@@ -189,14 +189,14 @@
                 </span>
                 <div class="d-flex gap-2">
                   <span class="text-muted">{{ curriculumRememberedCount }}/5000 từ</span>
-                  <span class="fw-bold text-teal">{{ curriculumPercent }}%</span>
+                  <span class="fw-bold text-teal">{{ formatFloatPercent(curriculumPercent) }}%</span>
                 </div>
               </div>
               <div class="progress" style="height: 10px; border-radius: 999px;">
                 <div
                   class="progress-bar rounded-pill"
                   role="progressbar"
-                  :style="{ width: `${curriculumPercent}%`, backgroundColor: '#00b074' }"
+                  :style="{ width: `${Math.min(100, curriculumPercent)}%`, backgroundColor: '#00b074' }"
                 ></div>
               </div>
             </div>
@@ -210,14 +210,14 @@
                 </span>
                 <div class="d-flex gap-2">
                   <span class="text-muted">{{ authStore.stats?.mastered_words || 0 }}/3351 từ</span>
-                  <span class="fw-bold text-teal">{{ vocabPercent }}%</span>
+                  <span class="fw-bold text-teal">{{ formatFloatPercent(vocabPercent) }}%</span>
                 </div>
               </div>
               <div class="progress" style="height: 10px; border-radius: 999px;">
                 <div
                   class="progress-bar rounded-pill"
                   role="progressbar"
-                  :style="{ width: `${vocabPercent}%`, backgroundColor: '#10b981' }"
+                  :style="{ width: `${Math.min(100, vocabPercent)}%`, backgroundColor: '#10b981' }"
                 ></div>
               </div>
             </div>
@@ -231,14 +231,14 @@
                 </span>
                 <div class="d-flex gap-2">
                   <span class="text-muted">{{ authStore.stats?.completed_grammars || 0 }}/15 bài</span>
-                  <span class="fw-bold text-teal">{{ grammarPercent }}%</span>
+                  <span class="fw-bold text-teal">{{ formatFloatPercent(grammarPercent) }}%</span>
                 </div>
               </div>
               <div class="progress" style="height: 10px; border-radius: 999px;">
                 <div
                   class="progress-bar rounded-pill"
                   role="progressbar"
-                  :style="{ width: `${grammarPercent}%`, backgroundColor: '#0d7362' }"
+                  :style="{ width: `${Math.min(100, grammarPercent)}%`, backgroundColor: '#0d7362' }"
                 ></div>
               </div>
             </div>
@@ -254,7 +254,7 @@
               </div>
             </div>
             <div class="badge bg-teal text-white px-3 py-2 rounded-pill fs-7 fw-bold">
-              {{ vocabPercent }}% từ đã nhớ
+              {{ formatFloatPercent(vocabPercent) }}% từ đã nhớ
             </div>
           </div>
         </div>
@@ -408,21 +408,29 @@ const curriculumRememberedCount = computed(() => {
     curriculumTopics.value.reduce((acc, t) => acc + (t.remembered_terms_count || 0), 0)
 })
 
+const formatFloatPercent = (val) => {
+  if (val === null || val === undefined || isNaN(val)) return '0.00'
+  const num = Number(val)
+  if (num <= 0) return '0.00'
+  if (num >= 100) return '100.00'
+  return num.toFixed(2)
+}
+
 const curriculumPercent = computed(() => {
   if (authStore.stats?.curriculum_percent !== undefined) {
-    return authStore.stats.curriculum_percent
+    return Number(authStore.stats.curriculum_percent)
   }
-  return Math.min(100, Math.round((curriculumRememberedCount.value / 5000) * 100))
+  return Math.min(100, ((curriculumRememberedCount.value || 0) / 5000) * 100)
 })
 
 const grammarPercent = computed(() => {
   const comp = authStore.stats?.completed_grammars || 0
-  return Math.min(100, Math.round((comp / 15) * 100))
+  return Math.min(100, (comp / 15) * 100)
 })
 
 const vocabPercent = computed(() => {
   const comp = authStore.stats?.mastered_words || 0
-  return Math.min(100, Math.round((comp / 3351) * 100))
+  return Math.min(100, (comp / 3351) * 100)
 })
 
 const plantStage = computed(() => {

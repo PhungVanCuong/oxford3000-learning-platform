@@ -1,5 +1,5 @@
 <template>
-  <div class="flashcard-player w-100 max-w-3xl mx-auto my-3">
+  <div class="flashcard-player w-100 mx-auto my-3" style="max-width: 920px;">
     <!-- Helper Tips Banner -->
     <div class="alert alert-primary bg-primary-subtle border-primary-subtle text-primary-emphasis d-flex align-items-center justify-content-between py-2 px-3 mb-3 rounded-3 shadow-sm fs-7">
       <div>
@@ -14,95 +14,132 @@
     <!-- 3D Card Box -->
     <div
       class="perspective-1000 w-100 cursor-pointer select-none mb-3"
-      style="min-height: 380px;"
+      style="min-height: 430px;"
       @click="toggleFlip"
     >
       <div
-        class="position-relative w-100 h-100 rounded-4 shadow-lg border border-2 transform-style-preserve-3d flashcard-3d-inner"
+        class="position-relative w-100 h-100 rounded-4 shadow-lg border-0 transform-style-preserve-3d flashcard-3d-inner"
         :class="{ 'rotate-y-180': isFlipped }"
-        style="min-height: 380px;"
+        style="min-height: 430px; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);"
       >
-        <!-- FRONT SIDE: Word + Phonetics + ENGLISH EXAMPLE SENTENCE -->
+        <!-- FRONT SIDE: Dark Forest Teal with Wave Decoration (Matching Roadmap) -->
         <div
-          class="position-absolute top-0 start-0 w-100 h-100 backface-hidden rounded-4 p-4 p-md-5 d-flex flex-column justify-content-between"
-          :class="isDark ? 'bg-dark text-white border-secondary' : 'bg-white text-dark border-light-subtle'"
+          class="position-absolute top-0 start-0 w-100 h-100 backface-hidden rounded-4 p-4 p-md-5 d-flex flex-column justify-content-between text-white border-0 overflow-hidden"
+          style="background: linear-gradient(145deg, #02231d 0%, #04382f 40%, #064e40 100%);"
         >
-          <div class="d-flex justify-content-between align-items-center">
-            <span class="badge bg-teal text-white px-3 py-1.5 rounded-pill fs-8">
-              MẶT TRƯỚC • TỪ TIẾNG ANH & VÍ DỤ
+          <!-- Top Card Info: Category + Status -->
+          <div class="d-flex justify-content-between align-items-center position-relative z-1">
+            <span class="fs-8 fw-bold letter-spacing-1 text-uppercase" style="color: #5eead4;">
+              OXFORD 3000™ • CHINH PHỤC TỪ VỰNG
             </span>
-            <span v-if="currentWord?.cefr_level" class="badge bg-success-subtle text-success border border-success-subtle">
-              {{ currentWord.cefr_level }}
-            </span>
+            <div class="d-flex align-items-center gap-2">
+              <span v-if="currentWord?.cefr_level" class="badge px-2.5 py-1 rounded-pill fw-bold fs-8" style="background-color: rgba(94, 234, 212, 0.2); color: #5eead4; border: 1px solid rgba(94, 234, 212, 0.35);">
+                {{ currentWord.cefr_level }}
+              </span>
+              <span 
+                class="badge px-3 py-1.5 rounded-pill fw-bold fs-8 shadow-xs"
+                :class="currentWord?.status === 'mastered' ? 'bg-success text-white' : 'text-white'"
+                :style="currentWord?.status !== 'mastered' ? 'background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.25);' : ''"
+              >
+                {{ currentWord?.status === 'mastered' ? '✔ ĐÃ GHI NHỚ' : currentWord?.status === 'learning' ? 'CẦN ÔN' : 'CHƯA HỌC' }}
+              </span>
+            </div>
           </div>
 
           <!-- Main Word Display -->
-          <div class="text-center my-auto py-2">
-            <h1 class="display-4 fw-black text-teal mb-2 tracking-tight">
+          <div class="text-center my-auto py-2 position-relative z-1">
+            <h1 class="display-5 display-md-4 fw-black text-white mb-2 tracking-tight" style="letter-spacing: -0.5px; word-break: break-word;">
               {{ currentWord?.word }}
             </h1>
-            <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap mb-3">
-              <span class="font-monospace fs-5 text-muted bg-body-tertiary px-3 py-1 rounded-3 border">
-                {{ currentWord?.phonetic_us }}
+            <div class="d-flex justify-content-center align-items-center gap-2 flex-wrap mb-2">
+              <span v-if="currentWord?.phonetic_us" class="fs-6 fst-italic" style="color: #a7f3d0;">
+                {{ currentWord.phonetic_us }}
               </span>
-              <span class="badge bg-secondary-subtle text-secondary-emphasis fs-7 px-3 py-1.5 rounded-3">
-                {{ currentWord?.part_of_speech }}
+              <span v-if="currentWord?.part_of_speech" class="badge px-3 py-1 rounded-pill text-uppercase fs-8 fw-bold" style="background-color: rgba(94, 234, 212, 0.2); color: #5eead4; border: 1px solid rgba(94, 234, 212, 0.35);">
+                {{ currentWord.part_of_speech }}
               </span>
+              <button
+                type="button"
+                @click.stop="speakCurrent"
+                class="btn btn-sm text-white rounded-pill px-3 py-1 fw-bold d-inline-flex align-items-center gap-1.5 shadow-xs"
+                style="background-color: #032b24; border: 1px solid rgba(255,255,255,0.3);"
+                title="Nghe phát âm chuẩn US"
+              >
+                <i class="bi bi-volume-up-fill text-warning"></i>
+                <span>NGHE US</span>
+              </button>
             </div>
 
             <!-- English Example Sentence Shown on Front -->
-            <div v-if="currentWord?.example_en" class="bg-body-tertiary p-3 rounded-3 text-start border my-2" @click.stop>
+            <div v-if="currentWord?.example_en" class="p-3 rounded-3 text-start my-2 shadow-xs" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.16); backdrop-filter: blur(4px);" @click.stop>
               <div class="d-flex justify-content-between align-items-center mb-1">
-                <span class="badge bg-teal text-white fs-8">CÂU VÍ DỤ SONG NGỮ</span>
+                <span class="badge px-2.5 py-0.5 rounded-pill fs-9 fw-bold text-uppercase" style="background-color: rgba(94, 234, 212, 0.25); color: #5eead4;">
+                  CÂU VÍ DỤ SONG NGỮ
+                </span>
                 <button
                   @click="speech.speak(currentWord?.example_en)"
-                  class="btn btn-sm btn-outline-teal py-0 px-2 rounded-pill fs-8"
+                  class="btn btn-sm text-white py-0 px-2 rounded-pill fs-8 border border-white-50"
+                  style="background-color: rgba(0,0,0,0.3);"
                   title="Nghe câu ví dụ"
                 >
-                  <i class="bi bi-volume-up-fill"></i> Nghe câu
+                  <i class="bi bi-volume-up-fill text-warning"></i> Nghe câu
                 </button>
               </div>
-              <p class="fs-6 fw-semibold mb-0 text-teal" v-html="highlightWord(currentWord?.example_en, currentWord?.word)"></p>
+              <p class="fs-6 fw-semibold mb-0 text-white" v-html="highlightWord(currentWord?.example_en, currentWord?.word)"></p>
+            </div>
+
+            <!-- Speech practice transcript feedback -->
+            <div 
+              v-if="speech.transcript.value" 
+              class="mt-2 px-3 py-1.5 rounded-pill d-inline-flex align-items-center gap-2 shadow-sm"
+              style="background-color: rgba(0, 0, 0, 0.55); border: 1px solid rgba(255, 255, 255, 0.25); backdrop-filter: blur(8px);"
+            >
+              <i class="bi bi-mic-fill text-warning"></i>
+              <span class="fw-bold fs-7" style="color: #facc15;">
+                Bạn đọc: "{{ speech.transcript.value }}" ({{ speech.pronunciationScore.value }}%
+                <span :class="speech.pronunciationFeedback.value === 'excellent' ? 'text-success fw-bold' : speech.pronunciationFeedback.value === 'good' ? 'text-warning fw-bold' : 'text-danger fw-bold'">
+                  {{ speech.pronunciationFeedback.value === 'excellent' ? '• Rất chuẩn! 🎉' : speech.pronunciationFeedback.value === 'good' ? '• Tương đối 👍' : '• Hãy đọc lại' }}
+                </span>)
+              </span>
             </div>
           </div>
 
-          <!-- Front Hint & Speech result -->
-          <div class="text-center pt-2 border-top">
-            <div v-if="speech.transcript.value" class="alert alert-info py-1 px-3 d-inline-block mb-1 fs-7">
-              Bạn đọc: <strong>"{{ speech.transcript.value }}"</strong> ({{ speech.pronunciationScore.value }}%
-              <span :class="speech.pronunciationFeedback.value === 'excellent' ? 'text-success fw-bold' : speech.pronunciationFeedback.value === 'good' ? 'text-warning fw-bold' : 'text-danger fw-bold'">
-                {{ speech.pronunciationFeedback.value === 'excellent' ? '• Rất chuẩn! 🎉' : speech.pronunciationFeedback.value === 'good' ? '• Tương đối 👍' : '• Hãy đọc lại' }}
-              </span>)
-            </div>
-            <div class="text-muted fs-8">
-              <i class="bi bi-arrow-repeat me-1"></i>Nhấp chuột hoặc gõ <strong>Space</strong> để lật thẻ xem Nghĩa & Dịch tiếng Việt
-            </div>
+          <!-- Flip Hint at Bottom -->
+          <div class="text-center text-white-50 fs-8 position-relative z-1 pt-2 border-top" style="border-top-color: rgba(255,255,255,0.12) !important;">
+            <i class="bi bi-arrow-repeat me-1"></i>Chạm để lật thẻ xem nghĩa tiếng Việt & câu ví dụ
+          </div>
+
+          <!-- Decorative SVG Wave Background (Matching Roadmap & Image) -->
+          <div class="position-absolute end-0 bottom-0 pointer-events-none" style="width: 240px; height: 180px; opacity: 0.85;">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#00b074" d="M47.5,-57.2C59.7,-48.1,66.8,-32.1,68.9,-15.8C71,0.5,68,17.2,59.9,30.8C51.8,44.4,38.6,55,23.6,61.4C8.6,67.8,-8.2,70,-23.7,65.3C-39.2,60.6,-53.4,49,-62.4,34.2C-71.4,19.4,-75.2,1.3,-71.4,-14.8C-67.7,-30.9,-56.3,-45,-42.6,-53.8C-28.9,-62.6,-14.5,-66.1,1.1,-67.4C16.6,-68.7,35.2,-66.3,47.5,-57.2Z" transform="translate(100 100)" />
+            </svg>
           </div>
         </div>
 
         <!-- BACK SIDE: ONLY VIETNAMESE MEANING & VIETNAMESE TRANSLATION -->
         <div
-          class="position-absolute top-0 start-0 w-100 h-100 backface-hidden rotate-y-180 rounded-4 p-4 p-md-5 d-flex flex-column justify-content-between"
-          :class="isDark ? 'bg-dark text-white border-secondary' : 'bg-white text-dark border-light-subtle'"
+          class="position-absolute top-0 start-0 w-100 h-100 backface-hidden rotate-y-180 rounded-4 p-4 p-md-5 d-flex flex-column justify-content-between text-dark border-0 shadow-lg"
+          style="background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);"
         >
           <div class="d-flex justify-content-between align-items-center">
-            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-1.5 rounded-pill fs-8">
-              MẶT SAU • NGHĨA & BẢN DỊCH TIẾNG VIỆT
+            <span class="badge bg-success-subtle text-success fw-bold fs-8 px-3 py-1 rounded-pill">
+              NGHĨA & BẢN DỊCH TIẾNG VIỆT
             </span>
-            <span class="badge" :class="currentWord?.status === 'mastered' ? 'bg-success text-white' : currentWord?.status === 'learning' ? 'bg-warning text-dark' : 'bg-secondary text-white'">
-              {{ currentWord?.status === 'mastered' ? 'Đã nhớ' : currentWord?.status === 'learning' ? 'Cần ôn' : 'Chưa học' }}
+            <span class="fs-8 text-muted">
+              <i class="bi bi-arrow-repeat me-1"></i>Chạm để quay lại
             </span>
           </div>
 
           <!-- Meaning & Vietnamese Translation -->
           <div class="my-auto py-3 text-center">
             <div class="text-muted fs-7 mb-1">Nghĩa tiếng Việt của từ:</div>
-            <h2 class="display-6 fw-bold text-success mb-4">
+            <h2 class="display-6 fw-bold text-success mb-3">
               {{ currentWord?.meaning_vi }}
             </h2>
 
             <!-- Vietnamese translation of the example sentence -->
-            <div v-if="currentWord?.example_vi" class="bg-body-tertiary p-3 rounded-3 text-start border my-2">
+            <div v-if="currentWord?.example_vi" class="bg-light p-3 rounded-3 text-start border my-2">
               <span class="badge bg-secondary text-white fs-8 mb-2">BẢN DỊCH CÂU VÍ DỤ</span>
               <p class="fs-6 text-dark-emphasis mb-0 fst-italic">
                 "{{ currentWord?.example_vi }}"

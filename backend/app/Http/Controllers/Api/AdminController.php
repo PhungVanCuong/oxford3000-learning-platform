@@ -46,15 +46,17 @@ class AdminController extends Controller
         $topLearners = User::orderBy('xp_points', 'desc')->take(5)->get()->map(function ($u) {
             $oxfordMastered = $u->vocabularyProgress()->where('status', 'mastered')->count();
             $curriculumMastered = CurriculumUserProgress::where('user_id', $u->id)->where('status', 'remembered')->count();
+            $phrasalMastered = \App\Models\UserPhraseProgress::where('user_id', $u->id)->where('status', 'mastered')->count();
             return [
                 'id' => $u->id,
                 'name' => $u->name,
                 'email' => $u->email,
                 'xp_points' => $u->xp_points ?? 0,
                 'streak_days' => $u->streak_days ?? 1,
-                'mastered_count' => $oxfordMastered + $curriculumMastered,
+                'mastered_count' => $oxfordMastered + $curriculumMastered + $phrasalMastered,
                 'oxford_count' => $oxfordMastered,
                 'curriculum_count' => $curriculumMastered,
+                'phrasal_count' => $phrasalMastered,
             ];
         });
 
@@ -97,7 +99,10 @@ class AdminController extends Controller
     public function getUsers(Request $request)
     {
         $users = User::withCount(['quizHistories'])->orderBy('id')->get()->map(function ($u) {
-            $masteredCount = $u->vocabularyProgress()->where('status', 'mastered')->count();
+            $masteredVocab = $u->vocabularyProgress()->where('status', 'mastered')->count();
+            $curriculumRemembered = CurriculumUserProgress::where('user_id', $u->id)->where('status', 'remembered')->count();
+            $masteredPhrases = \App\Models\UserPhraseProgress::where('user_id', $u->id)->where('status', 'mastered')->count();
+            $totalMastered = $masteredVocab + $curriculumRemembered + $masteredPhrases;
             $completedGrammars = $u->grammarProgress()->where('is_completed', true)->count();
             $avgAccuracy = $u->quiz_histories_count > 0 ? round($u->quizHistories()->avg('accuracy_percent'), 1) : 0;
 
@@ -111,7 +116,10 @@ class AdminController extends Controller
                 'xp_points' => $u->xp_points,
                 'streak_days' => $u->streak_days,
                 'words_per_day' => $u->words_per_day,
-                'mastered_words' => $masteredCount,
+                'mastered_words' => $masteredVocab,
+                'curriculum_remembered' => $curriculumRemembered,
+                'mastered_phrases' => $masteredPhrases,
+                'total_mastered_words' => $totalMastered,
                 'completed_grammars' => $completedGrammars,
                 'total_quizzes' => $u->quiz_histories_count,
                 'avg_accuracy' => $avgAccuracy,
@@ -303,6 +311,9 @@ class AdminController extends Controller
         \App\Models\UserVocabularyProgress::where('user_id', $user->id)->delete();
         \App\Models\UserGrammarProgress::where('user_id', $user->id)->delete();
         \App\Models\QuizHistory::where('user_id', $user->id)->delete();
+        CurriculumUserProgress::where('user_id', $user->id)->delete();
+        \App\Models\CurriculumStageProgress::where('user_id', $user->id)->delete();
+        \App\Models\UserPhraseProgress::where('user_id', $user->id)->delete();
 
         $user->xp_points = 0;
         $user->streak_days = 1;

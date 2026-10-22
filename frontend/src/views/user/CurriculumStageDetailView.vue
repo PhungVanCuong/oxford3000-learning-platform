@@ -161,9 +161,9 @@
     </div>
 
     <!-- MAIN BODY -->
-    <div v-else class="container max-w-3xl py-2 flex-grow-1 d-flex flex-column justify-content-center">
+    <div v-else class="container py-2 flex-grow-1 d-flex flex-column justify-content-center" style="max-width: 960px;">
       <!-- ================= MODE 1: 3D FLASHCARD ================= -->
-      <div v-if="activeMode === 'flashcard'" class="flashcard-container mx-auto w-100" style="max-width: 740px;">
+      <div v-if="activeMode === 'flashcard'" class="flashcard-container mx-auto w-100" style="max-width: 920px;">
         <!-- Helper Tips Banner (Styled exactly like Daily Study & Topics 3000) -->
         <div class="alert alert-primary bg-primary-subtle border-primary-subtle text-primary-emphasis d-flex align-items-center justify-content-between py-2 px-3 mb-3 rounded-3 shadow-xs fs-7">
           <div>
@@ -176,11 +176,11 @@
         </div>
 
         <!-- 3D Card (Dark Forest Teal) -->
-        <div class="perspective-1000 mb-3" style="min-height: 410px;">
+        <div class="perspective-1000 mb-3" style="min-height: 430px;">
           <div 
             class="flashcard-3d-inner w-100 h-100 position-relative rounded-4 shadow-lg cursor-pointer transform-style-preserve-3d"
             :class="{ 'rotate-y-180': isFlipped }"
-            style="min-height: 410px; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);"
+            style="min-height: 430px; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);"
             @click="isFlipped = !isFlipped"
           >
             <!-- FRONT FACE: Dark Forest Teal with Wave Decoration -->
@@ -204,9 +204,9 @@
 
               <!-- Main English Word / Term -->
               <div class="text-center my-3 position-relative z-1">
-                <h2 class="fw-black text-white mb-2 tracking-tight" style="font-size: 2.2rem;">
+                <h1 class="display-5 display-md-4 fw-black text-white mb-2 tracking-tight" style="letter-spacing: -0.5px; word-break: break-word;">
                   {{ currentTerm?.term }}
-                </h2>
+                </h1>
 
                 <!-- Part of Speech Badge -->
                 <div v-if="currentTerm?.part_of_speech" class="mb-2">
@@ -257,7 +257,7 @@
               </div>
 
               <!-- Decorative SVG Waves Background -->
-              <div class="position-absolute end-0 bottom-0 opacity-20 pointer-events-none" style="width: 240px; height: 180px;">
+              <div class="position-absolute end-0 bottom-0 pointer-events-none" style="width: 240px; height: 180px; opacity: 0.85;">
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                   <path fill="#00b074" d="M47.5,-57.2C59.7,-48.1,66.8,-32.1,68.9,-15.8C71,0.5,68,17.2,59.9,30.8C51.8,44.4,38.6,55,23.6,61.4C8.6,67.8,-8.2,70,-23.7,65.3C-39.2,60.6,-53.4,49,-62.4,34.2C-71.4,19.4,-75.2,1.3,-71.4,-14.8C-67.7,-30.9,-56.3,-45,-42.6,-53.8C-28.9,-62.6,-14.5,-66.1,1.1,-67.4C16.6,-68.7,35.2,-66.3,47.5,-57.2Z" transform="translate(100 100)" />
                 </svg>

@@ -108,7 +108,15 @@
               <td class="text-center fw-bold text-primary">{{ u.xp_points }}</td>
               <td class="text-center text-warning fw-bold">{{ u.streak_days }} ngày</td>
               <td>
-                <span class="fw-bold text-success">{{ u.mastered_words }}</span>/3351 từ
+                <div class="d-flex align-items-baseline gap-1">
+                  <span class="fw-black text-success fs-6">{{ u.total_mastered_words ?? (u.mastered_words + (u.curriculum_remembered || 0) + (u.mastered_phrases || 0)) }}</span>
+                  <span class="fs-8 text-muted fw-semibold">từ đã thuộc</span>
+                </div>
+                <div class="text-muted d-flex align-items-center gap-1 mt-0.5 flex-wrap" style="font-size: 11px;">
+                  <span class="badge bg-light text-secondary border px-1.5 py-0.5">{{ u.mastered_words }} Oxford</span>
+                  <span class="badge bg-light text-secondary border px-1.5 py-0.5">{{ u.curriculum_remembered || 0 }} Lộ trình</span>
+                  <span class="badge bg-light text-secondary border px-1.5 py-0.5">{{ u.mastered_phrases || 0 }} Cụm từ</span>
+                </div>
               </td>
               <td class="text-center">
                 <div class="btn-group btn-group-sm">

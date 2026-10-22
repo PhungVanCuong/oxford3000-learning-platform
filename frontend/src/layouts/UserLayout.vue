@@ -22,81 +22,82 @@
         <!-- Nav Links -->
         <div class="collapse navbar-collapse" id="userNavbar">
           <!-- GUEST MENU: When NOT Logged In -->
-          <ul v-if="!authStore.isAuthenticated" class="navbar-nav mx-auto mb-2 mb-lg-0 fw-semibold fs-7 gap-1 gap-lg-2">
+          <ul v-if="!authStore.isAuthenticated" class="navbar-nav mx-auto mb-2 mb-lg-0 fw-semibold fs-7 gap-1 gap-lg-1.5 align-items-center">
             <li class="nav-item">
-              <router-link to="/" class="nav-link px-2.5 py-1.5 text-dark-emphasis" active-class="active fw-bold text-teal">
-                <i class="bi bi-house-door me-1"></i>Trang chủ
+              <router-link to="/" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link" exact-active-class="nav-item-active">
+                <i class="bi bi-house-door-fill me-1.5 icon-home"></i>Trang chủ
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/curriculum" class="nav-link px-2.5 py-1.5 text-teal fw-bold d-flex align-items-center gap-1">
-                <i class="bi bi-signpost-split-fill"></i> Lộ trình (25 Chủ đề)
+              <router-link to="/curriculum" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link d-flex align-items-center gap-1.5" active-class="nav-item-active">
+                <i class="bi bi-signpost-split-fill icon-curriculum"></i>
+                <span>Lộ trình (25 Chủ đề)</span>
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/topics" class="nav-link px-2.5 py-1.5 text-dark-emphasis">
-                Chủ đề trong 3000 từ vựng
+              <router-link to="/topics" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
+                <i class="bi bi-grid-1x2-fill me-1.5 icon-topics"></i>Chủ đề trong 3000 từ vựng
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/dictionary" class="nav-link px-2.5 py-1.5 text-dark-emphasis">
-                Tra cứu 3000 từ
+              <router-link to="/dictionary" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
+                <i class="bi bi-search-heart-fill me-1.5 icon-dict"></i>Tra cứu 3000 từ
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/ipa" class="nav-link px-2.5 py-1.5 text-dark-emphasis">
-                44 Âm IPA
+              <router-link to="/ipa" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
+                <i class="bi bi-soundwave me-1.5 icon-ipa"></i>44 Âm IPA
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/grammar" class="nav-link px-2.5 py-1.5 text-dark-emphasis">
-                12 Thì Ngữ pháp
+              <router-link to="/grammar" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
+                <i class="bi bi-journal-bookmark-fill me-1.5 icon-grammar"></i>12 Thì Ngữ pháp
               </router-link>
             </li>
           </ul>
 
           <!-- AUTHENTICATED USER MENU -->
-          <ul v-else class="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold fs-7 gap-1">
+          <ul v-else class="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold fs-7 gap-1 align-items-center">
             <li class="nav-item">
-              <router-link to="/" class="nav-link px-2 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
-                <i class="bi bi-house-door me-1"></i> Trang chủ
+              <router-link to="/" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" exact-active-class="nav-item-active">
+                <i class="bi bi-house-door-fill me-1.5 icon-home"></i> Trang chủ
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/curriculum" class="nav-link px-2 py-1.5 rounded-2 d-flex align-items-center gap-1" active-class="active fw-bold text-teal bg-teal-subtle">
-                <i class="bi bi-signpost-split-fill text-teal"></i>
+              <router-link to="/curriculum" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link d-flex align-items-center gap-1.5" active-class="nav-item-active">
+                <i class="bi bi-signpost-split-fill icon-curriculum"></i>
                 <span>Lộ trình</span>
-                <span class="badge bg-warning text-dark px-1.5 py-0.5 rounded-pill" style="font-size: 8px;">25 CHỦ ĐỀ</span>
+                <span class="badge bg-warning text-dark px-1.5 py-0.5 rounded-pill shadow-xs" style="font-size: 8px;">25 CHỦ ĐỀ</span>
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/daily" class="nav-link px-2 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
-                <i class="bi bi-calendar3 me-1"></i> Học theo Ngày
+              <router-link to="/daily" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
+                <i class="bi bi-calendar-check-fill me-1.5 icon-daily"></i> Học theo Ngày
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/topics" class="nav-link px-2 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
-                <i class="bi bi-diagram-3 me-1"></i> Chủ đề trong 3000 từ vựng
+              <router-link to="/topics" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
+                <i class="bi bi-grid-1x2-fill me-1.5 icon-topics"></i> Chủ đề 3000 từ
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/phrasal-verbs" class="nav-link px-2 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
-                <i class="bi bi-puzzle me-1"></i> Cụm từ
+              <router-link to="/phrasal-verbs" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
+                <i class="bi bi-puzzle-fill me-1.5 icon-phrasal"></i> Cụm từ
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/grammar" class="nav-link px-2 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
-                <i class="bi bi-journal-bookmark me-1"></i> 12 Thì
+              <router-link to="/grammar" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
+                <i class="bi bi-journal-bookmark-fill me-1.5 icon-grammar"></i> 12 Thì
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/ipa" class="nav-link px-2 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
-                <i class="bi bi-soundwave me-1"></i> 44 Âm IPA
+              <router-link to="/ipa" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
+                <i class="bi bi-soundwave me-1.5 icon-ipa"></i> 44 Âm IPA
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/dictionary" class="nav-link px-2 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
-                <i class="bi bi-search me-1"></i> Tra cứu
+              <router-link to="/dictionary" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
+                <i class="bi bi-search-heart-fill me-1.5 icon-dict"></i> Tra cứu
               </router-link>
             </li>
           </ul>
@@ -272,3 +273,68 @@ onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
 })
 </script>
+
+<style scoped>
+/* Navigation link base styles */
+.nav-custom-link {
+  color: #334155;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 600;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.nav-custom-link:hover {
+  background-color: rgba(0, 176, 116, 0.08);
+  color: #00b074;
+  transform: translateY(-1px);
+}
+
+/* Individual vibrant colorful icons when not active */
+.icon-home { color: #2563eb !important; font-size: 15px; } /* Rich Royal Blue */
+.icon-curriculum { color: #10b981 !important; font-size: 15px; } /* Vibrant Emerald */
+.icon-daily { color: #f59e0b !important; font-size: 15px; } /* Amber Sun */
+.icon-topics { color: #06b6d4 !important; font-size: 15px; } /* Vivid Cyan */
+.icon-phrasal { color: #8b5cf6 !important; font-size: 15px; } /* Purple Magic */
+.icon-grammar { color: #ec4899 !important; font-size: 15px; } /* Rose Pink */
+.icon-ipa { color: #0d9488 !important; font-size: 15px; } /* Deep Teal */
+.icon-dict { color: #ef4444 !important; font-size: 15px; } /* Coral Red */
+
+/* ACTIVE STATE: Highlighting glowing pill with pure white text and white icon */
+.nav-item-active {
+  background: linear-gradient(135deg, #00b074 0%, #064e40 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 14px rgba(0, 176, 116, 0.35) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  transform: translateY(-1px);
+}
+
+.nav-item-active i {
+  color: #ffffff !important;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
+}
+
+.nav-item-active span {
+  color: #ffffff !important;
+}
+
+.nav-item-active:hover {
+  background: linear-gradient(135deg, #00c282 0%, #085a4a 100%) !important;
+  color: #ffffff !important;
+}
+
+/* Dark mode adjustments */
+:global([data-bs-theme="dark"]) .nav-custom-link,
+.bg-dark .nav-custom-link {
+  color: #cbd5e1;
+}
+
+:global([data-bs-theme="dark"]) .nav-custom-link:hover,
+.bg-dark .nav-custom-link:hover {
+  background-color: rgba(0, 176, 116, 0.16);
+  color: #5eead4;
+}
+</style>

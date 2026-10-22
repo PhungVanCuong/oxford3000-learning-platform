@@ -177,8 +177,7 @@ body {
 }
 
 /* ACTIVE STATE: High contrast white text & icon on vibrant teal gradient */
-.admin-nav-link.active,
-.admin-nav-link.router-link-active,
+.admin-nav-link.admin-nav-active,
 .admin-nav-link.router-link-exact-active {
   background: linear-gradient(135deg, #00b074 0%, #087F75 100%) !important;
   color: #ffffff !important;
@@ -186,11 +185,9 @@ body {
   box-shadow: 0 4px 14px rgba(8, 127, 117, 0.3) !important;
 }
 
-.admin-nav-link.active i,
-.admin-nav-link.router-link-active i,
+.admin-nav-link.admin-nav-active i,
 .admin-nav-link.router-link-exact-active i,
-.admin-nav-link.active span,
-.admin-nav-link.router-link-active span,
+.admin-nav-link.admin-nav-active span,
 .admin-nav-link.router-link-exact-active span {
   color: #ffffff !important;
   fill: #ffffff !important;

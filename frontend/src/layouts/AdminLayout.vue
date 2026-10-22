@@ -78,42 +78,46 @@
             <div class="d-flex flex-column gap-1.5">
               <router-link
                 to="/admin"
-                exact
                 class="admin-nav-link"
+                exact-active-class="admin-nav-active"
               >
-                <i class="bi bi-speedometer2"></i>
+                <i class="bi bi-speedometer2 icon-admin-dash"></i>
                 <span>Tổng quan Dashboard</span>
               </router-link>
 
               <router-link
                 to="/admin/curriculum"
                 class="admin-nav-link"
+                active-class="admin-nav-active"
               >
-                <i class="bi bi-signpost-split-fill"></i>
+                <i class="bi bi-signpost-split-fill icon-admin-curriculum"></i>
                 <span>Lộ trình (25 Chủ đề)</span>
               </router-link>
 
               <router-link
                 to="/admin/users"
                 class="admin-nav-link"
+                active-class="admin-nav-active"
               >
-                <i class="bi bi-people-fill"></i>
+                <i class="bi bi-people-fill icon-admin-users"></i>
                 <span>Học viên & Phân quyền</span>
               </router-link>
 
               <router-link
                 to="/admin/vocabularies"
                 class="admin-nav-link"
+                active-class="admin-nav-active"
               >
-                <i class="bi bi-book-half"></i>
+                <i class="bi bi-book-half icon-admin-vocab"></i>
                 <span>Kho 3000 từ vựng & AI</span>
               </router-link>
 
               <router-link
                 to="/admin/phrasal-verbs"
                 class="admin-nav-link"
+                active-class="admin-nav-active"
               >
-                <i class="bi bi-puzzle"></i>
+                <i class="bi bi-puzzle-fill icon-admin-phrases"></i>
                 <span>Cụm từ & Phrasal Verbs</span>
               </router-link>
             </div>
@@ -153,3 +157,69 @@ const handleLogout = async () => {
   router.push('/login?portal=admin')
 }
 </script>
+
+<style scoped>
+/* Admin Sidebar link base styles */
+.admin-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  color: #334155;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+}
+
+.admin-nav-link:hover {
+  background-color: rgba(0, 176, 116, 0.08);
+  color: #00b074;
+  transform: translateX(3px);
+}
+
+/* Individual vibrant colorful icons when not active */
+.icon-admin-dash { color: #2563eb !important; font-size: 1.15rem; } /* Royal Blue */
+.icon-admin-curriculum { color: #10b981 !important; font-size: 1.15rem; } /* Emerald */
+.icon-admin-users { color: #f59e0b !important; font-size: 1.15rem; } /* Amber */
+.icon-admin-vocab { color: #8b5cf6 !important; font-size: 1.15rem; } /* Purple */
+.icon-admin-phrases { color: #ec4899 !important; font-size: 1.15rem; } /* Pink */
+
+/* ACTIVE STATE: Highlighting glowing pill with pure white text and white icon */
+.admin-nav-active {
+  background: linear-gradient(135deg, #00b074 0%, #064e40 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 14px rgba(0, 176, 116, 0.35) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  transform: translateX(3px);
+}
+
+.admin-nav-active i {
+  color: #ffffff !important;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
+}
+
+.admin-nav-active span {
+  color: #ffffff !important;
+}
+
+.admin-nav-active:hover {
+  background: linear-gradient(135deg, #00c282 0%, #085a4a 100%) !important;
+  color: #ffffff !important;
+}
+
+/* Dark mode adjustments */
+:global([data-bs-theme="dark"]) .admin-nav-link,
+.bg-dark .admin-nav-link {
+  color: #cbd5e1;
+}
+
+:global([data-bs-theme="dark"]) .admin-nav-link:hover,
+.bg-dark .admin-nav-link:hover {
+  background-color: rgba(0, 176, 116, 0.16);
+  color: #5eead4;
+}
+</style>
