@@ -1,0 +1,186 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+:root {
+  --primary-teal: #087F75;
+  --primary-teal-dark: #064e40;
+  --primary-teal-light: #00b074;
+  --accent-gold: #f59e0b;
+  --bg-warm-cream: #F5F7F8;
+  --card-light: #ffffff;
+  --text-dark: #182325;
+}
+
+body {
+  font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+[data-bs-theme="light"] {
+  body {
+    background-color: #F5F7F8;
+    color: #182325;
+  }
+  .bg-card-custom {
+    background-color: #ffffff;
+    border-color: #E2E8F0;
+  }
+}
+
+[data-bs-theme="dark"] {
+  body {
+    background-color: #0b1315;
+    color: #f1f5f9;
+  }
+  .bg-card-custom {
+    background-color: #131e21;
+    border-color: #243438;
+  }
+}
+
+/* Enhanced Buttons with Prominent Borders, Vibrant Colors & Smooth Hover Animation */
+.btn {
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-teal {
+  background: linear-gradient(135deg, #00b074 0%, #087F75 100%);
+  color: #ffffff !important;
+  border: 1px solid #009963;
+}
+
+.btn-teal:hover {
+  background: linear-gradient(135deg, #00c280 0%, #009963 100%);
+  color: #ffffff !important;
+  border-color: #008757;
+}
+
+.btn-outline-teal {
+  color: #087F75;
+  border: 1.5px solid #087F75;
+  background-color: transparent;
+}
+
+.btn-outline-teal:hover {
+  background-color: #087F75;
+  color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .btn-outline-teal {
+  color: #5eead4;
+  border-color: #14b8a6;
+}
+
+[data-bs-theme="dark"] .btn-outline-teal:hover {
+  background-color: #14b8a6;
+  color: #042f2e !important;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+  border: 1px solid #1d4ed8;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #00b074 0%, #059669 100%);
+  border: 1px solid #047857;
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+  color: #ffffff !important;
+  border: 1px solid #b45309;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  border: 1px solid #b91c1c;
+}
+
+.text-teal {
+  color: var(--primary-teal) !important;
+}
+
+[data-bs-theme="dark"] .text-teal {
+  color: #5eead4 !important;
+}
+
+.bg-teal {
+  background-color: var(--primary-teal) !important;
+}
+
+.bg-teal-dark {
+  background-color: var(--primary-teal-dark) !important;
+}
+
+/* 3D Flashcard CSS with Ultra Smooth Flip */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.flashcard-3d-inner {
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Recording Mic Pulsing Animation */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.96);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  70% {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 12px rgba(239, 68, 68, 0);
+  }
+  100% {
+    transform: scale(0.96);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.animate-mic-pulse {
+  animation: pulse-ring 1.5s infinite;
+}
+
+/* Hover Cards Effect */
+.hover-card {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06) !important;
+}
