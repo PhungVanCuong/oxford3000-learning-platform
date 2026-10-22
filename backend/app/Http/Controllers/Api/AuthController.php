@@ -9,6 +9,8 @@ use App\Models\EmailOtp;
 use App\Models\UserVocabularyProgress;
 use App\Models\UserGrammarProgress;
 use App\Models\QuizHistory;
+use App\Models\CurriculumUserProgress;
+use App\Models\CurriculumStageProgress;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
@@ -283,9 +285,11 @@ class AuthController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Bạn cần đăng nhập để thực hiện.'], 401);
         }
 
-        // Xóa tiến độ từ vựng, ngữ pháp, lịch sử làm bài của chính user này
+        // Xóa tiến độ từ vựng, ngữ pháp, lộ trình 25 chủ đề, lịch sử làm bài của chính user này
         UserVocabularyProgress::where('user_id', $user->id)->delete();
         UserGrammarProgress::where('user_id', $user->id)->delete();
+        CurriculumUserProgress::where('user_id', $user->id)->delete();
+        CurriculumStageProgress::where('user_id', $user->id)->delete();
         QuizHistory::where('user_id', $user->id)->delete();
 
         // Đặt lại XP và streak
@@ -307,6 +311,9 @@ class AuthController extends Controller
                     'completed_grammars' => 0,
                     'total_quizzes' => 0,
                     'avg_accuracy' => 0,
+                    'curriculum_remembered_terms' => 0,
+                    'curriculum_completed_stages' => 0,
+                    'curriculum_percent' => 0,
                 ],
             ],
         ]);
@@ -330,6 +337,11 @@ class AuthController extends Controller
         $totalQuizzes = $user->quizHistories()->count();
         $avgAccuracy = $totalQuizzes > 0 ? round($user->quizHistories()->avg('accuracy_percent'), 1) : 0;
 
+        // Curriculum 25 Topics Progress
+        $curriculumRemembered = CurriculumUserProgress::where('user_id', $user->id)->where('status', 'remembered')->count();
+        $curriculumCompletedStages = CurriculumStageProgress::where('user_id', $user->id)->where('is_completed', true)->count();
+        $curriculumPercent = min(100, round(($curriculumRemembered / 5000) * 100, 1));
+
         return response()->json([
             'status' => 'success',
             'data' => [
@@ -342,6 +354,9 @@ class AuthController extends Controller
                     'completed_grammars' => $completedGrammars,
                     'total_quizzes' => $totalQuizzes,
                     'avg_accuracy' => $avgAccuracy,
+                    'curriculum_remembered_terms' => $curriculumRemembered,
+                    'curriculum_completed_stages' => $curriculumCompletedStages,
+                    'curriculum_percent' => $curriculumPercent,
                 ],
             ],
         ]);

@@ -2,8 +2,9 @@
   <div class="container py-4 max-w-6xl">
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
       <div>
-        <span class="badge bg-teal text-white rounded-pill px-3 py-1 fs-8">25 CHỦ ĐỀ THỰC TẾ</span>
-        <h2 class="fw-black text-teal mb-0">Lộ Trình Học Theo Chủ Đề</h2>
+        <span class="badge bg-teal text-white rounded-pill px-3 py-1 fs-8">KHO TỪ VỰNG CỐT LÕI OXFORD</span>
+        <h2 class="fw-black text-teal mb-1">Chủ Đề Trong 3000 Từ Vựng</h2>
+        <p class="text-muted fs-7 mb-0">Các bài học chủ đề được phân loại trực tiếp từ 3.000 từ vựng thông dụng nhất.</p>
       </div>
       <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1.5 rounded-pill fs-7">
         Chính sách mở khóa 100%

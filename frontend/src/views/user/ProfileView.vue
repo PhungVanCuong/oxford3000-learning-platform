@@ -180,38 +180,65 @@
             </div>
             <div class="text-muted fs-7 mb-4">Các kết quả đã lưu trên toàn bộ lộ trình.</div>
 
-            <!-- Progress 1: Ngữ pháp -->
+            <!-- Progress 1: Lộ trình 25 Chủ đề IELTS (5.000 từ) -->
             <div class="mb-4">
               <div class="d-flex justify-content-between align-items-center mb-1 fs-7">
-                <span class="fw-bold">Ngữ pháp (12 thì & chuyên đề)</span>
+                <span class="fw-bold d-flex align-items-center gap-1.5">
+                  <i class="bi bi-signpost-split-fill text-teal"></i>
+                  <span>Lộ trình 25 Chủ đề IELTS (5.000 từ)</span>
+                </span>
                 <div class="d-flex gap-2">
-                  <span class="text-muted">{{ authStore.stats?.completed_grammars || 0 }}/15 bài</span>
-                  <span class="fw-bold text-teal">{{ grammarPercent }}%</span>
+                  <span class="text-muted">{{ curriculumRememberedCount }}/5000 từ</span>
+                  <span class="fw-bold text-teal">{{ curriculumPercent }}%</span>
                 </div>
               </div>
-              <div class="progress" style="height: 10px;">
+              <div class="progress" style="height: 10px; border-radius: 999px;">
                 <div
                   class="progress-bar rounded-pill"
                   role="progressbar"
-                  :style="{ width: `${grammarPercent}%`, backgroundColor: '#0d7362' }"
+                  :style="{ width: `${curriculumPercent}%`, backgroundColor: '#00b074' }"
                 ></div>
               </div>
             </div>
 
-            <!-- Progress 2: Từ vựng -->
+            <!-- Progress 2: Từ vựng Oxford 3000 -->
             <div class="mb-4">
               <div class="d-flex justify-content-between align-items-center mb-1 fs-7">
-                <span class="fw-bold">Từ vựng (Kho 3.351 từ)</span>
+                <span class="fw-bold d-flex align-items-center gap-1.5">
+                  <i class="bi bi-journal-bookmark-fill text-success"></i>
+                  <span>Kho Từ vựng Oxford 3000™</span>
+                </span>
                 <div class="d-flex gap-2">
                   <span class="text-muted">{{ authStore.stats?.mastered_words || 0 }}/3351 từ</span>
                   <span class="fw-bold text-teal">{{ vocabPercent }}%</span>
                 </div>
               </div>
-              <div class="progress" style="height: 10px;">
+              <div class="progress" style="height: 10px; border-radius: 999px;">
                 <div
                   class="progress-bar rounded-pill"
                   role="progressbar"
                   :style="{ width: `${vocabPercent}%`, backgroundColor: '#10b981' }"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Progress 3: Ngữ pháp -->
+            <div class="mb-4">
+              <div class="d-flex justify-content-between align-items-center mb-1 fs-7">
+                <span class="fw-bold d-flex align-items-center gap-1.5">
+                  <i class="bi bi-book-half text-primary"></i>
+                  <span>Ngữ pháp (12 thì & chuyên đề)</span>
+                </span>
+                <div class="d-flex gap-2">
+                  <span class="text-muted">{{ authStore.stats?.completed_grammars || 0 }}/15 bài</span>
+                  <span class="fw-bold text-teal">{{ grammarPercent }}%</span>
+                </div>
+              </div>
+              <div class="progress" style="height: 10px; border-radius: 999px;">
+                <div
+                  class="progress-bar rounded-pill"
+                  role="progressbar"
+                  :style="{ width: `${grammarPercent}%`, backgroundColor: '#0d7362' }"
                 ></div>
               </div>
             </div>
@@ -230,6 +257,55 @@
               {{ vocabPercent }}% từ đã nhớ
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. TIẾN ĐỘ CHI TIẾT 25 CHỦ ĐỀ LỘ TRÌNH IELTS (5.000 TỪ) -->
+    <div class="card p-4 rounded-4 shadow-sm border bg-card-custom mb-4" style="border-color: #E2E8F0;">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-3">
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <span class="badge bg-teal-dark text-white rounded-pill px-2.5 py-1 fs-8">03</span>
+            <h5 class="fw-bold mb-0 text-teal">TIẾN ĐỘ 25 CHỦ ĐỀ LỘ TRÌNH IELTS (5.000 TỪ)</h5>
+          </div>
+          <div class="text-muted fs-7">Chi tiết từng chủ đề, số bài hoàn thành và tỷ lệ ghi nhớ được đồng bộ tự động.</div>
+        </div>
+        <router-link to="/curriculum" class="btn btn-sm btn-teal text-white rounded-pill px-3 py-1.5 fw-bold fs-8 d-flex align-items-center gap-1.5 shadow-xs">
+          <i class="bi bi-signpost-split-fill"></i>
+          <span>Vào học Lộ Trình →</span>
+        </router-link>
+      </div>
+
+      <div class="row g-2.5">
+        <div v-for="t in curriculumTopics" :key="t.id" class="col-12 col-md-6 col-lg-4">
+          <router-link :to="`/curriculum`" class="card p-3 rounded-3 border text-decoration-none hover-card h-100 bg-white" style="border-color: #E2E8F0;">
+            <div class="d-flex justify-content-between align-items-start mb-1.5">
+              <span class="badge rounded-pill text-teal fw-bold bg-teal-subtle px-2 py-0.5" style="font-size: 10px;">
+                CHỦ ĐỀ {{ String(t.order_num).padStart(2, '0') }}
+              </span>
+              <span 
+                class="badge rounded-pill fw-bold" 
+                :class="t.progress_percent >= 100 ? 'bg-success text-white' : (t.progress_percent > 0 ? 'bg-teal text-white' : 'bg-light text-muted border')" 
+                style="font-size: 10px;"
+              >
+                {{ t.progress_percent }}%
+              </span>
+            </div>
+            <div class="fw-bold fs-7 text-dark text-truncate">{{ t.title }}</div>
+            <div class="text-muted fs-8 mb-2 text-truncate">{{ t.title_vi }}</div>
+            <div class="d-flex justify-content-between align-items-center fs-8 text-muted mb-1">
+              <span>{{ t.remembered_terms_count || 0 }}/200 từ đã nhớ</span>
+              <span class="text-teal fw-semibold">{{ t.completed_stages_count || 0 }}/10 bài</span>
+            </div>
+            <div class="progress" style="height: 6px; border-radius: 999px;">
+              <div 
+                class="progress-bar rounded-pill" 
+                :class="t.progress_percent >= 100 ? 'bg-success' : 'bg-teal'" 
+                :style="{ width: `${t.progress_percent}%` }"
+              ></div>
+            </div>
+          </router-link>
         </div>
       </div>
     </div>
@@ -325,6 +401,20 @@ const form = ref({
   words_per_day: 15,
 })
 
+const curriculumTopics = ref([])
+
+const curriculumRememberedCount = computed(() => {
+  return authStore.stats?.curriculum_remembered_terms || 
+    curriculumTopics.value.reduce((acc, t) => acc + (t.remembered_terms_count || 0), 0)
+})
+
+const curriculumPercent = computed(() => {
+  if (authStore.stats?.curriculum_percent !== undefined) {
+    return authStore.stats.curriculum_percent
+  }
+  return Math.min(100, Math.round((curriculumRememberedCount.value / 5000) * 100))
+})
+
 const grammarPercent = computed(() => {
   const comp = authStore.stats?.completed_grammars || 0
   return Math.min(100, Math.round((comp / 15) * 100))
@@ -378,6 +468,18 @@ onMounted(async () => {
     form.value.avatar_url = authStore.user.avatar_url || presetAvatars[0]
     form.value.birth_date = authStore.user.birth_date ? authStore.user.birth_date.substring(0, 10) : '2005-10-18'
     form.value.words_per_day = authStore.user.words_per_day || 15
+  }
+
+  // Load Curriculum 25 Topics Progress
+  try {
+    const token = localStorage.getItem('oxford_token')
+    const headers = token ? { Authorization: `Bearer ${token}` } : {}
+    const cRes = await axios.get('/api/curriculum', { headers })
+    if (cRes.data?.data) {
+      curriculumTopics.value = cRes.data.data
+    }
+  } catch (e) {
+    console.error('Lỗi tải tiến độ lộ trình:', e)
   }
 })
 </script>

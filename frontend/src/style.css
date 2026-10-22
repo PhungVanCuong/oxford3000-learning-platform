@@ -15,6 +15,7 @@ body {
   font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
   letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
 }
 
 .material-symbols-outlined {
@@ -133,6 +134,100 @@ body {
   background-color: var(--primary-teal-dark) !important;
 }
 
+/* Sidebar Navigation Items - Guaranteed High Contrast White on Active */
+.admin-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  color: #334155;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+}
+
+.admin-nav-link i {
+  width: 22px;
+  text-align: center;
+  font-size: 1.15rem;
+  color: #087F75;
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+.admin-nav-link:hover {
+  background-color: #f1f5f9;
+  color: #087F75;
+}
+
+[data-bs-theme="dark"] .admin-nav-link {
+  color: #cbd5e1;
+}
+
+[data-bs-theme="dark"] .admin-nav-link i {
+  color: #5eead4;
+}
+
+[data-bs-theme="dark"] .admin-nav-link:hover {
+  background-color: #1e293b;
+  color: #ffffff;
+}
+
+/* ACTIVE STATE: High contrast white text & icon on vibrant teal gradient */
+.admin-nav-link.active,
+.admin-nav-link.router-link-active,
+.admin-nav-link.router-link-exact-active {
+  background: linear-gradient(135deg, #00b074 0%, #087F75 100%) !important;
+  color: #ffffff !important;
+  border-color: #009963 !important;
+  box-shadow: 0 4px 14px rgba(8, 127, 117, 0.3) !important;
+}
+
+.admin-nav-link.active i,
+.admin-nav-link.router-link-active i,
+.admin-nav-link.router-link-exact-active i,
+.admin-nav-link.active span,
+.admin-nav-link.router-link-active span,
+.admin-nav-link.router-link-exact-active span {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+/* Card Spacing & Typography Polish (Prevent text crowding) */
+.card {
+  border-radius: 14px;
+}
+
+.card-body {
+  padding: 1.5rem !important;
+}
+
+@media (min-width: 992px) {
+  .card-body {
+    padding: 1.75rem !important;
+  }
+}
+
+/* Table Padding & Row Breathing Space */
+.table th, .table td {
+  padding: 0.85rem 1.15rem !important;
+  vertical-align: middle;
+}
+
+.table thead th {
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+  letter-spacing: 0.5px;
+}
+
+hr {
+  margin: 1.5rem 0 !important;
+  opacity: 0.15 !important;
+}
+
 /* 3D Flashcard CSS with Ultra Smooth Flip */
 .perspective-1000 {
   perspective: 1000px;
@@ -182,5 +277,96 @@ body {
 
 .hover-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Backdrop Click Modal for easy dismissal */
+.modal-backdrop-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  padding: 1rem;
+}
+
+/* Extended Typography Utilities (Prevent Text Overflow & Crowding) */
+.fs-7 { font-size: 0.875rem !important; } /* 14px */
+.fs-8 { font-size: 0.75rem !important; }  /* 12px */
+.fs-9 { font-size: 0.6875rem !important; } /* 11px */
+.fw-black { font-weight: 800 !important; }
+.leading-none { line-height: 1 !important; }
+.leading-tight { line-height: 1.25 !important; }
+.leading-snug { line-height: 1.375 !important; }
+.leading-relaxed { line-height: 1.625 !important; }
+.letter-spacing-05 { letter-spacing: 0.5px !important; }
+.shadow-xs { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important; }
+.max-w-7xl { max-width: 80rem !important; margin-left: auto; margin-right: auto; }
+
+/* Half-Step Spacing Utilities (Essential for Bootstrap 5 Layouts) */
+.p-0\.5, .p-0-5 { padding: 0.125rem !important; }
+.p-1\.5, .p-1-5 { padding: 0.375rem !important; }
+.p-2\.5, .p-2-5 { padding: 0.625rem !important; }
+.p-3\.5, .p-3-5 { padding: 0.875rem !important; }
+.p-4\.5, .p-4-5 { padding: 1.25rem !important; }
+
+.py-0\.5, .py-0-5 { padding-top: 0.125rem !important; padding-bottom: 0.125rem !important; }
+.py-1\.5, .py-1-5 { padding-top: 0.375rem !important; padding-bottom: 0.375rem !important; }
+.py-2\.5, .py-2-5 { padding-top: 0.625rem !important; padding-bottom: 0.625rem !important; }
+.py-3\.5, .py-3-5 { padding-top: 0.875rem !important; padding-bottom: 0.875rem !important; }
+
+.px-0\.5, .px-0-5 { padding-left: 0.125rem !important; padding-right: 0.125rem !important; }
+.px-1\.5, .px-1-5 { padding-left: 0.375rem !important; padding-right: 0.375rem !important; }
+.px-2\.5, .px-2-5 { padding-left: 0.625rem !important; padding-right: 0.625rem !important; }
+.px-3\.5, .px-3-5 { padding-left: 0.875rem !important; padding-right: 0.875rem !important; }
+.px-4\.5, .px-4-5 { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+
+.m-0\.5, .m-0-5 { margin: 0.125rem !important; }
+.m-1\.5, .m-1-5 { margin: 0.375rem !important; }
+.m-2\.5, .m-2-5 { margin: 0.625rem !important; }
+.m-3\.5, .m-3-5 { margin: 0.875rem !important; }
+
+.my-1\.5, .my-1-5 { margin-top: 0.375rem !important; margin-bottom: 0.375rem !important; }
+.my-2\.5, .my-2-5 { margin-top: 0.625rem !important; margin-bottom: 0.625rem !important; }
+.my-3\.5, .my-3-5 { margin-top: 0.875rem !important; margin-bottom: 0.875rem !important; }
+
+.mb-0\.5, .mb-0-5 { margin-bottom: 0.125rem !important; }
+.mb-1\.5, .mb-1-5 { margin-bottom: 0.375rem !important; }
+.mb-2\.5, .mb-2-5 { margin-bottom: 0.625rem !important; }
+.mb-3\.5, .mb-3-5 { margin-bottom: 0.875rem !important; }
+
+.mt-0\.5, .mt-0-5 { margin-top: 0.125rem !important; }
+.mt-1\.5, .mt-1-5 { margin-top: 0.375rem !important; }
+.mt-2\.5, .mt-2-5 { margin-top: 0.625rem !important; }
+.mt-3\.5, .mt-3-5 { margin-top: 0.875rem !important; }
+
+.gap-0\.5, .gap-0-5 { gap: 0.125rem !important; }
+.gap-1\.5, .gap-1-5 { gap: 0.375rem !important; }
+.gap-2\.5, .gap-2-5 { gap: 0.625rem !important; }
+.gap-3\.5, .gap-3-5 { gap: 0.875rem !important; }
+
+.g-0\.5, .g-0-5 { --bs-gutter-x: 0.25rem; --bs-gutter-y: 0.25rem; }
+.g-1\.5, .g-1-5 { --bs-gutter-x: 0.5rem; --bs-gutter-y: 0.5rem; }
+.g-2\.5, .g-2-5 { --bs-gutter-x: 0.75rem; --bs-gutter-y: 0.75rem; }
+.g-3\.5, .g-3-5 { --bs-gutter-x: 1.25rem; --bs-gutter-y: 1.25rem; }
+
+/* Table Breathing Room & Frame Protection */
+.table th, .table td {
+  padding: 0.85rem 1.15rem !important;
+}
+
+.table tr th:first-child,
+.table tr td:first-child {
+  padding-left: 1.5rem !important;
+}
+
+.table tr th:last-child,
+.table tr td:last-child {
+  padding-right: 1.5rem !important;
 }

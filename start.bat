@@ -33,6 +33,8 @@ php -r "try { $pdo = new PDO('mysql:host=127.0.0.1;port=3306', 'root', ''); $pdo
 
 :: Kiem tra neu can chay migration & seeder
 php artisan migrate --force >nul 2>nul
+php artisan db:seed --class=PhrasalVerbSeeder --force >nul 2>nul
+php artisan db:seed --class=CurriculumRoadmapSeeder --force >nul 2>nul
 cd ..
 
 echo.

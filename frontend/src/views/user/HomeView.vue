@@ -65,6 +65,23 @@
                   <span>Trợ lý Gemini AI tận tâm</span>
                 </div>
               </div>
+
+              <!-- Quick Jump Pills to Sections: Tính năng, Quy trình, Lợi ích -->
+              <div class="d-flex align-items-center gap-2 flex-wrap mt-4 pt-3 border-top border-light-subtle">
+                <span class="fs-8 fw-bold text-muted text-uppercase">Khám phá chi tiết:</span>
+                <a href="#tinh-nang" class="btn btn-sm btn-outline-teal rounded-pill px-3 py-1.5 fs-8 d-inline-flex align-items-center gap-1.5 shadow-xs">
+                  <i class="bi bi-grid-fill"></i>
+                  <span>Tính năng nổi bật</span>
+                </a>
+                <a href="#quy-trinh" class="btn btn-sm btn-outline-teal rounded-pill px-3 py-1.5 fs-8 d-inline-flex align-items-center gap-1.5 shadow-xs">
+                  <i class="bi bi-diagram-3-fill"></i>
+                  <span>Quy trình 4 bước</span>
+                </a>
+                <a href="#loi-ich" class="btn btn-sm btn-outline-teal rounded-pill px-3 py-1.5 fs-8 d-inline-flex align-items-center gap-1.5 shadow-xs">
+                  <i class="bi bi-trophy-fill"></i>
+                  <span>Lợi ích học viên</span>
+                </a>
+              </div>
             </div>
 
             <!-- Right Column: Floating Preview Card (Matches Image 1) -->
@@ -384,13 +401,17 @@
               Triết lý cốt lõi: <strong>Xây dựng kiến thức trước → Làm bài kiểm tra sau</strong>. Học qua Flashcard 3D, Nghe giọng Mỹ, Luyện nói chấm điểm và trắc nghiệm 15 câu.
             </p>
             <div class="d-flex gap-3 flex-wrap">
+              <router-link to="/curriculum" class="btn btn-warning text-dark rounded-pill px-4 py-2.5 fw-bold shadow-sm d-flex align-items-center gap-2">
+                <i class="bi bi-signpost-split-fill fs-5"></i>
+                <span>Lộ trình 25 Chủ đề Mới (5.000 từ)</span>
+              </router-link>
               <router-link to="/daily" class="btn btn-light rounded-pill px-4 py-2.5 fw-bold shadow-sm d-flex align-items-center gap-2" style="color: #064e40;">
                 <i class="bi bi-play-circle-fill fs-5"></i>
-                <span>Vào học theo Ngày (3000 từ)</span>
+                <span>Học theo Ngày (3000 từ)</span>
               </router-link>
               <router-link to="/dictionary" class="btn btn-outline-light rounded-pill px-4 py-2.5 fw-semibold fs-7 d-flex align-items-center gap-2">
                 <i class="bi bi-search"></i>
-                <span>Tra cứu 3000 Từ Vựng</span>
+                <span>Tra cứu Từ Vựng</span>
               </router-link>
             </div>
           </div>
@@ -404,6 +425,29 @@
             <div class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill">
               {{ authStore.isAdmin ? 'Quản trị viên (Admin)' : 'Học viên Oxford' }}
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SPOTLIGHT: LỘ TRÌNH 25 CHỦ ĐỀ CHUYÊN SÂU (MỚI) -->
+      <div class="card border-0 rounded-4 shadow-sm mb-5 text-white overflow-hidden" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #087F75 100%);">
+        <div class="card-body p-4 p-md-5 d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-4">
+          <div style="max-width: 660px;">
+            <div class="d-inline-flex align-items-center gap-2 bg-white bg-opacity-20 px-3 py-1 rounded-pill mb-3 fs-8 fw-bold">
+              <i class="bi bi-stars text-warning"></i>
+              <span>LỘ TRÌNH 25 CHỦ ĐỀ CHUYÊN SÂU • 5.000 TỪ VỰNG & CỤM TỪ</span>
+            </div>
+            <h2 class="display-6 fw-black mb-2 text-white">Chinh Phục 25 Chủ Đề (10 Giai Đoạn)</h2>
+            <p class="fs-7 text-white-75 mb-0" style="line-height: 1.6;">
+              Mỗi chủ đề chia làm 10 giai đoạn tăng dần: Chặng 1 học 10 thẻ từ -> Chặng 2-10 làm bài kiểm tra trắc nghiệm 12 đến 28 câu (đúng đủ 200 câu/chủ đề). Mở khóa 100% tự do học bài!
+            </p>
+          </div>
+          <div class="d-flex align-items-center gap-3 flex-shrink-0">
+            <router-link to="/curriculum" class="btn btn-warning text-dark px-4 py-3 rounded-pill fw-bold shadow-lg d-flex align-items-center gap-2 fs-7 text-nowrap">
+              <i class="bi bi-signpost-split-fill"></i>
+              <span>Vào Lộ trình 25 Chủ đề</span>
+              <i class="bi bi-arrow-right"></i>
+            </router-link>
           </div>
         </div>
       </div>

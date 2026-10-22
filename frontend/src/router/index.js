@@ -14,12 +14,15 @@ import IpaView from '@/views/user/IpaView.vue'
 import DictionaryView from '@/views/user/DictionaryView.vue'
 import TipsView from '@/views/user/TipsView.vue'
 import ProfileView from '@/views/user/ProfileView.vue'
+import CurriculumRoadmapView from '@/views/user/CurriculumRoadmapView.vue'
+import CurriculumStageDetailView from '@/views/user/CurriculumStageDetailView.vue'
 
 // Admin Views
 import AdminDashboardView from '@/views/admin/AdminDashboardView.vue'
 import AdminUsersRolesView from '@/views/admin/AdminUsersRolesView.vue'
 import AdminVocabulariesView from '@/views/admin/AdminVocabulariesView.vue'
 import AdminPhrasalVerbsView from '@/views/admin/AdminPhrasalVerbsView.vue'
+import AdminCurriculumView from '@/views/admin/AdminCurriculumView.vue'
 
 // Auth Views
 import LoginView from '@/views/auth/LoginView.vue'
@@ -33,6 +36,8 @@ const routes = [
     component: UserLayout,
     children: [
       { path: '', name: 'home', component: HomeView },
+      { path: 'curriculum', name: 'curriculum', component: CurriculumRoadmapView },
+      { path: 'curriculum/:topicId/stage/:stageNum', name: 'curriculum-stage', component: CurriculumStageDetailView },
       { path: 'daily', name: 'daily', component: DailyStudyView },
       { path: 'topics', name: 'topics', component: TopicRoadmapView },
       { path: 'topics/:id', name: 'topic-detail', component: TopicDetailView },
@@ -71,6 +76,7 @@ const routes = [
     },
     children: [
       { path: '', name: 'admin-dashboard', component: AdminDashboardView },
+      { path: 'curriculum', name: 'admin-curriculum', component: AdminCurriculumView },
       { path: 'users', name: 'admin-users', component: AdminUsersRolesView },
       { path: 'vocabularies', name: 'admin-vocabularies', component: AdminVocabulariesView },
       { path: 'phrasal-verbs', name: 'admin-phrasal-verbs', component: AdminPhrasalVerbsView },

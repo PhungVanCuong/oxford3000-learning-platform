@@ -10,7 +10,13 @@ use App\Models\Topic;
 use App\Models\Grammar;
 use App\Models\QuizHistory;
 use App\Models\UserVocabularyProgress;
+use App\Models\CurriculumTopic;
+use App\Models\CurriculumTerm;
+use App\Models\CurriculumUserProgress;
+use App\Models\CurriculumStageProgress;
+use App\Models\PhrasalVerb;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -25,15 +31,43 @@ class AdminController extends Controller
         $totalGrammars = Grammar::count();
         $totalQuizzes = QuizHistory::count();
 
+        // Curriculum 25 Topics & Phrasal Verbs stats
+        $totalCurriculumTopics = CurriculumTopic::count();
+        $totalCurriculumTerms = CurriculumTerm::count();
+        $totalCurriculumRemembered = CurriculumUserProgress::where('status', 'remembered')->count();
+        $totalCurriculumStagesCompleted = CurriculumStageProgress::where('is_completed', true)->count();
+        $totalPhrasalVerbs = PhrasalVerb::count();
+
+        // Learning activities today
+        $todayReviews = UserVocabularyProgress::whereDate('last_reviewed_at', now()->toDateString())->count()
+            + CurriculumUserProgress::whereDate('last_reviewed_at', now()->toDateString())->count();
+
         // Top 5 active learners
         $topLearners = User::orderBy('xp_points', 'desc')->take(5)->get()->map(function ($u) {
+            $oxfordMastered = $u->vocabularyProgress()->where('status', 'mastered')->count();
+            $curriculumMastered = CurriculumUserProgress::where('user_id', $u->id)->where('status', 'remembered')->count();
             return [
                 'id' => $u->id,
                 'name' => $u->name,
                 'email' => $u->email,
-                'xp_points' => $u->xp_points,
-                'streak_days' => $u->streak_days,
-                'mastered_count' => $u->vocabularyProgress()->where('status', 'mastered')->count(),
+                'xp_points' => $u->xp_points ?? 0,
+                'streak_days' => $u->streak_days ?? 1,
+                'mastered_count' => $oxfordMastered + $curriculumMastered,
+                'oxford_count' => $oxfordMastered,
+                'curriculum_count' => $curriculumMastered,
+            ];
+        });
+
+        // 25 Curriculum topics overview with learner count
+        $curriculumOverview = CurriculumTopic::orderBy('order_num')->get()->map(function ($t) {
+            $rememberedInTopic = CurriculumUserProgress::where('topic_id', $t->id)->where('status', 'remembered')->count();
+            return [
+                'id' => $t->id,
+                'order_num' => $t->order_num,
+                'title' => $t->title,
+                'title_vi' => $t->title_vi,
+                'total_terms' => $t->total_terms,
+                'total_remembered' => $rememberedInTopic,
             ];
         });
 
@@ -45,7 +79,14 @@ class AdminController extends Controller
                 'total_topics' => $totalTopics,
                 'total_grammars' => $totalGrammars,
                 'total_quizzes' => $totalQuizzes,
+                'total_curriculum_topics' => $totalCurriculumTopics,
+                'total_curriculum_terms' => $totalCurriculumTerms,
+                'total_curriculum_remembered' => $totalCurriculumRemembered,
+                'total_curriculum_stages_completed' => $totalCurriculumStagesCompleted,
+                'total_phrasal_verbs' => $totalPhrasalVerbs,
+                'today_reviews' => $todayReviews,
                 'top_learners' => $topLearners,
+                'curriculum_overview' => $curriculumOverview,
             ],
         ]);
     }

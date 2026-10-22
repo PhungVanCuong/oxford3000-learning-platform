@@ -21,51 +21,51 @@
     </header>
 
     <!-- Main Content: Split Panel matching Image 2 (media_1792672234439_45c90ecf.png) -->
-    <main class="flex-grow-1 d-flex align-items-center justify-content-center p-3 p-md-4 p-lg-5">
-      <div class="card rounded-4 border-0 shadow-lg overflow-hidden w-100 max-w-5xl" style="min-height: 600px;">
-        <div class="row g-0 h-100">
+    <main class="flex-grow-1 d-flex align-items-center justify-content-center p-3 p-md-4">
+      <div class="card rounded-4 border-0 shadow-lg overflow-hidden w-100" style="max-width: 820px;">
+        <div class="row g-0 align-items-stretch">
           <!-- LEFT COLUMN: Dark Green (#064e40) matching screenshot -->
-          <div class="col-12 col-md-5 p-4 p-md-5 d-flex flex-column justify-content-between text-white position-relative" style="background: linear-gradient(160deg, #042f2e 0%, #064e40 60%, #087F75 100%);">
+          <div class="col-12 col-md-5 p-4 d-flex flex-column justify-content-between text-white" style="background: linear-gradient(160deg, #042f2e 0%, #064e40 60%, #087F75 100%);">
             <div>
-              <div class="inline-flex items-center mb-4">
-                <span class="badge rounded-pill px-3 py-1.5 fw-semibold border" style="background-color: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.2); font-size: 11px; color: #5eead4;">
-                  ✨ HỌC TẬP CÓ ĐỊNH HƯỚNG
-                </span>
+              <div class="d-inline-flex align-items-center gap-1.5 px-2.5 py-1 rounded-pill mb-3 border" style="background-color: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.2); font-size: 11px; color: #5eead4;">
+                <i class="bi bi-stars"></i>
+                <span class="fw-bold">HỌC TẬP CÓ ĐỊNH HƯỚNG</span>
               </div>
 
-              <h2 class="display-6 fw-black leading-tight mb-3">
+              <h3 class="fw-black mb-2" style="line-height: 1.25;">
                 Mỗi buổi học,<br/>
-                <span style="color: #5eead4;">một bước chuyển mình.</span>
-              </h2>
+                <span style="color: #5eead4;">một bước vươn tầm.</span>
+              </h3>
 
-              <p class="fs-7 text-white-50 leading-relaxed mb-4">
+              <p class="fs-8 text-white-75 mb-3" style="line-height: 1.5;">
                 Đồng hành cùng lộ trình chuẩn Oxford 3000 từ vựng, theo dõi sát sao chế độ luyện tập và ngữ pháp khoa học.
               </p>
             </div>
 
             <!-- Testimonial card in left column -->
-            <div class="p-3.5 rounded-3 border mt-4" style="background-color: rgba(0, 0, 0, 0.25); border-color: rgba(255, 255, 255, 0.12);">
-              <div class="d-flex align-items-center gap-1 text-warning mb-2 fs-7">
+            <div class="p-3 rounded-3 border" style="background-color: rgba(0, 0, 0, 0.22); border-color: rgba(255, 255, 255, 0.12);">
+              <div class="d-flex align-items-center gap-1 text-warning mb-1 fs-8">
                 <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
                 <span class="text-white fw-bold ms-1">4.9/5.0</span>
               </div>
               <p class="fs-8 text-white-75 mb-2 fst-italic">
                 "Có lộ trình học chi tiết giúp tôi nắm chắc 3000 từ vựng và 12 thì ngữ pháp, làm bài kiểm tra trắc nghiệm phản xạ rất nhanh."
               </p>
-              <div class="d-flex align-items-center gap-2">
-                <span class="badge bg-white text-dark rounded-pill px-2.5 py-1 fw-bold fs-8">
-                  <i class="bi bi-person-check-fill text-success me-1"></i> Học viên khóa 3 tháng
+              <div class="d-flex align-items-center justify-content-between">
+                <span class="badge bg-white text-dark rounded-pill px-2 py-0.5 fw-bold" style="font-size: 10px;">
+                  Học viên tiêu biểu
                 </span>
+                <span class="text-white-50" style="font-size: 10px;">100% Mở khóa</span>
               </div>
             </div>
           </div>
 
           <!-- RIGHT COLUMN: Registration Form matching Image 2 -->
-          <div class="col-12 col-md-7 p-4 p-md-5 d-flex flex-column justify-content-between" :class="authStore.themeMode === 'dark' ? 'bg-dark' : 'bg-white'">
+          <div class="col-12 col-md-7 p-4 p-lg-4 d-flex flex-column justify-content-between" :class="authStore.themeMode === 'dark' ? 'bg-dark' : 'bg-white'">
             <div>
-              <div class="mb-4">
-                <h3 class="fw-black text-teal mb-1">Bắt đầu hành trình</h3>
-                <p class="text-muted fs-7 mb-0">
+              <div class="mb-3">
+                <h4 class="fw-black text-teal mb-0">Bắt đầu hành trình</h4>
+                <p class="text-muted fs-8 mb-0">
                   Đăng ký tài khoản học viên để lưu giữ hồ sơ và bắt đầu lộ trình học tập.
                 </p>
               </div>

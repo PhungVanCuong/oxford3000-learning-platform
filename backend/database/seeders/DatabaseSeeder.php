@@ -15,6 +15,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             TopicSeeder::class,
             Oxford3000Seeder::class,
+            PhrasalVerbSeeder::class,
+            CurriculumRoadmapSeeder::class,
             GrammarSeeder::class,
             IpaSeeder::class,
             LearningTipSeeder::class,

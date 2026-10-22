@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\ProgressController;
 use App\Http\Controllers\Api\DictionaryController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\PhrasalVerbController;
+use App\Http\Controllers\Api\CurriculumRoadmapController;
 
 // 1. Authentication & Profile
 Route::post('/auth/login', [AuthController::class, 'login']);
@@ -66,7 +67,15 @@ Route::get('/vocabulary/search', [DictionaryController::class, 'search']);
 Route::post('/ai/generate-examples', [AdminController::class, 'generateAiExamples']);
 Route::post('/ai/explain', [AdminController::class, 'aiExplainOrCorrect']);
 
-// 11. Admin Dashboard Management & Role Permissions
+// 11. NEW CURRICULUM ROADMAP (Lộ trình 25 Chủ đề Chuyên sâu từ 25 files CSV x 10 Giai đoạn x 200 câu)
+Route::get('/curriculum', [CurriculumRoadmapController::class, 'index']);
+Route::get('/curriculum/{topicId}/all-terms', [CurriculumRoadmapController::class, 'getAllTopicTerms']);
+Route::get('/curriculum/{idOrSlug}', [CurriculumRoadmapController::class, 'show']);
+Route::get('/curriculum/{topicId}/stage/{stageNum}', [CurriculumRoadmapController::class, 'getStage']);
+Route::post('/curriculum/stage-submit', [CurriculumRoadmapController::class, 'submitStage']);
+Route::post('/curriculum/term-status', [CurriculumRoadmapController::class, 'updateTermStatus']);
+
+// 12. Admin Dashboard Management & Role Permissions
 Route::prefix('admin')->group(function () {
     Route::get('/stats', [AdminController::class, 'getDashboardStats']);
     Route::get('/users', [AdminController::class, 'getUsers']);
@@ -81,4 +90,12 @@ Route::prefix('admin')->group(function () {
     Route::post('/vocabularies', [AdminController::class, 'createVocabulary']);
     Route::put('/vocabularies/{id}', [AdminController::class, 'updateVocabulary']);
     Route::delete('/vocabularies/{id}', [AdminController::class, 'deleteVocabulary']);
+
+    // Admin Curriculum Management
+    Route::get('/curriculum/topics', [CurriculumRoadmapController::class, 'adminGetTopics']);
+    Route::put('/curriculum/topics/{id}', [CurriculumRoadmapController::class, 'adminUpdateTopic']);
+    Route::get('/curriculum/topics/{id}/terms', [CurriculumRoadmapController::class, 'adminGetTerms']);
+    Route::post('/curriculum/terms', [CurriculumRoadmapController::class, 'adminCreateTerm']);
+    Route::put('/curriculum/terms/{id}', [CurriculumRoadmapController::class, 'adminUpdateTerm']);
+    Route::delete('/curriculum/terms/{id}', [CurriculumRoadmapController::class, 'adminDeleteTerm']);
 });

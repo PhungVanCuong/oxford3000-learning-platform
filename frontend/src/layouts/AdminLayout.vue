@@ -50,17 +50,17 @@
 
     <div class="container-fluid flex-grow-1 p-0">
       <div class="row g-0 flex-nowrap">
-        <!-- 1. LEFT SIDEBAR (Width 240px) matching extracted template -->
-        <nav class="col-auto col-md-3 col-lg-2 border-end p-3 shadow-sm d-flex flex-column justify-content-between" :class="authStore.themeMode === 'dark' ? 'bg-dark border-secondary' : 'bg-white border-light-subtle'" style="min-height: calc(100vh - 64px); width: 250px;">
+        <!-- 1. LEFT SIDEBAR (Width 260px) -->
+        <nav class="col-auto border-end p-3 shadow-sm d-flex flex-column justify-content-between" :class="authStore.themeMode === 'dark' ? 'bg-dark border-secondary' : 'bg-white border-light-subtle'" style="min-height: calc(100vh - 64px); width: 260px;">
           <div>
             <!-- Brand in Sidebar -->
-            <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom">
-              <div class="rounded-3 d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" style="width: 36px; height: 36px; background: #00b074;">
+            <div class="d-flex align-items-center gap-2.5 mb-3 pb-3 border-bottom">
+              <div class="rounded-3 d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" style="width: 40px; height: 40px; background: linear-gradient(135deg, #00b074 0%, #087F75 100%);">
                 Ox
               </div>
               <div class="d-flex flex-column">
                 <span class="fw-black fs-6 tracking-tight text-teal text-uppercase" style="letter-spacing: 0.5px;">OXFORD 3000™</span>
-                <span class="text-muted" style="font-size: 10px;">HỆ THỐNG QUẢN TRỊ PT</span>
+                <span class="text-muted fw-semibold" style="font-size: 10px; letter-spacing: 0.3px;">HỆ THỐNG QUẢN TRỊ VIÊN</span>
               </div>
             </div>
 
@@ -68,69 +68,66 @@
             <div class="p-2.5 rounded-3 mb-3 d-flex align-items-center justify-content-between border" style="background-color: #E6F7F3; border-color: #A3E7D8;">
               <div class="d-flex align-items-center gap-2">
                 <span class="rounded-circle bg-success animate-mic-pulse" style="width: 8px; height: 8px;"></span>
-                <span class="fw-bold fs-8" style="color: #087F75;">Quản trị viên</span>
+                <span class="fw-bold fs-8" style="color: #087F75;">Máy chủ Sẵn sàng</span>
               </div>
-              <span class="badge bg-success text-white" style="font-size: 10px;">Hệ thống</span>
+              <span class="badge bg-success text-white" style="font-size: 10px;">Hoạt động</span>
             </div>
 
             <!-- Navigation Links -->
-            <div class="text-uppercase text-muted fs-8 fw-bold mb-2 px-2">Điều Hành Dữ Liệu</div>
-            <ul class="nav nav-pills flex-column gap-1.5 fs-7 fw-semibold">
-              <li class="nav-item">
-                <router-link
-                  to="/admin"
-                  exact-active-class="active bg-teal text-white shadow-sm"
-                  class="nav-link py-2 px-3 rounded-3 text-dark-emphasis d-flex align-items-center gap-2.5"
-                >
-                  <i class="bi bi-speedometer2 text-teal"></i>
-                  <span>Tổng quan Dashboard</span>
-                </router-link>
-              </li>
+            <div class="text-uppercase text-muted fs-8 fw-bold mb-2 px-2" style="letter-spacing: 0.5px;">Điều Hành Dữ Liệu</div>
+            <div class="d-flex flex-column gap-1.5">
+              <router-link
+                to="/admin"
+                exact
+                class="admin-nav-link"
+              >
+                <i class="bi bi-speedometer2"></i>
+                <span>Tổng quan Dashboard</span>
+              </router-link>
 
-              <li class="nav-item">
-                <router-link
-                  to="/admin/users"
-                  active-class="active bg-teal text-white shadow-sm"
-                  class="nav-link py-2 px-3 rounded-3 text-dark-emphasis d-flex align-items-center gap-2.5"
-                >
-                  <i class="bi bi-people-fill text-teal"></i>
-                  <span>Học viên & Phân quyền</span>
-                </router-link>
-              </li>
+              <router-link
+                to="/admin/curriculum"
+                class="admin-nav-link"
+              >
+                <i class="bi bi-signpost-split-fill"></i>
+                <span>Lộ trình (25 Chủ đề)</span>
+              </router-link>
 
-              <li class="nav-item">
-                <router-link
-                  to="/admin/vocabularies"
-                  active-class="active bg-teal text-white shadow-sm"
-                  class="nav-link py-2 px-3 rounded-3 text-dark-emphasis d-flex align-items-center gap-2.5"
-                >
-                  <i class="bi bi-book-half text-teal"></i>
-                  <span>Kho 3000 từ vựng & AI</span>
-                </router-link>
-              </li>
+              <router-link
+                to="/admin/users"
+                class="admin-nav-link"
+              >
+                <i class="bi bi-people-fill"></i>
+                <span>Học viên & Phân quyền</span>
+              </router-link>
 
-              <li class="nav-item">
-                <router-link
-                  to="/admin/phrasal-verbs"
-                  active-class="active bg-teal text-white shadow-sm"
-                  class="nav-link py-2 px-3 rounded-3 text-dark-emphasis d-flex align-items-center gap-2.5"
-                >
-                  <i class="bi bi-puzzle text-teal"></i>
-                  <span>Cụm từ & Phrasal Verbs</span>
-                </router-link>
-              </li>
-            </ul>
+              <router-link
+                to="/admin/vocabularies"
+                class="admin-nav-link"
+              >
+                <i class="bi bi-book-half"></i>
+                <span>Kho 3000 từ vựng & AI</span>
+              </router-link>
+
+              <router-link
+                to="/admin/phrasal-verbs"
+                class="admin-nav-link"
+              >
+                <i class="bi bi-puzzle"></i>
+                <span>Cụm từ & Phrasal Verbs</span>
+              </router-link>
+            </div>
           </div>
 
           <!-- Bottom Sidebar Section -->
           <div class="pt-3 border-top mt-auto">
-            <router-link to="/" class="nav-link py-2 px-3 text-secondary d-flex align-items-center gap-2 fs-7 rounded-3 hover:bg-light">
-              <i class="bi bi-box-arrow-left"></i>
+            <router-link to="/" class="admin-nav-link mb-1 text-secondary">
+              <i class="bi bi-box-arrow-left text-secondary"></i>
               <span>Vào Cổng Học Viên</span>
             </router-link>
-            <button @click="handleLogout" class="nav-link py-2 px-3 text-danger d-flex align-items-center gap-2 fs-7 rounded-3 w-100 text-start border-0 bg-transparent mt-1">
-              <i class="bi bi-power"></i>
-              <span>Đăng xuất</span>
+            <button @click="handleLogout" class="admin-nav-link text-danger w-100 text-start border-0 bg-transparent">
+              <i class="bi bi-power text-danger"></i>
+              <span>Đăng xuất Quản trị</span>
             </button>
           </div>
         </nav>

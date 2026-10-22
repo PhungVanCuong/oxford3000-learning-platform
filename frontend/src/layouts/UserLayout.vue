@@ -1,8 +1,8 @@
 <template>
   <div class="user-layout min-vh-100 d-flex flex-column">
     <!-- Navbar matching Image 1 (media_1792672183705_bc785297.png) -->
-    <nav class="navbar navbar-expand-lg border-bottom sticky-top py-2.5 shadow-sm" :class="authStore.themeMode === 'dark' ? 'bg-dark navbar-dark border-secondary' : 'bg-white navbar-light border-light-subtle'">
-      <div class="container-fluid px-3 px-lg-4 max-w-7xl">
+    <nav class="navbar navbar-expand-lg border-bottom sticky-top py-2.5 shadow-sm" :class="authStore.themeMode === 'dark' ? 'bg-dark navbar-dark border-secondary' : 'bg-white navbar-light border-light-subtle'" style="z-index: 1040 !important;">
+      <div class="container-fluid px-3 px-md-4 px-xl-5">
         <!-- Brand Logo -->
         <router-link to="/" class="navbar-brand d-flex align-items-center gap-2.5 text-decoration-none">
           <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" style="width: 40px; height: 40px; background: #00b074;">
@@ -21,22 +21,22 @@
 
         <!-- Nav Links -->
         <div class="collapse navbar-collapse" id="userNavbar">
-          <!-- GUEST MENU: When NOT Logged In (Matches image media_1792672183705_bc785297.png) -->
-          <ul v-if="!authStore.isAuthenticated" class="navbar-nav mx-auto mb-2 mb-lg-0 fw-semibold fs-7 gap-1 gap-lg-3">
+          <!-- GUEST MENU: When NOT Logged In -->
+          <ul v-if="!authStore.isAuthenticated" class="navbar-nav mx-auto mb-2 mb-lg-0 fw-semibold fs-7 gap-1 gap-lg-2">
             <li class="nav-item">
-              <a href="#tinh-nang" class="nav-link px-2.5 py-1.5 text-dark-emphasis">
-                Tính năng
-              </a>
+              <router-link to="/" class="nav-link px-2.5 py-1.5 text-dark-emphasis" active-class="active fw-bold text-teal">
+                <i class="bi bi-house-door me-1"></i>Trang chủ
+              </router-link>
             </li>
             <li class="nav-item">
-              <a href="#quy-trinh" class="nav-link px-2.5 py-1.5 text-dark-emphasis">
-                Quy trình
-              </a>
+              <router-link to="/curriculum" class="nav-link px-2.5 py-1.5 text-teal fw-bold d-flex align-items-center gap-1">
+                <i class="bi bi-signpost-split-fill"></i> Lộ trình (25 Chủ đề)
+              </router-link>
             </li>
             <li class="nav-item">
-              <a href="#loi-ich" class="nav-link px-2.5 py-1.5 text-dark-emphasis">
-                Lợi ích
-              </a>
+              <router-link to="/topics" class="nav-link px-2.5 py-1.5 text-dark-emphasis">
+                Chủ đề trong 3000 từ vựng
+              </router-link>
             </li>
             <li class="nav-item">
               <router-link to="/dictionary" class="nav-link px-2.5 py-1.5 text-dark-emphasis">
@@ -58,37 +58,44 @@
           <!-- AUTHENTICATED USER MENU -->
           <ul v-else class="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold fs-7 gap-1">
             <li class="nav-item">
-              <router-link to="/" class="nav-link px-2.5 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
+              <router-link to="/" class="nav-link px-2 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
                 <i class="bi bi-house-door me-1"></i> Trang chủ
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/daily" class="nav-link px-2.5 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
-                <i class="bi bi-calendar3 me-1"></i> Học theo Ngày (3000 từ)
+              <router-link to="/curriculum" class="nav-link px-2 py-1.5 rounded-2 d-flex align-items-center gap-1" active-class="active fw-bold text-teal bg-teal-subtle">
+                <i class="bi bi-signpost-split-fill text-teal"></i>
+                <span>Lộ trình</span>
+                <span class="badge bg-warning text-dark px-1.5 py-0.5 rounded-pill" style="font-size: 8px;">25 CHỦ ĐỀ</span>
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/topics" class="nav-link px-2.5 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
-                <i class="bi bi-diagram-3 me-1"></i> 25 Chủ đề
+              <router-link to="/daily" class="nav-link px-2 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
+                <i class="bi bi-calendar3 me-1"></i> Học theo Ngày
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/phrasal-verbs" class="nav-link px-2.5 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
-                <i class="bi bi-puzzle me-1"></i> Học Cụm từ
+              <router-link to="/topics" class="nav-link px-2 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
+                <i class="bi bi-diagram-3 me-1"></i> Chủ đề trong 3000 từ vựng
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/grammar" class="nav-link px-2.5 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
-                <i class="bi bi-journal-bookmark me-1"></i> 12 Thì & Ngữ pháp
+              <router-link to="/phrasal-verbs" class="nav-link px-2 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
+                <i class="bi bi-puzzle me-1"></i> Cụm từ
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/ipa" class="nav-link px-2.5 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
+              <router-link to="/grammar" class="nav-link px-2 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
+                <i class="bi bi-journal-bookmark me-1"></i> 12 Thì
+              </router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/ipa" class="nav-link px-2 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
                 <i class="bi bi-soundwave me-1"></i> 44 Âm IPA
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/dictionary" class="nav-link px-2.5 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
+              <router-link to="/dictionary" class="nav-link px-2 py-1.5 rounded-2" active-class="active fw-bold text-teal bg-teal-subtle">
                 <i class="bi bi-search me-1"></i> Tra cứu
               </router-link>
             </li>
