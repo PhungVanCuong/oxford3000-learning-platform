@@ -5,12 +5,14 @@
       <div class="container-fluid px-3 px-md-4 px-xl-5">
         <!-- Brand Logo -->
         <router-link to="/" class="navbar-brand d-flex align-items-center gap-2.5 text-decoration-none">
-          <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" style="width: 40px; height: 40px; background: #00b074;">
-            <span class="fs-5">Ox</span>
+          <div class="rounded-3 d-flex align-items-center justify-content-center text-white fw-black shadow-sm" style="width: 42px; height: 42px; background: linear-gradient(135deg, #00b074 0%, #064e40 100%);">
+            <span class="fs-5" style="letter-spacing: -0.5px;">Ox</span>
           </div>
           <div class="d-flex flex-column">
-            <span class="fw-black fs-6 tracking-tight text-teal text-uppercase" style="letter-spacing: 0.5px;">OXFORD 3000™</span>
-            <span class="text-muted d-none d-sm-inline" style="font-size: 10px;">TIẾNG ANH TOÀN DIỆN</span>
+            <span class="fw-black fs-5 tracking-tight text-teal text-uppercase leading-tight" style="letter-spacing: 0.5px;">
+              OXVOCAB<span class="text-success" style="font-size: 11px; vertical-align: top;">™</span>
+            </span>
+            <span class="text-muted d-none d-sm-inline fw-semibold" style="font-size: 10px; letter-spacing: 0.3px;">HỌC TỪ VỰNG & LỘ TRÌNH THÔNG MINH</span>
           </div>
         </router-link>
 
@@ -22,82 +24,94 @@
         <!-- Nav Links -->
         <div class="collapse navbar-collapse" id="userNavbar">
           <!-- GUEST MENU: When NOT Logged In -->
-          <ul v-if="!authStore.isAuthenticated" class="navbar-nav mx-auto mb-2 mb-lg-0 fw-semibold fs-7 gap-1 gap-lg-1.5 align-items-center">
+          <ul v-if="!authStore.isAuthenticated" class="navbar-nav mx-auto mb-2 mb-lg-0 fw-semibold fs-7 gap-1.5 gap-lg-2 align-items-center">
             <li class="nav-item">
               <router-link to="/" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link" exact-active-class="nav-item-active">
-                <i class="bi bi-house-door-fill me-1.5 icon-home"></i>Trang chủ
+                <i class="bi bi-house-door-fill me-2 icon-home"></i>
+                <span>Trang chủ</span>
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/curriculum" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link d-flex align-items-center gap-1.5" active-class="nav-item-active">
-                <i class="bi bi-signpost-split-fill icon-curriculum"></i>
+              <router-link to="/curriculum" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link d-flex align-items-center" active-class="nav-item-active">
+                <i class="bi bi-signpost-split-fill me-2 icon-curriculum"></i>
                 <span>Lộ trình (25 Chủ đề)</span>
               </router-link>
             </li>
             <li class="nav-item">
               <router-link to="/topics" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
-                <i class="bi bi-grid-1x2-fill me-1.5 icon-topics"></i>Chủ đề trong 3000 từ vựng
+                <i class="bi bi-grid-1x2-fill me-2 icon-topics"></i>
+                <span>Chủ đề trong 3000 từ vựng</span>
               </router-link>
             </li>
             <li class="nav-item">
               <router-link to="/dictionary" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
-                <i class="bi bi-search-heart-fill me-1.5 icon-dict"></i>Tra cứu 3000 từ
+                <i class="bi bi-search-heart-fill me-2 icon-dict"></i>
+                <span>Tra cứu 3000 từ</span>
               </router-link>
             </li>
             <li class="nav-item">
               <router-link to="/ipa" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
-                <i class="bi bi-soundwave me-1.5 icon-ipa"></i>44 Âm IPA
+                <i class="bi bi-soundwave me-2 icon-ipa"></i>
+                <span>44 Âm IPA</span>
               </router-link>
             </li>
             <li class="nav-item">
               <router-link to="/grammar" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
-                <i class="bi bi-journal-bookmark-fill me-1.5 icon-grammar"></i>12 Thì Ngữ pháp
+                <i class="bi bi-journal-bookmark-fill me-2 icon-grammar"></i>
+                <span>12 Thì Ngữ pháp</span>
               </router-link>
             </li>
           </ul>
 
           <!-- AUTHENTICATED USER MENU -->
-          <ul v-else class="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold fs-7 gap-1 align-items-center">
+          <ul v-else class="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold fs-7 gap-1.5 gap-lg-2 align-items-center">
             <li class="nav-item">
               <router-link to="/" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" exact-active-class="nav-item-active">
-                <i class="bi bi-house-door-fill me-1.5 icon-home"></i> Trang chủ
+                <i class="bi bi-house-door-fill me-2 icon-home"></i>
+                <span>Trang chủ</span>
               </router-link>
             </li>
             <li class="nav-item">
               <router-link to="/curriculum" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link d-flex align-items-center gap-1.5" active-class="nav-item-active">
-                <i class="bi bi-signpost-split-fill icon-curriculum"></i>
+                <i class="bi bi-signpost-split-fill me-1.5 icon-curriculum"></i>
                 <span>Lộ trình</span>
-                <span class="badge bg-warning text-dark px-1.5 py-0.5 rounded-pill shadow-xs" style="font-size: 8px;">25 CHỦ ĐỀ</span>
+                <span class="badge bg-warning text-dark px-1.5 py-1.5 rounded-pill shadow-xs" style="font-size: 8px;">25 CHỦ ĐỀ</span>
               </router-link>
             </li>
             <li class="nav-item">
               <router-link to="/daily" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
-                <i class="bi bi-calendar-check-fill me-1.5 icon-daily"></i> Học theo Ngày
+                <i class="bi bi-calendar-check-fill me-2 icon-daily"></i>
+                <span>Học theo Ngày</span>
               </router-link>
             </li>
             <li class="nav-item">
               <router-link to="/topics" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
-                <i class="bi bi-grid-1x2-fill me-1.5 icon-topics"></i> Chủ đề 3000 từ
+                <i class="bi bi-grid-1x2-fill me-2 icon-topics"></i>
+                <span>Chủ đề 3000 từ</span>
               </router-link>
             </li>
             <li class="nav-item">
               <router-link to="/phrasal-verbs" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
-                <i class="bi bi-puzzle-fill me-1.5 icon-phrasal"></i> Cụm từ
+                <i class="bi bi-puzzle-fill me-2 icon-phrasal"></i>
+                <span>Cụm từ</span>
               </router-link>
             </li>
             <li class="nav-item">
               <router-link to="/grammar" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
-                <i class="bi bi-journal-bookmark-fill me-1.5 icon-grammar"></i> 12 Thì
+                <i class="bi bi-journal-bookmark-fill me-2 icon-grammar"></i>
+                <span>12 Thì</span>
               </router-link>
             </li>
             <li class="nav-item">
               <router-link to="/ipa" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
-                <i class="bi bi-soundwave me-1.5 icon-ipa"></i> 44 Âm IPA
+                <i class="bi bi-soundwave me-2 icon-ipa"></i>
+                <span>44 Âm IPA</span>
               </router-link>
             </li>
             <li class="nav-item">
               <router-link to="/dictionary" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
-                <i class="bi bi-search-heart-fill me-1.5 icon-dict"></i> Tra cứu
+                <i class="bi bi-search-heart-fill me-2 icon-dict"></i>
+                <span>Tra cứu</span>
               </router-link>
             </li>
           </ul>
@@ -190,13 +204,13 @@
                     </router-link>
 
                     <router-link
-                      v-if="authStore.isAdmin"
+                      v-if="authStore.isStaff || authStore.isAdmin"
                       to="/admin"
                       @click="isDropdownOpen = false"
                       class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2 text-danger fw-semibold"
                     >
                       <i class="bi bi-shield-lock-fill text-danger fs-6"></i>
-                      <span>Quản trị hệ thống (Admin)</span>
+                      <span>Khu vực Quản trị & Điều phối</span>
                     </router-link>
                   </div>
 
@@ -227,8 +241,8 @@
     <!-- Footer -->
     <footer class="border-top py-4 text-center text-muted fs-8 mt-5" :class="authStore.themeMode === 'dark' ? 'bg-dark border-secondary' : 'bg-white border-light-subtle'">
       <div class="container">
-        <div><strong>Hệ Thống Học Tiếng Anh Toàn Diện Oxford 3000™</strong> • Full-Stack Vue 3 + Laravel API</div>
-        <div class="text-secondary mt-1">Lộ trình 3000 từ vựng • 25 Chủ đề • Học Cụm từ • 12 Thì Ngữ pháp • 44 Âm IPA • Trắc nghiệm thông minh</div>
+        <div><strong>OXVOCAB™ - Nền Tảng Học Từ Vựng & Lộ Trình Tiếng Anh Toàn Diện</strong> • Full-Stack Vue 3 + Laravel API</div>
+        <div class="text-secondary mt-1">Lộ trình 3000 từ vựng • 25 Chủ đề IELTS • Học Cụm từ • 12 Thì Ngữ pháp • 44 Âm IPA • Trắc nghiệm & Luyện nói AI</div>
       </div>
     </footer>
 
@@ -283,6 +297,7 @@ onUnmounted(() => {
   border: 1px solid transparent;
   display: inline-flex;
   align-items: center;
+  gap: 8px;
   text-decoration: none;
 }
 

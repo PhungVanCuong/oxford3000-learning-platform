@@ -41,31 +41,31 @@
         <!-- 2. MAIN 2-COLUMN VIEW -->
         <div class="row g-4">
           <!-- 2.1 LEFT SIDEBAR: TOPICS SELECTOR (THƯ VIỆN IELTS / CHỌN CHỦ ĐỀ) -->
-          <div class="col-12 col-lg-4 col-xl-3.5" style="max-width: 360px;">
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="position: sticky; top: 88px; max-height: calc(100vh - 108px); z-index: 20; display: flex; flex-direction: column;">
+          <div class="col-12 col-md-5 col-lg-5 col-xl-4">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden w-100" style="position: sticky; top: 88px; max-height: calc(100vh - 108px); z-index: 20; display: flex; flex-direction: column;">
               <!-- Dark Forest Teal Header Card -->
-              <div class="p-3.5 text-white" style="background: linear-gradient(135deg, #032b24 0%, #064e40 60%, #087F75 100%);">
-                <div class="d-flex justify-content-between align-items-center mb-1.5 flex-wrap gap-1">
-                  <span class="badge px-2.5 py-1 rounded-pill fw-bold text-uppercase" style="background: rgba(255,255,255,0.18); color: #5eead4; font-size: 10px; letter-spacing: 0.5px;">
+              <div class="p-4 text-white" style="background: linear-gradient(135deg, #032b24 0%, #064e40 60%, #087F75 100%);">
+                <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-1">
+                  <span class="badge px-3 py-1 rounded-pill fw-bold text-uppercase" style="background: rgba(255,255,255,0.18); color: #5eead4; font-size: 11px; letter-spacing: 0.5px;">
                     THƯ VIỆN IELTS
                   </span>
-                  <span class="fs-8 text-white-75 fw-semibold">25 Chủ đề • 5.000 mục từ</span>
+                  <span class="fs-7 text-white-75 fw-semibold">25 Chủ đề • 5.000 mục từ</span>
                 </div>
-                <h4 class="fw-black mb-2.5 text-white">Chọn chủ đề</h4>
+                <h3 class="fw-black mb-3 text-white fs-3">Chọn chủ đề</h3>
                 
                 <!-- Quick Search Input -->
-                <div class="position-relative mt-1">
-                  <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 fs-7" style="color: #087F75; z-index: 2;"></i>
+                <div class="position-relative">
+                  <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 fs-6" style="color: #087F75; z-index: 2;"></i>
                   <input
                     v-model="searchQuery"
                     type="text"
-                    class="form-control rounded-pill ps-5 pe-4 py-2 bg-white text-dark border-0 shadow-sm fs-7 fw-medium"
+                    class="form-control rounded-pill ps-5 pe-4 py-2.5 bg-white text-dark border-0 shadow-sm fs-6 fw-medium"
                     placeholder="Tìm kiếm chủ đề (VD: Education, City...)"
                     style="outline: none;"
                   />
                   <button
                     v-if="searchQuery"
-                    class="btn btn-sm text-secondary position-absolute top-50 end-0 translate-middle-y me-2 p-0 px-1 fs-7"
+                    class="btn btn-sm text-secondary position-absolute top-50 end-0 translate-middle-y me-2 p-0 px-1 fs-6"
                     @click="searchQuery = ''"
                     style="z-index: 2;"
                   >
@@ -75,19 +75,19 @@
               </div>
 
               <!-- Scrollable 25 Topics List -->
-              <div class="p-2.5 overflow-y-auto flex-grow-1 d-flex flex-column gap-2" style="background-color: #F8FAFC;">
+              <div class="p-3 overflow-y-auto flex-grow-1 d-flex flex-column gap-2.5" style="background-color: #F8FAFC;">
                 <div
                   v-for="t in filteredTopics"
                   :key="t.id"
                   @click="selectedTopicId = t.id"
-                  class="card p-2.5 rounded-3 border transition-all cursor-pointer topic-item-card"
+                  class="card p-3 rounded-4 border transition-all cursor-pointer topic-item-card"
                   :class="selectedTopicId === t.id ? 'active-topic-card' : 'bg-white border-light-subtle hover-shadow'"
                 >
                   <div class="d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center gap-2.5 min-w-0">
+                    <div class="d-flex align-items-center gap-3 min-w-0">
                       <!-- Colored Number Badge (Left) -->
                       <div
-                        class="d-flex align-items-center justify-content-center fw-bold fs-7 flex-shrink-0"
+                        class="d-flex align-items-center justify-content-center fw-black flex-shrink-0 shadow-2xs"
                         :style="getPillBadgeStyle(t.order_num)"
                       >
                         {{ String(t.order_num).padStart(2, '0') }}
@@ -95,9 +95,16 @@
 
                       <!-- Topic Title & Progress -->
                       <div class="text-truncate">
-                        <div class="fw-bold fs-7 text-dark-emphasis text-truncate leading-snug mb-0.5">{{ t.title }}</div>
-                        <div class="text-muted fs-8 text-truncate">
-                          {{ t.completed_stages_count || 0 }}/10 bài đã hoàn thành • {{ t.progress_percent || 0 }}%
+                        <div class="fw-black fs-6 text-dark-emphasis text-truncate leading-snug">
+                          {{ t.title }}
+                        </div>
+                        <div v-if="t.title_vi" class="text-secondary text-truncate fw-semibold" style="font-size: 13px; line-height: 1.35;">
+                          {{ t.title_vi }}
+                        </div>
+                        <div class="text-muted fs-7 text-truncate d-flex align-items-center gap-1.5 mt-1">
+                          <span>{{ t.completed_stages_count || 0 }}/10 bài</span>
+                          <span>•</span>
+                          <span class="fw-bold" :class="t.progress_percent >= 100 ? 'text-success' : 'text-teal'">{{ t.progress_percent || 0 }}%</span>
                         </div>
                       </div>
                     </div>
@@ -105,14 +112,15 @@
                     <!-- Small Right Dark Circle Badge -->
                     <div class="ms-2 flex-shrink-0">
                       <div 
-                        class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold fs-9 shadow-xs"
+                        class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-xs"
                         :style="{
-                          width: '24px',
-                          height: '24px',
+                          width: '28px',
+                          height: '28px',
+                          fontSize: '11px',
                           backgroundColor: selectedTopicId === t.id ? '#00b074' : '#032b24'
                         }"
                       >
-                        <i v-if="t.progress_percent >= 100" class="bi bi-check fs-8"></i>
+                        <i v-if="t.progress_percent >= 100" class="bi bi-check fs-7"></i>
                         <span v-else>{{ String(t.order_num).padStart(2, '0') }}</span>
                       </div>
                     </div>
@@ -128,7 +136,7 @@
           </div>
 
           <!-- 2.2 RIGHT MAIN CONTENT: ZIGZAG 10 STAGES S-CURVE (MATCHING IMAGE 1) -->
-          <div class="col-12 col-lg-8 col-xl-8.5 flex-grow-1">
+          <div class="col-12 col-md-7 col-lg-7 col-xl-8 flex-grow-1">
             <!-- Top Banner: 10 bài học • 200 mục từ -->
             <div 
               v-if="currentTopic" 
@@ -172,7 +180,7 @@
                   >
                     <div 
                       class="stage-content-card-box d-flex align-items-center gap-3 cursor-pointer w-100"
-                      style="max-width: 82%;"
+                      style="max-width: 86%;"
                       @click="goToStage(st.stage_num)"
                     >
                       <!-- Circle Node (Attached Left) -->
@@ -239,7 +247,7 @@
                   >
                     <div 
                       class="stage-content-card-box d-flex align-items-center gap-3 cursor-pointer w-100 justify-content-end"
-                      style="max-width: 82%;"
+                      style="max-width: 86%;"
                       @click="goToStage(st.stage_num)"
                     >
                       <!-- Stage Card -->
@@ -370,10 +378,11 @@ const getPillBadgeStyle = (num) => {
   return {
     backgroundColor: p.bg,
     color: p.color,
-    minWidth: '38px',
-    height: '32px',
-    borderRadius: '8px',
-    fontSize: '12px'
+    minWidth: '44px',
+    height: '38px',
+    borderRadius: '10px',
+    fontSize: '14px',
+    fontWeight: '800'
   }
 }
 

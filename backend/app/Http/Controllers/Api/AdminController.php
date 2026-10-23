@@ -20,11 +20,73 @@ use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
+    private function resolveCurrentUser(Request $request): ?User
+    {
+        $user = auth('sanctum')->user() ?? $request->user();
+        if (!$user) {
+            $token = $request->bearerToken();
+            if ($token) {
+                $accessToken = \Laravel\Sanctum\PersonalAccessToken::findToken($token);
+                if ($accessToken) {
+                    $user = $accessToken->tokenable;
+                }
+            }
+        }
+        return $user;
+    }
+
+    private function authorizePermission(Request $request, string $permission)
+    {
+        $user = $this->resolveCurrentUser($request);
+        if (!$user) {
+            abort(response()->json([
+                'status' => 'error',
+                'message' => 'Bạn cần đăng nhập để sử dụng tính năng này.'
+            ], 401));
+        }
+
+        if (!$user->hasPermission($permission)) {
+            abort(response()->json([
+                'status' => 'error',
+                'message' => "Tài khoản của bạn ({$user->role}) không có quyền thực hiện chức năng này (yêu cầu quyền: {$permission})."
+            ], 403));
+        }
+        return $user;
+    }
+
+    private function authorizePermissionAny(Request $request, array $permissions)
+    {
+        $user = $this->resolveCurrentUser($request);
+        if (!$user) {
+            abort(response()->json([
+                'status' => 'error',
+                'message' => 'Bạn cần đăng nhập để sử dụng tính năng này.'
+            ], 401));
+        }
+
+        if ($user->isAdmin()) {
+            return $user;
+        }
+
+        foreach ($permissions as $perm) {
+            if ($user->hasPermission($perm)) {
+                return $user;
+            }
+        }
+
+        abort(response()->json([
+            'status' => 'error',
+            'message' => "Tài khoản của bạn ({$user->role}) không có quyền thực hiện chức năng này."
+        ], 403));
+    }
+
     /**
      * Admin Overview Stats
      */
-    public function getDashboardStats()
+    public function getDashboardStats(Request $request)
     {
+        $this->authorizePermissionAny($request, ['view_reports', 'manage_users']);
+
         $totalUsers = User::count();
         $totalWords = Vocabulary::count();
         $totalTopics = Topic::count();
@@ -98,7 +160,15 @@ class AdminController extends Controller
      */
     public function getUsers(Request $request)
     {
-        $users = User::withCount(['quizHistories'])->orderBy('id')->get()->map(function ($u) {
+        $currentUser = $this->resolveCurrentUser($request);
+        $this->authorizePermissionAny($request, ['manage_users', 'view_students']);
+
+        $query = User::withCount(['quizHistories'])->orderBy('id');
+        if ($currentUser && !$currentUser->hasPermission('manage_users')) {
+            $query->where('role', 'user');
+        }
+
+        $users = $query->get()->map(function ($u) {
             $masteredVocab = $u->vocabularyProgress()->where('status', 'mastered')->count();
             $curriculumRemembered = CurriculumUserProgress::where('user_id', $u->id)->where('status', 'remembered')->count();
             $masteredPhrases = \App\Models\UserPhraseProgress::where('user_id', $u->id)->where('status', 'mastered')->count();
@@ -111,7 +181,7 @@ class AdminController extends Controller
                 'name' => $u->name,
                 'email' => $u->email,
                 'role' => $u->role,
-                'permissions' => $u->permissions_json ?? [],
+                'permissions' => $u->permissions,
                 'birth_date' => $u->birth_date ? $u->birth_date->format('d/m/Y') : null,
                 'xp_points' => $u->xp_points,
                 'streak_days' => $u->streak_days,
@@ -136,9 +206,18 @@ class AdminController extends Controller
     /**
      * Detailed View of a specific student
      */
-    public function getUserDetails($id)
+    public function getUserDetails(Request $request, $id)
     {
+        $currentUser = $this->resolveCurrentUser($request);
+        $this->authorizePermissionAny($request, ['manage_users', 'view_students']);
+
         $user = User::findOrFail($id);
+        if ($currentUser && !$currentUser->hasPermission('manage_users') && $user->role !== 'user') {
+            abort(response()->json([
+                'status' => 'error',
+                'message' => 'Bạn chỉ có quyền xem thông tin của học viên.'
+            ], 403));
+        }
 
         $quizHistories = $user->quizHistories()->take(10)->get();
         $masteredWords = $user->vocabularyProgress()->where('status', 'mastered')->with('vocabulary')->take(20)->get()->pluck('vocabulary');
@@ -166,11 +245,13 @@ class AdminController extends Controller
 
     public function createUser(Request $request)
     {
+        $this->authorizePermission($request, 'manage_users');
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6',
-            'role' => 'required|in:admin,user',
+            'role' => 'required|in:admin,moderator,editor,tutor,user',
             'birth_date' => 'nullable|date',
             'words_per_day' => 'nullable|integer',
         ]);
@@ -197,11 +278,13 @@ class AdminController extends Controller
 
     public function updateUser(Request $request, $id)
     {
+        $this->authorizePermission($request, 'manage_users');
+
         $user = User::findOrFail($id);
 
         $validated = $request->validate([
             'name' => 'nullable|string|max:255',
-            'role' => 'nullable|in:admin,user',
+            'role' => 'nullable|in:admin,moderator,editor,tutor,user',
             'password' => 'nullable|string|min:6',
             'birth_date' => 'nullable|date',
             'words_per_day' => 'nullable|integer',
@@ -225,8 +308,10 @@ class AdminController extends Controller
         ]);
     }
 
-    public function deleteUser($id)
+    public function deleteUser(Request $request, $id)
     {
+        $this->authorizePermission($request, 'manage_users');
+
         $user = User::findOrFail($id);
         if ($user->email === 'cuongphung1810@gmail.com') {
             return response()->json(['status' => 'error', 'message' => 'Không thể xóa tài khoản Admin chính'], 403);
@@ -245,6 +330,8 @@ class AdminController extends Controller
      */
     public function createVocabulary(Request $request)
     {
+        $this->authorizePermission($request, 'manage_vocab');
+
         $validated = $request->validate([
             'topic_id' => 'nullable|exists:topics,id',
             'word' => 'required|string',
@@ -267,6 +354,8 @@ class AdminController extends Controller
 
     public function updateVocabulary(Request $request, $id)
     {
+        $this->authorizePermission($request, 'manage_vocab');
+
         $vocab = Vocabulary::findOrFail($id);
 
         $validated = $request->validate([
@@ -290,8 +379,10 @@ class AdminController extends Controller
         ]);
     }
 
-    public function deleteVocabulary($id)
+    public function deleteVocabulary(Request $request, $id)
     {
+        $this->authorizePermission($request, 'manage_vocab');
+
         $vocab = Vocabulary::findOrFail($id);
         $vocab->delete();
 
@@ -304,8 +395,10 @@ class AdminController extends Controller
     /**
      * Admin: Reset learning progress of a user
      */
-    public function resetUserProgress($id)
+    public function resetUserProgress(Request $request, $id)
     {
+        $this->authorizePermissionAny($request, ['reset_progress', 'manage_users']);
+
         $user = User::findOrFail($id);
 
         \App\Models\UserVocabularyProgress::where('user_id', $user->id)->delete();
@@ -331,6 +424,8 @@ class AdminController extends Controller
      */
     public function generateAiExamples(Request $request, \App\Services\GeminiApiService $gemini)
     {
+        $this->authorizePermission($request, 'ai_generation');
+
         $request->validate([
             'word' => 'required|string',
             'part_of_speech' => 'nullable|string',
@@ -354,6 +449,8 @@ class AdminController extends Controller
      */
     public function aiExplainOrCorrect(Request $request, \App\Services\GeminiApiService $gemini)
     {
+        $this->authorizePermission($request, 'ai_generation');
+
         $request->validate([
             'text' => 'required|string|max:1000',
         ]);
@@ -367,25 +464,162 @@ class AdminController extends Controller
     }
 
     /**
-     * Get available roles & permissions definitions
+     * Get available roles & permissions definitions with full packaged details
      */
-    public function getPermissionsList()
+    public function getPermissionsList(Request $request)
     {
+        $this->authorizePermission($request, 'manage_roles');
+
+        $roleCounts = User::select('role', DB::raw('count(*) as total'))
+            ->groupBy('role')
+            ->pluck('total', 'role')
+            ->toArray();
+
+        $roles = [
+            [
+                'key' => 'admin',
+                'name' => 'Quản trị viên Cấp cao (Super Admin)',
+                'badge' => 'danger',
+                'icon' => 'bi-shield-shaded',
+                'description' => 'Toàn quyền điều hành toàn bộ hệ thống, quản lý cơ sở dữ liệu, phân quyền tài khoản, reset tiến độ và giám sát máy chủ.',
+                'user_count' => $roleCounts['admin'] ?? 0,
+                'default_permissions' => [
+                    'manage_vocab', 'ai_generation', 'manage_curriculum', 
+                    'manage_phrases', 'manage_users', 'manage_roles', 
+                    'reset_progress', 'view_reports', 'view_students', 'view_student_progress'
+                ],
+            ],
+            [
+                'key' => 'moderator',
+                'name' => 'Quản trị viên Nội dung (Content Manager)',
+                'badge' => 'warning',
+                'icon' => 'bi-pencil-square',
+                'description' => 'Phụ trách kiểm duyệt nội dung học tập, quản lý lộ trình 25 chủ đề, biên tập câu hỏi trắc nghiệm và cụm từ.',
+                'user_count' => $roleCounts['moderator'] ?? 0,
+                'default_permissions' => [
+                    'manage_vocab', 'ai_generation', 'manage_curriculum', 
+                    'manage_phrases', 'view_reports'
+                ],
+            ],
+            [
+                'key' => 'editor',
+                'name' => 'Biên tập viên Học thuật (Vocabulary Editor)',
+                'badge' => 'primary',
+                'icon' => 'bi-journal-code',
+                'description' => 'Chuyên môn biên soạn nghĩa tiếng Việt, phiên âm IPA, ví dụ thực tế và tra cứu từ vựng Oxford.',
+                'user_count' => $roleCounts['editor'] ?? 0,
+                'default_permissions' => [
+                    'manage_vocab', 'ai_generation', 'manage_phrases'
+                ],
+            ],
+            [
+                'key' => 'tutor',
+                'name' => 'Trợ giảng / Giáo viên Hướng dẫn (Tutor / Instructor)',
+                'badge' => 'info',
+                'icon' => 'bi-person-badge',
+                'description' => 'Theo dõi quá trình học tập của học viên, giám sát số từ đã thuộc, chuỗi ngày streak và giải đáp thắc mắc.',
+                'user_count' => $roleCounts['tutor'] ?? 0,
+                'default_permissions' => [
+                    'view_students', 'view_student_progress', 'view_reports'
+                ],
+            ],
+            [
+                'key' => 'user',
+                'name' => 'Học viên Tiêu chuẩn (Standard Learner)',
+                'badge' => 'secondary',
+                'icon' => 'bi-mortarboard',
+                'description' => 'Truy cập toàn bộ 3.000 từ vựng Oxford, 25 chủ đề thực chiến, luyện phát âm microphone và làm bài kiểm tra.',
+                'user_count' => $roleCounts['user'] ?? 0,
+                'default_permissions' => [
+                    'learn_curriculum', 'learn_daily', 'practice_voice', 'bookmark_words'
+                ],
+            ],
+        ];
+
+        $permissions = [
+            // Từ vựng & AI
+            [
+                'key' => 'manage_vocab',
+                'name' => 'Quản lý kho 3000 từ vựng (Thêm, Sửa, Xóa)',
+                'description' => 'Được phép tạo mới, chỉnh sửa nghĩa, phiên âm và xóa từ vựng khỏi từ điển.',
+                'category' => 'Từ vựng & AI',
+            ],
+            [
+                'key' => 'ai_generation',
+                'name' => 'Tự động tạo câu ví dụ & giải thích qua Gemini AI',
+                'description' => 'Gọi API Google Gemini để sinh mẫu câu ví dụ và sửa lỗi câu hỏi.',
+                'category' => 'Từ vựng & AI',
+            ],
+            [
+                'key' => 'bookmark_words',
+                'name' => 'Đánh dấu từ vựng yêu thích & Sổ tay cá nhân',
+                'description' => 'Lưu từ cần ôn tập vào danh mục cá nhân và tra cứu nhanh.',
+                'category' => 'Từ vựng & AI',
+            ],
+            // Lộ trình & Cụm từ
+            [
+                'key' => 'manage_curriculum',
+                'name' => 'Quản lý 25 chủ đề lộ trình & 200 câu trắc nghiệm',
+                'description' => 'Chỉnh sửa nội dung 25 chủ đề thực chiến, bộ câu hỏi trắc nghiệm từng chặng.',
+                'category' => 'Lộ trình & Cụm từ',
+            ],
+            [
+                'key' => 'manage_phrases',
+                'name' => 'Quản lý cụm từ & Phrasal Verbs',
+                'description' => 'Thêm mới và cập nhật thành ngữ, cụm động từ trong hệ thống.',
+                'category' => 'Lộ trình & Cụm từ',
+            ],
+            [
+                'key' => 'learn_curriculum',
+                'name' => 'Học và thi thử trắc nghiệm 25 chủ đề lộ trình',
+                'description' => 'Tham gia kiểm tra và mở khóa 10 chặng thử thách của mỗi chủ đề.',
+                'category' => 'Lộ trình & Cụm từ',
+            ],
+            // Học viên & Đào tạo
+            [
+                'key' => 'view_students',
+                'name' => 'Giám sát danh sách học viên & Bảng xếp hạng',
+                'description' => 'Xem danh sách tất cả học viên trong hệ thống và điểm XP.',
+                'category' => 'Học viên & Đào tạo',
+            ],
+            [
+                'key' => 'view_student_progress',
+                'name' => 'Xem chi tiết tiến độ từ vựng & lộ trình của từng học viên',
+                'description' => 'Xem thống kê số từ đã thuộc, tỷ lệ chính xác và lịch sử làm bài.',
+                'category' => 'Học viên & Đào tạo',
+            ],
+            [
+                'key' => 'reset_progress',
+                'name' => 'Quyền Reset tiến độ học tập cho học viên',
+                'description' => 'Xóa dữ liệu học tập và đưa tiến độ của học viên về trạng thái ban đầu.',
+                'category' => 'Học viên & Đào tạo',
+            ],
+            // Quản trị & Hệ thống
+            [
+                'key' => 'manage_users',
+                'name' => 'Quản lý tài khoản (Tạo mới, Sửa, Xóa học viên)',
+                'description' => 'Tạo tài khoản quản trị mới, chỉnh sửa thông tin hoặc xóa tài khoản.',
+                'category' => 'Quản trị & Hệ thống',
+            ],
+            [
+                'key' => 'manage_roles',
+                'name' => 'Thiết lập chức vụ & phân quyền hệ thống',
+                'description' => 'Đóng gói chức vụ, phân bổ ma trận quyền hạn cho từng cấp bậc.',
+                'category' => 'Quản trị & Hệ thống',
+            ],
+            [
+                'key' => 'view_reports',
+                'name' => 'Xem Dashboard thống kê & Báo cáo tổng thể',
+                'description' => 'Truy cập số liệu phân tích người dùng, từ vựng và biểu đồ tiến độ.',
+                'category' => 'Quản trị & Hệ thống',
+            ],
+        ];
+
         return response()->json([
             'status' => 'success',
             'data' => [
-                'roles' => [
-                    ['key' => 'admin', 'name' => 'Quản trị viên cấp cao (Admin)', 'badge' => 'danger'],
-                    ['key' => 'moderator', 'name' => 'Điều hành viên / Giáo viên', 'badge' => 'warning'],
-                    ['key' => 'user', 'name' => 'Học viên tiêu chuẩn', 'badge' => 'secondary'],
-                ],
-                'permissions' => [
-                    ['key' => 'manage_vocab', 'name' => 'Quản lý kho từ vựng (Thêm, Sửa, Xóa & AI)', 'category' => 'Từ vựng'],
-                    ['key' => 'manage_phrases', 'name' => 'Quản lý cụm từ & Phrasal Verbs', 'category' => 'Cụm từ'],
-                    ['key' => 'manage_users', 'name' => 'Quản lý tài khoản & Phân quyền', 'category' => 'Hệ thống'],
-                    ['key' => 'reset_progress', 'name' => 'Quyền Reset tiến độ học viên', 'category' => 'Học viên'],
-                    ['key' => 'view_reports', 'name' => 'Xem thống kê toàn hệ thống', 'category' => 'Báo cáo'],
-                ],
+                'roles' => $roles,
+                'permissions' => $permissions,
             ],
         ]);
     }
@@ -395,9 +629,11 @@ class AdminController extends Controller
      */
     public function updateUserRoleAndPermissions(Request $request, $id)
     {
+        $this->authorizePermission($request, 'manage_roles');
+
         $user = User::findOrFail($id);
         $validated = $request->validate([
-            'role' => 'required|in:admin,moderator,user',
+            'role' => 'required|string|max:50',
             'permissions' => 'nullable|array',
         ]);
 
@@ -407,9 +643,11 @@ class AdminController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => "Đã cập nhật chức vụ và phân quyền cho học viên {$user->name} thành công!",
+            'message' => "Đã cập nhật chức vụ [{$user->role}] và phân quyền cho tài khoản [{$user->name}] thành công!",
             'data' => [
                 'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
                 'role' => $user->role,
                 'permissions' => $user->permissions_json,
             ],

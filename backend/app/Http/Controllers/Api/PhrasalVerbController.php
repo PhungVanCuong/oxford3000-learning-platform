@@ -140,8 +140,31 @@ class PhrasalVerbController extends Controller
         ]);
     }
 
+    private function authorizeManagePhrases(Request $request)
+    {
+        $user = auth('sanctum')->user() ?? $request->user();
+        if (!$user) {
+            $token = $request->bearerToken();
+            if ($token) {
+                $accessToken = \Laravel\Sanctum\PersonalAccessToken::findToken($token);
+                if ($accessToken) {
+                    $user = $accessToken->tokenable;
+                }
+            }
+        }
+        if (!$user || !$user->hasPermission('manage_phrases')) {
+            abort(response()->json([
+                'status' => 'error',
+                'message' => 'Bạn không có quyền quản lý cụm từ (yêu cầu quyền: manage_phrases).'
+            ], 403));
+        }
+        return $user;
+    }
+
     public function store(Request $request)
     {
+        $this->authorizeManagePhrases($request);
+
         $validated = $request->validate([
             'phrase' => 'required|string|unique:phrasal_verbs,phrase',
             'type' => 'required|in:phrasal_verb,collocation,idiom',
@@ -163,6 +186,8 @@ class PhrasalVerbController extends Controller
 
     public function update(Request $request, $id)
     {
+        $this->authorizeManagePhrases($request);
+
         $phrase = PhrasalVerb::findOrFail($id);
 
         $validated = $request->validate([
@@ -185,8 +210,10 @@ class PhrasalVerbController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        $this->authorizeManagePhrases($request);
+
         $phrase = PhrasalVerb::findOrFail($id);
         $phrase->delete();
 

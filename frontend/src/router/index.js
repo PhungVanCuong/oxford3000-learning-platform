@@ -20,6 +20,7 @@ import CurriculumStageDetailView from '@/views/user/CurriculumStageDetailView.vu
 // Admin Views
 import AdminDashboardView from '@/views/admin/AdminDashboardView.vue'
 import AdminUsersRolesView from '@/views/admin/AdminUsersRolesView.vue'
+import AdminRolesPermissionsView from '@/views/admin/AdminRolesPermissionsView.vue'
 import AdminVocabulariesView from '@/views/admin/AdminVocabulariesView.vue'
 import AdminPhrasalVerbsView from '@/views/admin/AdminPhrasalVerbsView.vue'
 import AdminCurriculumView from '@/views/admin/AdminCurriculumView.vue'
@@ -63,11 +64,11 @@ const routes = [
         user = storedUser ? JSON.parse(storedUser) : null
       } catch (e) {}
 
-      const isAdmin = user && (user.role === 'admin' || user.role === 'moderator' || user.email === 'cuongphung1810@gmail.com')
+      const isStaffOrAdmin = user && (['admin', 'moderator', 'editor', 'tutor'].includes(user.role) || user.email === 'cuongphung1810@gmail.com')
 
       if (!token) {
         next('/login?portal=admin')
-      } else if (!isAdmin) {
+      } else if (!isStaffOrAdmin) {
         alert('Tài khoản của bạn không có quyền truy cập vào Khu Vực Quản Trị Hệ Thống.')
         next('/')
       } else {
@@ -76,10 +77,81 @@ const routes = [
     },
     children: [
       { path: '', name: 'admin-dashboard', component: AdminDashboardView },
-      { path: 'curriculum', name: 'admin-curriculum', component: AdminCurriculumView },
-      { path: 'users', name: 'admin-users', component: AdminUsersRolesView },
-      { path: 'vocabularies', name: 'admin-vocabularies', component: AdminVocabulariesView },
-      { path: 'phrasal-verbs', name: 'admin-phrasal-verbs', component: AdminPhrasalVerbsView },
+      {
+        path: 'curriculum',
+        name: 'admin-curriculum',
+        component: AdminCurriculumView,
+        beforeEnter: (to, from, next) => {
+          const user = JSON.parse(localStorage.getItem('oxford_user') || '{}')
+          const canAccess = user.role === 'admin' || user.email === 'cuongphung1810@gmail.com' || (user.permissions || []).includes('manage_curriculum')
+          if (!canAccess) {
+            alert('Bạn không có quyền truy cập vào mục Lộ trình 25 Chủ đề.')
+            next('/admin')
+          } else {
+            next()
+          }
+        }
+      },
+      {
+        path: 'users',
+        name: 'admin-users',
+        component: AdminUsersRolesView,
+        beforeEnter: (to, from, next) => {
+          const user = JSON.parse(localStorage.getItem('oxford_user') || '{}')
+          const canAccess = user.role === 'admin' || user.email === 'cuongphung1810@gmail.com' || (user.permissions || []).includes('manage_users') || (user.permissions || []).includes('view_students')
+          if (!canAccess) {
+            alert('Bạn không có quyền truy cập vào mục Quản lý Học viên.')
+            next('/admin')
+          } else {
+            next()
+          }
+        }
+      },
+      {
+        path: 'roles',
+        name: 'admin-roles',
+        component: AdminRolesPermissionsView,
+        beforeEnter: (to, from, next) => {
+          const user = JSON.parse(localStorage.getItem('oxford_user') || '{}')
+          const canAccess = user.role === 'admin' || user.email === 'cuongphung1810@gmail.com' || (user.permissions || []).includes('manage_roles')
+          if (!canAccess) {
+            alert('Chỉ Quản trị viên Cấp cao mới có quyền truy cập vào Trung tâm Phân quyền Chức vụ.')
+            next('/admin')
+          } else {
+            next()
+          }
+        }
+      },
+      {
+        path: 'vocabularies',
+        name: 'admin-vocabularies',
+        component: AdminVocabulariesView,
+        beforeEnter: (to, from, next) => {
+          const user = JSON.parse(localStorage.getItem('oxford_user') || '{}')
+          const canAccess = user.role === 'admin' || user.email === 'cuongphung1810@gmail.com' || (user.permissions || []).includes('manage_vocab')
+          if (!canAccess) {
+            alert('Bạn không có quyền truy cập vào mục Kho từ vựng & AI.')
+            next('/admin')
+          } else {
+            next()
+          }
+        }
+      },
+      {
+        path: 'phrasal-verbs',
+        name: 'admin-phrasal-verbs',
+        component: AdminPhrasalVerbsView,
+        beforeEnter: (to, from, next) => {
+          const user = JSON.parse(localStorage.getItem('oxford_user') || '{}')
+          const canAccess = user.role === 'admin' || user.email === 'cuongphung1810@gmail.com' || (user.permissions || []).includes('manage_phrases')
+          if (!canAccess) {
+            alert('Bạn không có quyền truy cập vào mục Cụm từ & Phrasal Verbs.')
+            next('/admin')
+          } else {
+            next()
+          }
+        }
+      },
     ],
   },
 

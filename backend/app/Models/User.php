@@ -17,6 +17,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'permissions_json',
         'avatar_url',
         'birth_date',
         'xp_points',
@@ -31,6 +32,31 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $appends = [
+        'permissions',
+    ];
+
+    public static array $roleDefaultPermissions = [
+        'admin' => [
+            'manage_vocab', 'ai_generation', 'manage_curriculum', 
+            'manage_phrases', 'manage_users', 'manage_roles', 
+            'reset_progress', 'view_reports', 'view_students', 'view_student_progress'
+        ],
+        'moderator' => [
+            'manage_vocab', 'ai_generation', 'manage_curriculum', 
+            'manage_phrases', 'view_reports'
+        ],
+        'editor' => [
+            'manage_vocab', 'ai_generation', 'manage_phrases'
+        ],
+        'tutor' => [
+            'view_students', 'view_student_progress', 'view_reports'
+        ],
+        'user' => [
+            'learn_curriculum', 'learn_daily', 'practice_voice', 'bookmark_words'
+        ],
+    ];
+
     protected function casts(): array
     {
         return [
@@ -41,7 +67,29 @@ class User extends Authenticatable
             'words_per_day' => 'integer',
             'xp_points' => 'integer',
             'streak_days' => 'integer',
+            'permissions_json' => 'array',
         ];
+    }
+
+    public function getPermissionsAttribute(): array
+    {
+        if ($this->isAdmin()) {
+            return self::$roleDefaultPermissions['admin'];
+        }
+
+        $base = self::$roleDefaultPermissions[$this->role] ?? self::$roleDefaultPermissions['user'];
+        if (!empty($this->permissions_json) && is_array($this->permissions_json)) {
+            return array_values(array_unique(array_merge($base, $this->permissions_json)));
+        }
+        return $base;
+    }
+
+    public function hasPermission(string $permission): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+        return in_array($permission, $this->permissions);
     }
 
     public function isAdmin(): bool

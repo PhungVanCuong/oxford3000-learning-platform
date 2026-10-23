@@ -16,12 +16,6 @@
         {{ alertMessage }}
       </div>
 
-      <!-- Debug Test OTP Hint -->
-      <div v-if="debugOtp" class="alert alert-info py-2 px-3 fs-8 mb-3 rounded-3">
-        <i class="bi bi-info-circle me-1"></i>
-        Mã OTP thử nghiệm hệ thống: <strong>{{ debugOtp }}</strong> (hoặc dùng mã master <strong>123456</strong>).
-      </div>
-
       <!-- Forgot Password Form -->
       <form @submit.prevent="step === 1 ? sendOtp() : resetPassword()">
         <!-- STEP 1: Enter Email -->
@@ -61,7 +55,7 @@
               v-model="otpCode"
               type="text"
               class="form-control text-center font-monospace fs-4 tracking-widest rounded-3 py-2 fw-bold"
-              placeholder="123456"
+              placeholder="Nhập 6 số OTP"
               maxlength="6"
               required
             />
@@ -132,7 +126,6 @@ const step = ref(1)
 const isLoading = ref(false)
 const alertMessage = ref('')
 const alertType = ref('success')
-const debugOtp = ref('')
 
 const email = ref('')
 const otpCode = ref('')
@@ -149,9 +142,6 @@ const sendOtp = async () => {
     step.value = 2
     alertType.value = 'success'
     alertMessage.value = res.data.message
-    if (res.data.debug_otp) {
-      debugOtp.value = res.data.debug_otp
-    }
   } catch (err) {
     alertType.value = 'error'
     alertMessage.value = err.response?.data?.message || 'Email này không tồn tại trong hệ thống.'

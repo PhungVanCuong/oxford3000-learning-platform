@@ -20,8 +20,8 @@ class UserSeeder extends Seeder
                 'password' => $commonPassword,
                 'role' => 'admin', // Full access
                 'birth_date' => '2005-10-18',
-                'xp_points' => 450,
-                'streak_days' => 3,
+                'xp_points' => 9999999,
+                'streak_days' => 999,
                 'last_study_date' => now()->toDateString(),
                 'words_per_day' => 15,
                 'theme_mode' => 'light',

@@ -214,6 +214,7 @@
               <!-- Quick Audio & Status Pill -->
               <div class="d-flex align-items-center gap-1">
                 <button
+                  type="button"
                   @click="speech.speak(word.word)"
                   class="btn btn-sm btn-outline-teal rounded-circle p-1.5 shadow-sm"
                   title="Nghe phát âm chuẩn US"
@@ -221,13 +222,47 @@
                   <i class="bi bi-volume-up-fill"></i>
                 </button>
                 <button
-                  @click="speech.startListening(word.word)"
-                  class="btn btn-sm rounded-circle p-1.5 shadow-sm"
-                  :class="speech.isListening.value ? 'btn-danger animate-mic-pulse' : 'btn-outline-info'"
-                  title="Luyện nói từ này"
+                  type="button"
+                  @click.stop="startListeningWord(word)"
+                  class="btn btn-sm rounded-circle p-1.5 shadow-sm transition-all"
+                  :class="activeListeningWordId === word.id && speech.isListening.value ? 'btn-danger animate-mic-pulse text-white' : 'btn-outline-info'"
+                  :title="activeListeningWordId === word.id && speech.isListening.value ? 'Đang lắng nghe... bấm để dừng' : 'Luyện nói từ này'"
                 >
-                  <i class="bi bi-mic-fill"></i>
+                  <i class="bi" :class="activeListeningWordId === word.id && speech.isListening.value ? 'bi-record-fill' : 'bi-mic-fill'"></i>
                 </button>
+              </div>
+            </div>
+
+            <!-- Listening indicator box -->
+            <div 
+              v-if="activeListeningWordId === word.id && speech.isListening.value" 
+              class="alert alert-warning py-1.5 px-2.5 rounded-3 mb-2 fs-8 d-flex align-items-center gap-2 border-warning shadow-xs"
+            >
+              <span class="spinner-grow spinner-grow-sm text-danger flex-shrink-0" role="status"></span>
+              <span class="fw-semibold text-dark">
+                Đang lắng nghe... Hãy đọc to: <strong class="text-danger">"{{ word.word }}"</strong>
+              </span>
+            </div>
+
+            <!-- Pronunciation result box -->
+            <div 
+              v-else-if="pronunciationResults[word.id]" 
+              class="alert py-1.5 px-2.5 rounded-3 mb-2 fs-8 border transition-all shadow-xs"
+              :class="pronunciationResults[word.id].score >= 80 ? 'alert-success border-success' : pronunciationResults[word.id].score >= 50 ? 'alert-warning border-warning' : 'alert-danger border-danger'"
+            >
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-1.5 text-truncate me-2">
+                  <i class="bi" :class="pronunciationResults[word.id].score >= 80 ? 'bi-check-circle-fill text-success' : 'bi-exclamation-circle-fill text-warning'"></i>
+                  <span class="text-truncate">
+                    Bạn đọc: <strong>"{{ pronunciationResults[word.id].transcript || '...' }}"</strong>
+                  </span>
+                </div>
+                <span 
+                  class="badge rounded-pill fw-bold fs-9 flex-shrink-0"
+                  :class="pronunciationResults[word.id].score >= 80 ? 'bg-success text-white' : pronunciationResults[word.id].score >= 50 ? 'bg-warning text-dark' : 'bg-danger text-white'"
+                >
+                  {{ pronunciationResults[word.id].score }}% • {{ pronunciationResults[word.id].score >= 80 ? 'Chuẩn 🎉' : pronunciationResults[word.id].score >= 50 ? 'Tương đối 👍' : 'Thử lại ❌' }}
+                </span>
               </div>
             </div>
 
@@ -351,7 +386,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore'
 import { useSpeech } from '@/composables/useSpeech'
@@ -364,6 +399,41 @@ const totalWords = ref(0)
 const currentPage = ref(1)
 const totalPages = ref(1)
 const isLoading = ref(false)
+
+const activeListeningWordId = ref(null)
+const pronunciationResults = ref({})
+
+const startListeningWord = async (word) => {
+  if (activeListeningWordId.value === word.id && speech.isListening.value) {
+    speech.stopSpeech()
+    speech.isListening.value = false
+    activeListeningWordId.value = null
+    return
+  }
+
+  activeListeningWordId.value = word.id
+  await speech.startListening(word.word)
+}
+
+watch(() => speech.isListening.value, (isListening) => {
+  if (!isListening && activeListeningWordId.value !== null) {
+    const currentWordId = activeListeningWordId.value
+    if (speech.transcript.value || speech.pronunciationScore.value !== null) {
+      const score = speech.pronunciationScore.value ?? 0
+      pronunciationResults.value[currentWordId] = {
+        score,
+        transcript: speech.transcript.value,
+        feedback: score >= 80 ? 'excellent' : score >= 50 ? 'good' : 'poor'
+      }
+
+      // If pronounced correctly (>= 80%), automatically upgrade status to mastered
+      const targetWord = words.value.find(w => w.id === currentWordId)
+      if (score >= 80 && targetWord && targetWord.status !== 'mastered') {
+        toggleStatus(targetWord, 'mastered')
+      }
+    }
+  }
+})
 
 const searchQuery = ref('')
 const filterStatus = ref('all')

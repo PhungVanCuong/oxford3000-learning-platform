@@ -38,7 +38,7 @@
           />
           <div class="d-none d-md-flex flex-column">
             <span class="fw-bold fs-7 text-dark-emphasis leading-tight">{{ authStore.userName }}</span>
-            <span class="badge bg-danger-subtle text-danger border border-danger-subtle" style="font-size: 9px;">Quản trị viên Cấp cao</span>
+            <span class="badge rounded-pill" :class="roleBadgeClass" style="font-size: 9px;">{{ roleDisplayName }}</span>
           </div>
 
           <button @click="handleLogout" class="btn btn-sm btn-outline-danger rounded-circle p-1 ms-1" title="Đăng xuất khỏi Admin" style="width: 32px; height: 32px;">
@@ -55,11 +55,13 @@
           <div>
             <!-- Brand in Sidebar -->
             <div class="d-flex align-items-center gap-2.5 mb-3 pb-3 border-bottom">
-              <div class="rounded-3 d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" style="width: 40px; height: 40px; background: linear-gradient(135deg, #00b074 0%, #087F75 100%);">
+              <div class="rounded-3 d-flex align-items-center justify-content-center text-white fw-black shadow-sm" style="width: 42px; height: 42px; background: linear-gradient(135deg, #00b074 0%, #064e40 100%);">
                 Ox
               </div>
               <div class="d-flex flex-column">
-                <span class="fw-black fs-6 tracking-tight text-teal text-uppercase" style="letter-spacing: 0.5px;">OXFORD 3000™</span>
+                <span class="fw-black fs-5 tracking-tight text-teal text-uppercase leading-tight" style="letter-spacing: 0.5px;">
+                  OXVOCAB<span class="text-success" style="font-size: 11px; vertical-align: top;">™</span>
+                </span>
                 <span class="text-muted fw-semibold" style="font-size: 10px; letter-spacing: 0.3px;">HỆ THỐNG QUẢN TRỊ VIÊN</span>
               </div>
             </div>
@@ -77,6 +79,7 @@
             <div class="text-uppercase text-muted fs-8 fw-bold mb-2 px-2" style="letter-spacing: 0.5px;">Điều Hành Dữ Liệu</div>
             <div class="d-flex flex-column gap-1.5">
               <router-link
+                v-if="authStore.canViewReports || authStore.isAdmin"
                 to="/admin"
                 class="admin-nav-link"
                 exact-active-class="admin-nav-active"
@@ -86,6 +89,7 @@
               </router-link>
 
               <router-link
+                v-if="authStore.canManageCurriculum || authStore.isAdmin"
                 to="/admin/curriculum"
                 class="admin-nav-link"
                 active-class="admin-nav-active"
@@ -95,15 +99,27 @@
               </router-link>
 
               <router-link
+                v-if="authStore.canViewStudents || authStore.canManageUsers || authStore.isAdmin"
                 to="/admin/users"
                 class="admin-nav-link"
                 active-class="admin-nav-active"
               >
                 <i class="bi bi-people-fill icon-admin-users"></i>
-                <span>Học viên & Phân quyền</span>
+                <span>Quản lý Học viên</span>
               </router-link>
 
               <router-link
+                v-if="authStore.canManageRoles || authStore.isAdmin"
+                to="/admin/roles"
+                class="admin-nav-link"
+                active-class="admin-nav-active"
+              >
+                <i class="bi bi-shield-lock-fill icon-admin-roles"></i>
+                <span>Phân quyền chức vụ</span>
+              </router-link>
+
+              <router-link
+                v-if="authStore.canManageVocab || authStore.isAdmin"
                 to="/admin/vocabularies"
                 class="admin-nav-link"
                 active-class="admin-nav-active"
@@ -113,6 +129,7 @@
               </router-link>
 
               <router-link
+                v-if="authStore.canManagePhrases || authStore.isAdmin"
                 to="/admin/phrasal-verbs"
                 class="admin-nav-link"
                 active-class="admin-nav-active"
@@ -146,11 +163,35 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 
 const authStore = useAuthStore()
 const router = useRouter()
+
+const roleDisplayName = computed(() => {
+  const role = authStore.user?.role
+  switch (role) {
+    case 'admin': return 'Quản trị viên Cấp cao'
+    case 'moderator': return 'Quản trị nội dung'
+    case 'editor': return 'Biên tập viên'
+    case 'tutor': return 'Trợ giảng / Giáo viên'
+    case 'user': return 'Học viên tiêu chuẩn'
+    default: return 'Thành viên'
+  }
+})
+
+const roleBadgeClass = computed(() => {
+  const role = authStore.user?.role
+  switch (role) {
+    case 'admin': return 'bg-danger-subtle text-danger border border-danger-subtle'
+    case 'moderator': return 'bg-warning-subtle text-dark border border-warning-subtle'
+    case 'editor': return 'bg-primary-subtle text-primary border border-primary-subtle'
+    case 'tutor': return 'bg-info-subtle text-dark border border-info-subtle'
+    default: return 'bg-secondary-subtle text-secondary border border-secondary-subtle'
+  }
+})
 
 const handleLogout = async () => {
   await authStore.logout()
@@ -184,6 +225,7 @@ const handleLogout = async () => {
 .icon-admin-dash { color: #2563eb !important; font-size: 1.15rem; } /* Royal Blue */
 .icon-admin-curriculum { color: #10b981 !important; font-size: 1.15rem; } /* Emerald */
 .icon-admin-users { color: #f59e0b !important; font-size: 1.15rem; } /* Amber */
+.icon-admin-roles { color: #dc2626 !important; font-size: 1.15rem; } /* Crimson Red */
 .icon-admin-vocab { color: #8b5cf6 !important; font-size: 1.15rem; } /* Purple */
 .icon-admin-phrases { color: #ec4899 !important; font-size: 1.15rem; } /* Pink */
 

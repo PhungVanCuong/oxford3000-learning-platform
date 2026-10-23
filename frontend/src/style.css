@@ -338,6 +338,18 @@ hr {
 .mb-2\.5, .mb-2-5 { margin-bottom: 0.625rem !important; }
 .mb-3\.5, .mb-3-5 { margin-bottom: 0.875rem !important; }
 
+/* Margin End / Right Utilities */
+.me-0\.5, .me-0-5 { margin-right: 0.125rem !important; }
+.me-1\.5, .me-1-5 { margin-right: 0.375rem !important; }
+.me-2 { margin-right: 0.5rem !important; }
+.me-2\.5, .me-2-5 { margin-right: 0.625rem !important; }
+
+/* Margin Start / Left Utilities */
+.ms-0\.5, .ms-0-5 { margin-left: 0.125rem !important; }
+.ms-1\.5, .ms-1-5 { margin-left: 0.375rem !important; }
+.ms-2 { margin-left: 0.5rem !important; }
+.ms-2\.5, .ms-2-5 { margin-left: 0.625rem !important; }
+
 .mt-0\.5, .mt-0-5 { margin-top: 0.125rem !important; }
 .mt-1\.5, .mt-1-5 { margin-top: 0.375rem !important; }
 .mt-2\.5, .mt-2-5 { margin-top: 0.625rem !important; }

@@ -8,8 +8,8 @@
             Ox
           </div>
           <div class="d-flex flex-column">
-            <span class="fw-black fs-6 tracking-tight text-teal">OXFORD 3000™</span>
-            <span class="text-muted" style="font-size: 10px;">Hệ thống học tiếng Anh toàn diện</span>
+            <span class="fw-black fs-6 tracking-tight text-teal">OXVOCAB™</span>
+            <span class="text-muted" style="font-size: 10px;">Học từ vựng & lộ trình thông minh</span>
           </div>
         </router-link>
 
@@ -76,12 +76,6 @@
                 <div>{{ alertMessage }}</div>
               </div>
 
-              <!-- Debug OTP Hint -->
-              <div v-if="debugOtp" class="alert alert-info py-2 px-3 fs-8 mb-3 rounded-3">
-                <i class="bi bi-info-circle me-1"></i>
-                Mã OTP thử nghiệm: <strong>{{ debugOtp }}</strong> (hoặc nhập mã master <strong>123456</strong>).
-              </div>
-
               <form @submit.prevent="step === 1 ? sendOtp() : submitRegister()">
                 <!-- STEP 1: Basic Info -->
                 <div v-if="step === 1">
@@ -98,7 +92,7 @@
                         v-model="form.name"
                         type="text"
                         class="form-control border-start-0 py-2.5 fs-7"
-                        placeholder="VD: Cường Phùng"
+                        placeholder="VD: Nguyễn Văn A"
                         required
                       />
                     </div>
@@ -117,7 +111,7 @@
                         v-model="form.email"
                         type="email"
                         class="form-control border-start-0 py-2.5 fs-7"
-                        placeholder="cuongphung1810@gmail.com"
+                        placeholder="name@example.com"
                         required
                       />
                     </div>
@@ -216,7 +210,7 @@
                       v-model="form.otp_code"
                       type="text"
                       class="form-control form-control-lg text-center font-monospace fw-bold tracking-widest rounded-3"
-                      placeholder="123456"
+                      placeholder="••••••"
                       maxlength="6"
                       required
                       style="font-size: 24px; letter-spacing: 6px;"
@@ -271,7 +265,6 @@ const step = ref(1)
 const isLoading = ref(false)
 const alertMessage = ref('')
 const alertType = ref('error')
-const debugOtp = ref('')
 const showPassword = ref(false)
 const confirmPassword = ref('')
 
@@ -280,7 +273,7 @@ const form = ref({
   email: '',
   password: '',
   otp_code: '',
-  avatar_url: 'https://api.dicebear.com/7.x/bottts/svg?seed=CuongPhung',
+  avatar_url: 'https://api.dicebear.com/7.x/bottts/svg?seed=Learner',
 })
 
 const sendOtp = async () => {
@@ -295,8 +288,7 @@ const sendOtp = async () => {
   try {
     const res = await axios.post('/api/auth/send-register-otp', { email: form.value.email })
     step.value = 2
-    debugOtp.value = res.data.debug_otp || '123456'
-    alertMessage.value = res.data.message || 'Mã xác nhận OTP đã được gửi!'
+    alertMessage.value = res.data.message || 'Mã xác nhận OTP đã được gửi đến email!'
     alertType.value = 'success'
   } catch (err) {
     alertMessage.value = err.response?.data?.message || 'Không thể gửi mã OTP. Vui lòng kiểm tra lại email.'

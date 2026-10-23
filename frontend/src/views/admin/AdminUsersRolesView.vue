@@ -8,8 +8,11 @@
         <div class="text-muted fs-7">Cấp vai trò, gán danh sách chức năng chi tiết và giám sát tiến độ của từng tài khoản</div>
       </div>
 
-      <div class="d-flex gap-2">
-        <button @click="openCreateUserModal" class="btn btn-teal btn-sm rounded-pill px-3 py-2 shadow-sm fw-bold">
+      <div class="d-flex gap-2 flex-wrap">
+        <router-link v-if="authStore.canManageRoles" to="/admin/roles" class="btn btn-outline-danger btn-sm rounded-pill px-3 py-2 shadow-sm fw-bold">
+          <i class="bi bi-shield-lock-fill me-1"></i> Quản lý Chức vụ & Đóng gói →
+        </router-link>
+        <button v-if="authStore.canManageUsers" @click="openCreateUserModal" class="btn btn-teal btn-sm rounded-pill px-3 py-2 shadow-sm fw-bold">
           <i class="bi bi-person-plus-fill me-1"></i> Thêm tài khoản mới
         </button>
       </div>
@@ -86,8 +89,18 @@
               </td>
               <td class="text-muted fs-8">{{ u.email }}</td>
               <td>
-                <span class="badge px-2.5 py-1 rounded-pill" :class="u.role === 'admin' ? 'bg-danger text-white' : u.role === 'moderator' ? 'bg-warning text-dark' : 'bg-secondary text-white'">
-                  {{ u.role === 'admin' ? 'Admin' : u.role === 'moderator' ? 'Moderator' : 'User' }}
+                <span class="badge px-2.5 py-1 rounded-pill" :class="
+                  u.role === 'admin' ? 'bg-danger text-white' :
+                  u.role === 'moderator' ? 'bg-warning text-dark' :
+                  u.role === 'editor' ? 'bg-primary text-white' :
+                  u.role === 'tutor' ? 'bg-info text-dark' : 'bg-secondary text-white'
+                ">
+                  {{
+                    u.role === 'admin' ? 'Admin' :
+                    u.role === 'moderator' ? 'Moderator' :
+                    u.role === 'editor' ? 'Editor' :
+                    u.role === 'tutor' ? 'Tutor' : 'Learner'
+                  }}
                 </span>
               </td>
               <td>
@@ -120,13 +133,13 @@
               </td>
               <td class="text-center">
                 <div class="btn-group btn-group-sm">
-                  <button @click="openRoleModal(u)" class="btn btn-outline-primary" title="Phân quyền chức vụ">
+                  <button v-if="authStore.canManageRoles" @click="openRoleModal(u)" class="btn btn-outline-primary" title="Phân quyền chức vụ">
                     <i class="bi bi-shield-lock"></i>
                   </button>
-                  <button @click="resetUserProgress(u)" class="btn btn-outline-warning" title="Reset toàn bộ quá trình học">
+                  <button v-if="authStore.hasPermission('reset_progress') || authStore.canManageUsers" @click="resetUserProgress(u)" class="btn btn-outline-warning" title="Reset toàn bộ quá trình học">
                     <i class="bi bi-arrow-counterclockwise"></i>
                   </button>
-                  <button @click="deleteUser(u.id)" class="btn btn-outline-danger" title="Xóa tài khoản" :disabled="u.email === 'cuongphung1810@gmail.com'">
+                  <button v-if="authStore.canManageUsers" @click="deleteUser(u.id)" class="btn btn-outline-danger" title="Xóa tài khoản" :disabled="u.email === 'cuongphung1810@gmail.com'">
                     <i class="bi bi-trash"></i>
                   </button>
                 </div>
@@ -151,9 +164,11 @@
             <div class="mb-3">
               <label class="form-label fs-7 fw-bold mb-1">Chọn Chức Vụ (Role):</label>
               <select v-model="roleForm.role" class="form-select rounded-3 fs-7">
-                <option value="admin">Quản trị viên (Admin) - Toàn quyền</option>
-                <option value="moderator">Điều hành viên / Giáo viên (Moderator)</option>
-                <option value="user">Học viên tiêu chuẩn (User)</option>
+                <option value="admin">Quản trị viên Cấp cao (Super Admin) - Toàn quyền</option>
+                <option value="moderator">Quản trị nội dung (Content Moderator)</option>
+                <option value="editor">Biên tập viên (Vocabulary Editor)</option>
+                <option value="tutor">Trợ giảng / Giáo viên (Tutor / Instructor)</option>
+                <option value="user">Học viên tiêu chuẩn (Standard Learner)</option>
               </select>
             </div>
 
@@ -197,6 +212,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
+import { useAuthStore } from '@/stores/authStore'
+
+const authStore = useAuthStore()
 
 const users = ref([])
 const searchUser = ref('')
@@ -292,7 +310,7 @@ const openCreateUserModal = () => {
       role: 'user',
       words_per_day: 15,
     }).then(() => {
-      alert('Tạo tài khoản học viên thành công! Mật khẩu mặc định: 123456')
+      alert('Tạo tài khoản học viên thành công! Mật khẩu khởi tạo: password123 (yêu cầu đổi mật khẩu sau khi đăng nhập)')
       fetchUsers()
     }).catch(err => {
       alert('Lỗi: ' + (err.response?.data?.message || err.message))

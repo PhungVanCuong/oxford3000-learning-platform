@@ -29,6 +29,44 @@ export const useAuthStore = defineStore('auth', {
       if (!state.user) return false
       return state.user.role === 'admin' || state.user.role === 'moderator' || state.user.email === 'cuongphung1810@gmail.com'
     },
+    isStaff: (state) => {
+      if (!state.user) return false
+      if (state.user.role === 'user') return false
+      return ['admin', 'moderator', 'editor', 'tutor'].includes(state.user.role) || state.user.email === 'cuongphung1810@gmail.com'
+    },
+    hasPermission: (state) => (permKey) => {
+      if (!state.user) return false
+      if (state.user.role === 'admin' || state.user.email === 'cuongphung1810@gmail.com') return true
+      return (state.user.permissions || []).includes(permKey)
+    },
+    canManageRoles: (state) => {
+      if (!state.user) return false
+      return state.user.role === 'admin' || state.user.email === 'cuongphung1810@gmail.com' || (state.user.permissions || []).includes('manage_roles')
+    },
+    canManageUsers: (state) => {
+      if (!state.user) return false
+      return state.user.role === 'admin' || (state.user.permissions || []).includes('manage_users')
+    },
+    canViewStudents: (state) => {
+      if (!state.user) return false
+      return state.user.role === 'admin' || (state.user.permissions || []).includes('view_students') || (state.user.permissions || []).includes('manage_users')
+    },
+    canManageVocab: (state) => {
+      if (!state.user) return false
+      return state.user.role === 'admin' || (state.user.permissions || []).includes('manage_vocab')
+    },
+    canManageCurriculum: (state) => {
+      if (!state.user) return false
+      return state.user.role === 'admin' || (state.user.permissions || []).includes('manage_curriculum')
+    },
+    canManagePhrases: (state) => {
+      if (!state.user) return false
+      return state.user.role === 'admin' || (state.user.permissions || []).includes('manage_phrases')
+    },
+    canViewReports: (state) => {
+      if (!state.user) return false
+      return state.user.role === 'admin' || (state.user.permissions || []).includes('view_reports')
+    },
     userName: (state) => state.user?.name || 'Khách vãng lai',
     userEmail: (state) => state.user?.email || '',
     userAvatar: (state) => state.user?.avatar_url || 'https://api.dicebear.com/7.x/bottts/svg?seed=CuongPhung',

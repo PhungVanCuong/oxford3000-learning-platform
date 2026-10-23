@@ -29,7 +29,7 @@ class AuthController extends Controller
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Email hoặc mật khẩu không chính xác. Mật khẩu mẫu: 123456.',
+                'message' => 'Email hoặc mật khẩu không chính xác.',
             ], 422);
         }
 
@@ -124,8 +124,7 @@ class AuthController extends Controller
             'status' => 'success',
             'message' => $sent 
                 ? 'Mã OTP xác thực đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư đến (hoặc thư rác).'
-                : 'Hệ thống đã tạo mã OTP. (Mã mẫu hiển thị để hỗ trợ thử nghiệm).',
-            'debug_otp' => $otp,
+                : 'Mã xác thực OTP đã được hệ thống gửi tới địa chỉ email của bạn.',
         ]);
     }
 
@@ -231,8 +230,7 @@ class AuthController extends Controller
             'status' => 'success',
             'message' => $sent 
                 ? 'Mã OTP khôi phục mật khẩu đã được gửi đến email của bạn.' 
-                : 'Đã tạo mã xác thực khôi phục mật khẩu.',
-            'debug_otp' => $otp,
+                : 'Mã xác thực khôi phục mật khẩu đã được tạo và gửi đến email của bạn.',
         ]);
     }
 

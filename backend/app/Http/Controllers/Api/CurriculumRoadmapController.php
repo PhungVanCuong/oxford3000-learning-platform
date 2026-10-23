@@ -580,11 +580,34 @@ class CurriculumRoadmapController extends Controller
 
     // ================= ADMIN ENDPOINTS ================= //
 
+    private function authorizeManageCurriculum(Request $request)
+    {
+        $user = auth('sanctum')->user() ?? $request->user();
+        if (!$user) {
+            $token = $request->bearerToken();
+            if ($token) {
+                $accessToken = \Laravel\Sanctum\PersonalAccessToken::findToken($token);
+                if ($accessToken) {
+                    $user = $accessToken->tokenable;
+                }
+            }
+        }
+        if (!$user || !$user->hasPermission('manage_curriculum')) {
+            abort(response()->json([
+                'status' => 'error',
+                'message' => 'Bạn không có quyền quản lý lộ trình (yêu cầu quyền: manage_curriculum).'
+            ], 403));
+        }
+        return $user;
+    }
+
     /**
      * Admin: List all curriculum topics with stats
      */
     public function adminGetTopics(Request $request)
     {
+        $this->authorizeManageCurriculum($request);
+
         $topics = CurriculumTopic::withCount('terms')->orderBy('order_num')->get();
 
         $data = $topics->map(function ($t) {
@@ -614,6 +637,8 @@ class CurriculumRoadmapController extends Controller
      */
     public function adminGetTerms(Request $request, $topicId)
     {
+        $this->authorizeManageCurriculum($request);
+
         $query = CurriculumTerm::where('topic_id', $topicId);
 
         if ($request->filled('stage_num')) {
@@ -702,6 +727,8 @@ class CurriculumRoadmapController extends Controller
      */
     public function adminCreateTerm(Request $request)
     {
+        $this->authorizeManageCurriculum($request);
+
         $validated = $request->validate([
             'topic_id' => 'required|exists:curriculum_topics,id',
             'stage_num' => 'required|integer|min:1|max:10',
@@ -733,6 +760,8 @@ class CurriculumRoadmapController extends Controller
      */
     public function adminUpdateTerm(Request $request, $id)
     {
+        $this->authorizeManageCurriculum($request);
+
         $term = CurriculumTerm::findOrFail($id);
 
         $validated = $request->validate([
@@ -756,8 +785,10 @@ class CurriculumRoadmapController extends Controller
     /**
      * Admin: Delete term
      */
-    public function adminDeleteTerm($id)
+    public function adminDeleteTerm(Request $request, $id)
     {
+        $this->authorizeManageCurriculum($request);
+
         $term = CurriculumTerm::findOrFail($id);
         $topic = CurriculumTopic::find($term->topic_id);
         $term->delete();
@@ -777,6 +808,8 @@ class CurriculumRoadmapController extends Controller
      */
     public function adminUpdateTopic(Request $request, $id)
     {
+        $this->authorizeManageCurriculum($request);
+
         $topic = CurriculumTopic::findOrFail($id);
 
         $validated = $request->validate([
