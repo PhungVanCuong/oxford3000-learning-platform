@@ -24,101 +24,173 @@
         <!-- Nav Links -->
         <div class="collapse navbar-collapse" id="userNavbar">
           <!-- GUEST MENU: When NOT Logged In -->
-          <ul v-if="!authStore.isAuthenticated" class="navbar-nav mx-auto mb-2 mb-lg-0 fw-semibold fs-7 gap-1.5 gap-lg-2 align-items-center">
+          <ul v-if="!authStore.isAuthenticated" class="navbar-nav mx-auto mb-2 mb-lg-0 fw-semibold fs-7 gap-1.5 gap-lg-2 align-items-center flex-nowrap">
             <li class="nav-item">
-              <router-link to="/" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link" exact-active-class="nav-item-active">
-                <i class="bi bi-house-door-fill me-2 icon-home"></i>
+              <router-link to="/" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link text-nowrap" exact-active-class="nav-item-active">
+                <i class="bi bi-house-door-fill me-1.5 icon-home"></i>
                 <span>Trang chủ</span>
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/curriculum" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link d-flex align-items-center" active-class="nav-item-active">
-                <i class="bi bi-signpost-split-fill me-2 icon-curriculum"></i>
+              <router-link to="/curriculum" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link d-flex align-items-center text-nowrap" active-class="nav-item-active">
+                <i class="bi bi-signpost-split-fill me-1.5 icon-curriculum"></i>
                 <span>Lộ trình (25 Chủ đề)</span>
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/topics" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
-                <i class="bi bi-grid-1x2-fill me-2 icon-topics"></i>
-                <span>Chủ đề trong 3000 từ vựng</span>
+              <router-link to="/grammar" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link text-nowrap" active-class="nav-item-active">
+                <i class="bi bi-journal-bookmark-fill me-1.5 icon-grammar"></i>
+                <span>Ngữ pháp</span>
               </router-link>
             </li>
-            <li class="nav-item">
-              <router-link to="/dictionary" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
-                <i class="bi bi-search-heart-fill me-2 icon-dict"></i>
-                <span>Tra cứu 3000 từ</span>
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link to="/ipa" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
-                <i class="bi bi-soundwave me-2 icon-ipa"></i>
-                <span>44 Âm IPA</span>
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link to="/grammar" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
-                <i class="bi bi-journal-bookmark-fill me-2 icon-grammar"></i>
-                <span>12 Thì Ngữ pháp</span>
-              </router-link>
+
+            <!-- Xem thêm Dropdown for Guest -->
+            <li class="nav-item position-relative" ref="guestMoreRef">
+              <button
+                @click="toggleGuestMore"
+                class="nav-link px-3 py-1.5 rounded-pill nav-custom-link d-flex align-items-center gap-1 border-0 bg-transparent text-nowrap"
+                :class="{ 'nav-item-active': isGuestMoreOpen }"
+                type="button"
+              >
+                <i class="bi bi-grid-fill me-1 text-teal"></i>
+                <span>Xem thêm</span>
+                <i class="bi bi-chevron-down fs-8 ms-0.5"></i>
+              </button>
+
+              <div
+                v-if="isGuestMoreOpen"
+                class="dropdown-menu show position-absolute start-0 mt-2 shadow-lg border rounded-4 py-2 z-3"
+                :class="authStore.themeMode === 'dark' ? 'dropdown-menu-dark bg-dark border-secondary' : 'bg-white border-light-subtle'"
+                style="min-width: 230px;"
+              >
+                <router-link to="/phrasal-verbs" @click="isGuestMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
+                  <i class="bi bi-puzzle-fill text-warning"></i>
+                  <span>Cụm từ (Phrasal Verbs)</span>
+                </router-link>
+                <router-link to="/dictionary" @click="isGuestMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
+                  <i class="bi bi-search-heart-fill text-teal"></i>
+                  <span>Tra cứu 3000 từ</span>
+                </router-link>
+                <router-link to="/ipa" @click="isGuestMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
+                  <i class="bi bi-soundwave text-info"></i>
+                  <span>44 Âm IPA</span>
+                </router-link>
+                <router-link to="/tips" @click="isGuestMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
+                  <i class="bi bi-lightbulb-fill text-warning"></i>
+                  <span>Mẹo Học Hiệu Quả</span>
+                </router-link>
+                <router-link to="/tree" @click="isGuestMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
+                  <i class="bi bi-tree-fill text-success"></i>
+                  <span>Nuôi Cây Tri Thức</span>
+                </router-link>
+                <router-link to="/stats" @click="isGuestMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
+                  <i class="bi bi-bar-chart-fill text-primary"></i>
+                  <span>Báo Cáo Năng Suất</span>
+                </router-link>
+                <router-link to="/topics" @click="isGuestMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
+                  <i class="bi bi-grid-1x2-fill text-secondary"></i>
+                  <span>Chủ đề 3000 từ</span>
+                </router-link>
+              </div>
             </li>
           </ul>
 
           <!-- AUTHENTICATED USER MENU -->
-          <ul v-else class="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold fs-7 gap-1.5 gap-lg-2 align-items-center">
+          <ul v-else class="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold fs-7 gap-1.5 gap-lg-2 align-items-center flex-nowrap">
             <li class="nav-item">
-              <router-link to="/" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" exact-active-class="nav-item-active">
-                <i class="bi bi-house-door-fill me-2 icon-home"></i>
+              <router-link to="/" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link text-nowrap" exact-active-class="nav-item-active">
+                <i class="bi bi-house-door-fill me-1.5 icon-home"></i>
                 <span>Trang chủ</span>
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/curriculum" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link d-flex align-items-center gap-1.5" active-class="nav-item-active">
-                <i class="bi bi-signpost-split-fill me-1.5 icon-curriculum"></i>
+              <router-link to="/curriculum" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link d-flex align-items-center gap-1.5 text-nowrap" active-class="nav-item-active">
+                <i class="bi bi-signpost-split-fill me-1 icon-curriculum"></i>
                 <span>Lộ trình</span>
-                <span class="badge bg-warning text-dark px-1.5 py-1.5 rounded-pill shadow-xs" style="font-size: 8px;">25 CHỦ ĐỀ</span>
+                <span class="badge bg-warning text-dark px-1.5 py-1 rounded-pill shadow-xs" style="font-size: 8px;">25 CHỦ ĐỀ</span>
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/daily" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
-                <i class="bi bi-calendar-check-fill me-2 icon-daily"></i>
+              <router-link to="/daily" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link text-nowrap" active-class="nav-item-active">
+                <i class="bi bi-calendar-check-fill me-1.5 icon-daily"></i>
                 <span>Học theo Ngày</span>
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/topics" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
-                <i class="bi bi-grid-1x2-fill me-2 icon-topics"></i>
-                <span>Chủ đề 3000 từ</span>
+              <router-link to="/grammar" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link text-nowrap" active-class="nav-item-active">
+                <i class="bi bi-journal-bookmark-fill me-1.5 icon-grammar"></i>
+                <span>Ngữ pháp</span>
               </router-link>
             </li>
-            <li class="nav-item">
-              <router-link to="/phrasal-verbs" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
-                <i class="bi bi-puzzle-fill me-2 icon-phrasal"></i>
-                <span>Cụm từ</span>
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link to="/grammar" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
-                <i class="bi bi-journal-bookmark-fill me-2 icon-grammar"></i>
-                <span>12 Thì</span>
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link to="/ipa" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
-                <i class="bi bi-soundwave me-2 icon-ipa"></i>
-                <span>44 Âm IPA</span>
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link to="/dictionary" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link" active-class="nav-item-active">
-                <i class="bi bi-search-heart-fill me-2 icon-dict"></i>
-                <span>Tra cứu</span>
-              </router-link>
+
+            <!-- Xem thêm Dropdown for Auth User -->
+            <li class="nav-item position-relative" ref="authMoreRef">
+              <button
+                @click="toggleAuthMore"
+                class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link d-flex align-items-center gap-1 border-0 bg-transparent text-nowrap"
+                :class="{ 'nav-item-active': isAuthMoreOpen }"
+                type="button"
+              >
+                <i class="bi bi-grid-fill me-1 text-teal"></i>
+                <span>Xem thêm</span>
+                <i class="bi bi-chevron-down fs-8 ms-0.5"></i>
+              </button>
+
+              <div
+                v-if="isAuthMoreOpen"
+                class="dropdown-menu show position-absolute start-0 mt-2 shadow-lg border rounded-4 py-2 z-3"
+                :class="authStore.themeMode === 'dark' ? 'dropdown-menu-dark bg-dark border-secondary' : 'bg-white border-light-subtle'"
+                style="min-width: 235px;"
+              >
+                <router-link to="/phrasal-verbs" @click="isAuthMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
+                  <i class="bi bi-puzzle-fill text-warning"></i>
+                  <span>Cụm từ (Phrasal Verbs)</span>
+                </router-link>
+                <router-link to="/dictionary" @click="isAuthMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
+                  <i class="bi bi-search-heart-fill text-teal"></i>
+                  <span>Tra cứu 3000 từ</span>
+                </router-link>
+                <router-link to="/ipa" @click="isAuthMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
+                  <i class="bi bi-soundwave text-info"></i>
+                  <span>44 Âm IPA</span>
+                </router-link>
+                <router-link to="/tips" @click="isAuthMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
+                  <i class="bi bi-lightbulb-fill text-warning"></i>
+                  <span>Mẹo Học Hiệu Quả</span>
+                </router-link>
+                <router-link to="/tree" @click="isAuthMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
+                  <i class="bi bi-tree-fill text-success"></i>
+                  <span>Nuôi Cây Tri Thức</span>
+                </router-link>
+                <router-link to="/stats" @click="isAuthMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
+                  <i class="bi bi-bar-chart-fill text-primary"></i>
+                  <span>Báo Cáo Năng Suất</span>
+                </router-link>
+                <router-link to="/topics" @click="isAuthMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
+                  <i class="bi bi-grid-1x2-fill text-secondary"></i>
+                  <span>Chủ đề 3000 từ</span>
+                </router-link>
+              </div>
             </li>
           </ul>
 
-          <!-- Right Side: Dark toggle + Auth state -->
-          <div class="d-flex align-items-center gap-2 gap-lg-3 mt-3 mt-lg-0">
-            <!-- Theme Toggle -->
+          <!-- Right Side: Arena Icon + Dark toggle + Auth state -->
+          <div class="d-flex align-items-center gap-2 gap-lg-2.5 mt-3 mt-lg-0 flex-nowrap">
+            <!-- Arena Circular Icon Button (Left of Theme Toggle) -->
+            <router-link
+              to="/arena"
+              class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center shadow-sm position-relative text-decoration-none"
+              style="width: 36px; height: 36px;"
+              :class="authStore.themeMode === 'dark' ? 'border-secondary' : 'border-light-subtle'"
+              title="Đấu trường Quiz & Luyện thi"
+            >
+              <i class="bi bi-trophy-fill text-warning fs-6"></i>
+              <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" style="transform: translate(-30%, 25%) !important;">
+                <span class="visually-hidden">Live</span>
+              </span>
+            </router-link>
+
+            <!-- Theme Toggle Button -->
             <button
               @click="authStore.toggleTheme"
               class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center shadow-sm"
@@ -157,19 +229,20 @@
               </div>
 
               <!-- Profile Dropdown Combobox -->
-              <div class="position-relative" ref="dropdownRef">
+              <div class="position-relative flex-shrink-0" ref="dropdownRef">
                 <button
                   @click="toggleDropdown"
-                  class="btn btn-sm btn-teal rounded-pill d-flex align-items-center gap-2 px-3 py-1.5 shadow-sm border-0"
+                  class="btn btn-sm btn-teal rounded-pill d-flex align-items-center gap-2 px-3 py-1.5 shadow-sm border-0 text-nowrap"
+                  style="white-space: nowrap !important; flex-shrink: 0;"
                   type="button"
                 >
                   <img
                     :src="authStore.userAvatar"
-                    class="rounded-circle border border-white"
+                    class="rounded-circle border border-white flex-shrink-0"
                     style="width: 26px; height: 26px; object-fit: cover; background-color: #fff;"
                   />
-                  <span class="d-none d-md-inline fw-bold text-white">{{ authStore.userName }}</span>
-                  <i class="bi bi-chevron-down text-white fs-8"></i>
+                  <span class="d-none d-md-inline fw-bold text-white text-nowrap" style="white-space: nowrap !important;">{{ authStore.userName }}</span>
+                  <i class="bi bi-chevron-down text-white fs-8 flex-shrink-0"></i>
                 </button>
 
                 <!-- Profile Dropdown Card -->
@@ -201,6 +274,33 @@
                     >
                       <i class="bi bi-person-circle text-primary fs-6"></i>
                       <span>Trang cá nhân</span>
+                    </router-link>
+
+                    <router-link
+                      to="/tree"
+                      @click="isDropdownOpen = false"
+                      class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2 text-dark-emphasis"
+                    >
+                      <i class="bi bi-tree-fill text-success fs-6"></i>
+                      <span>Vườn Cây Tri Thức</span>
+                    </router-link>
+
+                    <router-link
+                      to="/stats"
+                      @click="isDropdownOpen = false"
+                      class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2 text-dark-emphasis"
+                    >
+                      <i class="bi bi-bar-chart-fill text-teal fs-6"></i>
+                      <span>Báo Cáo Năng Suất</span>
+                    </router-link>
+
+                    <router-link
+                      to="/arena"
+                      @click="isDropdownOpen = false"
+                      class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2 text-dark-emphasis"
+                    >
+                      <i class="bi bi-trophy-fill text-warning fs-6"></i>
+                      <span>Đấu Trường Quiz</span>
                     </router-link>
 
                     <router-link
@@ -263,13 +363,33 @@ const router = useRouter()
 const isDropdownOpen = ref(false)
 const dropdownRef = ref(null)
 
+const isGuestMoreOpen = ref(false)
+const guestMoreRef = ref(null)
+
+const isAuthMoreOpen = ref(false)
+const authMoreRef = ref(null)
+
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value
+}
+
+const toggleGuestMore = () => {
+  isGuestMoreOpen.value = !isGuestMoreOpen.value
+}
+
+const toggleAuthMore = () => {
+  isAuthMoreOpen.value = !isAuthMoreOpen.value
 }
 
 const handleClickOutside = (event) => {
   if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
     isDropdownOpen.value = false
+  }
+  if (guestMoreRef.value && !guestMoreRef.value.contains(event.target)) {
+    isGuestMoreOpen.value = false
+  }
+  if (authMoreRef.value && !authMoreRef.value.contains(event.target)) {
+    isAuthMoreOpen.value = false
   }
 }
 

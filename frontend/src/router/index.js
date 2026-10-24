@@ -16,6 +16,10 @@ import TipsView from '@/views/user/TipsView.vue'
 import ProfileView from '@/views/user/ProfileView.vue'
 import CurriculumRoadmapView from '@/views/user/CurriculumRoadmapView.vue'
 import CurriculumStageDetailView from '@/views/user/CurriculumStageDetailView.vue'
+import KnowledgeTreeView from '@/views/user/KnowledgeTreeView.vue'
+import ActivityStatsView from '@/views/user/ActivityStatsView.vue'
+import ArenaView from '@/views/user/ArenaView.vue'
+import ArenaRoomView from '@/views/user/ArenaRoomView.vue'
 
 // Admin Views
 import AdminDashboardView from '@/views/admin/AdminDashboardView.vue'
@@ -24,6 +28,7 @@ import AdminRolesPermissionsView from '@/views/admin/AdminRolesPermissionsView.v
 import AdminVocabulariesView from '@/views/admin/AdminVocabulariesView.vue'
 import AdminPhrasalVerbsView from '@/views/admin/AdminPhrasalVerbsView.vue'
 import AdminCurriculumView from '@/views/admin/AdminCurriculumView.vue'
+import AdminArenaView from '@/views/admin/AdminArenaView.vue'
 
 // Auth Views
 import LoginView from '@/views/auth/LoginView.vue'
@@ -48,6 +53,10 @@ const routes = [
       { path: 'ipa', name: 'ipa', component: IpaView },
       { path: 'dictionary', name: 'dictionary', component: DictionaryView },
       { path: 'tips', name: 'tips', component: TipsView },
+      { path: 'tree', name: 'knowledge-tree', component: KnowledgeTreeView },
+      { path: 'stats', name: 'activity-stats', component: ActivityStatsView },
+      { path: 'arena', name: 'arena', component: ArenaView },
+      { path: 'arena/:idOrCode', name: 'arena-room', component: ArenaRoomView },
       { path: 'profile', name: 'profile', component: ProfileView },
     ],
   },
@@ -146,6 +155,21 @@ const routes = [
           const canAccess = user.role === 'admin' || user.email === 'cuongphung1810@gmail.com' || (user.permissions || []).includes('manage_phrases')
           if (!canAccess) {
             alert('Bạn không có quyền truy cập vào mục Cụm từ & Phrasal Verbs.')
+            next('/admin')
+          } else {
+            next()
+          }
+        }
+      },
+      {
+        path: 'arena',
+        name: 'admin-arena',
+        component: AdminArenaView,
+        beforeEnter: (to, from, next) => {
+          const user = JSON.parse(localStorage.getItem('oxford_user') || '{}')
+          const canAccess = user.role === 'admin' || user.email === 'cuongphung1810@gmail.com' || (user.permissions || []).includes('manage_arena')
+          if (!canAccess) {
+            alert('Bạn không có quyền truy cập vào mục Quản lý Đấu trường.')
             next('/admin')
           } else {
             next()

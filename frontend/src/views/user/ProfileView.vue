@@ -25,10 +25,26 @@
         </div>
 
         <!-- Action Buttons -->
-        <div class="d-flex align-items-center gap-2">
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <router-link
+            to="/stats"
+            class="btn btn-outline-light rounded-pill px-3 py-2 fw-semibold fs-7 d-flex align-items-center gap-1"
+          >
+            <i class="bi bi-bar-chart-fill text-warning"></i>
+            <span>Báo cáo Năng suất</span>
+          </router-link>
+
+          <router-link
+            to="/tree"
+            class="btn btn-outline-light rounded-pill px-3 py-2 fw-semibold fs-7 d-flex align-items-center gap-1"
+          >
+            <i class="bi bi-tree-fill text-success"></i>
+            <span>Cây Tri Thức</span>
+          </router-link>
+
           <router-link
             to="/daily"
-            class="btn btn-light rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-1.5"
+            class="btn btn-light rounded-pill px-3.5 py-2 fw-bold shadow-sm d-flex align-items-center gap-1.5"
             style="color: #064e40;"
           >
             <span>Tiếp tục học</span>

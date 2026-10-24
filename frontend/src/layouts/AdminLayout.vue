@@ -137,6 +137,16 @@
                 <i class="bi bi-puzzle-fill icon-admin-phrases"></i>
                 <span>Cụm từ & Phrasal Verbs</span>
               </router-link>
+
+              <router-link
+                v-if="authStore.canManageArena || authStore.isAdmin"
+                to="/admin/arena"
+                class="admin-nav-link"
+                active-class="admin-nav-active"
+              >
+                <i class="bi bi-trophy-fill text-warning"></i>
+                <span>Quản lý Đấu trường</span>
+              </router-link>
             </div>
           </div>
 

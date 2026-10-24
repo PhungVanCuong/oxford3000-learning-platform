@@ -14,16 +14,24 @@ class Grammar extends Model
     protected $fillable = [
         'topic_id',
         'title',
+        'slug',
         'level',
+        'summary',
         'theory_html',
+        'active_passive_html',
+        'pronunciation_notes',
         'examples_json',
+        'exercises_json',
         'order_index',
+        'badge_color',
+        'icon',
     ];
 
     protected function casts(): array
     {
         return [
             'examples_json' => 'array',
+            'exercises_json' => 'array',
             'order_index' => 'integer',
         ];
     }

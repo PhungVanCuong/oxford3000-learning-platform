@@ -67,6 +67,10 @@ export const useAuthStore = defineStore('auth', {
       if (!state.user) return false
       return state.user.role === 'admin' || (state.user.permissions || []).includes('view_reports')
     },
+    canManageArena: (state) => {
+      if (!state.user) return false
+      return state.user.role === 'admin' || state.user.email === 'cuongphung1810@gmail.com' || (state.user.permissions || []).includes('manage_arena')
+    },
     userName: (state) => state.user?.name || 'Khách vãng lai',
     userEmail: (state) => state.user?.email || '',
     userAvatar: (state) => state.user?.avatar_url || 'https://api.dicebear.com/7.x/bottts/svg?seed=CuongPhung',

@@ -19,11 +19,27 @@
         </div>
 
         <div class="d-flex align-items-center gap-2 flex-wrap">
-          <router-link to="/admin/curriculum" class="btn btn-outline-teal rounded-pill px-3.5 py-2 fw-bold shadow-xs fs-7 d-flex align-items-center gap-1.5">
+          <router-link
+            v-if="authStore.canManageCurriculum || authStore.isAdmin"
+            to="/admin/curriculum"
+            class="btn btn-outline-teal rounded-pill px-3.5 py-2 fw-bold shadow-xs fs-7 d-flex align-items-center gap-1.5"
+          >
             <i class="bi bi-signpost-split-fill"></i>
             <span>QL Lộ Trình 25 Chủ Đề</span>
           </router-link>
-          <router-link to="/admin/users" class="btn btn-teal text-white rounded-pill px-3.5 py-2 fw-bold shadow-sm d-flex align-items-center gap-1.5 fs-7">
+          <router-link
+            v-if="authStore.canManageArena || authStore.isAdmin"
+            to="/admin/arena"
+            class="btn btn-outline-warning text-dark rounded-pill px-3.5 py-2 fw-bold shadow-xs fs-7 d-flex align-items-center gap-1.5"
+          >
+            <i class="bi bi-trophy-fill text-warning"></i>
+            <span>QL Đấu Trường Quiz</span>
+          </router-link>
+          <router-link
+            v-if="authStore.canManageUsers || authStore.isAdmin"
+            to="/admin/users"
+            class="btn btn-teal text-white rounded-pill px-3.5 py-2 fw-bold shadow-sm d-flex align-items-center gap-1.5 fs-7"
+          >
             <i class="bi bi-person-plus-fill"></i>
             <span>Thêm Học Viên Mới</span>
           </router-link>
@@ -31,10 +47,10 @@
       </div>
     </div>
 
-    <!-- 2. Six Airy, Spacious Stat Cards (2 rows of 3 or 3x2) -->
+    <!-- 2. Six Airy, Spacious Stat Cards (Filtered by user permissions) -->
     <div class="row g-4 mb-4">
       <!-- Card 1: Tổng học viên -->
-      <div class="col-12 col-sm-6 col-xl-4">
+      <div v-if="authStore.canViewStudents || authStore.canManageUsers || authStore.isAdmin" class="col-12 col-sm-6 col-xl-4">
         <div class="card p-4 rounded-4 shadow-sm border bg-card-custom h-100 hover-card" style="border-color: #E2E8F0;">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <span class="text-muted fs-8 text-uppercase fw-bold letter-spacing-05">Tài khoản & Học viên</span>
@@ -54,7 +70,7 @@
       </div>
 
       <!-- Card 2: Lộ trình 25 Chủ đề IELTS -->
-      <div class="col-12 col-sm-6 col-xl-4">
+      <div v-if="authStore.canManageCurriculum || authStore.isAdmin" class="col-12 col-sm-6 col-xl-4">
         <router-link to="/admin/curriculum" class="text-decoration-none">
           <div class="card p-4 rounded-4 shadow-sm border bg-card-custom h-100 hover-card" style="border-color: #E2E8F0;">
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -76,7 +92,7 @@
       </div>
 
       <!-- Card 3: Kho 3000 từ vựng Oxford -->
-      <div class="col-12 col-sm-6 col-xl-4">
+      <div v-if="authStore.canManageVocab || authStore.isAdmin" class="col-12 col-sm-6 col-xl-4">
         <router-link to="/admin/vocabularies" class="text-decoration-none">
           <div class="card p-4 rounded-4 shadow-sm border bg-card-custom h-100 hover-card" style="border-color: #E2E8F0;">
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -98,7 +114,7 @@
       </div>
 
       <!-- Card 4: Cụm từ & Phrasal Verbs -->
-      <div class="col-12 col-sm-6 col-xl-4">
+      <div v-if="authStore.canManagePhrases || authStore.isAdmin" class="col-12 col-sm-6 col-xl-4">
         <router-link to="/admin/phrasal-verbs" class="text-decoration-none">
           <div class="card p-4 rounded-4 shadow-sm border bg-card-custom h-100 hover-card" style="border-color: #E2E8F0;">
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -120,7 +136,7 @@
       </div>
 
       <!-- Card 5: Lượt kiểm tra & Bài thi -->
-      <div class="col-12 col-sm-6 col-xl-4">
+      <div v-if="authStore.canViewReports || authStore.isAdmin" class="col-12 col-sm-6 col-xl-4">
         <div class="card p-4 rounded-4 shadow-sm border bg-card-custom h-100 hover-card" style="border-color: #E2E8F0;">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <span class="text-muted fs-8 text-uppercase fw-bold letter-spacing-05">Lượt làm bài kiểm tra</span>
@@ -137,6 +153,28 @@
             <span>Tự động chấm điểm & cộng điểm XP</span>
           </div>
         </div>
+      </div>
+
+      <!-- Card 6: Đấu trường Quiz & Phòng thi đua -->
+      <div v-if="authStore.canManageArena || authStore.isAdmin" class="col-12 col-sm-6 col-xl-4">
+        <router-link to="/admin/arena" class="text-decoration-none">
+          <div class="card p-4 rounded-4 shadow-sm border bg-card-custom h-100 hover-card" style="border-color: #E2E8F0;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="text-muted fs-8 text-uppercase fw-bold letter-spacing-05">Đấu trường Quiz Trực tuyến</span>
+              <div class="rounded-3 p-2.5 d-flex align-items-center justify-content-center text-warning" style="background-color: #fefce8; width: 44px; height: 44px;">
+                <i class="bi bi-trophy-fill fs-5 text-warning"></i>
+              </div>
+            </div>
+            <div class="d-flex align-items-baseline gap-2">
+              <div class="display-6 fw-black text-warning">QL Phòng</div>
+              <span class="text-muted fs-7">thi đấu trực tiếp</span>
+            </div>
+            <div class="text-muted fs-8 mt-2 d-flex align-items-center gap-1.5">
+              <i class="bi bi-lightning-charge text-warning"></i>
+              <span>Quản lý phòng mở & kết thúc trận</span>
+            </div>
+          </div>
+        </router-link>
       </div>
 
       <!-- Card 6: Hoạt động học tập hôm nay -->

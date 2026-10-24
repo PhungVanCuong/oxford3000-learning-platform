@@ -17,7 +17,9 @@ class DatabaseSeeder extends Seeder
             Oxford3000Seeder::class,
             PhrasalVerbSeeder::class,
             CurriculumRoadmapSeeder::class,
-            GrammarSeeder::class,
+            GrammarPdfFullSeeder::class,
+            UpdateGrammarExercisesSeeder::class,
+            ArenaSampleSeeder::class,
             IpaSeeder::class,
             LearningTipSeeder::class,
         ]);

@@ -13,6 +13,8 @@ use App\Http\Controllers\Api\DictionaryController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\PhrasalVerbController;
 use App\Http\Controllers\Api\CurriculumRoadmapController;
+use App\Http\Controllers\Api\ArenaController;
+use App\Http\Controllers\Api\ActivityController;
 
 // 1. Authentication & Profile
 Route::post('/auth/login', [AuthController::class, 'login']);
@@ -37,10 +39,24 @@ Route::get('/topics', [TopicController::class, 'index']);
 Route::get('/topics/{idOrSlug}', [TopicController::class, 'show']);
 Route::get('/topics/quiz/{idOrSlug}', [TopicController::class, 'generateTopicQuiz']);
 
-// 4. Grammar Lessons (101 lessons architecture)
+// 4. Grammar Lessons (Chuyên đề Ngữ pháp)
 Route::get('/grammars', [GrammarController::class, 'index']);
+Route::post('/grammars/check-translation', [GrammarController::class, 'checkTranslation']);
 Route::get('/grammars/{id}', [GrammarController::class, 'show']);
+Route::post('/grammars/{id}/quiz', [GrammarController::class, 'submitQuiz']);
 Route::get('/grammars/quiz/{id}', [GrammarController::class, 'getQuestions']);
+
+// 4.1 Classroom Quiz Arena (Đấu trường Trắc nghiệm Trực tiếp)
+Route::get('/arena/rooms', [ArenaController::class, 'index']);
+Route::post('/arena/rooms', [ArenaController::class, 'store']);
+Route::post('/arena/rooms/join', [ArenaController::class, 'join']);
+Route::get('/arena/rooms/{id}', [ArenaController::class, 'show']);
+Route::post('/arena/rooms/{id}/start', [ArenaController::class, 'start']);
+Route::post('/arena/rooms/{id}/answer', [ArenaController::class, 'submitAnswer']);
+
+// 4.2 User Activity & Productivity Charts (Weekly frequency & GitHub heatmap)
+Route::get('/user/study-stats', [ActivityController::class, 'getStudyStats']);
+Route::get('/user/contribution-heatmap', [ActivityController::class, 'getContributionHeatmap']);
 
 // 5. 44 IPA Sounds
 Route::get('/ipa-sounds', [IpaController::class, 'index']);
@@ -98,4 +114,9 @@ Route::prefix('admin')->group(function () {
     Route::post('/curriculum/terms', [CurriculumRoadmapController::class, 'adminCreateTerm']);
     Route::put('/curriculum/terms/{id}', [CurriculumRoadmapController::class, 'adminUpdateTerm']);
     Route::delete('/curriculum/terms/{id}', [CurriculumRoadmapController::class, 'adminDeleteTerm']);
+
+    // Admin Arena Quiz Room Management
+    Route::get('/arena/rooms', [ArenaController::class, 'adminIndex']);
+    Route::post('/arena/rooms/{id}/close', [ArenaController::class, 'closeRoom']);
+    Route::delete('/arena/rooms/{id}', [ArenaController::class, 'destroy']);
 });

@@ -155,17 +155,18 @@
               </div>
 
               <!-- Form -->
-              <form @submit.prevent="handleLogin" novalidate>
+              <form @submit.prevent="handleLogin" action="#" method="post" novalidate>
                 <!-- Email / Account Input -->
                 <div class="mb-3">
                   <div class="form-floating">
                     <input
                       v-model="email"
                       type="email"
+                      name="email"
                       class="form-control rounded-3 fs-6"
                       id="floatingEmail"
                       placeholder="name@example.com"
-                      autocomplete="username"
+                      autocomplete="username email"
                       required
                     />
                     <label for="floatingEmail" class="text-muted">
@@ -181,6 +182,7 @@
                       <input
                         v-model="password"
                         :type="showPassword ? 'text' : 'password'"
+                        name="password"
                         class="form-control rounded-3 fs-6 pe-5"
                         id="floatingPassword"
                         placeholder="Mật khẩu"
@@ -291,7 +293,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 
@@ -303,20 +305,29 @@ const password = ref('')
 const showPassword = ref(false)
 const rememberMe = ref(false)
 
+const persistCredentials = () => {
+  if (rememberMe.value) {
+    localStorage.setItem('oxvocab_remember_login', 'true')
+    if (email.value) localStorage.setItem('oxvocab_saved_email', email.value)
+    if (password.value) localStorage.setItem('oxvocab_saved_password', password.value)
+  } else {
+    localStorage.removeItem('oxvocab_remember_login')
+    localStorage.removeItem('oxvocab_saved_email')
+    localStorage.removeItem('oxvocab_saved_password')
+  }
+}
+
+watch(rememberMe, () => {
+  persistCredentials()
+})
+
 const handleLogin = async () => {
   if (!email.value || !password.value) return
 
+  persistCredentials()
+
   const success = await authStore.login(email.value, password.value)
   if (success) {
-    // Handle Remember Password & Save Credentials
-    if (rememberMe.value) {
-      localStorage.setItem('oxvocab_remember_login', 'true')
-      localStorage.setItem('oxvocab_saved_email', email.value)
-    } else {
-      localStorage.removeItem('oxvocab_remember_login')
-      localStorage.removeItem('oxvocab_saved_email')
-    }
-
     // Auto-detect Role: Staff / Admin automatically jump to /admin, Learners go to Home or Daily
     if (authStore.isStaff || authStore.isAdmin) {
       router.push('/admin')
@@ -332,8 +343,12 @@ onMounted(() => {
   if (savedRemember === 'true') {
     rememberMe.value = true
     const savedEmail = localStorage.getItem('oxvocab_saved_email')
+    const savedPassword = localStorage.getItem('oxvocab_saved_password')
     if (savedEmail) {
       email.value = savedEmail
+    }
+    if (savedPassword) {
+      password.value = savedPassword
     }
   }
 })
