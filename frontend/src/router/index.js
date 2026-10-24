@@ -67,7 +67,7 @@ const routes = [
       const isStaffOrAdmin = user && (['admin', 'moderator', 'editor', 'tutor'].includes(user.role) || user.email === 'cuongphung1810@gmail.com')
 
       if (!token) {
-        next('/login?portal=admin')
+        next('/login')
       } else if (!isStaffOrAdmin) {
         alert('Tài khoản của bạn không có quyền truy cập vào Khu Vực Quản Trị Hệ Thống.')
         next('/')

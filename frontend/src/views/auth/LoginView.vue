@@ -1,6 +1,6 @@
 <template>
   <div class="login-page-wrapper min-vh-100 d-flex flex-column justify-content-between" :class="authStore.themeMode === 'dark' ? 'bg-dark-fb text-white' : 'bg-light-fb text-dark'">
-    <!-- Top Bar with Home Link & Theme Toggle -->
+    <!-- Top Bar with Brand Link & Theme Toggle -->
     <header class="py-2.5 px-3 px-md-4">
       <div class="container-fluid d-flex justify-content-between align-items-center max-w-6xl">
         <router-link to="/" class="d-flex align-items-center gap-2 text-decoration-none">
@@ -31,67 +31,121 @@
       </div>
     </header>
 
-    <!-- Main Section: Facebook Full Viewport Layout -->
-    <main class="flex-grow-1 d-flex align-items-center py-4 py-lg-5">
+    <!-- Main Section: Modern Split Viewport Layout -->
+    <main class="flex-grow-1 d-flex align-items-center py-3 py-lg-4">
       <div class="container max-w-6xl">
         <div class="row align-items-center justify-content-center g-4 g-lg-5">
-          <!-- LEFT COLUMN: Brand Hero & Statement (Facebook-style) -->
+          <!-- LEFT COLUMN: High-Tech Brand Showcase (No fake testimonials) -->
           <div class="col-12 col-lg-6 col-xl-6 text-center text-lg-start mb-2 mb-lg-0">
             <div class="d-inline-flex align-items-center gap-2 mb-3">
-              <div class="rounded-4 d-inline-flex align-items-center justify-content-center text-white fw-black shadow-sm" style="width: 58px; height: 58px; background: linear-gradient(135deg, #00b074 0%, #087F75 100%); font-size: 28px;">
+              <div class="rounded-4 d-inline-flex align-items-center justify-content-center text-white fw-black shadow-sm" style="width: 52px; height: 52px; background: linear-gradient(135deg, #00b074 0%, #087F75 100%); font-size: 26px;">
                 Ox
               </div>
-              <span class="fw-black text-teal display-5 text-uppercase" style="letter-spacing: -0.5px;">OxVocab<span class="text-success fs-4 align-top">™</span></span>
+              <span class="fw-black text-teal display-6 text-uppercase" style="letter-spacing: -0.5px;">OxVocab<span class="text-success fs-4 align-top">™</span></span>
             </div>
 
-            <h1 class="fw-semibold mb-3 lh-sm" :class="authStore.themeMode === 'dark' ? 'text-light' : 'text-dark-emphasis'" style="font-size: clamp(1.45rem, 2.3vw, 1.85rem);">
-              OxVocab giúp bạn kết nối và chinh phục <strong class="text-teal">3.000 từ vựng Oxford</strong> cùng lộ trình IELTS thông minh mỗi ngày.
+            <h1 class="fw-black mb-3 lh-sm" :class="authStore.themeMode === 'dark' ? 'text-light' : 'text-dark-emphasis'" style="font-size: clamp(1.45rem, 2.3vw, 1.85rem);">
+              Bứt phá vốn từ & làm chủ giao tiếp với <span class="text-teal">3.000 từ vựng Oxford</span> thông minh.
             </h1>
 
-            <p class="text-secondary fs-6 mb-4 d-none d-md-block" style="line-height: 1.6; max-width: 500px;">
-              Đồng bộ dữ liệu học tập cá nhân hóa, làm chủ 25 chủ đề thực chiến, luyện nói chấm điểm phát âm AI trực tiếp qua Microphone và thi thử các chặng trắc nghiệm chuẩn quốc tế.
+            <p class="text-secondary fs-7 mb-4 d-none d-md-block" style="line-height: 1.6; max-width: 520px;">
+              Đồng bộ dữ liệu học tập cá nhân hóa, luyện nói chấm điểm phát âm AI chuẩn bản xứ, 25 chủ đề lộ trình thực chiến và thuật toán ghi nhớ dài hạn SRS.
             </p>
 
-            <!-- Feature Badges -->
+            <!-- HIGH-TECH TECH SHOWCASE CARD -->
+            <div class="card border-0 rounded-4 p-3.5 p-md-4 shadow-sm mb-4 text-start position-relative overflow-hidden text-white" style="background: linear-gradient(145deg, #032b24 0%, #064e40 60%, #087F75 100%);">
+              <!-- Card Header -->
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="badge rounded-pill px-3 py-1.5 fw-bold" style="background: rgba(94, 234, 212, 0.18); color: #5eead4; font-size: 11px;">
+                  <i class="bi bi-cpu-fill me-1"></i> AI SPEECH ENGINE 2.0
+                </span>
+                <span class="fs-8 fw-semibold text-white-50 d-flex align-items-center gap-1.5">
+                  <span class="rounded-circle bg-success d-inline-block" style="width: 7px; height: 7px;"></span>
+                  Hệ thống sẵn sàng
+                </span>
+              </div>
+
+              <!-- Audio Wave Simulation & Target Word -->
+              <div class="p-3 rounded-3 mb-3" style="background: rgba(0, 0, 0, 0.28); border: 1px solid rgba(255, 255, 255, 0.12);">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                  <div>
+                    <span class="fs-8 text-white-50 text-uppercase fw-semibold">Từ vựng mục tiêu:</span>
+                    <div class="fs-5 fw-black text-white">comprehensive <span class="fs-8 fw-normal text-white-50">/ˌkɑːm.prɪˈhen.sɪv/</span></div>
+                  </div>
+                  <div class="text-end">
+                    <span class="badge rounded-pill px-2.5 py-1 fw-black" style="background: #00b074; color: #ffffff; font-size: 11px;">
+                      <i class="bi bi-patch-check-fill me-1"></i> 98.5% Native Match
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Animated-like Sound Bars -->
+                <div class="d-flex align-items-end gap-1" style="height: 28px;">
+                  <span class="rounded-pill bg-success flex-grow-1" style="height: 35%; opacity: 0.6;"></span>
+                  <span class="rounded-pill bg-success flex-grow-1" style="height: 65%; opacity: 0.85;"></span>
+                  <span class="rounded-pill bg-success flex-grow-1" style="height: 90%; opacity: 1;"></span>
+                  <span class="rounded-pill bg-teal flex-grow-1" style="height: 100%; opacity: 1;"></span>
+                  <span class="rounded-pill bg-teal flex-grow-1" style="height: 80%; opacity: 0.9;"></span>
+                  <span class="rounded-pill bg-success flex-grow-1" style="height: 95%; opacity: 1;"></span>
+                  <span class="rounded-pill bg-success flex-grow-1" style="height: 50%; opacity: 0.7;"></span>
+                  <span class="rounded-pill bg-success flex-grow-1" style="height: 75%; opacity: 0.85;"></span>
+                  <span class="rounded-pill bg-teal flex-grow-1" style="height: 40%; opacity: 0.65;"></span>
+                </div>
+              </div>
+
+              <!-- 4 Platform Highlights Grid -->
+              <div class="row g-2 fs-8">
+                <div class="col-6">
+                  <div class="p-2 rounded-2" style="background: rgba(255, 255, 255, 0.08);">
+                    <div class="fw-bold text-teal-light">3.000 Mục từ Oxford</div>
+                    <div class="text-white-50" style="font-size: 11px;">Chuẩn CEFR A1 - C1</div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="p-2 rounded-2" style="background: rgba(255, 255, 255, 0.08);">
+                    <div class="fw-bold text-teal-light">25 Chủ đề Thực chiến</div>
+                    <div class="text-white-50" style="font-size: 11px;">10 Chặng trắc nghiệm mỗi bài</div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="p-2 rounded-2" style="background: rgba(255, 255, 255, 0.08);">
+                    <div class="fw-bold text-teal-light">Lặp lại ngắt quãng (SRS)</div>
+                    <div class="text-white-50" style="font-size: 11px;">Tối ưu hóa phản xạ dài hạn</div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="p-2 rounded-2" style="background: rgba(255, 255, 255, 0.08);">
+                    <div class="fw-bold text-teal-light">Tự động nhận diện quyền</div>
+                    <div class="text-white-50" style="font-size: 11px;">1 Cổng đăng nhập duy nhất</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Feature Pills -->
             <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-lg-start">
-              <span class="badge rounded-pill px-3 py-2 fs-8 fw-semibold border" :class="authStore.themeMode === 'dark' ? 'bg-dark border-secondary text-light' : 'bg-white border-light-subtle text-dark-emphasis shadow-xs'">
-                <i class="bi bi-patch-check-fill text-success me-1"></i> Chuẩn Oxford 3000™
+              <span class="badge rounded-pill px-3 py-1.5 fs-8 fw-semibold border" :class="authStore.themeMode === 'dark' ? 'bg-dark border-secondary text-light' : 'bg-white border-light-subtle text-dark-emphasis shadow-2xs'">
+                <i class="bi bi-shield-check text-success me-1"></i> Bảo mật đa lớp
               </span>
-              <span class="badge rounded-pill px-3 py-2 fs-8 fw-semibold border" :class="authStore.themeMode === 'dark' ? 'bg-dark border-secondary text-light' : 'bg-white border-light-subtle text-dark-emphasis shadow-xs'">
-                <i class="bi bi-mic-fill text-teal me-1"></i> Nhận diện phát âm AI
+              <span class="badge rounded-pill px-3 py-1.5 fs-8 fw-semibold border" :class="authStore.themeMode === 'dark' ? 'bg-dark border-secondary text-light' : 'bg-white border-light-subtle text-dark-emphasis shadow-2xs'">
+                <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Đồng bộ đám mây
               </span>
-              <span class="badge rounded-pill px-3 py-2 fs-8 fw-semibold border" :class="authStore.themeMode === 'dark' ? 'bg-dark border-secondary text-light' : 'bg-white border-light-subtle text-dark-emphasis shadow-xs'">
-                <i class="bi bi-mortarboard-fill text-primary me-1"></i> Lộ trình 25 Chủ đề
+              <span class="badge rounded-pill px-3 py-1.5 fs-8 fw-semibold border" :class="authStore.themeMode === 'dark' ? 'bg-dark border-secondary text-light' : 'bg-white border-light-subtle text-dark-emphasis shadow-2xs'">
+                <i class="bi bi-mic-fill text-teal me-1"></i> Kiểm tra giọng nói AI
               </span>
             </div>
           </div>
 
-          <!-- RIGHT COLUMN: Facebook-Style White Login Card -->
+          <!-- RIGHT COLUMN: Single Unified Login Card -->
           <div class="col-12 col-md-8 col-lg-6 col-xl-5">
             <div class="card border-0 shadow-lg rounded-4 p-4 p-sm-4.5" :class="authStore.themeMode === 'dark' ? 'bg-card-dark border border-secondary' : 'bg-white'">
               
-              <!-- Portal Header (Học Viên vs Quản Trị Viên) -->
-              <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-                <div>
-                  <h4 class="fw-black mb-0" :class="isAdminPortal ? 'text-danger' : 'text-teal'">
-                    {{ isAdminPortal ? 'Cổng Đăng Nhập Quản Trị' : 'Đăng Nhập Tài Khoản' }}
-                  </h4>
-                  <span class="text-muted fs-8">
-                    {{ isAdminPortal ? 'Dành cho Quản trị viên & Điều hành' : 'Lưu giữ hồ sơ học tập và tiến độ' }}
-                  </span>
-                </div>
-
-                <!-- Portal Switch Pill -->
-                <button
-                  type="button"
-                  @click="togglePortal"
-                  class="btn btn-sm rounded-pill px-2.5 py-1 fw-semibold fs-8 border shadow-xs"
-                  :class="isAdminPortal ? 'btn-outline-primary' : 'btn-outline-danger'"
-                  tabindex="-1"
-                >
-                  <i class="bi bi-arrow-left-right me-1"></i>
-                  {{ isAdminPortal ? 'Cổng Học Viên' : 'Cổng Admin' }}
-                </button>
+              <!-- Unified Header (Only 1 Single Portal) -->
+              <div class="mb-3.5 pb-2 border-bottom">
+                <h4 class="fw-black mb-1 text-teal">Đăng Nhập Tài Khoản</h4>
+                <span class="text-muted fs-8">
+                  Truy cập tài khoản học tập và khu vực làm việc của bạn
+                </span>
               </div>
 
               <!-- Error Alert -->
@@ -115,7 +169,7 @@
                       required
                     />
                     <label for="floatingEmail" class="text-muted">
-                      <i class="bi bi-envelope me-1.5 text-teal"></i>Email hoặc tên tài khoản
+                      <i class="bi bi-envelope me-1.5 text-teal"></i>Email hoặc tài khoản
                     </label>
                   </div>
                 </div>
@@ -134,7 +188,7 @@
                         required
                       />
                       <label for="floatingPassword" class="text-muted">
-                        <i class="bi bi-shield-lock me-1.5 text-teal"></i>Mật khẩu bảo mật
+                        <i class="bi bi-shield-lock me-1.5 text-teal"></i>Mật khẩu
                       </label>
                     </div>
 
@@ -175,14 +229,11 @@
                 <!-- Submit Button -->
                 <button
                   type="submit"
-                  class="btn w-100 py-2.5 fw-bold fs-6 shadow-sm mb-3 d-flex align-items-center justify-content-center gap-2 rounded-3"
-                  :class="isAdminPortal ? 'btn-danger' : 'btn-teal'"
+                  class="btn btn-teal w-100 py-2.5 fw-bold fs-6 shadow-sm mb-3 d-flex align-items-center justify-content-center gap-2 rounded-3"
                   :disabled="authStore.isLoading || !email || !password"
                 >
                   <span v-if="authStore.isLoading" class="spinner-border spinner-border-sm"></span>
-                  <span v-else>
-                    {{ isAdminPortal ? 'Đăng Nhập Cổng Admin' : 'Đăng Nhập' }}
-                  </span>
+                  <span v-else>Đăng Nhập</span>
                 </button>
 
                 <!-- Facebook-style Divider -->
@@ -241,23 +292,16 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 
 const authStore = useAuthStore()
 const router = useRouter()
-const route = useRoute()
 
-const isAdminPortal = ref(false)
 const email = ref('')
 const password = ref('')
 const showPassword = ref(false)
 const rememberMe = ref(false)
-
-const togglePortal = () => {
-  isAdminPortal.value = !isAdminPortal.value
-  authStore.error = null
-}
 
 const handleLogin = async () => {
   if (!email.value || !password.value) return
@@ -273,7 +317,8 @@ const handleLogin = async () => {
       localStorage.removeItem('oxvocab_saved_email')
     }
 
-    if (authStore.isStaff || authStore.isAdmin || authStore.isModerator) {
+    // Auto-detect Role: Staff / Admin automatically jump to /admin, Learners go to Home or Daily
+    if (authStore.isStaff || authStore.isAdmin) {
       router.push('/admin')
     } else {
       router.push('/daily')
@@ -282,10 +327,6 @@ const handleLogin = async () => {
 }
 
 onMounted(() => {
-  if (route.query.portal === 'admin') {
-    isAdminPortal.value = true
-  }
-
   // Restore saved login if rememberMe was previously checked
   const savedRemember = localStorage.getItem('oxvocab_remember_login')
   if (savedRemember === 'true') {
@@ -311,8 +352,12 @@ onMounted(() => {
   background-color: #242526;
 }
 
-.shadow-xs {
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+.text-teal-light {
+  color: #5eead4;
+}
+
+.shadow-2xs {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .password-eye-btn {

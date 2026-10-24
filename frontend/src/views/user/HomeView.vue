@@ -104,7 +104,7 @@
                       <i class="bi bi-person-fill fs-5"></i>
                     </div>
                     <div>
-                      <div class="fw-bold fs-7 text-dark">Học viên tiêu biểu</div>
+                      <div class="fw-bold fs-7 text-dark">Hồ sơ Học tập Thông minh</div>
                       <div class="text-muted fs-8">Lộ trình: Chinh phục 3000 từ & Giao tiếp</div>
                     </div>
                   </div>

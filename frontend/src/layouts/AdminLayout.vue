@@ -195,7 +195,7 @@ const roleBadgeClass = computed(() => {
 
 const handleLogout = async () => {
   await authStore.logout()
-  router.push('/login?portal=admin')
+  router.push('/login')
 }
 </script>
 
