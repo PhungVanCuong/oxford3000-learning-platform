@@ -356,7 +356,10 @@ const sendOtp = async () => {
   isLoading.value = true
   alertMessage.value = ''
   try {
-    const res = await axios.post('/api/auth/register-send-otp', { email: form.value.email })
+    const res = await axios.post('/api/auth/register-send-otp', {
+      name: form.value.name,
+      email: form.value.email,
+    })
     step.value = 2
     alertMessage.value = res.data.message || 'Mã xác nhận OTP đã được gửi đến email!'
     alertType.value = 'success'
