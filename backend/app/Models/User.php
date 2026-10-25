@@ -25,6 +25,7 @@ class User extends Authenticatable
         'last_study_date',
         'words_per_day',
         'theme_mode',
+        'header_nav_json',
     ];
 
     protected $hidden = [
@@ -68,6 +69,7 @@ class User extends Authenticatable
             'xp_points' => 'integer',
             'streak_days' => 'integer',
             'permissions_json' => 'array',
+            'header_nav_json' => 'array',
         ];
     }
 

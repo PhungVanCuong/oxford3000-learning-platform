@@ -124,12 +124,12 @@
               </div>
             </div>
             <div class="d-flex align-items-baseline gap-2">
-              <div class="display-6 fw-black text-teal">{{ stats.total_phrasal_verbs || 20 }}</div>
-              <span class="text-muted fs-7">cụm từ ghép</span>
+              <div class="display-6 fw-black text-teal">{{ stats.total_phrasal_verbs || 945 }}</div>
+              <span class="text-muted fs-7">cụm từ & mẫu câu</span>
             </div>
             <div class="text-muted fs-8 mt-2 d-flex align-items-center gap-1.5">
               <i class="bi bi-link-45deg text-warning"></i>
-              <span>Đồng bộ tiến độ các từ thành phần</span>
+              <span>95 Cụm Động Từ & 850 Cụm Từ Thông Dụng</span>
             </div>
           </div>
         </router-link>

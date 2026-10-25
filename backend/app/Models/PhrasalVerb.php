@@ -12,6 +12,8 @@ class PhrasalVerb extends Model
     protected $fillable = [
         'phrase',
         'type',
+        'category',
+        'part_number',
         'meaning_vi',
         'example_en',
         'example_vi',

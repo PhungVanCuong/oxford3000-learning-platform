@@ -24,6 +24,49 @@
       </div>
     </div>
 
+    <!-- Top Overall Progress Dashboard (Matching Curriculum & Daily) -->
+    <div class="card p-4 rounded-4 shadow-sm border bg-card-custom mb-4" style="border-left: 6px solid #00b074;">
+      <div class="row g-3 align-items-center">
+        <div class="col-12 col-md-4">
+          <div class="d-flex align-items-center gap-3">
+            <div class="rounded-4 p-3 bg-teal-subtle text-teal d-flex align-items-center justify-content-center" style="width: 52px; height: 52px;">
+              <i class="bi bi-mortarboard-fill fs-3"></i>
+            </div>
+            <div>
+              <div class="text-muted fs-8 fw-bold text-uppercase">Bài học hoàn thành</div>
+              <div class="fs-4 fw-black text-teal">{{ completedLessonsCount }} / {{ grammars.length }} bài</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4 border-start-md">
+          <div class="d-flex align-items-center gap-3">
+            <div class="rounded-4 p-3 bg-warning-subtle text-warning-emphasis d-flex align-items-center justify-content-center" style="width: 52px; height: 52px;">
+              <i class="bi bi-pencil-square fs-3"></i>
+            </div>
+            <div>
+              <div class="text-muted fs-8 fw-bold text-uppercase">Tổng số câu đã hoàn thành</div>
+              <div class="fs-4 fw-black text-warning-emphasis">{{ completedQuestionsCount }} / {{ totalQuestionsCount }} câu</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4 border-start-md">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="text-muted fs-8 fw-bold text-uppercase">Tiến độ ngữ pháp toàn khóa</span>
+            <span class="fw-black text-teal fs-6">{{ overallPercent }}%</span>
+          </div>
+          <div class="progress" style="height: 10px; border-radius: 999px;">
+            <div
+              class="progress-bar rounded-pill bg-teal"
+              role="progressbar"
+              :style="{ width: `${overallPercent}%` }"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Category Filter Tabs -->
     <div class="d-flex align-items-center gap-2 mb-4 overflow-x-auto pb-1 flex-nowrap">
       <button
@@ -68,8 +111,11 @@
                 <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2.5 py-1 rounded-pill fs-8 fw-bold">
                   {{ g.level }}
                 </span>
-                <span v-if="g.is_completed" class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1 rounded-pill fs-8 fw-bold">
-                  <i class="bi bi-check-circle-fill me-1"></i>Đã học ({{ g.best_score }}%)
+                <span v-if="isGrammarCompleted(g)" class="badge bg-success text-white px-2.5 py-1 rounded-pill fs-8 fw-bold shadow-xs">
+                  <i class="bi bi-check-circle-fill me-1"></i>✓ ĐÃ XONG
+                </span>
+                <span v-else-if="getGrammarCompletedCount(g) > 0" class="badge bg-warning text-dark px-2.5 py-1 rounded-pill fs-8 fw-bold">
+                  <i class="bi bi-clock-history me-1"></i>Đang học ({{ getGrammarPercent(g) }}%)
                 </span>
                 <span v-else class="badge bg-secondary-subtle text-secondary px-2 py-1 rounded-pill fs-8">
                   Chưa học
@@ -86,10 +132,30 @@
               {{ g.summary || 'Nắm trọn cấu trúc, dấu hiệu nhận biết, bảng công thức chủ động & bị động và bài tập dịch câu.' }}
             </p>
 
+            <!-- Card Progress Section (Matching Curriculum & Daily) -->
+            <div class="p-2.5 rounded-3 bg-body-tertiary border mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-1 fs-8">
+                <span class="text-muted fw-semibold">
+                  <i class="bi bi-pencil-fill text-teal me-1"></i>
+                  Đã làm: <strong>{{ getGrammarCompletedCount(g) }}/{{ getGrammarTotalCount(g) }}</strong> câu
+                </span>
+                <span class="fw-bold" :class="isGrammarCompleted(g) ? 'text-success' : 'text-teal'">
+                  {{ getGrammarPercent(g) }}%
+                </span>
+              </div>
+              <div class="progress" style="height: 6px; border-radius: 999px;">
+                <div
+                  class="progress-bar rounded-pill"
+                  :class="isGrammarCompleted(g) ? 'bg-success' : 'bg-teal'"
+                  :style="{ width: `${getGrammarPercent(g)}%` }"
+                ></div>
+              </div>
+            </div>
+
             <!-- Feature Badges within Card -->
-            <div class="d-flex flex-wrap gap-1.5 mb-3 fs-8">
+            <div class="d-flex flex-wrap gap-1.5 mb-2 fs-8">
               <span class="badge bg-light text-secondary border px-2 py-1">
-                <i class="bi bi-translate text-teal me-1"></i> {{ g.total_exercises || g.questions_count }} bài tập thực hành
+                <i class="bi bi-translate text-teal me-1"></i> {{ getGrammarTotalCount(g) }} bài tập thực hành
               </span>
               <span class="badge bg-light text-secondary border px-2 py-1">
                 <i class="bi bi-robot text-primary me-1"></i> Chấm điểm AI
@@ -102,9 +168,10 @@
             <router-link 
               :to="`/grammar/${g.id}`" 
               class="btn w-100 rounded-pill py-2.5 fw-black fs-7 shadow-xs d-flex align-items-center justify-content-center gap-2 btn-grammar-action text-white"
-              :style="{ backgroundColor: g.badge_color || '#00b074' }"
+              :style="{ backgroundColor: isGrammarCompleted(g) ? '#059669' : (g.badge_color || '#00b074') }"
             >
-              <span>Học lý thuyết & Làm bài tập</span>
+              <i :class="isGrammarCompleted(g) ? 'bi bi-check2-circle' : 'bi bi-play-circle-fill'"></i>
+              <span>{{ isGrammarCompleted(g) ? 'Xem lại kết quả & Ôn tập ✓' : 'Học lý thuyết & Làm bài tập' }}</span>
               <i class="bi bi-arrow-right"></i>
             </router-link>
           </div>
@@ -121,6 +188,64 @@ import axios from 'axios'
 const grammars = ref([])
 const isLoading = ref(true)
 const selectedCategory = ref('all')
+const localProgressMap = ref({})
+
+const loadLocalGrammarProgress = () => {
+  try {
+    localProgressMap.value = JSON.parse(localStorage.getItem('ox_all_grammar_progress') || '{}')
+  } catch (e) {
+    localProgressMap.value = {}
+  }
+}
+
+const getGrammarTotalCount = (g) => {
+  if (localProgressMap.value[g.id]?.totalCount) {
+    return localProgressMap.value[g.id].totalCount
+  }
+  return g.total_exercises || g.questions_count || 20
+}
+
+const getGrammarCompletedCount = (g) => {
+  if (localProgressMap.value[g.id]?.completedCount !== undefined) {
+    return localProgressMap.value[g.id].completedCount
+  }
+  if (g.is_completed) {
+    return getGrammarTotalCount(g)
+  }
+  return 0
+}
+
+const isGrammarCompleted = (g) => {
+  if (localProgressMap.value[g.id]?.isFinished) return true
+  if (g.is_completed) return true
+  const comp = getGrammarCompletedCount(g)
+  const total = getGrammarTotalCount(g)
+  return total > 0 && comp >= total
+}
+
+const getGrammarPercent = (g) => {
+  const total = getGrammarTotalCount(g)
+  if (total === 0) return 0
+  const comp = getGrammarCompletedCount(g)
+  return Math.min(100, Math.round((comp / total) * 100))
+}
+
+const completedLessonsCount = computed(() => {
+  return grammars.value.filter(g => isGrammarCompleted(g)).length
+})
+
+const totalQuestionsCount = computed(() => {
+  return grammars.value.reduce((acc, g) => acc + getGrammarTotalCount(g), 0)
+})
+
+const completedQuestionsCount = computed(() => {
+  return grammars.value.reduce((acc, g) => acc + getGrammarCompletedCount(g), 0)
+})
+
+const overallPercent = computed(() => {
+  if (totalQuestionsCount.value === 0) return 0
+  return Math.min(100, Math.round((completedQuestionsCount.value / totalQuestionsCount.value) * 100))
+})
 
 const categories = [
   { key: 'all', label: 'Tất cả 12 thì & Chuyên đề', icon: 'bi-grid-fill' },
@@ -162,6 +287,7 @@ const filteredGrammars = computed(() => {
 })
 
 onMounted(() => {
+  loadLocalGrammarProgress()
   fetchGrammars()
 })
 </script>

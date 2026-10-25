@@ -242,7 +242,7 @@
             <div class="mb-4">
               <div class="d-flex justify-content-between align-items-center mb-1 fs-7">
                 <span class="fw-bold d-flex align-items-center gap-1.5">
-                  <i class="bi bi-book-half text-primary"></i>
+                  <i class="bi bi-journal-bookmark-fill text-danger"></i>
                   <span>Ngữ pháp (12 thì & chuyên đề)</span>
                 </span>
                 <div class="d-flex gap-2">
@@ -255,6 +255,27 @@
                   class="progress-bar rounded-pill"
                   role="progressbar"
                   :style="{ width: `${Math.min(100, grammarPercent)}%`, backgroundColor: '#0d7362' }"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Progress 4: Cụm từ & Cụm động từ (Phrasal Verbs & 1000 Cụm từ) -->
+            <div class="mb-4">
+              <div class="d-flex justify-content-between align-items-center mb-1 fs-7">
+                <span class="fw-bold d-flex align-items-center gap-1.5">
+                  <i class="bi bi-puzzle-fill text-warning"></i>
+                  <span>Cụm từ & Cụm động từ (945 câu & cụm)</span>
+                </span>
+                <div class="d-flex gap-2">
+                  <span class="text-muted">{{ authStore.stats?.mastered_phrases || 0 }}/{{ authStore.stats?.total_phrases || 945 }} câu</span>
+                  <span class="fw-bold text-teal">{{ formatFloatPercent(phrasesPercent) }}%</span>
+                </div>
+              </div>
+              <div class="progress" style="height: 10px; border-radius: 999px;">
+                <div
+                  class="progress-bar rounded-pill"
+                  role="progressbar"
+                  :style="{ width: `${Math.min(100, phrasesPercent)}%`, backgroundColor: '#f59e0b' }"
                 ></div>
               </div>
             </div>
@@ -277,7 +298,104 @@
       </div>
     </div>
 
-    <!-- 3. TIẾN ĐỘ CHI TIẾT 25 CHỦ ĐỀ LỘ TRÌNH IELTS (5.000 TỪ) -->
+    <!-- 3. TÙY CHỈNH THANH ĐIỀU HƯỚNG HEADER (MENU 6 MỤC) -->
+    <div class="card p-4 rounded-4 shadow-sm border bg-card-custom mb-4" style="border-color: #E2E8F0;">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-3">
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <span class="badge bg-teal-dark text-white rounded-pill px-2.5 py-1 fs-8">NAV</span>
+            <h5 class="fw-bold mb-0 text-teal">TÙY CHỈNH THANH ĐIỀU HƯỚNG HEADER (MENU 6 MỤC)</h5>
+          </div>
+          <div class="text-muted fs-7">
+            Thanh Header gồm 6 mục: <strong>Trang chủ</strong> (Cố định vị trí 1), <strong>4 Mục bạn tự chọn</strong> (Vị trí 2 - 5), và <strong>Xem thêm ▾</strong> (Cố định vị trí 6 chứa các mục còn lại).
+          </div>
+        </div>
+        <button
+          @click="saveHeaderNav"
+          class="btn btn-teal text-white rounded-pill px-4 py-2 fw-bold fs-7 d-flex align-items-center gap-1.5 shadow-sm"
+          :disabled="isSavingNav"
+        >
+          <span v-if="isSavingNav" class="spinner-border spinner-border-sm me-1"></span>
+          <i v-else class="bi bi-check2-circle fs-6"></i>
+          <span>Lưu Cấu Hình Menu ({{ selectedNavIds.length }}/4)</span>
+        </button>
+      </div>
+
+      <!-- Live Preview of Header Bar -->
+      <div class="p-3 rounded-4 mb-3" style="background-color: rgba(6, 78, 64, 0.05); border: 1.5px dashed rgba(6, 78, 64, 0.2);">
+        <div class="text-muted fs-8 fw-bold text-uppercase mb-2 d-flex align-items-center gap-1.5">
+          <i class="bi bi-eye-fill text-teal"></i>
+          <span>Mô Phỏng Giao Diện Thanh Header 6 Mục Của Bạn:</span>
+        </div>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <!-- Fixed 1: Trang chủ -->
+          <div class="badge bg-light text-dark border px-3 py-2 rounded-pill fs-7 fw-semibold d-flex align-items-center gap-1.5 shadow-xs">
+            <i class="bi bi-house-door-fill text-primary"></i>
+            <span>1. Trang chủ (Cố định)</span>
+          </div>
+
+          <!-- Dynamic Slots 2-5 -->
+          <div
+            v-for="(id, idx) in selectedNavIds"
+            :key="id"
+            class="badge text-white px-3 py-2 rounded-pill fs-7 fw-bold d-flex align-items-center gap-1.5 shadow-sm"
+            style="background: linear-gradient(135deg, #00b074 0%, #064e40 100%);"
+          >
+            <i :class="[getNavOption(id)?.icon, 'text-warning']"></i>
+            <span>{{ idx + 2 }}. {{ getNavOption(id)?.label }}</span>
+            <button
+              @click.stop="toggleNavItem(id)"
+              class="btn-close btn-close-white p-0 ms-1"
+              style="width: 8px; height: 8px;"
+              title="Bỏ mục này"
+            ></button>
+          </div>
+
+          <!-- Empty placeholders if < 4 -->
+          <div
+            v-for="emptyIdx in (4 - selectedNavIds.length)"
+            :key="'empty-' + emptyIdx"
+            class="badge bg-light text-muted border border-dashed px-3 py-2 rounded-pill fs-7 fw-normal"
+          >
+            + Chọn thêm {{ emptyIdx }} mục
+          </div>
+
+          <!-- Fixed 6: Xem thêm -->
+          <div class="badge bg-light text-dark border px-3 py-2 rounded-pill fs-7 fw-semibold d-flex align-items-center gap-1.5 shadow-xs">
+            <i class="bi bi-grid-fill text-teal"></i>
+            <span>6. Xem thêm ▾ ({{ availableNavOptions.length - selectedNavIds.length }} mục phụ)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selectable items grid -->
+      <div class="row g-2.5">
+        <div v-for="opt in availableNavOptions" :key="opt.id" class="col-12 col-sm-6 col-lg-4 col-xl-2-4">
+          <div
+            @click="toggleNavItem(opt.id)"
+            class="card p-3 rounded-4 border h-100 cursor-pointer transition-all user-select-none"
+            :class="selectedNavIds.includes(opt.id) ? 'border-success bg-success-subtle shadow-xs' : 'border-light-subtle bg-white hover-card'"
+            style="cursor: pointer;"
+          >
+            <div class="d-flex justify-content-between align-items-start mb-1.5">
+              <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;" :class="selectedNavIds.includes(opt.id) ? 'bg-success text-white' : 'bg-light ' + opt.color">
+                <i :class="opt.icon"></i>
+              </div>
+              <span v-if="selectedNavIds.includes(opt.id)" class="badge bg-success rounded-pill px-2 py-1 fs-8">
+                <i class="bi bi-check-lg me-0.5"></i>Vị trí {{ selectedNavIds.indexOf(opt.id) + 2 }}
+              </span>
+              <span v-else class="badge bg-light text-muted rounded-pill px-2 py-1 fs-8">
+                Xem thêm ▾
+              </span>
+            </div>
+            <div class="fw-bold fs-7 text-dark-emphasis mb-0.5">{{ opt.label }}</div>
+            <div class="text-muted fs-8 leading-tight">{{ opt.desc }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. TIẾN ĐỘ CHI TIẾT 25 CHỦ ĐỀ LỘ TRÌNH IELTS (5.000 TỪ) -->
     <div class="card p-4 rounded-4 shadow-sm border bg-card-custom mb-4" style="border-color: #E2E8F0;">
       <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-3">
         <div>
@@ -400,6 +518,57 @@ const router = useRouter()
 const isSaving = ref(false)
 const showResetConfirm = ref(false)
 const isResetting = ref(false)
+const isSavingNav = ref(false)
+
+const availableNavOptions = [
+  { id: 'curriculum', label: 'Lộ trình', desc: '25 Chủ đề IELTS 5000 từ', icon: 'bi bi-signpost-split-fill', color: 'text-success' },
+  { id: 'daily', label: 'Học theo Ngày', desc: 'Lộ trình từng ngày 3000 từ', icon: 'bi bi-calendar-check-fill', color: 'text-warning' },
+  { id: 'grammar', label: 'Ngữ pháp', desc: '12 thì và bài tập dịch câu', icon: 'bi bi-journal-bookmark-fill', color: 'text-danger' },
+  { id: 'phrasal_verbs', label: 'Cụm từ', desc: '100 Phrasal Verbs & 1000 Cụm từ', icon: 'bi bi-puzzle-fill', color: 'text-info' },
+  { id: 'dictionary', label: 'Tra cứu', desc: 'Từ điển tra cứu 3000 từ vựng', icon: 'bi bi-search-heart-fill', color: 'text-teal' },
+  { id: 'ipa', label: '44 Âm IPA', desc: 'Bảng phiên âm chuẩn quốc tế', icon: 'bi bi-soundwave', color: 'text-primary' },
+  { id: 'tips', label: 'Mẹo học', desc: 'Phương pháp & bí quyết học từ', icon: 'bi bi-lightbulb-fill', color: 'text-warning' },
+  { id: 'tree', label: 'Cây tri thức', desc: 'Vườn cây tiến độ học tập', icon: 'bi bi-tree-fill', color: 'text-success' },
+  { id: 'stats', label: 'Năng suất', desc: 'Biểu đồ giờ học & streak', icon: 'bi bi-bar-chart-fill', color: 'text-primary' },
+  { id: 'topics', label: 'Chủ đề', desc: 'Danh mục chủ đề từ vựng', icon: 'bi bi-grid-1x2-fill', color: 'text-secondary' },
+]
+
+const selectedNavIds = ref([...(authStore.headerNavItems || ['curriculum', 'daily', 'grammar', 'phrasal_verbs'])])
+
+const getNavOption = (id) => availableNavOptions.find(opt => opt.id === id)
+
+const toggleNavItem = (id) => {
+  if (selectedNavIds.value.includes(id)) {
+    if (selectedNavIds.value.length <= 1) {
+      alert('Vui lòng chọn ít nhất 1 mục hiển thị trên thanh Header!')
+      return
+    }
+    selectedNavIds.value = selectedNavIds.value.filter(item => item !== id)
+  } else {
+    if (selectedNavIds.value.length >= 4) {
+      alert('Tối đa 4 mục tùy chỉnh trên thanh Header (kết hợp với Trang chủ và Xem thêm là tròn 6 mục)! Hãy bỏ bớt 1 mục trước khi chọn thêm.')
+      return
+    }
+    selectedNavIds.value.push(id)
+  }
+}
+
+const saveHeaderNav = async () => {
+  if (selectedNavIds.value.length !== 4) {
+    alert('Vui lòng chọn đúng 4 mục để thanh Header hiển thị chuẩn xác 6 mục!')
+    return
+  }
+  isSavingNav.value = true
+  try {
+    await authStore.setHeaderNav(selectedNavIds.value)
+    alert('Đã lưu cấu hình thanh Header thành công! Thanh điều hướng đã cập nhật 6 mục.')
+  } catch (err) {
+    console.error(err)
+    alert('Lỗi lưu cấu hình: ' + (err.response?.data?.message || err.message))
+  } finally {
+    isSavingNav.value = false
+  }
+}
 
 const presetAvatars = [
   'https://api.dicebear.com/7.x/bottts/svg?seed=CuongPhung',
@@ -449,6 +618,15 @@ const vocabPercent = computed(() => {
   return Math.min(100, (comp / 3351) * 100)
 })
 
+const phrasesPercent = computed(() => {
+  if (authStore.stats?.phrases_percent !== undefined) {
+    return Number(authStore.stats.phrases_percent)
+  }
+  const comp = authStore.stats?.mastered_phrases || 0
+  const total = authStore.stats?.total_phrases || 945
+  return Math.min(100, (comp / total) * 100)
+})
+
 const plantStage = computed(() => {
   const xp = authStore.user?.xp_points || 0
   if (xp < 150) return 'Hạt giống ươm mầm'
@@ -492,6 +670,10 @@ onMounted(async () => {
     form.value.avatar_url = authStore.user.avatar_url || presetAvatars[0]
     form.value.birth_date = authStore.user.birth_date ? authStore.user.birth_date.substring(0, 10) : '2005-10-18'
     form.value.words_per_day = authStore.user.words_per_day || 15
+  }
+
+  if (authStore.headerNavItems && Array.isArray(authStore.headerNavItems) && authStore.headerNavItems.length === 4) {
+    selectedNavIds.value = [...authStore.headerNavItems]
   }
 
   // Load Curriculum 25 Topics Progress

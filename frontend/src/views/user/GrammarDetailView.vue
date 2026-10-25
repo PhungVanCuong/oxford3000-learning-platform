@@ -212,17 +212,53 @@
           <!-- Exercise Phase Header -->
           <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4 border-bottom pb-3">
             <div>
-              <div class="d-flex align-items-center gap-2 mb-1">
+              <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
                 <span class="badge bg-teal text-white rounded-pill px-2.5 py-1 fs-8">TẤT CẢ DẠNG BÀI TẬP TRONG PDF</span>
                 <span class="badge bg-warning-subtle text-dark border rounded-pill px-2.5 py-1 fs-8">AI CHẤM ĐIỂM TỰ ĐỘNG</span>
+                <span v-if="isAllCompleted" class="badge bg-success text-white rounded-pill px-2.5 py-1 fs-8 fw-bold">
+                  <i class="bi bi-check-circle-fill me-1"></i> ✓ ĐÃ XONG TOÀN BỘ
+                </span>
               </div>
               <h4 class="fw-black text-teal mb-0">
                 <i class="bi bi-stars text-warning me-2"></i> Luyện Tập & Chấm Điểm Thực Chiến (49 Trang PDF)
               </h4>
             </div>
-            <div class="text-end">
-              <span class="fs-7 fw-bold text-muted">Đã hoàn thành: </span>
-              <span class="badge bg-teal text-white fs-7 px-3 py-1.5 rounded-pill">{{ completedCount }} câu đạt chuẩn</span>
+            <div class="text-end d-flex flex-column align-items-md-end gap-1">
+              <div class="d-flex align-items-center gap-2">
+                <span class="fs-7 fw-bold text-muted">Tiến độ bài làm:</span>
+                <span class="badge bg-teal text-white fs-7 px-3 py-1.5 rounded-pill shadow-xs">
+                  {{ completedCount }}/{{ totalExercisesCount }} câu đạt chuẩn ({{ progressPercent }}%)
+                </span>
+              </div>
+              <div class="d-flex align-items-center gap-2 mt-1">
+                <button
+                  v-if="completedCount > 0"
+                  @click="resetAllExercises"
+                  class="btn btn-sm btn-outline-danger rounded-pill px-3 py-1 fs-8 fw-semibold"
+                  title="Xóa kết quả để làm lại từ đầu"
+                >
+                  <i class="bi bi-arrow-counterclockwise me-1"></i> Làm lại bài này
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Overall Progress Bar Banner -->
+          <div class="p-3 rounded-4 mb-4" :class="isAllCompleted ? 'bg-success-subtle border border-success' : 'bg-body-tertiary border'">
+            <div class="d-flex justify-content-between align-items-center mb-1.5 fs-7">
+              <span class="fw-bold d-flex align-items-center gap-1.5">
+                <i :class="isAllCompleted ? 'bi bi-check-circle-fill text-success' : 'bi bi-award-fill text-teal'"></i>
+                <span>{{ isAllCompleted ? 'Chúc mừng! Bạn đã hoàn thành 100% tất cả bài tập thì này.' : 'Tiến độ hoàn thành các câu bài tập:' }}</span>
+              </span>
+              <span class="fw-black" :class="isAllCompleted ? 'text-success' : 'text-teal'">{{ completedCount }} / {{ totalExercisesCount }} câu ({{ progressPercent }}%)</span>
+            </div>
+            <div class="progress" style="height: 8px; border-radius: 999px;">
+              <div
+                class="progress-bar rounded-pill"
+                role="progressbar"
+                :class="isAllCompleted ? 'bg-success' : 'bg-teal'"
+                :style="{ width: `${progressPercent}%` }"
+              ></div>
             </div>
           </div>
 
@@ -292,8 +328,8 @@
 
                   <!-- Status Badge -->
                   <div v-if="results[idx]">
-                    <span v-if="results[idx].passed" class="badge bg-success text-white rounded-pill px-3 py-1.5 fs-8 shadow-xs">
-                      <i class="bi bi-check2-circle me-1"></i> Đạt {{ results[idx].similarity_score }}% (+15 XP)
+                    <span v-if="results[idx].passed" class="badge bg-success text-white rounded-pill px-3 py-1.5 fs-8 shadow-xs fw-bold">
+                      <i class="bi bi-check-circle-fill me-1"></i> ✓ ĐÃ XONG ({{ results[idx].similarity_score }}%)
                     </span>
                     <span v-else class="badge bg-warning text-dark rounded-pill px-3 py-1.5 fs-8">
                       <i class="bi bi-exclamation-triangle me-1"></i> Chưa đạt ({{ results[idx].similarity_score }}%)
@@ -383,8 +419,8 @@
                     Câu {{ String(vIdx + 1).padStart(2, '0') }}
                   </span>
                   <div v-if="verbResults[vIdx]">
-                    <span v-if="verbResults[vIdx].passed" class="badge bg-success text-white rounded-pill px-3 py-1 fs-8">
-                      ✓ Đúng (+10 XP)
+                    <span v-if="verbResults[vIdx].passed" class="badge bg-success text-white rounded-pill px-3 py-1 fs-8 fw-bold shadow-xs">
+                      <i class="bi bi-check-circle-fill me-1"></i> ✓ ĐÃ XONG (+10 XP)
                     </span>
                     <span v-else class="badge bg-danger text-white rounded-pill px-3 py-1 fs-8">
                       ✗ Chưa đúng
@@ -448,8 +484,8 @@
                     Câu {{ String(bIdx + 1).padStart(2, '0') }}
                   </span>
                   <div v-if="buildResults[bIdx]">
-                    <span v-if="buildResults[bIdx].passed" class="badge bg-success text-white rounded-pill px-3 py-1 fs-8">
-                      ✓ Đạt chuẩn (+15 XP)
+                    <span v-if="buildResults[bIdx].passed" class="badge bg-success text-white rounded-pill px-3 py-1 fs-8 fw-bold shadow-xs">
+                      <i class="bi bi-check-circle-fill me-1"></i> ✓ ĐÃ XONG (+15 XP)
                     </span>
                     <span v-else class="badge bg-danger text-white rounded-pill px-3 py-1 fs-8">
                       ✗ Cần sửa lại
@@ -569,12 +605,166 @@ const sentenceBuildingExercises = computed(() => {
   return ex.sentence_buildings || []
 })
 
+const totalExercisesCount = computed(() => {
+  return translationExercises.value.length + verbConjugationExercises.value.length + sentenceBuildingExercises.value.length
+})
+
+const progressPercent = computed(() => {
+  if (totalExercisesCount.value === 0) return 0
+  return Math.min(100, Math.round((completedCount.value / totalExercisesCount.value) * 100))
+})
+
+const isAllCompleted = computed(() => {
+  return totalExercisesCount.value > 0 && completedCount.value >= totalExercisesCount.value
+})
+
 const completedCount = computed(() => {
   const transPassed = Object.values(results.value).filter(r => r?.passed).length
   const verbPassed = Object.values(verbResults.value).filter(r => r?.passed).length
   const buildPassed = Object.values(buildResults.value).filter(r => r?.passed).length
   return transPassed + verbPassed + buildPassed
 })
+
+// Guaranteed Local & Offline Grader
+const evaluateTranslationLocally = (userAns, expected) => {
+  const norm = (s) => (s || '')
+    .toLowerCase()
+    .replace(/[.,?!:;"'`\-_()]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  const cleanUser = norm(userAns)
+  const cleanExp = norm(expected)
+
+  // 1. Direct match
+  if (cleanUser === cleanExp) {
+    return {
+      passed: true,
+      similarity_score: 100,
+      ai_result: {
+        corrected_answer: expected,
+        simple_explanation: 'Chính xác 100%! Bạn đã dịch rất đúng và chuẩn xác cấu trúc ngữ pháp.'
+      }
+    }
+  }
+
+  // 2. Token sets (handles connectors like "and", ",", "&", "-", order-insensitive)
+  const stripConnectors = (tokens) => {
+    const stopWords = ['and', '&', 'or', 'a', 'an', 'the', 'with', 'to']
+    return tokens.filter(t => !stopWords.includes(t))
+  }
+  const uTokens = stripConnectors(cleanUser.split(' ').filter(Boolean))
+  const eTokens = stripConnectors(cleanExp.split(' ').filter(Boolean))
+
+  const uSorted = [...uTokens].sort().join(' ')
+  const eSorted = [...eTokens].sort().join(' ')
+
+  if (uSorted && eSorted && uSorted === eSorted) {
+    return {
+      passed: true,
+      similarity_score: 100,
+      ai_result: {
+        corrected_answer: expected,
+        simple_explanation: 'Xuất sắc! Bạn đã điền đúng tất cả các từ cần thiết dù cách dùng từ nối (dấu phẩy hoặc từ and) có khác một chút.'
+      }
+    }
+  }
+
+  // 3. Substring / Token matching
+  let matchedTokens = 0
+  const eSet = new Set(eTokens)
+  uTokens.forEach(t => {
+    if (eSet.has(t)) matchedTokens++
+  })
+
+  const tokenScore = eTokens.length > 0 ? Math.round((matchedTokens / eTokens.length) * 100) : 0
+
+  // 4. Character overlap
+  const maxLen = Math.max(cleanUser.length, cleanExp.length)
+  let commonChars = 0
+  for (let i = 0; i < Math.min(cleanUser.length, cleanExp.length); i++) {
+    if (cleanUser[i] === cleanExp[i]) commonChars++
+  }
+  const charScore = maxLen > 0 ? Math.round((commonChars / maxLen) * 100) : 0
+  const finalScore = Math.min(100, Math.max(tokenScore, charScore))
+
+  const isPassed = finalScore >= 80
+
+  return {
+    passed: isPassed,
+    similarity_score: finalScore,
+    ai_result: {
+      corrected_answer: expected,
+      simple_explanation: isPassed
+        ? `Đạt yêu cầu (${finalScore}%)! Câu dịch của bạn đã thể hiện đúng nghĩa cốt lõi của thì.`
+        : `Chưa đạt (${finalScore}%). Hãy đối chiếu với đáp án chuẩn bên dưới để hoàn thiện nhé.`
+    }
+  }
+}
+
+// Save & Restore localStorage Progress
+const getProgressStorageKey = () => `ox_grammar_${grammar.value?.id}_progress`
+
+const saveLocalProgress = () => {
+  if (!grammar.value?.id) return
+  const data = {
+    userAnswers: userAnswers.value,
+    results: results.value,
+    verbAnswers: verbAnswers.value,
+    verbResults: verbResults.value,
+    buildAnswers: buildAnswers.value,
+    buildResults: buildResults.value,
+    completedCount: completedCount.value,
+    totalExercisesCount: totalExercisesCount.value,
+    savedAt: new Date().toISOString()
+  }
+  localStorage.setItem(getProgressStorageKey(), JSON.stringify(data))
+
+  // Update global grammar overview storage for GrammarView.vue
+  try {
+    const allProgress = JSON.parse(localStorage.getItem('ox_all_grammar_progress') || '{}')
+    allProgress[grammar.value.id] = {
+      completedCount: completedCount.value,
+      totalCount: totalExercisesCount.value,
+      isFinished: completedCount.value >= totalExercisesCount.value && totalExercisesCount.value > 0,
+      percent: totalExercisesCount.value > 0 ? Math.round((completedCount.value / totalExercisesCount.value) * 100) : 0,
+      updatedAt: new Date().toISOString()
+    }
+    localStorage.setItem('ox_all_grammar_progress', JSON.stringify(allProgress))
+  } catch (e) {}
+}
+
+const loadLocalProgress = () => {
+  if (!grammar.value?.id) return
+  try {
+    const saved = localStorage.getItem(getProgressStorageKey())
+    if (saved) {
+      const data = JSON.parse(saved)
+      if (data.userAnswers) userAnswers.value = data.userAnswers
+      if (data.results) results.value = data.results
+      if (data.verbAnswers) verbAnswers.value = data.verbAnswers
+      if (data.verbResults) verbResults.value = data.verbResults
+      if (data.buildAnswers) buildAnswers.value = data.buildAnswers
+      if (data.buildResults) buildResults.value = data.buildResults
+    }
+  } catch (e) {
+    console.error('Lỗi tải tiến độ cũ:', e)
+  }
+}
+
+const resetAllExercises = () => {
+  if (!confirm('Bạn có chắc chắn muốn làm lại bài tập của thì này? Toàn bộ kết quả đã làm sẽ được làm mới.')) return
+  userAnswers.value = {}
+  results.value = {}
+  verbAnswers.value = {}
+  verbResults.value = {}
+  buildAnswers.value = {}
+  buildResults.value = {}
+  if (grammar.value?.id) {
+    localStorage.removeItem(getProgressStorageKey())
+    saveLocalProgress()
+  }
+}
 
 const getPlaceholder = (item) => {
   if (!item?.expected) return '...'
@@ -620,18 +810,16 @@ const checkAnswer = async (idx, item) => {
     if (isPassed && authStore.user) {
       authStore.user.xp_points = payload.user_xp || ((authStore.user.xp_points || 0) + 15)
     }
+    saveLocalProgress()
   } catch (err) {
-    console.error('Lỗi khi chấm điểm dịch câu:', err)
-    // Fallback local check
-    const isClose = ans.toLowerCase().includes(item.expected.toLowerCase().substring(0, 8))
-    results.value[idx] = {
-      passed: isClose,
-      similarity_score: isClose ? 85 : 60,
-      ai_result: {
-        corrected_answer: item.expected,
-        simple_explanation: isClose ? 'Câu dịch rất tốt!' : 'Hệ thống đã ghi nhận câu trả lời của bạn.'
-      }
+    console.warn('API chấm điểm dịch câu không khả dụng, sử dụng bộ chấm điểm thông minh cục bộ:', err)
+    // Guaranteed Offline / Local Fallback Grader
+    const fallback = evaluateTranslationLocally(ans, item.expected)
+    results.value[idx] = fallback
+    if (fallback.passed && authStore.user) {
+      authStore.user.xp_points = (authStore.user.xp_points || 0) + 15
     }
+    saveLocalProgress()
   } finally {
     loadingCheck.value[idx] = false
   }
@@ -654,6 +842,7 @@ const checkVerbConjugation = (idx, item) => {
   if (isMatch && authStore.user) {
     authStore.user.xp_points = (authStore.user.xp_points || 0) + 10
   }
+  saveLocalProgress()
 }
 
 const checkSentenceBuilding = (idx, item) => {
@@ -673,6 +862,7 @@ const checkSentenceBuilding = (idx, item) => {
   if (isMatch && authStore.user) {
     authStore.user.xp_points = (authStore.user.xp_points || 0) + 15
   }
+  saveLocalProgress()
 }
 
 const startQuiz = async () => {
@@ -690,7 +880,8 @@ const startQuiz = async () => {
 }
 
 const handleGrammarQuizCompleted = () => {
-  // refresh user data or show alert
+  // refresh user data
+  authStore.fetchMe()
 }
 
 onMounted(async () => {
@@ -698,6 +889,7 @@ onMounted(async () => {
   try {
     const res = await axios.get(`/api/grammars/${route.params.id}`)
     grammar.value = res.data.data
+    loadLocalProgress()
   } catch (err) {
     console.error('Failed to load grammar detail:', err)
   } finally {

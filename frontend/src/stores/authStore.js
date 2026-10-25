@@ -17,6 +17,13 @@ export const useAuthStore = defineStore('auth', {
     error: null,
     showLoginModal: false,
     loginModalMessage: '',
+    headerNavItems: (() => {
+      try {
+        const saved = JSON.parse(localStorage.getItem('oxford_header_nav'))
+        if (Array.isArray(saved) && saved.length === 4) return saved
+      } catch (e) {}
+      return ['curriculum', 'daily', 'grammar', 'phrasal_verbs']
+    })(),
   }),
 
   getters: {
@@ -168,6 +175,10 @@ export const useAuthStore = defineStore('auth', {
           if (this.user?.theme_mode) {
             this.applyTheme(this.user.theme_mode)
           }
+          if (this.user?.header_nav_json && Array.isArray(this.user.header_nav_json) && this.user.header_nav_json.length === 4) {
+            this.headerNavItems = this.user.header_nav_json
+            localStorage.setItem('oxford_header_nav', JSON.stringify(this.headerNavItems))
+          }
         } else {
           this.user = null
           this.stats = null
@@ -201,6 +212,16 @@ export const useAuthStore = defineStore('auth', {
         return false
       } finally {
         this.isLoading = false
+      }
+    },
+
+    async setHeaderNav(items) {
+      if (Array.isArray(items) && items.length === 4) {
+        this.headerNavItems = [...items]
+        localStorage.setItem('oxford_header_nav', JSON.stringify(this.headerNavItems))
+        if (this.isAuthenticated) {
+          await this.updateProfile({ header_nav_json: this.headerNavItems })
+        }
       }
     },
 

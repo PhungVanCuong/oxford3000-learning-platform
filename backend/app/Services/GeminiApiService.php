@@ -183,6 +183,27 @@ class GeminiApiService
                     'tips' => "Rất chuẩn xác, hãy duy trì tốc độ và sự tự tin này nhé!",
                 ];
             }
+
+            // 3b. Kiểm tra trường hợp nhiều từ nối bằng "and", ",", "&" (VD: "reading and booking" vs "reading, booking")
+            $stripConnectors = function($tokens) {
+                $stop = ['and', '&', 'or', 'a', 'an', 'the', 'with', 'to'];
+                return array_values(array_filter($tokens, fn($t) => !in_array($t, $stop)));
+            };
+            $uTokens = $stripConnectors(explode(' ', $normUser));
+            $eTokens = $stripConnectors(explode(' ', $exp));
+            if (!empty($uTokens) && !empty($eTokens)) {
+                $uSorted = $uTokens; sort($uSorted);
+                $eSorted = $eTokens; sort($eSorted);
+                if ($uSorted === $eSorted) {
+                    return [
+                        'score' => 100,
+                        'is_passed' => true,
+                        'corrected' => $expectedAnswer,
+                        'explanation' => "Chính xác tuyệt đối! Bạn đã dịch đúng tất cả các từ và động từ cần chia.",
+                        'tips' => "Rất tốt! Hệ thống tự nhận diện các cách viết linh hoạt giữa dấu phẩy và từ 'and'.",
+                    ];
+                }
+            }
         }
 
         // 4. Tính toán độ tương đồng Fuzzy (Dice, Levenshtein, Substring Overlap)

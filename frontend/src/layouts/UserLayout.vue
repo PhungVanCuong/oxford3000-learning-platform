@@ -23,112 +23,31 @@
 
         <!-- Nav Links -->
         <div class="collapse navbar-collapse" id="userNavbar">
-          <!-- GUEST MENU: When NOT Logged In -->
-          <ul v-if="!authStore.isAuthenticated" class="navbar-nav mx-auto mb-2 mb-lg-0 fw-semibold fs-7 gap-1.5 gap-lg-2 align-items-center flex-nowrap">
-            <li class="nav-item">
-              <router-link to="/" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link text-nowrap" exact-active-class="nav-item-active">
-                <i class="bi bi-house-door-fill me-1.5 icon-home"></i>
-                <span>Trang chủ</span>
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link to="/curriculum" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link d-flex align-items-center text-nowrap" active-class="nav-item-active">
-                <i class="bi bi-signpost-split-fill me-1.5 icon-curriculum"></i>
-                <span>Lộ trình (25 Chủ đề)</span>
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link to="/grammar" class="nav-link px-3 py-1.5 rounded-pill nav-custom-link text-nowrap" active-class="nav-item-active">
-                <i class="bi bi-journal-bookmark-fill me-1.5 icon-grammar"></i>
-                <span>Ngữ pháp</span>
-              </router-link>
-            </li>
-
-            <!-- Xem thêm Dropdown for Guest -->
-            <li class="nav-item position-relative" ref="guestMoreRef">
-              <button
-                @click="toggleGuestMore"
-                class="nav-link px-3 py-1.5 rounded-pill nav-custom-link d-flex align-items-center gap-1 border-0 bg-transparent text-nowrap"
-                :class="{ 'nav-item-active': isGuestMoreOpen }"
-                type="button"
-              >
-                <i class="bi bi-grid-fill me-1 text-teal"></i>
-                <span>Xem thêm</span>
-                <i class="bi bi-chevron-down fs-8 ms-0.5"></i>
-              </button>
-
-              <div
-                v-if="isGuestMoreOpen"
-                class="dropdown-menu show position-absolute start-0 mt-2 shadow-lg border rounded-4 py-2 z-3"
-                :class="authStore.themeMode === 'dark' ? 'dropdown-menu-dark bg-dark border-secondary' : 'bg-white border-light-subtle'"
-                style="min-width: 230px;"
-              >
-                <router-link to="/phrasal-verbs" @click="isGuestMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
-                  <i class="bi bi-puzzle-fill text-warning"></i>
-                  <span>Cụm từ (Phrasal Verbs)</span>
-                </router-link>
-                <router-link to="/dictionary" @click="isGuestMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
-                  <i class="bi bi-search-heart-fill text-teal"></i>
-                  <span>Tra cứu 3000 từ</span>
-                </router-link>
-                <router-link to="/ipa" @click="isGuestMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
-                  <i class="bi bi-soundwave text-info"></i>
-                  <span>44 Âm IPA</span>
-                </router-link>
-                <router-link to="/tips" @click="isGuestMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
-                  <i class="bi bi-lightbulb-fill text-warning"></i>
-                  <span>Mẹo Học Hiệu Quả</span>
-                </router-link>
-                <router-link to="/tree" @click="isGuestMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
-                  <i class="bi bi-tree-fill text-success"></i>
-                  <span>Nuôi Cây Tri Thức</span>
-                </router-link>
-                <router-link to="/stats" @click="isGuestMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
-                  <i class="bi bi-bar-chart-fill text-primary"></i>
-                  <span>Báo Cáo Năng Suất</span>
-                </router-link>
-                <router-link to="/topics" @click="isGuestMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
-                  <i class="bi bi-grid-1x2-fill text-secondary"></i>
-                  <span>Chủ đề 3000 từ</span>
-                </router-link>
-              </div>
-            </li>
-          </ul>
-
-          <!-- AUTHENTICATED USER MENU -->
-          <ul v-else class="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold fs-7 gap-1.5 gap-lg-2 align-items-center flex-nowrap">
+          <!-- UNIFIED 6-SLOT NAVIGATION BAR (Slot 1: Trang chủ, Slots 2-5: Customizable 4 items, Slot 6: Xem thêm) -->
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold fs-7 gap-1.5 gap-lg-2 align-items-center flex-nowrap">
+            <!-- Slot 1: Trang chủ (Fixed) -->
             <li class="nav-item">
               <router-link to="/" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link text-nowrap" exact-active-class="nav-item-active">
                 <i class="bi bi-house-door-fill me-1.5 icon-home"></i>
                 <span>Trang chủ</span>
               </router-link>
             </li>
-            <li class="nav-item">
-              <router-link to="/curriculum" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link d-flex align-items-center gap-1.5 text-nowrap" active-class="nav-item-active">
-                <i class="bi bi-signpost-split-fill me-1 icon-curriculum"></i>
-                <span>Lộ trình</span>
-                <span class="badge bg-warning text-dark px-1.5 py-1 rounded-pill shadow-xs" style="font-size: 8px;">25 CHỦ ĐỀ</span>
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link to="/daily" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link text-nowrap" active-class="nav-item-active">
-                <i class="bi bi-calendar-check-fill me-1.5 icon-daily"></i>
-                <span>Học theo Ngày</span>
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link to="/grammar" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link text-nowrap" active-class="nav-item-active">
-                <i class="bi bi-journal-bookmark-fill me-1.5 icon-grammar"></i>
-                <span>Ngữ pháp</span>
+
+            <!-- Slots 2-5: The 4 Customized Navigation Items -->
+            <li v-for="item in visibleNavItems" :key="item.id" class="nav-item">
+              <router-link :to="item.to" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link d-flex align-items-center gap-1.5 text-nowrap" active-class="nav-item-active">
+                <i :class="[item.icon, item.iconClass, 'me-1']"></i>
+                <span>{{ item.label }}</span>
+                <span v-if="item.badge" class="badge bg-warning text-dark px-1.5 py-1 rounded-pill shadow-xs" style="font-size: 8px;">{{ item.badge }}</span>
               </router-link>
             </li>
 
-            <!-- Xem thêm Dropdown for Auth User -->
-            <li class="nav-item position-relative" ref="authMoreRef">
+            <!-- Slot 6: Xem thêm Dropdown (Containing all other items) -->
+            <li class="nav-item position-relative" ref="moreMenuRef">
               <button
-                @click="toggleAuthMore"
+                @click="toggleMoreMenu"
                 class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link d-flex align-items-center gap-1 border-0 bg-transparent text-nowrap"
-                :class="{ 'nav-item-active': isAuthMoreOpen }"
+                :class="{ 'nav-item-active': isMoreMenuOpen }"
                 type="button"
               >
                 <i class="bi bi-grid-fill me-1 text-teal"></i>
@@ -137,38 +56,20 @@
               </button>
 
               <div
-                v-if="isAuthMoreOpen"
+                v-if="isMoreMenuOpen"
                 class="dropdown-menu show position-absolute start-0 mt-2 shadow-lg border rounded-4 py-2 z-3"
                 :class="authStore.themeMode === 'dark' ? 'dropdown-menu-dark bg-dark border-secondary' : 'bg-white border-light-subtle'"
-                style="min-width: 235px;"
+                style="min-width: 250px;"
               >
-                <router-link to="/phrasal-verbs" @click="isAuthMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
-                  <i class="bi bi-puzzle-fill text-warning"></i>
-                  <span>Cụm từ (Phrasal Verbs)</span>
-                </router-link>
-                <router-link to="/dictionary" @click="isAuthMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
-                  <i class="bi bi-search-heart-fill text-teal"></i>
-                  <span>Tra cứu 3000 từ</span>
-                </router-link>
-                <router-link to="/ipa" @click="isAuthMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
-                  <i class="bi bi-soundwave text-info"></i>
-                  <span>44 Âm IPA</span>
-                </router-link>
-                <router-link to="/tips" @click="isAuthMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
-                  <i class="bi bi-lightbulb-fill text-warning"></i>
-                  <span>Mẹo Học Hiệu Quả</span>
-                </router-link>
-                <router-link to="/tree" @click="isAuthMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
-                  <i class="bi bi-tree-fill text-success"></i>
-                  <span>Nuôi Cây Tri Thức</span>
-                </router-link>
-                <router-link to="/stats" @click="isAuthMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
-                  <i class="bi bi-bar-chart-fill text-primary"></i>
-                  <span>Báo Cáo Năng Suất</span>
-                </router-link>
-                <router-link to="/topics" @click="isAuthMoreOpen = false" class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2">
-                  <i class="bi bi-grid-1x2-fill text-secondary"></i>
-                  <span>Chủ đề 3000 từ</span>
+                <router-link
+                  v-for="item in moreNavItems"
+                  :key="item.id"
+                  :to="item.to"
+                  @click="isMoreMenuOpen = false"
+                  class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2"
+                >
+                  <i :class="[item.icon, item.iconClass, 'fs-6']"></i>
+                  <span>{{ item.fullLabel || item.label }}</span>
                 </router-link>
               </div>
             </li>
@@ -352,7 +253,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import LoginRequiredModal from '@/components/LoginRequiredModal.vue'
@@ -363,33 +264,46 @@ const router = useRouter()
 const isDropdownOpen = ref(false)
 const dropdownRef = ref(null)
 
-const isGuestMoreOpen = ref(false)
-const guestMoreRef = ref(null)
+const isMoreMenuOpen = ref(false)
+const moreMenuRef = ref(null)
 
-const isAuthMoreOpen = ref(false)
-const authMoreRef = ref(null)
+const NAV_CATALOG = [
+  { id: 'curriculum', label: 'Lộ trình', fullLabel: 'Lộ trình (25 Chủ đề)', to: '/curriculum', icon: 'bi bi-signpost-split-fill', iconClass: 'icon-curriculum', badge: '25 CHỦ ĐỀ' },
+  { id: 'daily', label: 'Học theo Ngày', fullLabel: 'Học theo Ngày', to: '/daily', icon: 'bi bi-calendar-check-fill', iconClass: 'icon-daily' },
+  { id: 'grammar', label: 'Ngữ pháp', fullLabel: 'Ngữ pháp (12 Thì & Bài tập)', to: '/grammar', icon: 'bi bi-journal-bookmark-fill', iconClass: 'icon-grammar' },
+  { id: 'phrasal_verbs', label: 'Cụm từ', fullLabel: 'Cụm từ (Phrasal Verbs & 1000 Cụm từ)', to: '/phrasal-verbs', icon: 'bi bi-puzzle-fill', iconClass: 'icon-phrasal' },
+  { id: 'dictionary', label: 'Tra cứu', fullLabel: 'Tra cứu 3000 từ', to: '/dictionary', icon: 'bi bi-search-heart-fill', iconClass: 'icon-dict' },
+  { id: 'ipa', label: '44 Âm IPA', fullLabel: 'Bảng 44 Âm IPA', to: '/ipa', icon: 'bi bi-soundwave', iconClass: 'icon-ipa' },
+  { id: 'tips', label: 'Mẹo học', fullLabel: 'Mẹo Học Tiếng Anh Hiệu Quả', to: '/tips', icon: 'bi bi-lightbulb-fill text-warning', iconClass: '' },
+  { id: 'tree', label: 'Cây tri thức', fullLabel: 'Vườn Cây Tri Thức', to: '/tree', icon: 'bi bi-tree-fill text-success', iconClass: '' },
+  { id: 'stats', label: 'Năng suất', fullLabel: 'Báo Cáo Năng Suất', to: '/stats', icon: 'bi bi-bar-chart-fill text-primary', iconClass: '' },
+  { id: 'topics', label: 'Chủ đề', fullLabel: 'Chủ đề 3000 từ', to: '/topics', icon: 'bi bi-grid-1x2-fill text-secondary', iconClass: '' },
+]
+
+const visibleNavItems = computed(() => {
+  const chosenIds = authStore.headerNavItems || ['curriculum', 'daily', 'grammar', 'phrasal_verbs']
+  return chosenIds.map(id => NAV_CATALOG.find(item => item.id === id)).filter(Boolean)
+})
+
+const moreNavItems = computed(() => {
+  const chosenIds = authStore.headerNavItems || ['curriculum', 'daily', 'grammar', 'phrasal_verbs']
+  return NAV_CATALOG.filter(item => !chosenIds.includes(item.id))
+})
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value
 }
 
-const toggleGuestMore = () => {
-  isGuestMoreOpen.value = !isGuestMoreOpen.value
-}
-
-const toggleAuthMore = () => {
-  isAuthMoreOpen.value = !isAuthMoreOpen.value
+const toggleMoreMenu = () => {
+  isMoreMenuOpen.value = !isMoreMenuOpen.value
 }
 
 const handleClickOutside = (event) => {
   if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
     isDropdownOpen.value = false
   }
-  if (guestMoreRef.value && !guestMoreRef.value.contains(event.target)) {
-    isGuestMoreOpen.value = false
-  }
-  if (authMoreRef.value && !authMoreRef.value.contains(event.target)) {
-    isAuthMoreOpen.value = false
+  if (moreMenuRef.value && !moreMenuRef.value.contains(event.target)) {
+    isMoreMenuOpen.value = false
   }
 }
 

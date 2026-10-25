@@ -340,6 +340,12 @@ class AuthController extends Controller
         $curriculumCompletedStages = CurriculumStageProgress::where('user_id', $user->id)->where('is_completed', true)->count();
         $curriculumPercent = min(100, round(($curriculumRemembered / 5000) * 100, 1));
 
+        // Phrasal Verbs & Common Phrases Progress
+        $masteredPhrases = \App\Models\UserPhraseProgress::where('user_id', $user->id)->where('status', 'mastered')->count();
+        $learningPhrases = \App\Models\UserPhraseProgress::where('user_id', $user->id)->where('status', 'learning')->count();
+        $totalPhrases = \App\Models\PhrasalVerb::count();
+        $phrasesPercent = $totalPhrases > 0 ? min(100, round(($masteredPhrases / $totalPhrases) * 100, 1)) : 0;
+
         return response()->json([
             'status' => 'success',
             'data' => [
@@ -355,6 +361,10 @@ class AuthController extends Controller
                     'curriculum_remembered_terms' => $curriculumRemembered,
                     'curriculum_completed_stages' => $curriculumCompletedStages,
                     'curriculum_percent' => $curriculumPercent,
+                    'mastered_phrases' => $masteredPhrases,
+                    'learning_phrases' => $learningPhrases,
+                    'total_phrases' => $totalPhrases,
+                    'phrases_percent' => $phrasesPercent,
                 ],
             ],
         ]);
@@ -373,6 +383,7 @@ class AuthController extends Controller
             'words_per_day' => 'nullable|integer|in:10,15,20,25,30,50',
             'theme_mode' => 'nullable|in:light,dark',
             'avatar_url' => 'nullable|string',
+            'header_nav_json' => 'nullable|array',
         ]);
 
         $user->fill($validated);

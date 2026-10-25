@@ -70,6 +70,10 @@ Route::post('/progress/word-status', [ProgressController::class, 'updateWordStat
 
 // 8. Phrasal Verbs & Collocations (Học theo Cụm từ)
 Route::get('/phrasal-verbs', [PhrasalVerbController::class, 'index']);
+Route::get('/phrasal-verbs/methods', [PhrasalVerbController::class, 'getMethods']);
+Route::get('/phrasal-verbs/exercises', [PhrasalVerbController::class, 'getExercises']);
+Route::post('/phrasal-verbs/check-exercise', [PhrasalVerbController::class, 'checkExercise']);
+Route::get('/phrasal-verbs/stats', [PhrasalVerbController::class, 'getStats']);
 Route::post('/phrasal-verbs/status', [PhrasalVerbController::class, 'updateStatus']);
 Route::post('/phrasal-verbs', [PhrasalVerbController::class, 'store']);
 Route::put('/phrasal-verbs/{id}', [PhrasalVerbController::class, 'update']);
