@@ -230,6 +230,8 @@ class CurriculumRoadmapSeeder extends Seeder
 
         foreach ($topicsMeta as $order => $meta) {
             $candidatePaths = [
+                base_path('Tài liệu tiếng Anh' . DIRECTORY_SEPARATOR . $meta['file']),
+                base_path('Tài liệu tiếng Anh' . DIRECTORY_SEPARATOR . 'IELTS 25 topics' . DIRECTORY_SEPARATOR . $meta['file']),
                 $workspaceRoot . DIRECTORY_SEPARATOR . 'Tài liệu tiếng Anh' . DIRECTORY_SEPARATOR . $meta['file'],
                 $workspaceRoot . DIRECTORY_SEPARATOR . $meta['file'],
                 base_path('..' . DIRECTORY_SEPARATOR . 'Tài liệu tiếng Anh' . DIRECTORY_SEPARATOR . $meta['file']),

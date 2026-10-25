@@ -55,7 +55,7 @@ echo ===========================================================================
 echo   CHUC MUNG! HE THONG DA DUOC KHOI CHAY THANH CONG!
 echo.
 echo   - Giao dien Web hoc tap : http://localhost:5173
-echo   - Backend RESTful API   : http://localhost:8000/api
+echo   - Backend RESTful API   : https://beoxvocab.deloydz.io.vn (hoac http://localhost:8000/api)
 echo.
 echo   Luu y: Cua so nay dang chay ung dung. Ban co the thu nho cua so nay lai.
 echo   Khi muon tat ung dung, ban chi can dong cua so nay hoac an to hop Ctrl + C.

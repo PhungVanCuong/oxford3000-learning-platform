@@ -229,11 +229,23 @@ cd "Web English 3000 từ vựng"
    - *945 Cụm từ và Phrasal Verbs (100 Cụm từ Word + 850 Cụm từ PDF chia 17 phần)*
    - *20 tài khoản người dùng mẫu phân quyền đầy đủ*
 
-8. Khởi chạy máy chủ Backend Laravel API:
+8. Khởi chạy máy chủ Backend Laravel API (khi phát triển cục bộ):
    ```bash
    php artisan serve --port=8000
    ```
-   Backend API sẽ hoạt động tại: **`http://localhost:8000/api`**
+
+---
+
+#### 🌐 CƠ CHẾ HOẠT ĐỘNG SONG SONG ĐA MÔI TRƯỜNG (LOCALHOST & DOMAIN)
+Hệ thống được thiết kế **tự động nhận diện môi trường theo Hostname trình duyệt**, cho phép chạy đồng thời cả 2 môi trường mà không cần chỉnh sửa cấu hình thủ công:
+1. **Môi trường Cục bộ (Localhost):**
+   - **Frontend (Web Học Tập)**: `http://localhost:5173` (hoặc `http://127.0.0.1:5173`)
+   - **Backend (Laravel API)**: `http://localhost:8000` (hoặc `http://127.0.0.1:8000`)
+   - *Khi chạy `npm run dev`, Vite Dev Server tự động chuyển tiếp (Proxy) toàn bộ API sang `http://127.0.0.1:8000`.*
+2. **Môi trường Tên Miền Chính Thức (Production):**
+   - **Frontend (Web Học Tập)**: `https://oxvocab.deloydz.io.vn`
+   - **Backend (Laravel API)**: `https://beoxvocab.deloydz.io.vn`
+   - *CORS và Sanctum đã được cấu hình chấp thuận và liên kết trơn tru giữa cả 2 tên miền.*
 
 ---
 

@@ -9,6 +9,10 @@ class TopicSeeder extends Seeder
 {
     public function run(): void
     {
+        \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
+        Topic::truncate();
+        \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
+
         $topics = [
             ['name' => 'Gia đình & Mối quan hệ', 'slug' => 'family-and-relationships', 'icon' => 'bi-people', 'description' => 'Từ vựng và hội thoại về các thành viên gia đình, bạn bè và tình cảm.'],
             ['name' => 'Công việc & Nghề nghiệp', 'slug' => 'jobs-and-careers', 'icon' => 'bi-briefcase', 'description' => 'Môi trường công sở, phỏng vấn xin việc, đàm phán và thăng tiến.'],
