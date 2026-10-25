@@ -14,6 +14,7 @@ use App\Models\CurriculumStageProgress;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -405,9 +406,13 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         /** @var User|null $user */
-        $user = auth('sanctum')->user();
-        if ($user && $user->currentAccessToken()) {
-            $user->currentAccessToken()->delete();
+        $user = auth('sanctum')->user() ?? $request->user();
+        if ($user) {
+            /** @var PersonalAccessToken|null $token */
+            $token = $user->currentAccessToken();
+            if ($token instanceof PersonalAccessToken) {
+                $token->delete();
+            }
         }
 
         return response()->json([
