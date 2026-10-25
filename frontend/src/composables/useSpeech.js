@@ -3,14 +3,21 @@ import { ref, onMounted, onUnmounted } from 'vue'
 export function useSpeech() {
   const isSpeaking = ref(false)
   const isListening = ref(false)
+  const listeningId = ref(null) // ID of current listening item (e.g. 'pv_12' or 'grammar_ex_3')
+  const itemResults = ref({}) // map { [id]: { transcript, score, feedback } }
   const speechError = ref(null)
   const transcript = ref('')
   const pronunciationScore = ref(null) // 0 to 100
   const pronunciationFeedback = ref('') // 'excellent', 'good', 'poor'
 
+  const availableVoices = ref([])
+  const selectedVoiceURI = ref(typeof localStorage !== 'undefined' ? (localStorage.getItem('oxford_voice_uri') || '') : '')
+  const selectedSpeed = ref(typeof localStorage !== 'undefined' ? parseFloat(localStorage.getItem('oxford_speech_rate') || '1.0') : 1.0)
+
   let synth = null
   let recognition = null
   let currentTargetText = ''
+  let currentItemId = null
   let micPermissionGranted = false
 
   // Initialize SpeechSynthesis
@@ -18,31 +25,119 @@ export function useSpeech() {
     synth = window.speechSynthesis
   }
 
-  // Pre-load voices
-  if (synth && synth.onvoiceschanged !== undefined) {
-    synth.onvoiceschanged = () => {
-      // Voices loaded into cache
-    }
+  const loadVoices = () => {
+    if (!synth) return []
+    const all = synth.getVoices()
+    if (!all || all.length === 0) return []
+
+    const enVoices = all.filter(v => v.lang && v.lang.toLowerCase().startsWith('en'))
+    const list = enVoices.length > 0 ? enVoices : all
+
+    availableVoices.value = list.map(v => {
+      const nameLower = v.name.toLowerCase()
+      let gender = 'female' // default
+      if (nameLower.includes('male') && !nameLower.includes('female')) {
+        gender = 'male'
+      } else if (
+        nameLower.includes('david') ||
+        nameLower.includes('guy') ||
+        nameLower.includes('george') ||
+        nameLower.includes('mark') ||
+        nameLower.includes('james') ||
+        nameLower.includes('paul') ||
+        nameLower.includes('richard') ||
+        nameLower.includes('christopher') ||
+        nameLower.includes('eric') ||
+        nameLower.includes('steffan')
+      ) {
+        gender = 'male'
+      } else if (
+        nameLower.includes('zira') ||
+        nameLower.includes('jenny') ||
+        nameLower.includes('samantha') ||
+        nameLower.includes('victoria') ||
+        nameLower.includes('karen') ||
+        nameLower.includes('aria') ||
+        nameLower.includes('susan') ||
+        nameLower.includes('catherine') ||
+        nameLower.includes('hazel') ||
+        nameLower.includes('linda')
+      ) {
+        gender = 'female'
+      }
+
+      let region = 'US'
+      if (v.lang.includes('GB') || nameLower.includes('uk') || nameLower.includes('british')) region = 'UK'
+      else if (v.lang.includes('AU') || nameLower.includes('australia')) region = 'AU'
+      else if (v.lang.includes('CA') || nameLower.includes('canada')) region = 'CA'
+      else if (v.lang.includes('IN') || nameLower.includes('india')) region = 'IN'
+
+      return {
+        name: v.name,
+        voiceURI: v.voiceURI,
+        lang: v.lang,
+        gender, // 'male' | 'female'
+        region,
+        label: `${v.name} (${region} - ${gender === 'male' ? 'Nam 👨' : 'Nữ 👩'})`,
+        default: v.default
+      }
+    })
+
+    return availableVoices.value
   }
 
-  // Get preferred English US voice
-  const getUSVoice = () => {
+  // Pre-load voices
+  if (synth) {
+    if (synth.onvoiceschanged !== undefined) {
+      synth.onvoiceschanged = () => {
+        loadVoices()
+      }
+    }
+    loadVoices()
+  }
+
+  // Get preferred voice (selected by user or fallback)
+  const getPreferredVoice = () => {
     if (!synth) return null
     const voices = synth.getVoices()
+    if (!voices || voices.length === 0) return null
+
+    // 1. Try user selected voice
+    if (selectedVoiceURI.value) {
+      const found = voices.find(v => v.voiceURI === selectedVoiceURI.value || v.name === selectedVoiceURI.value)
+      if (found) return found
+    }
+
+    // 2. Default high quality US voice
     return (
       voices.find(v => v.lang === 'en-US' && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Samantha') || v.name.includes('David') || v.name.includes('Jenny') || v.name.includes('Guy'))) ||
       voices.find(v => v.lang === 'en-US') ||
       voices.find(v => v.lang.startsWith('en')) ||
+      voices[0] ||
       null
     )
   }
 
+  const setVoice = (voiceURI) => {
+    selectedVoiceURI.value = voiceURI
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('oxford_voice_uri', voiceURI)
+    }
+  }
+
+  const setSpeed = (rate) => {
+    selectedSpeed.value = rate
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('oxford_speech_rate', rate.toString())
+    }
+  }
+
   /**
-   * Speak English text with configurable speed
+   * Speak English text with configurable speed and selected voice
    * @param {string} text - text to read
-   * @param {number} rate - 1.0 (normal) or 0.75 (slow)
+   * @param {number|null} rate - 1.0 (normal) or 0.75 (slow)
    */
-  const speak = (text, rate = 1.0) => {
+  const speak = (text, rate = null) => {
     if (!synth || !text) return
 
     try {
@@ -53,10 +148,10 @@ export function useSpeech() {
     const cleanText = text.replace(/\[.*?\]/g, '').replace(/___+/g, '').replace(/\(.*?\)/g, '')
     const utterance = new SpeechSynthesisUtterance(cleanText)
     utterance.lang = 'en-US'
-    utterance.rate = rate
+    utterance.rate = rate !== null ? rate : (selectedSpeed.value || 1.0)
     utterance.pitch = 1.0
 
-    const voice = getUSVoice()
+    const voice = getPreferredVoice()
     if (voice) {
       utterance.voice = voice
     }
@@ -72,6 +167,29 @@ export function useSpeech() {
     utterance.onerror = () => {
       isSpeaking.value = false
     }
+
+    synth.speak(utterance)
+  }
+
+  const testVoice = (voiceURI, testText = 'Hello! Welcome to Oxford English learning system.') => {
+    if (!synth) return
+    try {
+      synth.cancel()
+    } catch (e) {}
+
+    const utterance = new SpeechSynthesisUtterance(testText)
+    utterance.rate = selectedSpeed.value || 1.0
+    utterance.pitch = 1.0
+
+    const voices = synth.getVoices()
+    const voice = voices.find(v => v.voiceURI === voiceURI || v.name === voiceURI)
+    if (voice) {
+      utterance.voice = voice
+    }
+
+    utterance.onstart = () => { isSpeaking.value = true }
+    utterance.onend = () => { isSpeaking.value = false }
+    utterance.onerror = () => { isSpeaking.value = false }
 
     synth.speak(utterance)
   }
@@ -147,39 +265,24 @@ export function useSpeech() {
   }
 
   /**
-   * Safe warm up of microphone permission to ensure the very first word works seamlessly
-   */
-  const ensureMicrophonePermission = async () => {
-    if (micPermissionGranted) return true
-    if (typeof navigator !== 'undefined' && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-        // Immediately release tracks
-        stream.getTracks().forEach(track => track.stop())
-        micPermissionGranted = true
-        return true
-      } catch (e) {
-        console.warn('Microphone permission not pre-granted:', e)
-        return false
-      }
-    }
-    return true
-  }
-
-  /**
    * Start Speech-To-Text to evaluate pronunciation
+   * @param {string} targetText
+   * @param {string|number|null} id - Unique item ID so only this item reacts
    */
-  const startListening = async (targetText) => {
+  const startListening = async (targetText, id = null) => {
     speechError.value = null
     transcript.value = ''
     pronunciationScore.value = null
     pronunciationFeedback.value = ''
     currentTargetText = targetText || ''
+    currentItemId = id
+    listeningId.value = id
 
     const SpeechRecognition = typeof window !== 'undefined' ? (window.SpeechRecognition || window.webkitSpeechRecognition) : null
 
     if (!SpeechRecognition) {
       speechError.value = 'Trình duyệt chưa hỗ trợ Web Speech API. Vui lòng dùng Chrome, Edge hoặc Brave.'
+      listeningId.value = null
       return
     }
 
@@ -203,6 +306,7 @@ export function useSpeech() {
 
       recognition.onstart = () => {
         isListening.value = true
+        listeningId.value = currentItemId
         speechError.value = null
       }
 
@@ -217,12 +321,20 @@ export function useSpeech() {
               const score = calculateScore(spoken, currentTargetText)
               pronunciationScore.value = score
 
+              let feedback = 'poor'
               if (score >= 80) {
-                pronunciationFeedback.value = 'excellent'
+                feedback = 'excellent'
               } else if (score >= 55) {
-                pronunciationFeedback.value = 'good'
-              } else {
-                pronunciationFeedback.value = 'poor'
+                feedback = 'good'
+              }
+              pronunciationFeedback.value = feedback
+
+              if (currentItemId !== null) {
+                itemResults.value[currentItemId] = {
+                  transcript: spoken,
+                  score,
+                  feedback
+                }
               }
             }
           }
@@ -231,6 +343,7 @@ export function useSpeech() {
 
       recognition.onerror = (event) => {
         isListening.value = false
+        listeningId.value = null
         if (event.error !== 'no-speech' && event.error !== 'aborted') {
           speechError.value = 'Lỗi thu âm: ' + event.error
         }
@@ -238,11 +351,13 @@ export function useSpeech() {
 
       recognition.onend = () => {
         isListening.value = false
+        listeningId.value = null
       }
 
       recognition.start()
     } catch (err) {
       isListening.value = false
+      listeningId.value = null
       speechError.value = err.message
     }
   }
@@ -253,6 +368,7 @@ export function useSpeech() {
         recognition.stop()
       } catch (e) {}
       isListening.value = false
+      listeningId.value = null
     }
   }
 
@@ -264,10 +380,19 @@ export function useSpeech() {
   return {
     isSpeaking,
     isListening,
+    listeningId,
+    itemResults,
     speechError,
     transcript,
     pronunciationScore,
     pronunciationFeedback,
+    availableVoices,
+    selectedVoiceURI,
+    selectedSpeed,
+    loadVoices,
+    setVoice,
+    setSpeed,
+    testVoice,
     speak,
     stopSpeech,
     startListening,

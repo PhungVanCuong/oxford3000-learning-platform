@@ -124,9 +124,19 @@
             <i class="bi bi-signpost-2-fill text-teal"></i>
             <span>Chọn Phần Học (Mỗi phần 50 câu đàm thoại thông dụng):</span>
           </span>
-          <span class="badge bg-teal-subtle text-teal fw-bold fs-8">
-            Đang xem: {{ selectedPartNumber ? `Phần ${selectedPartNumber}` : 'Tất cả 17 phần' }}
-          </span>
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-teal-subtle text-teal fw-bold fs-8">
+              Đang xem: {{ selectedPartNumber ? `Phần ${selectedPartNumber}` : 'Tất cả 17 phần' }}
+            </span>
+            <button
+              v-if="selectedPartNumber"
+              @click="startFlashcardForPart(selectedPartNumber)"
+              class="btn btn-sm btn-teal text-white rounded-pill px-3 py-1 fw-bold fs-8 d-inline-flex align-items-center gap-1 shadow-2xs text-nowrap"
+            >
+              <i class="bi bi-card-text"></i>
+              <span>Luyện Thẻ 3D Phần {{ selectedPartNumber }}</span>
+            </button>
+          </div>
         </div>
 
         <div class="d-flex gap-1.5 overflow-x-auto pb-1" style="scrollbar-width: thin;">
@@ -254,19 +264,19 @@
                   </span>
                 </td>
                 <td class="text-center">
-                  <div class="btn-group btn-group-sm">
+                  <div class="d-inline-flex align-items-center justify-content-center gap-1.5 text-nowrap">
                     <button
                       @click="markPhraseStatus(item, item.status === 'mastered' ? 'unlearned' : 'mastered')"
-                      class="btn rounded-pill px-2.5 py-1"
-                      :class="item.status === 'mastered' ? 'btn-success' : 'btn-outline-success'"
+                      class="btn btn-sm rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1 text-nowrap shadow-2xs"
+                      :class="item.status === 'mastered' ? 'btn-success text-white' : 'btn-outline-success'"
                       title="Đánh dấu đã thuộc"
                     >
                       <i class="bi" :class="item.status === 'mastered' ? 'bi-check2-circle' : 'bi-check2'"></i>
-                      <span class="ms-1 fs-8">{{ item.status === 'mastered' ? 'Đã thuộc' : 'Thuộc' }}</span>
+                      <span class="fs-8 fw-semibold text-nowrap">{{ item.status === 'mastered' ? 'Đã thuộc' : 'Thuộc' }}</span>
                     </button>
                     <button
                       @click="markPhraseStatus(item, 'learning')"
-                      class="btn btn-outline-warning rounded-pill px-2 py-1 ms-1"
+                      class="btn btn-sm btn-outline-warning rounded-pill px-2 py-1 d-inline-flex align-items-center gap-1 text-nowrap shadow-2xs"
                       title="Cần ôn lại"
                     >
                       <i class="bi bi-arrow-clockwise"></i>
@@ -380,24 +390,38 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="mt-auto pt-2 d-flex justify-content-between align-items-center border-top">
-              <button
-                @click="speech.startListening(pv.phrase)"
-                class="btn btn-sm px-2.5 py-1 rounded-pill fs-8 fw-semibold"
-                :class="speech.isListening.value ? 'btn-danger' : 'btn-outline-info'"
-              >
-                <i class="bi bi-mic-fill me-1"></i> Luyện nói
-              </button>
-
-              <div class="btn-group btn-group-sm">
+            <div class="mt-auto pt-2 border-top">
+              <div class="d-flex justify-content-between align-items-center">
                 <button
-                  @click="markPhraseStatus(pv, pv.status === 'mastered' ? 'unlearned' : 'mastered')"
-                  class="btn rounded-pill px-3 py-1 fw-bold fs-8"
-                  :class="pv.status === 'mastered' ? 'btn-success' : 'btn-teal text-white'"
+                  @click="speech.startListening(pv.phrase, 'pv_' + pv.id)"
+                  class="btn btn-sm px-2.5 py-1 rounded-pill fs-8 fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
+                  :class="speech.listeningId.value === ('pv_' + pv.id) ? 'btn-danger animate-mic-pulse' : 'btn-outline-info'"
                 >
-                  <i class="bi bi-check2 me-1"></i>
-                  <span>{{ pv.status === 'mastered' ? 'Đã thuộc' : 'Thuộc từ' }}</span>
+                  <i class="bi" :class="speech.listeningId.value === ('pv_' + pv.id) ? 'bi-record-fill' : 'bi-mic-fill'"></i>
+                  <span>{{ speech.listeningId.value === ('pv_' + pv.id) ? 'Đang nghe...' : 'Luyện nói' }}</span>
                 </button>
+
+                <div class="d-inline-flex align-items-center gap-1 text-nowrap">
+                  <button
+                    @click="markPhraseStatus(pv, pv.status === 'mastered' ? 'unlearned' : 'mastered')"
+                    class="btn btn-sm rounded-pill px-3 py-1 fw-bold fs-8 d-inline-flex align-items-center gap-1 text-nowrap"
+                    :class="pv.status === 'mastered' ? 'btn-success' : 'btn-teal text-white'"
+                  >
+                    <i class="bi bi-check2"></i>
+                    <span>{{ pv.status === 'mastered' ? 'Đã thuộc' : 'Thuộc từ' }}</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Scoped Mic Results for this Card -->
+              <div v-if="speech.itemResults.value['pv_' + pv.id]" class="mt-2 p-2 rounded-3 bg-white border fs-8">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="text-muted">Bạn đã đọc:</span>
+                  <span class="badge" :class="speech.itemResults.value['pv_' + pv.id].score >= 80 ? 'bg-success' : speech.itemResults.value['pv_' + pv.id].score >= 55 ? 'bg-warning text-dark' : 'bg-danger'">
+                    {{ speech.itemResults.value['pv_' + pv.id].score }}%
+                  </span>
+                </div>
+                <div class="fw-semibold text-dark-emphasis">"{{ speech.itemResults.value['pv_' + pv.id].transcript }}"</div>
               </div>
             </div>
           </div>
@@ -617,6 +641,45 @@
 
     <!-- TAB 5: FLASHCARD 3D PLAYER -->
     <div v-if="activeMainTab === 'flashcard'">
+      <!-- Part Selector for Flashcards -->
+      <div class="card p-3 rounded-4 shadow-sm border bg-card-custom mb-3 max-w-3xl mx-auto">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="fs-8 fw-bold text-uppercase text-muted d-flex align-items-center gap-1">
+            <i class="bi bi-filter-circle text-teal"></i>
+            <span>Chọn Nội Dung Luyện Thẻ 3D:</span>
+          </span>
+          <span class="badge bg-teal text-white fw-bold fs-8">
+            {{ getFlashPartLabel() }}
+          </span>
+        </div>
+
+        <div class="d-flex gap-1.5 overflow-x-auto pb-1" style="scrollbar-width: thin;">
+          <button
+            @click="setFlashPart('all_1000')"
+            class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold text-nowrap"
+            :class="selectedFlashPart === 'all_1000' ? 'btn-teal text-white' : 'btn-outline-secondary'"
+          >
+            Tất cả 1000 cụm từ
+          </button>
+          <button
+            @click="setFlashPart('pv_100')"
+            class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold text-nowrap"
+            :class="selectedFlashPart === 'pv_100' ? 'btn-teal text-white' : 'btn-outline-secondary'"
+          >
+            100 Phrasal Verbs (A-W)
+          </button>
+          <button
+            v-for="part in 17"
+            :key="part"
+            @click="setFlashPart(part)"
+            class="btn btn-sm rounded-pill px-2.5 py-1.5 fw-semibold text-nowrap"
+            :class="selectedFlashPart === part ? 'btn-teal text-white' : 'btn-outline-secondary'"
+          >
+            Phần {{ part }}
+          </button>
+        </div>
+      </div>
+
       <div v-if="flashcardItems.length > 0" class="flashcard-player w-100 max-w-3xl mx-auto my-3">
         <!-- Progress Info -->
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -685,7 +748,7 @@
               </div>
 
               <div class="text-center pt-2 border-top text-muted fs-8">
-                <i class="bi bi-arrow-repeat me-1"></i>Nhấp chuột để lật thẻ xem Nghĩa & Dịch tiếng Việt
+                <i class="bi bi-arrow-repeat me-1"></i>Bấm <strong>Space</strong> hoặc nhấp chuột để lật thẻ
               </div>
             </div>
 
@@ -718,66 +781,94 @@
               </div>
 
               <div class="text-center pt-2 border-top text-muted fs-8">
-                <i class="bi bi-arrow-repeat me-1"></i>Nhấp chuột để lật lại mặt trước
+                <i class="bi bi-arrow-repeat me-1"></i>Bấm <strong>Space</strong> hoặc nhấp chuột để lật lại mặt trước
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Controls Row -->
-        <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
+        <!-- Strict Single-Row Action Controls -->
+        <div class="d-flex align-items-center justify-content-center gap-1.5 flex-nowrap overflow-x-auto py-1 w-100 flashcard-controls-row">
+          <!-- [← / Q] Prev -->
           <button
             @click="prevFlash"
             :disabled="currentFlashIndex === 0"
-            class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1"
+            class="btn btn-outline-secondary btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
+            title="Lùi thẻ (Phím ← hoặc Q)"
           >
-            <i class="bi bi-chevron-left"></i> Trước
+            <i class="bi bi-chevron-left"></i>
+            <span>[Q] Trước</span>
           </button>
 
+          <!-- [Space] Flip -->
           <button
             @click="isFlipped = !isFlipped"
-            class="btn btn-teal btn-sm px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1"
+            class="btn btn-teal btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
+            title="Lật thẻ (Phím Space)"
           >
-            <i class="bi bi-arrow-repeat"></i> Lật thẻ
+            <i class="bi bi-arrow-repeat"></i>
+            <span>[Space] Lật</span>
           </button>
 
+          <!-- [A] Listen -->
           <button
             @click="speech.speak(currentFlashItem?.phrase)"
-            class="btn btn-primary btn-sm px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1"
+            class="btn btn-primary btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
+            title="Nghe phát âm chuẩn (Phím A)"
           >
-            <i class="bi bi-volume-up-fill"></i> Nghe cụm
+            <i class="bi bi-volume-up-fill"></i>
+            <span>[A] Nghe</span>
           </button>
 
+          <!-- [D] Speak -->
           <button
-            @click="speech.startListening(currentFlashItem?.phrase)"
-            class="btn btn-sm px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1"
-            :class="speech.isListening.value ? 'btn-danger' : 'btn-info text-white'"
+            @click="speech.startListening(currentFlashItem?.phrase, 'flash_' + currentFlashItem?.id)"
+            class="btn btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
+            :class="speech.listeningId.value === ('flash_' + currentFlashItem?.id) ? 'btn-danger animate-mic-pulse' : 'btn-info text-white'"
+            title="Luyện nói Micro (Phím D)"
           >
-            <i class="bi" :class="speech.isListening.value ? 'bi-record-fill' : 'bi-mic-fill'"></i>
-            <span>{{ speech.isListening.value ? 'Đang nghe...' : 'Luyện nói' }}</span>
+            <i class="bi" :class="speech.listeningId.value === ('flash_' + currentFlashItem?.id) ? 'bi-record-fill' : 'bi-mic-fill'"></i>
+            <span>[D] {{ speech.listeningId.value === ('flash_' + currentFlashItem?.id) ? 'Đang nghe...' : 'Luyện nói' }}</span>
           </button>
 
+          <!-- [S] Mastered -->
           <button
             @click="markPhraseStatus(currentFlashItem, 'mastered')"
-            class="btn btn-success btn-sm px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1"
+            class="btn btn-success btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
+            title="Đã nhớ cụm này (Phím S)"
           >
-            <i class="bi bi-check-circle-fill"></i> Đã nhớ
+            <i class="bi bi-check-circle-fill"></i>
+            <span>[S] Đã nhớ</span>
           </button>
 
+          <!-- [X] Need Review -->
           <button
             @click="markPhraseStatus(currentFlashItem, 'learning')"
-            class="btn btn-warning btn-sm text-white px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1"
+            class="btn btn-warning btn-sm text-white px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
+            title="Cần ôn lại cụm này (Phím X)"
           >
-            <i class="bi bi-arrow-clockwise"></i> Cần ôn
+            <i class="bi bi-arrow-clockwise"></i>
+            <span>[X] Cần ôn</span>
           </button>
 
+          <!-- [→ / E] Next -->
           <button
             @click="nextFlash"
             :disabled="currentFlashIndex === flashcardItems.length - 1"
-            class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1"
+            class="btn btn-outline-secondary btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
+            title="Tiếp thẻ (Phím → hoặc E)"
           >
-            Tiếp <i class="bi bi-chevron-right"></i>
+            <span>[E] Tiếp</span>
+            <i class="bi bi-chevron-right"></i>
           </button>
+        </div>
+
+        <!-- Mic result under card -->
+        <div v-if="speech.itemResults.value['flash_' + currentFlashItem?.id]" class="mt-2 p-2 rounded-3 bg-light border text-center fs-8">
+          <span class="text-muted">Bạn vừa đọc:</span> <strong>"{{ speech.itemResults.value['flash_' + currentFlashItem?.id].transcript }}"</strong>
+          <span class="badge ms-2" :class="speech.itemResults.value['flash_' + currentFlashItem?.id].score >= 80 ? 'bg-success' : 'bg-warning text-dark'">
+            {{ speech.itemResults.value['flash_' + currentFlashItem?.id].score }}%
+          </span>
         </div>
       </div>
     </div>
@@ -785,7 +876,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore'
 import { useSpeech } from '@/composables/useSpeech'
@@ -831,10 +922,38 @@ const showHint = ref({})
 // Tab 5: Flashcard
 const currentFlashIndex = ref(0)
 const isFlipped = ref(false)
+const selectedFlashPart = ref('all_1000') // 'all_1000' | 'pv_100' | number 1-17
+
+const setFlashPart = (part) => {
+  selectedFlashPart.value = part
+  currentFlashIndex.value = 0
+  isFlipped.value = false
+}
+
+const getFlashPartLabel = () => {
+  if (selectedFlashPart.value === 'all_1000') return 'Tất cả 1000 cụm từ'
+  if (selectedFlashPart.value === 'pv_100') return '100 Phrasal Verbs'
+  return `Phần ${selectedFlashPart.value}`
+}
+
+const startFlashcardForPart = (part) => {
+  activeMainTab.value = 'flashcard'
+  selectedFlashPart.value = part
+  currentFlashIndex.value = 0
+  isFlipped.value = false
+}
+
 const flashcardItems = computed(() => {
-  if (activeMainTab.value === 'phrasal_verbs_100') return phrasalVerbs100List.value
+  if (selectedFlashPart.value === 'pv_100') {
+    return phrasalVerbs100List.value
+  }
+  if (typeof selectedFlashPart.value === 'number') {
+    const list = phrases.value.filter(p => (p.part_number === selectedFlashPart.value) || (Math.ceil(p.id / 50) === selectedFlashPart.value))
+    return list.length > 0 ? list : phrases.value
+  }
   return phrases.value.length > 0 ? phrases.value : phrasalVerbs100List.value
 })
+
 const currentFlashItem = computed(() => {
   if (flashcardItems.value.length === 0) return null
   return flashcardItems.value[currentFlashIndex.value] || null
@@ -995,7 +1114,46 @@ const nextFlash = () => {
   }
 }
 
+const handleKeyDown = (e) => {
+  if (activeMainTab.value !== 'flashcard') return
+  const tag = e.target.tagName.toLowerCase()
+  if (tag === 'input' || tag === 'textarea' || tag === 'select') return
+  if (document.querySelector('.modal.show')) return
+
+  if (e.code === 'Space') {
+    e.preventDefault()
+    isFlipped.value = !isFlipped.value
+  } else if (e.key === 'ArrowLeft' || e.key === 'q' || e.key === 'Q') {
+    e.preventDefault()
+    prevFlash()
+  } else if (e.key === 'ArrowRight' || e.key === 'e' || e.key === 'E') {
+    e.preventDefault()
+    nextFlash()
+  } else if (e.key === 'a' || e.key === 'A') {
+    e.preventDefault()
+    if (currentFlashItem.value?.phrase) {
+      speech.speak(currentFlashItem.value.phrase)
+    }
+  } else if (e.key === 'd' || e.key === 'D') {
+    e.preventDefault()
+    if (currentFlashItem.value?.phrase) {
+      speech.startListening(currentFlashItem.value.phrase, 'flash_' + currentFlashItem.value.id)
+    }
+  } else if (e.key === 's' || e.key === 'S') {
+    e.preventDefault()
+    if (currentFlashItem.value) {
+      markPhraseStatus(currentFlashItem.value, 'mastered')
+    }
+  } else if (e.key === 'x' || e.key === 'X') {
+    e.preventDefault()
+    if (currentFlashItem.value) {
+      markPhraseStatus(currentFlashItem.value, 'learning')
+    }
+  }
+}
+
 onMounted(async () => {
+  window.addEventListener('keydown', handleKeyDown)
   await Promise.all([
     fetchStats(),
     fetchPhrases(),
@@ -1003,6 +1161,12 @@ onMounted(async () => {
     fetchMethods(),
     fetchExercises(),
   ])
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyDown)
+  speech.stopSpeech()
+  speech.stopListening()
 })
 </script>
 

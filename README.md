@@ -254,43 +254,26 @@ cd "Web English 3000 từ vựng"
 
 ---
 
-## 🔑 6. DANH SÁCH TÀI KHOẢN MẪU ĐỂ TRẢI NGHIỆM
+## 📋 6. HƯỚNG DẪN SỬ DỤNG CHI TIẾT TỪ A ĐẾN Z
 
-Hệ thống đã chuẩn bị sẵn các tài khoản kiểm thử cho từng vai trò trong cơ sở dữ liệu:
-
-| Họ và tên | Email đăng nhập | Mật khẩu mặc định | Vai trò (Role) | Chức năng nổi bật |
-| :--- | :--- | :---: | :---: | :--- |
-| **Phùng Văn Cường** | `cuongphung1810@gmail.com` | `123456` | **Super Admin** | Toàn quyền quản trị, phân quyền, quản lý từ vựng, lộ trình & đấu trường |
-| **Quản Trị Viên OxVocab** | `admin@oxvocab.com` | `123456` | **Admin** | Quản lý thành viên, xem báo cáo năng suất toàn hệ thống |
-| **Nguyễn Minh Anh** | `user1@gmail.com` | `123456` | **Moderator** | Điều hành nội dung, kiểm duyệt từ vựng và bài tập |
-| **Cô Thu Trang** | `tutor1@gmail.com` | `123456` | **Tutor (Giáo viên)** | Mở phòng Đấu trường Quiz, tạo lớp thi đấu trực tiếp cho học sinh |
-| **Lê Hoàng Nam** | `cuong@gmail.com` | `123456` | **Học viên** | Đã có chuỗi học 18 ngày, tích lũy 2.850 XP, Cây Tri Thức Cấp 15 |
-| **Học viên kiểm thử** | `user2@gmail.com` | `123456` | **Học viên mới** | Chuỗi ngày học 0, trải nghiệm học từ đầu |
-
-> [!NOTE]
-> Mọi tài khoản mới đăng ký qua form Đăng ký trên trang web sẽ tự động nhận vai trò **Học viên (`user`)** và có thể bắt đầu học ngay lập tức.
-
----
-
-## 📋 7. HƯỚNG DẪN SỬ DỤNG CHI TIẾT TỪ A ĐẾN Z
-
-### 7.1. Dành Cho Học Viên
+### 6.1. Dành Cho Học Viên
 1. **Đăng nhập & Bắt đầu**:
-   - Truy cập `http://localhost:5173/login`, đăng nhập với tài khoản của bạn hoặc tài khoản mẫu `cuong@gmail.com` (mật khẩu `123456`).
+   - Truy cập `http://localhost:5173/login`, đăng nhập với tài khoản học viên hoặc đăng ký tài khoản mới trực tiếp trên hệ thống.
 2. **Học Lộ Trình 25 Chủ Đề**:
    - Nhấp vào **"Lộ trình"** trên thanh Header.
    - Chọn một trong 25 chủ đề (VD: *Technology & Artificial Intelligence*).
    - Học thẻ Flashcard 3D: Nhấp vào thẻ để lật xem nghĩa tiếng Việt, nhấn nút chiếc loa để nghe phát âm, bấm nút Micro để luyện nói.
    - Làm bài kiểm tra để tích lũy XP và mở khóa chặng tiếp theo.
-3. **Học Ngữ Pháp 12 Thì & Luyện Dịch Câu AI**:
+3. **Học Ngữ Pháp 12 Thì, Thể Bị Động & Luyện Dịch Câu AI**:
    - Nhấp vào **"Ngữ pháp"** trên Header.
    - Chọn thì bạn muốn học (VD: *Thì Hiện tại hoàn thành*).
    - Đọc lý thuyết, công thức, bảng thể bị động và quy tắc ngữ âm.
-   - Kéo xuống mục **"Luyện Tập & Chấm Điểm Thực Chiến"**: Gõ câu dịch tiếng Anh vào ô nhập liệu và nhấn `Enter`. Hệ thống AI sẽ chấm điểm, đưa ra lời giải thích và cấp huy hiệu **"✓ ĐÃ XONG"**.
+   - Kéo xuống mục **"Luyện Tập & Chấm Điểm Thực Chiến"**: Gõ câu dịch tiếng Anh hoặc chuyển đổi câu bị động vào ô nhập liệu và nhấn `Enter`. Hệ thống AI sẽ chấm điểm, đưa ra lời giải thích và cấp huy hiệu **"✓ ĐÃ XONG"**.
 4. **Học Cụm Từ & Phrasal Verbs**:
    - Nhấp vào **"Cụm từ"** trên Header.
    - Chọn Tab **1000 Cụm Từ Thông Dụng** để học 850 mẫu câu giao tiếp chia theo 17 phần (50 câu/phần).
    - Chọn Tab **100 Cụm Động Từ** để tra cứu cụm từ theo bảng chữ cái A - W.
+   - Luyện Thẻ 3D cho từng phần cụ thể.
    - Làm bài tập thực hành Bài 1 & Bài 2 để nhận +15 XP mỗi câu.
 5. **Tham Gia Đấu Trường Trực Tuyến**:
    - Nhấp vào biểu tượng hình tròn chiếc cúp **Đấu trường** ở góc phải Header.
@@ -298,15 +281,15 @@ Hệ thống đã chuẩn bị sẵn các tài khoản kiểm thử cho từng v
 6. **Chăm Sóc Cây Tri Thức**:
    - Nhấp vào **Xem thêm ▾ ➔ Vườn Cây Tri Thức**.
    - Bấm nút **"Tưới cây"**, **"Xới đất"** hoặc **"Thu hoạch trái"** khi tích lũy đủ điểm kinh nghiệm.
-7. **Tùy Chỉnh Menu Header**:
-   - Vào **Trang cá nhân (Profile)** ➔ Tìm đến thẻ **"Tùy chỉnh thanh điều hướng Header (Menu 6 Mục)"**.
-   - Nhấp chọn 4 mục bạn yêu thích nhất để đưa lên thanh menu chính và nhấn **"Lưu Cấu Hình Menu"**.
+7. **Tùy Chỉnh Giọng Đọc & Menu Header**:
+   - Vào **Trang cá nhân (Profile)** ➔ Tìm đến thẻ **"Cài đặt giọng đọc & Phát âm"** để chọn giọng Nam/Nữ và accent ưa thích.
+   - Tùy chỉnh thứ tự 4 mục Header và thứ tự danh sách trong **"Xem thêm ▾"** và nhấn **"Lưu Cấu Hình Menu"**.
 
 ---
 
-### 7.2. Dành Cho Giảng Viên & Quản Trị Viên
+### 6.2. Dành Cho Giảng Viên & Quản Trị Viên
 1. **Đăng nhập quản trị**:
-   - Đăng nhập với tài khoản `cuongphung1810@gmail.com` hoặc `admin@oxvocab.com`.
+   - Đăng nhập với tài khoản có quyền Quản trị viên (`admin`) hoặc Giảng viên (`tutor`).
    - Nhấp vào ảnh đại diện góc phải ➔ Chọn **"Khu vực Quản trị & Điều phối"** (hoặc truy cập `http://localhost:5173/admin`).
 2. **Tạo Phòng Đấu Trường Quiz Mới**:
    - Vào **Quản lý Đấu trường** (`/admin/arena`) hoặc tạo trực tiếp từ giao diện Đấu trường.
@@ -318,7 +301,7 @@ Hệ thống đã chuẩn bị sẵn các tài khoản kiểm thử cho từng v
 
 ---
 
-## 📁 8. CẤU TRÚC THƯ MỤC DỰ ÁN
+## 📁 7. CẤU TRÚC THƯ MỤC DỰ ÁN
 
 ```
 Web English 3000 từ vựng/
@@ -384,7 +367,7 @@ Web English 3000 từ vựng/
 
 ---
 
-## 🔧 9. XỬ LÝ SỰ CỐ THƯỜNG GẶP (TROUBLESHOOTING)
+## 🔧 8. XỬ LÝ SỰ CỐ THƯỜNG GẶP (TROUBLESHOOTING)
 
 1. **Lỗi không kết nối được Database (`Connection refused` hoặc `Access denied`)**:
    - Kiểm tra MySQL trong XAMPP hoặc Laragon đã được Bật (Start) hay chưa.
@@ -397,7 +380,7 @@ Web English 3000 từ vựng/
 
 ---
 
-## 📄 10. BẢN QUYỀN & TÁC GIẢ
+## 📄 9. BẢN QUYỀN & TÁC GIẢ
 
 - **Tác giả / Nhà phát triển chính**: Phùng Văn Cường ([cuongphung1810@gmail.com](mailto:cuongphung1810@gmail.com))
 - **Dự án**: Hệ thống học tiếng Anh toàn diện OxVocab™ (Đồ án tốt nghiệp / Khóa luận học tập).

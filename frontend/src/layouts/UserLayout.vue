@@ -287,7 +287,19 @@ const visibleNavItems = computed(() => {
 
 const moreNavItems = computed(() => {
   const chosenIds = authStore.headerNavItems || ['curriculum', 'daily', 'grammar', 'phrasal_verbs']
-  return NAV_CATALOG.filter(item => !chosenIds.includes(item.id))
+  const moreOrder = authStore.moreNavOrder || []
+  const unchosen = NAV_CATALOG.filter(item => !chosenIds.includes(item.id))
+  if (moreOrder.length > 0) {
+    return [...unchosen].sort((a, b) => {
+      const idxA = moreOrder.indexOf(a.id)
+      const idxB = moreOrder.indexOf(b.id)
+      if (idxA === -1 && idxB === -1) return 0
+      if (idxA === -1) return 1
+      if (idxB === -1) return -1
+      return idxA - idxB
+    })
+  }
+  return unchosen
 })
 
 const toggleDropdown = () => {

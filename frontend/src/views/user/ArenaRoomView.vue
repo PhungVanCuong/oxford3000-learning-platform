@@ -230,25 +230,37 @@
             <table class="table table-hover align-middle border rounded-4 overflow-hidden fs-7">
               <thead class="table-light">
                 <tr>
-                  <th style="width: 60px;">Hạng</th>
+                  <th style="width: 80px;" class="text-center">Hạng</th>
                   <th>Học viên</th>
-                  <th>Câu đúng</th>
-                  <th>Thời gian TB</th>
-                  <th class="text-end">Tổng XP</th>
+                  <th class="text-center">Số câu đúng</th>
+                  <th class="text-center">Thời gian TB</th>
+                  <th class="text-end">Tổng XP đạt được</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(p, rIdx) in sortedParticipants" :key="p.id">
-                  <td class="fw-bold">{{ rIdx + 1 }}</td>
+                <tr v-for="(p, rIdx) in sortedParticipants" :key="p.id || rIdx">
+                  <td class="text-center fw-black">
+                    <span v-if="rIdx === 0" class="badge bg-warning text-dark fs-8 rounded-pill px-2 py-1 shadow-2xs">🥇 1</span>
+                    <span v-else-if="rIdx === 1" class="badge bg-secondary text-white fs-8 rounded-pill px-2 py-1 shadow-2xs">🥈 2</span>
+                    <span v-else-if="rIdx === 2" class="badge bg-danger-subtle text-danger fs-8 rounded-pill px-2 py-1 shadow-2xs">🥉 3</span>
+                    <span v-else class="text-muted fw-bold">#{{ rIdx + 1 }}</span>
+                  </td>
                   <td>
                     <div class="d-flex align-items-center gap-2">
-                      <img :src="p.user_avatar" class="rounded-circle border" style="width: 28px; height: 28px;" />
-                      <span class="fw-semibold">{{ p.user_name }}</span>
+                      <img :src="p.user_avatar || 'https://api.dicebear.com/7.x/bottts/svg?seed=' + p.user_name" class="rounded-circle border" style="width: 32px; height: 32px;" />
+                      <div>
+                        <div class="fw-bold text-dark-emphasis">{{ p.user_name }}</div>
+                        <span v-if="p.is_current_user" class="badge bg-teal-subtle text-teal rounded-pill" style="font-size: 10px;">Bạn</span>
+                      </div>
                     </div>
                   </td>
-                  <td><span class="badge bg-success-subtle text-success">{{ p.correct_answers_count || 0 }}/{{ questions.length }}</span></td>
-                  <td class="text-muted font-monospace">{{ p.avg_speed || '4.2' }}s</td>
-                  <td class="text-end fw-black text-warning">{{ p.total_score || 0 }} XP</td>
+                  <td class="text-center">
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1 rounded-pill fw-bold">
+                      {{ (p.correct_count !== undefined ? p.correct_count : p.correct_answers_count) || 0 }}/{{ questions.length }} câu
+                    </span>
+                  </td>
+                  <td class="text-center text-muted font-monospace fs-8">{{ p.avg_speed || (p.total_time_ms ? (p.total_time_ms / 1000 / Math.max(1, questions.length)).toFixed(1) + 's' : '4.2s') }}</td>
+                  <td class="text-end fw-black text-warning fs-6">+{{ p.total_score || p.score || 0 }} XP</td>
                 </tr>
               </tbody>
             </table>
@@ -290,6 +302,7 @@ const copied = ref(false)
 const currentQuestionIndex = ref(0)
 const timeLeft = ref(15)
 const timerInterval = ref(null)
+const lobbyPollInterval = ref(null)
 const selectedAnswer = ref(null)
 const isCurrentCorrect = ref(false)
 const lastEarnedXp = ref(0)
@@ -314,6 +327,55 @@ const copyShareLink = () => {
   setTimeout(() => { copied.value = false }, 2500)
 }
 
+const startLobbyPolling = () => {
+  clearInterval(lobbyPollInterval.value)
+  lobbyPollInterval.value = setInterval(async () => {
+    if (!room.value || room.value.status !== 'waiting') {
+      clearInterval(lobbyPollInterval.value)
+      return
+    }
+    try {
+      const res = await axios.get(`/api/arena/rooms/${route.params.idOrCode}`)
+      const payload = res.data.data
+      const updatedRoom = payload.room || payload
+
+      // Update participants list live
+      if (payload.participants) {
+        participants.value = payload.participants.map(p => ({
+          ...p,
+          total_score: p.score ?? p.total_score ?? 0,
+          correct_count: p.correct_count ?? p.correct_answers_count ?? 0,
+          user_name: p.user_name || (p.user ? p.user.name : 'Học viên'),
+          user_avatar: p.user_avatar || (p.user ? p.user.avatar_url : `https://api.dicebear.com/7.x/bottts/svg?seed=${p.user_id}`)
+        }))
+      }
+
+      // If room status changed to playing, auto advance without manual reload
+      if (updatedRoom.status === 'playing') {
+        clearInterval(lobbyPollInterval.value)
+        room.value.status = 'playing'
+
+        const rawQuestions = payload.questions || payload.questions_data || []
+        if (rawQuestions.length > 0) {
+          questions.value = rawQuestions.map((q, idx) => ({
+            id: q.id || idx + 1,
+            q: q.prompt || q.question || q.q || 'Câu hỏi trắc nghiệm',
+            options: q.options || q.options_json || ['A', 'B', 'C', 'D'],
+            answer: q.correct_answer || q.answer,
+            correct_answer: q.correct_answer || q.answer,
+            explain: q.explanation || q.explain || 'Đáp án chính xác.',
+            type: q.type || 'Trắc nghiệm phản xạ'
+          }))
+        }
+        currentQuestionIndex.value = 0
+        startQuestionTimer()
+      }
+    } catch (e) {
+      console.warn('Lobby polling error:', e)
+    }
+  }, 1500)
+}
+
 const loadRoomDetails = async () => {
   errorMessage.value = ''
   try {
@@ -326,6 +388,7 @@ const loadRoomDetails = async () => {
     participants.value = rawParts.map(p => ({
       ...p,
       total_score: p.score ?? p.total_score ?? 0,
+      correct_count: p.correct_count ?? p.correct_answers_count ?? 0,
       user_name: p.user_name || (p.user ? p.user.name : 'Học viên'),
       user_avatar: p.user_avatar || (p.user ? p.user.avatar_url : `https://api.dicebear.com/7.x/bottts/svg?seed=${p.user_id}`)
     }))
@@ -344,6 +407,13 @@ const loadRoomDetails = async () => {
 
     timeLeft.value = room.value.time_per_question || 15
 
+    // If waiting, start reactive polling so students auto start when teacher begins
+    if (room.value.status === 'waiting') {
+      startLobbyPolling()
+    } else if (room.value.status === 'playing') {
+      startQuestionTimer()
+    }
+
     // Auto join participant if logged in and not joined yet
     if (authStore.isAuthenticated && authStore.user) {
       const alreadyIn = participants.value.some(p => p.user_id === authStore.user.id)
@@ -358,6 +428,7 @@ const loadRoomDetails = async () => {
           participants.value = (refPayload.participants || []).map(p => ({
             ...p,
             total_score: p.score ?? p.total_score ?? 0,
+            correct_count: p.correct_count ?? p.correct_answers_count ?? 0,
             user_name: p.user_name || (p.user ? p.user.name : 'Học viên'),
             user_avatar: p.user_avatar || (p.user ? p.user.avatar_url : `https://api.dicebear.com/7.x/bottts/svg?seed=${p.user_id}`)
           }))
@@ -377,6 +448,7 @@ const loadRoomDetails = async () => {
 const startGame = async () => {
   try {
     await axios.post(`/api/arena/rooms/${room.value.id || route.params.idOrCode}/start`)
+    clearInterval(lobbyPollInterval.value)
     room.value.status = 'playing'
     startQuestionTimer()
   } catch (err) {
@@ -394,7 +466,7 @@ const startQuestionTimer = () => {
     if (timeLeft.value > 0) {
       timeLeft.value--
     } else {
-      // Time expired
+      // Time expired: automatically advance to next question with 0 points
       clearInterval(timerInterval.value)
       if (selectedAnswer.value === null) {
         chooseOption('__TIMEOUT__')
@@ -408,8 +480,9 @@ const chooseOption = async (opt) => {
   selectedAnswer.value = opt
   clearInterval(timerInterval.value)
 
-  const timeTaken = (Date.now() - answerStartTime.value) / 1000
-  const isCorrect = opt === currentQuestion.value.answer || opt === currentQuestion.value.correct_answer
+  const isTimeout = opt === '__TIMEOUT__'
+  const timeTaken = isTimeout ? (room.value.time_per_question || 15) : ((Date.now() - answerStartTime.value) / 1000)
+  const isCorrect = !isTimeout && (opt === currentQuestion.value.answer || opt === currentQuestion.value.correct_answer)
   isCurrentCorrect.value = isCorrect
 
   // Speed bonus
@@ -424,24 +497,38 @@ const chooseOption = async (opt) => {
     if (authStore.user) {
       authStore.user.xp_points = (authStore.user.xp_points || 0) + bonusXp
     }
+  } else {
+    lastEarnedXp.value = 0
   }
 
   try {
-    await axios.post(`/api/arena/rooms/${room.value.id || route.params.idOrCode}/answer`, {
+    const res = await axios.post(`/api/arena/rooms/${room.value.id || route.params.idOrCode}/answer`, {
       question_index: currentQuestionIndex.value,
       question_id: currentQuestion.value.id || currentQuestionIndex.value,
-      selected_option: opt,
-      user_answer: opt,
+      selected_option: isTimeout ? '' : opt,
+      user_answer: isTimeout ? '' : opt,
       time_taken_ms: Math.round(timeTaken * 1000),
       time_taken_seconds: timeTaken,
       is_correct: isCorrect,
       xp_earned: bonusXp
     })
+
+    if (res.data?.data) {
+      if (res.data.data.correct_answer) {
+        currentQuestion.value.correct_answer = res.data.data.correct_answer
+      }
+      if (res.data.data.explanation) {
+        currentQuestion.value.explain = res.data.data.explanation
+      }
+      if (res.data.data.total_score !== undefined) {
+        currentMyScore.value = res.data.data.total_score
+      }
+    }
   } catch (err) {
     console.error('Failed to submit answer:', err)
   }
 
-  // Delay then next question
+  // Delay then advance to next question
   setTimeout(() => {
     if (currentQuestionIndex.value < questions.value.length - 1) {
       currentQuestionIndex.value++
@@ -465,13 +552,32 @@ const getOptionClass = (opt) => {
   return 'bg-body-tertiary opacity-50'
 }
 
-const finishGame = () => {
+const finishGame = async () => {
+  clearInterval(timerInterval.value)
+  clearInterval(lobbyPollInterval.value)
   room.value.status = 'finished'
   confetti({
     particleCount: 150,
     spread: 90,
     origin: { y: 0.6 }
   })
+
+  // Fetch updated final room ranking & leaderboard
+  try {
+    const res = await axios.get(`/api/arena/rooms/${route.params.idOrCode}`)
+    const payload = res.data.data
+    if (payload.participants) {
+      participants.value = payload.participants.map(p => ({
+        ...p,
+        total_score: p.score ?? p.total_score ?? 0,
+        correct_count: p.correct_count ?? p.correct_answers_count ?? 0,
+        user_name: p.user_name || (p.user ? p.user.name : 'Học viên'),
+        user_avatar: p.user_avatar || (p.user ? p.user.avatar_url : `https://api.dicebear.com/7.x/bottts/svg?seed=${p.user_id}`)
+      }))
+    }
+  } catch (e) {
+    console.warn('Could not reload final leaderboard:', e)
+  }
 }
 
 onMounted(() => {
@@ -480,6 +586,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   clearInterval(timerInterval.value)
+  clearInterval(lobbyPollInterval.value)
 })
 </script>
 

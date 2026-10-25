@@ -312,12 +312,12 @@
           </div>
         </div>
 
-        <!-- Action Buttons Row styled like Daily Study & Topics 3000 -->
-        <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap mb-4">
+        <!-- Strict Single-Row Action Controls (Matches Lộ trình, Học theo ngày & Chủ đề 3000 từ) -->
+        <div class="d-flex align-items-center justify-content-center gap-1.5 flex-nowrap overflow-x-auto py-1 w-100 flashcard-controls-row mb-4">
           <!-- [Q] Trước -->
           <button 
             type="button"
-            class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1.5 fw-semibold"
+            class="btn btn-outline-secondary btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-semibold"
             :disabled="currentCardIndex === 0"
             @click="prevCard"
             title="Phím [Q] hoặc mũi tên trái"
@@ -329,18 +329,18 @@
           <!-- [Space] Lật thẻ -->
           <button 
             type="button"
-            class="btn btn-teal text-white btn-sm px-3.5 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1.5 fw-bold"
+            class="btn btn-teal text-white btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-bold"
             @click="isFlipped = !isFlipped"
             title="Phím [Space]"
           >
             <i class="bi bi-arrow-repeat"></i>
-            <span><strong>[Space]</strong> Lật thẻ</span>
+            <span><strong>[Space]</strong> Lật</span>
           </button>
 
           <!-- [A] Nghe US -->
           <button 
             type="button"
-            class="btn btn-primary btn-sm px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1.5 fw-bold"
+            class="btn btn-primary btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-bold"
             @click="speakWord(currentTerm?.term)"
             title="Phím [A]"
           >
@@ -351,7 +351,7 @@
           <!-- [D] Luyện nói -->
           <button 
             type="button"
-            class="btn btn-sm px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1.5 fw-bold"
+            class="btn btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-bold"
             :class="isListening ? 'btn-danger animate-mic-pulse' : 'btn-info text-white'"
             @click="startSpeechRecognition"
             title="Phím [D]"
@@ -363,7 +363,7 @@
           <!-- [S] Đã nhớ -->
           <button 
             type="button"
-            class="btn btn-success btn-sm px-3.5 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1.5 fw-bold"
+            class="btn btn-success btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-bold"
             @click="markTermRemembered"
             title="Phím [S]"
           >
@@ -374,7 +374,7 @@
           <!-- [X] Cần ôn -->
           <button 
             type="button"
-            class="btn btn-warning text-dark btn-sm px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1.5 fw-bold"
+            class="btn btn-warning text-dark btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-bold"
             @click="markTermLearning"
             title="Phím [X]"
           >
@@ -385,7 +385,7 @@
           <!-- [E] Tiếp -->
           <button 
             type="button"
-            class="btn btn-outline-secondary btn-sm px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1.5 fw-semibold"
+            class="btn btn-outline-secondary btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-semibold"
             :disabled="currentCardIndex >= terms.length - 1"
             @click="nextCard"
             title="Phím [E] hoặc mũi tên phải"

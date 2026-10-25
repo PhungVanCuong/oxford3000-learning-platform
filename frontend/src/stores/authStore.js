@@ -24,6 +24,13 @@ export const useAuthStore = defineStore('auth', {
       } catch (e) {}
       return ['curriculum', 'daily', 'grammar', 'phrasal_verbs']
     })(),
+    moreNavOrder: (() => {
+      try {
+        const saved = JSON.parse(localStorage.getItem('oxford_more_nav_order'))
+        if (Array.isArray(saved)) return saved
+      } catch (e) {}
+      return []
+    })(),
   }),
 
   getters: {
@@ -222,6 +229,23 @@ export const useAuthStore = defineStore('auth', {
         if (this.isAuthenticated) {
           await this.updateProfile({ header_nav_json: this.headerNavItems })
         }
+      }
+    },
+
+    async setHeaderNavAndMore(headerItems, moreItems = []) {
+      if (Array.isArray(headerItems) && headerItems.length === 4) {
+        this.headerNavItems = [...headerItems]
+        localStorage.setItem('oxford_header_nav', JSON.stringify(this.headerNavItems))
+      }
+      if (Array.isArray(moreItems)) {
+        this.moreNavOrder = [...moreItems]
+        localStorage.setItem('oxford_more_nav_order', JSON.stringify(this.moreNavOrder))
+      }
+      if (this.isAuthenticated) {
+        await this.updateProfile({ 
+          header_nav_json: this.headerNavItems,
+          more_nav_order_json: this.moreNavOrder
+        })
       }
     },
 

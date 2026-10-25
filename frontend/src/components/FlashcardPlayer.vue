@@ -154,33 +154,33 @@
       </div>
     </div>
 
-    <!-- Complete 7 Action Buttons Row with Shortcut Labels -->
-    <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
+    <!-- Complete 7 Action Buttons Row with Shortcut Labels (Strict Single Row) -->
+    <div class="d-flex align-items-center justify-content-center gap-1.5 flex-nowrap overflow-x-auto py-1 w-100 flashcard-controls-row">
       <!-- [← / Q] Prev -->
       <button
         @click="prevCard"
         :disabled="currentIndex === 0"
-        class="btn btn-outline-secondary btn-sm px-2 px-md-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1"
+        class="btn btn-outline-secondary btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
         title="Lùi thẻ (Phím ← hoặc Q)"
       >
         <i class="bi bi-chevron-left"></i>
-        <span class="d-none d-sm-inline">[Q] Trước</span>
+        <span>[Q] Trước</span>
       </button>
 
       <!-- [Space] Flip -->
       <button
         @click="toggleFlip"
-        class="btn btn-teal btn-sm px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1"
+        class="btn btn-teal btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
         title="Lật thẻ (Phím Space)"
       >
         <i class="bi bi-arrow-repeat"></i>
-        <span>[Space] Lật thẻ</span>
+        <span>[Space] Lật</span>
       </button>
 
       <!-- [A] Listen -->
       <button
         @click="speakCurrent"
-        class="btn btn-primary btn-sm px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1"
+        class="btn btn-primary btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
         title="Nghe phát âm chuẩn US (Phím A)"
       >
         <i class="bi bi-volume-up-fill"></i>
@@ -190,7 +190,7 @@
       <!-- [D] Speak -->
       <button
         @click="recordCurrent"
-        class="btn btn-sm px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1"
+        class="btn btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
         :class="speech.isListening.value ? 'btn-danger animate-mic-pulse' : 'btn-info text-white'"
         title="Luyện nói Micro (Phím D)"
       >
@@ -201,7 +201,7 @@
       <!-- [S] Mastered -->
       <button
         @click="markCurrentMastered"
-        class="btn btn-success btn-sm px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1"
+        class="btn btn-success btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
         title="Đã nhớ từ này (Phím S)"
       >
         <i class="bi bi-check-circle-fill"></i>
@@ -211,7 +211,7 @@
       <!-- [X] Need Review -->
       <button
         @click="markCurrentLearning"
-        class="btn btn-warning btn-sm text-white px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1"
+        class="btn btn-warning btn-sm text-white px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
         title="Cần ôn lại từ này (Phím X)"
       >
         <i class="bi bi-arrow-clockwise"></i>
@@ -222,10 +222,10 @@
       <button
         @click="nextCard"
         :disabled="currentIndex === words.length - 1"
-        class="btn btn-outline-secondary btn-sm px-2 px-md-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-1"
+        class="btn btn-outline-secondary btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
         title="Tiếp thẻ (Phím → hoặc E)"
       >
-        <span class="d-none d-sm-inline">[E] Tiếp</span>
+        <span>[E] Tiếp</span>
         <i class="bi bi-chevron-right"></i>
       </button>
     </div>

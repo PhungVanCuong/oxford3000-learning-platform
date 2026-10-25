@@ -191,19 +191,27 @@
                     <i class="bi bi-volume-up-fill me-1"></i> Nghe câu
                   </button>
                   <button
-                    @click="speech.startListening(ex.en)"
+                    @click="speech.startListening(ex.en, 'grammar_ex_' + exIdx)"
                     class="btn btn-sm rounded-pill px-3 py-1 fs-8"
-                    :class="speech.isListening.value ? 'btn-danger animate-pulse' : 'btn-outline-success'"
+                    :class="speech.listeningId.value === ('grammar_ex_' + exIdx) ? 'btn-danger animate-pulse' : 'btn-outline-success'"
                   >
-                    <i class="bi bi-mic-fill me-1"></i> Đọc lại
+                    <i class="bi" :class="speech.listeningId.value === ('grammar_ex_' + exIdx) ? 'bi-record-fill' : 'bi-mic-fill'"></i>
+                    <span class="ms-1">{{ speech.listeningId.value === ('grammar_ex_' + exIdx) ? 'Đang nghe...' : 'Đọc lại' }}</span>
                   </button>
+                </div>
+
+                <!-- Per-item mic result -->
+                <div v-if="speech.itemResults.value['grammar_ex_' + exIdx]" class="mt-2 p-2 rounded-3 bg-white border fs-8">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="text-muted">Bạn đã đọc:</span>
+                    <span class="badge" :class="speech.itemResults.value['grammar_ex_' + exIdx].score >= 80 ? 'bg-success' : speech.itemResults.value['grammar_ex_' + exIdx].score >= 55 ? 'bg-warning text-dark' : 'bg-danger'">
+                      {{ speech.itemResults.value['grammar_ex_' + exIdx].score }}%
+                    </span>
+                  </div>
+                  <div class="fw-semibold text-dark-emphasis">"{{ speech.itemResults.value['grammar_ex_' + exIdx].transcript }}"</div>
                 </div>
               </div>
             </div>
-          </div>
-
-          <div v-if="speech.transcript.value" class="alert alert-info mt-3 mb-0 py-2 fs-7 text-center rounded-3">
-            Giọng bạn vừa đọc: <strong>"{{ speech.transcript.value }}"</strong> (Độ chính xác: {{ speech.pronunciationScore.value }}%)
           </div>
         </section>
 
@@ -291,6 +299,16 @@
             >
               <i class="bi bi-puzzle-fill me-1.5"></i>
               <span>3. Hoàn Thành Câu Từ Từ Gợi Ý ({{ sentenceBuildingExercises.length }})</span>
+            </button>
+
+            <button
+              v-if="passiveConversionsExercises.length"
+              @click="activeExerciseTab = 'passive_conversions'"
+              class="btn btn-sm rounded-pill px-3 py-2 fw-bold fs-7 transition-all flex-grow-1"
+              :class="activeExerciseTab === 'passive_conversions' ? 'btn-teal text-white shadow-xs' : 'btn-link text-muted text-decoration-none'"
+            >
+              <i class="bi bi-arrow-left-right me-1.5"></i>
+              <span>4. Chuyển Đổi Câu Bị Động (Passive Voice - {{ passiveConversionsExercises.length }} Câu)</span>
             </button>
           </div>
 
@@ -531,6 +549,103 @@
               </div>
             </div>
           </div>
+
+          <!-- TAB 4: PASSIVE CONVERSIONS (CHUYỂN SANG THỂ BỊ ĐỘNG) -->
+          <div v-else-if="activeExerciseTab === 'passive_conversions'">
+            <div class="alert alert-primary bg-opacity-10 border-primary-subtle p-3.5 rounded-4 mb-4 fs-7">
+              <div class="d-flex gap-2">
+                <i class="bi bi-arrow-left-right text-primary fs-5 shrink-0"></i>
+                <div>
+                  <strong>Dạng bài tập chuyển đổi sang thể bị động (Trang 3 PDF):</strong> Đọc câu chủ động ban đầu và viết lại câu sang đúng cấu trúc thể bị động (S + be + V3/ed + by O). Chấm điểm thông minh hoặc đạt từ <strong>80%</strong> là nhận ngay <strong>+15 XP</strong>! Nhấn <kbd class="px-1.5 py-0.5 bg-dark text-white rounded">Enter</kbd> để kiểm tra tức thì!
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex flex-column gap-3.5">
+              <div
+                v-for="(pItem, pIdx) in passiveConversionsExercises"
+                :key="pItem.id || pIdx"
+                class="card p-3.5 p-md-4 rounded-4 border bg-body-tertiary transition-all"
+                :class="{
+                  'border-success shadow-xs bg-success-subtle bg-opacity-10': passiveResults[pIdx]?.passed,
+                  'border-warning': passiveResults[pIdx] && !passiveResults[pIdx]?.passed
+                }"
+              >
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="badge rounded-pill px-2.5 py-1 fw-bold fs-8" :class="passiveResults[pIdx]?.passed ? 'bg-success text-white' : 'bg-secondary text-white'">
+                      Câu {{ String(pIdx + 1).padStart(2, '0') }}
+                    </span>
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill fs-8">Active → Passive</span>
+                  </div>
+
+                  <div v-if="passiveResults[pIdx]">
+                    <span v-if="passiveResults[pIdx].passed" class="badge bg-success text-white rounded-pill px-3 py-1.5 fs-8 shadow-xs fw-bold">
+                      <i class="bi bi-check-circle-fill me-1"></i> ✓ ĐÃ XONG ({{ passiveResults[pIdx].similarity_score }}%)
+                    </span>
+                    <span v-else class="badge bg-warning text-dark rounded-pill px-3 py-1.5 fs-8">
+                      <i class="bi bi-exclamation-triangle me-1"></i> Chưa đạt ({{ passiveResults[pIdx].similarity_score }}%)
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Active sentence -->
+                <div class="p-3 rounded-3 bg-white border mb-3">
+                  <div class="text-muted fs-8 fw-bold text-uppercase mb-1">🔤 Câu chủ động ban đầu:</div>
+                  <div class="fs-6 fw-bold text-teal">"{{ pItem.active }}"</div>
+                </div>
+
+                <!-- Input area -->
+                <div class="mb-2">
+                  <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted rounded-start-pill ps-3"><i class="bi bi-pencil-square"></i></span>
+                    <input
+                      type="text"
+                      v-model="passiveAnswers[pIdx]"
+                      @keydown.enter.prevent="checkPassiveConversion(pIdx, pItem)"
+                      class="form-control form-control-lg fs-7 border-start-0 border-end-0"
+                      :placeholder="'Chuyển sang bị động: ' + (pItem.expected ? pItem.expected.split(' ').slice(0, 3).join(' ') + '...' : '')"
+                      :disabled="loadingPassiveCheck[pIdx]"
+                    />
+                    <button
+                      @click="checkPassiveConversion(pIdx, pItem)"
+                      class="btn btn-teal px-4 fw-bold text-white fs-7 rounded-end-pill d-flex align-items-center gap-1.5 shadow-sm"
+                      :disabled="loadingPassiveCheck[pIdx] || !passiveAnswers[pIdx]?.trim()"
+                    >
+                      <span v-if="loadingPassiveCheck[pIdx]" class="spinner-border spinner-border-sm" role="status"></span>
+                      <i v-else class="bi bi-stars"></i>
+                      <span>{{ loadingPassiveCheck[pIdx] ? 'AI đang chấm...' : 'Chấm điểm' }}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Feedback -->
+                <div v-if="passiveResults[pIdx]" class="p-3.5 rounded-4 mt-2 transition-all shadow-xs" :class="passiveResults[pIdx].passed ? 'bg-white border border-success' : 'bg-white border border-warning'">
+                  <div class="d-flex align-items-center justify-content-between mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="badge rounded-pill px-2.5 py-1 fs-8 fw-bold" :class="passiveResults[pIdx].passed ? 'bg-success text-white' : 'bg-warning text-dark'">
+                        {{ passiveResults[pIdx].passed ? '🎉 CHÍNH XÁC (ĐẠT CHUẨN +15 XP)' : '💡 GÓP Ý HOÀN THIỆN' }}
+                      </span>
+                      <span class="fs-8 text-muted">Độ tương đồng: <strong>{{ passiveResults[pIdx].similarity_score }}%</strong></span>
+                    </div>
+                    <button @click="speech.speak(passiveResults[pIdx].ai_result?.corrected_answer || pItem.expected)" class="btn btn-sm btn-outline-teal rounded-pill px-3 py-1 fs-8">
+                      <i class="bi bi-volume-up-fill me-1"></i> Nghe câu bị động
+                    </button>
+                  </div>
+
+                  <div class="fs-7 text-dark-emphasis mb-2">
+                    <span class="fw-bold text-success"><i class="bi bi-check-lg me-1"></i> Cấu trúc bị động chuẩn:</span>
+                    <span class="fw-semibold fst-italic ms-1 text-teal">{{ passiveResults[pIdx].ai_result?.corrected_answer || pItem.expected }}</span>
+                  </div>
+
+                  <div class="fs-8 text-muted p-2.5 rounded-3 bg-light border">
+                    <strong class="text-teal"><i class="bi bi-chat-quote-fill me-1"></i> Hướng dẫn cấu trúc:</strong>
+                    {{ passiveResults[pIdx].ai_result?.simple_explanation || 'Bạn đã chuyển đổi câu chủ động sang bị động rất chính xác!' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
         <!-- 7. SECTION: PRACTICE QUIZ (MULTIPLE CHOICE) -->
@@ -590,9 +705,27 @@ const verbResults = ref({})
 const buildAnswers = ref({})
 const buildResults = ref({})
 
+// Passive voice conversion states (Page 3 PDF)
+const passiveAnswers = ref({})
+const loadingPassiveCheck = ref({})
+const passiveResults = ref({})
+
+const defaultPassive10 = [
+  { id: 1, active: 'My father waters this flower every morning.', expected: 'This flower is watered by my father every morning' },
+  { id: 2, active: 'John invited Fiona to his birthday party last night.', expected: 'Fiona was invited to John\'s birthday party last night' },
+  { id: 3, active: 'Her mother is preparing the dinner in the kitchen.', expected: 'The dinner is being prepared in the kitchen by her mother' },
+  { id: 4, active: 'We should clean our teeth twice a day.', expected: 'Our teeth should be cleaned twice a day' },
+  { id: 5, active: 'Our teachers have explained the English grammar.', expected: 'The English grammar has been explained by our teachers' },
+  { id: 6, active: 'Some drunk drivers caused the accident in this city.', expected: 'The accident was caused in this city by some drunk drivers' },
+  { id: 7, active: 'Tom will visit Mary next month.', expected: 'Mary will be visited by Tom next month' },
+  { id: 8, active: 'The manager didn\'t phone the secretary this morning.', expected: 'The secretary was not phoned by the manager this morning' },
+  { id: 9, active: 'The students have discussed the pollution problems since last week.', expected: 'The pollution problems have been discussed by the students since last week' },
+  { id: 10, active: 'Some people will interview the new president on TV.', expected: 'The new president will be interviewed on TV' }
+]
+
 const translationExercises = computed(() => {
   const ex = grammar.value?.exercises || grammar.value?.exercises_json || {}
-  return ex.translations || ex.passive_conversions || []
+  return ex.translations || []
 })
 
 const verbConjugationExercises = computed(() => {
@@ -605,8 +738,21 @@ const sentenceBuildingExercises = computed(() => {
   return ex.sentence_buildings || []
 })
 
+const passiveConversionsExercises = computed(() => {
+  const ex = grammar.value?.exercises || grammar.value?.exercises_json || {}
+  if (ex.passive_conversions && ex.passive_conversions.length > 0) {
+    return ex.passive_conversions
+  }
+  const slug = grammar.value?.slug || ''
+  const title = grammar.value?.title || ''
+  if (slug.includes('bi-dong') || slug.includes('passive') || title.includes('Bị Động') || title.includes('Passive')) {
+    return defaultPassive10
+  }
+  return []
+})
+
 const totalExercisesCount = computed(() => {
-  return translationExercises.value.length + verbConjugationExercises.value.length + sentenceBuildingExercises.value.length
+  return translationExercises.value.length + verbConjugationExercises.value.length + sentenceBuildingExercises.value.length + passiveConversionsExercises.value.length
 })
 
 const progressPercent = computed(() => {
@@ -622,7 +768,8 @@ const completedCount = computed(() => {
   const transPassed = Object.values(results.value).filter(r => r?.passed).length
   const verbPassed = Object.values(verbResults.value).filter(r => r?.passed).length
   const buildPassed = Object.values(buildResults.value).filter(r => r?.passed).length
-  return transPassed + verbPassed + buildPassed
+  const passivePassed = Object.values(passiveResults.value).filter(r => r?.passed).length
+  return transPassed + verbPassed + buildPassed + passivePassed
 })
 
 // Guaranteed Local & Offline Grader
@@ -714,6 +861,8 @@ const saveLocalProgress = () => {
     verbResults: verbResults.value,
     buildAnswers: buildAnswers.value,
     buildResults: buildResults.value,
+    passiveAnswers: passiveAnswers.value,
+    passiveResults: passiveResults.value,
     completedCount: completedCount.value,
     totalExercisesCount: totalExercisesCount.value,
     savedAt: new Date().toISOString()
@@ -746,6 +895,8 @@ const loadLocalProgress = () => {
       if (data.verbResults) verbResults.value = data.verbResults
       if (data.buildAnswers) buildAnswers.value = data.buildAnswers
       if (data.buildResults) buildResults.value = data.buildResults
+      if (data.passiveAnswers) passiveAnswers.value = data.passiveAnswers
+      if (data.passiveResults) passiveResults.value = data.passiveResults
     }
   } catch (e) {
     console.error('Lỗi tải tiến độ cũ:', e)
@@ -760,6 +911,8 @@ const resetAllExercises = () => {
   verbResults.value = {}
   buildAnswers.value = {}
   buildResults.value = {}
+  passiveAnswers.value = {}
+  passiveResults.value = {}
   if (grammar.value?.id) {
     localStorage.removeItem(getProgressStorageKey())
     saveLocalProgress()
@@ -776,6 +929,51 @@ const scrollToSection = (sectionId) => {
   const el = document.getElementById(sectionId)
   if (el) {
     el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+}
+
+const checkPassiveConversion = async (idx, item) => {
+  const ans = (passiveAnswers.value[idx] || '').trim()
+  if (!ans) return
+
+  loadingPassiveCheck.value[idx] = true
+
+  try {
+    const res = await axios.post('/api/grammars/check-translation', {
+      grammar_id: grammar.value.id,
+      vi_prompt: 'Chuyển sang bị động: ' + item.active,
+      user_answer: ans,
+      expected_answer: item.expected,
+      tense: 'Thể bị động (Passive Voice)'
+    })
+
+    const payload = res.data.data || res.data
+    const isPassed = Boolean(payload.passed ?? payload.is_passed ?? (payload.similarity_score >= 80) ?? (payload.score >= 80))
+    const score = payload.similarity_score ?? payload.score ?? (isPassed ? 100 : 0)
+
+    passiveResults.value[idx] = {
+      passed: isPassed,
+      similarity_score: score,
+      ai_result: payload.ai_result || {
+        corrected_answer: payload.corrected_answer || item.expected,
+        simple_explanation: payload.explanation || (isPassed ? 'Chính xác! Bạn đã chuyển sang cấu trúc bị động rất chuẩn.' : 'Chưa chính xác, hãy đối chiếu với cấu trúc bị động chuẩn bên dưới.')
+      }
+    }
+
+    if (isPassed && authStore.user) {
+      authStore.user.xp_points = payload.user_xp || ((authStore.user.xp_points || 0) + 15)
+    }
+    saveLocalProgress()
+  } catch (err) {
+    console.warn('API chấm điểm không khả dụng, sử dụng bộ chấm điểm thông minh cục bộ:', err)
+    const fallback = evaluateTranslationLocally(ans, item.expected)
+    passiveResults.value[idx] = fallback
+    if (fallback.passed && authStore.user) {
+      authStore.user.xp_points = (authStore.user.xp_points || 0) + 15
+    }
+    saveLocalProgress()
+  } finally {
+    loadingPassiveCheck.value[idx] = false
   }
 }
 

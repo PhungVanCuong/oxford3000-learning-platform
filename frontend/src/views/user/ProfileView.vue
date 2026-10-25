@@ -298,6 +298,87 @@
       </div>
     </div>
 
+    <!-- CÀI ĐẶT GIỌNG ĐỌC & PHÁT ÂM (VOICE SETTINGS) -->
+    <div class="card p-4 rounded-4 shadow-sm border bg-card-custom mb-4" style="border-color: #E2E8F0;">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-3">
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <span class="badge bg-teal-dark text-white rounded-pill px-2.5 py-1 fs-8">VOICE</span>
+            <h5 class="fw-bold mb-0 text-teal">CÀI ĐẶT GIỌNG ĐỌC & PHÁT ÂM (VOICE SETTINGS)</h5>
+          </div>
+          <div class="text-muted fs-7">
+            Tùy chỉnh giọng đọc tiếng Anh (Nam 👨 / Nữ 👩, Accent US/UK/AU) và tốc độ phát âm chuẩn cho toàn bộ hệ thống (Flashcard, Từ điển, Ngữ pháp, Cụm từ).
+          </div>
+        </div>
+
+        <button
+          @click="testCurrentVoice"
+          class="btn btn-teal text-white rounded-pill px-3.5 py-2 fw-bold fs-7 d-flex align-items-center gap-1.5 shadow-sm"
+        >
+          <i class="bi bi-volume-up-fill fs-6"></i>
+          <span>🔊 Nghe thử giọng này</span>
+        </button>
+      </div>
+
+      <div class="row g-3">
+        <!-- Voice Selector -->
+        <div class="col-12 col-md-8">
+          <label class="form-label fs-7 fw-bold mb-1">Chọn giọng đọc tiếng Anh:</label>
+          <div class="input-group">
+            <span class="input-group-text bg-body-tertiary border-end-0"><i class="bi bi-mic-fill text-teal"></i></span>
+            <select
+              v-model="selectedVoiceURI"
+              @change="onVoiceChanged"
+              class="form-select border-start-0 py-2 fs-7"
+            >
+              <option value="">-- Mặc định (Google US English / Trình duyệt) --</option>
+              <option
+                v-for="v in speech.availableVoices.value"
+                :key="v.voiceURI"
+                :value="v.voiceURI"
+              >
+                {{ v.label }}
+              </option>
+            </select>
+          </div>
+          <div class="form-text fs-8 text-muted mt-1">
+            Hệ thống tự động phát hiện tất cả các giọng đọc tiếng Anh cài đặt trên trình duyệt và thiết bị của bạn.
+          </div>
+        </div>
+
+        <!-- Speech Speed -->
+        <div class="col-12 col-md-4">
+          <label class="form-label fs-7 fw-bold mb-1">Tốc độ phát âm:</label>
+          <div class="btn-group w-100" role="group">
+            <button
+              type="button"
+              @click="onSpeedChanged(0.75)"
+              class="btn btn-sm rounded-start-pill py-2 fs-8 fw-bold"
+              :class="currentSpeed === 0.75 ? 'btn-teal text-white' : 'btn-outline-secondary'"
+            >
+              0.75x (Chậm)
+            </button>
+            <button
+              type="button"
+              @click="onSpeedChanged(1.0)"
+              class="btn btn-sm py-2 fs-8 fw-bold"
+              :class="currentSpeed === 1.0 ? 'btn-teal text-white' : 'btn-outline-secondary'"
+            >
+              1.0x (Chuẩn)
+            </button>
+            <button
+              type="button"
+              @click="onSpeedChanged(1.25)"
+              class="btn btn-sm rounded-end-pill py-2 fs-8 fw-bold"
+              :class="currentSpeed === 1.25 ? 'btn-teal text-white' : 'btn-outline-secondary'"
+            >
+              1.25x (Nhanh)
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 3. TÙY CHỈNH THANH ĐIỀU HƯỚNG HEADER (MENU 6 MỤC) -->
     <div class="card p-4 rounded-4 shadow-sm border bg-card-custom mb-4" style="border-color: #E2E8F0;">
       <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-3">
@@ -307,7 +388,7 @@
             <h5 class="fw-bold mb-0 text-teal">TÙY CHỈNH THANH ĐIỀU HƯỚNG HEADER (MENU 6 MỤC)</h5>
           </div>
           <div class="text-muted fs-7">
-            Thanh Header gồm 6 mục: <strong>Trang chủ</strong> (Cố định vị trí 1), <strong>4 Mục bạn tự chọn</strong> (Vị trí 2 - 5), và <strong>Xem thêm ▾</strong> (Cố định vị trí 6 chứa các mục còn lại).
+            Thanh Header gồm 6 mục: <strong>Trang chủ</strong> (Cố định vị trí 1), <strong>4 Mục bạn tự chọn</strong> (Vị trí 2 - 5), và <strong>Xem thêm ▾</strong> (Cố định vị trí 6 chứa các mục còn lại theo thứ tự bạn sắp xếp).
           </div>
         </div>
         <button
@@ -327,7 +408,7 @@
           <i class="bi bi-eye-fill text-teal"></i>
           <span>Mô Phỏng Giao Diện Thanh Header 6 Mục Của Bạn:</span>
         </div>
-        <div class="d-flex align-items-center gap-2 flex-wrap">
+        <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
           <!-- Fixed 1: Trang chủ -->
           <div class="badge bg-light text-dark border px-3 py-2 rounded-pill fs-7 fw-semibold d-flex align-items-center gap-1.5 shadow-xs">
             <i class="bi bi-house-door-fill text-primary"></i>
@@ -343,6 +424,24 @@
           >
             <i :class="[getNavOption(id)?.icon, 'text-warning']"></i>
             <span>{{ idx + 2 }}. {{ getNavOption(id)?.label }}</span>
+            <div class="d-inline-flex gap-1 ms-1">
+              <button
+                v-if="idx > 0"
+                @click.stop="moveHeaderItemUp(idx)"
+                class="btn btn-sm btn-link p-0 text-white text-decoration-none lh-1"
+                title="Di chuyển sang trái"
+              >
+                ◀
+              </button>
+              <button
+                v-if="idx < selectedNavIds.length - 1"
+                @click.stop="moveHeaderItemDown(idx)"
+                class="btn btn-sm btn-link p-0 text-white text-decoration-none lh-1"
+                title="Di chuyển sang phải"
+              >
+                ▶
+              </button>
+            </div>
             <button
               @click.stop="toggleNavItem(id)"
               class="btn-close btn-close-white p-0 ms-1"
@@ -363,7 +462,41 @@
           <!-- Fixed 6: Xem thêm -->
           <div class="badge bg-light text-dark border px-3 py-2 rounded-pill fs-7 fw-semibold d-flex align-items-center gap-1.5 shadow-xs">
             <i class="bi bi-grid-fill text-teal"></i>
-            <span>6. Xem thêm ▾ ({{ availableNavOptions.length - selectedNavIds.length }} mục phụ)</span>
+            <span>6. Xem thêm ▾ ({{ unselectedNavIds.length }} mục phụ)</span>
+          </div>
+        </div>
+
+        <!-- More Menu Order Reordering Panel -->
+        <div v-if="unselectedNavIds.length > 0" class="mt-2.5 pt-2 border-top">
+          <div class="text-muted fs-8 fw-semibold mb-1.5">
+            <i class="bi bi-sort-numeric-down text-teal me-1"></i>
+            <span>Thứ tự các mục sẽ hiển thị trong dropdown "Xem thêm ▾" (Nhấp mũi tên để điều chỉnh thứ tự):</span>
+          </div>
+          <div class="d-flex gap-1.5 flex-wrap">
+            <span
+              v-for="(id, mIdx) in unselectedNavIds"
+              :key="id"
+              class="badge bg-white text-dark border px-2.5 py-1.5 rounded-pill fs-8 d-inline-flex align-items-center gap-1 shadow-2xs"
+            >
+              <i :class="[getNavOption(id)?.icon, 'text-teal']"></i>
+              <span>#{{ mIdx + 1 }}. {{ getNavOption(id)?.label }}</span>
+              <button
+                v-if="mIdx > 0"
+                @click="moveMoreItemUp(mIdx)"
+                class="btn btn-sm btn-link p-0 text-muted ms-1 text-decoration-none"
+                title="Lên trên"
+              >
+                ▲
+              </button>
+              <button
+                v-if="mIdx < unselectedNavIds.length - 1"
+                @click="moveMoreItemDown(mIdx)"
+                class="btn btn-sm btn-link p-0 text-muted ms-1 text-decoration-none"
+                title="Xuống dưới"
+              >
+                ▼
+              </button>
+            </span>
           </div>
         </div>
       </div>
@@ -507,13 +640,31 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import { useSpeech } from '@/composables/useSpeech'
 import axios from 'axios'
 
 const authStore = useAuthStore()
 const router = useRouter()
+const speech = useSpeech()
+
+const selectedVoiceURI = ref(localStorage.getItem('oxford_voice_uri') || '')
+const currentSpeed = ref(parseFloat(localStorage.getItem('oxford_speech_rate') || '1.0'))
+
+const onVoiceChanged = () => {
+  speech.setVoice(selectedVoiceURI.value)
+}
+
+const onSpeedChanged = (spd) => {
+  currentSpeed.value = spd
+  speech.setSpeed(spd)
+}
+
+const testCurrentVoice = () => {
+  speech.testVoice(selectedVoiceURI.value, 'Hello! Welcome to Oxford English learning system. This is your selected voice.')
+}
 
 const isSaving = ref(false)
 const showResetConfirm = ref(false)
@@ -535,6 +686,29 @@ const availableNavOptions = [
 
 const selectedNavIds = ref([...(authStore.headerNavItems || ['curriculum', 'daily', 'grammar', 'phrasal_verbs'])])
 
+const computeUnselectedNavIds = () => {
+  const allIds = availableNavOptions.map(opt => opt.id)
+  const moreOrder = authStore.moreNavOrder || []
+  const unselected = allIds.filter(id => !selectedNavIds.value.includes(id))
+  if (moreOrder.length > 0) {
+    unselected.sort((a, b) => {
+      const idxA = moreOrder.indexOf(a)
+      const idxB = moreOrder.indexOf(b)
+      if (idxA === -1 && idxB === -1) return 0
+      if (idxA === -1) return 1
+      if (idxB === -1) return -1
+      return idxA - idxB
+    })
+  }
+  return unselected
+}
+
+const unselectedNavIds = ref(computeUnselectedNavIds())
+
+watch(selectedNavIds, () => {
+  unselectedNavIds.value = computeUnselectedNavIds()
+}, { deep: true })
+
 const getNavOption = (id) => availableNavOptions.find(opt => opt.id === id)
 
 const toggleNavItem = (id) => {
@@ -553,6 +727,38 @@ const toggleNavItem = (id) => {
   }
 }
 
+const moveHeaderItemUp = (idx) => {
+  if (idx > 0) {
+    const temp = selectedNavIds.value[idx]
+    selectedNavIds.value[idx] = selectedNavIds.value[idx - 1]
+    selectedNavIds.value[idx - 1] = temp
+  }
+}
+
+const moveHeaderItemDown = (idx) => {
+  if (idx < selectedNavIds.value.length - 1) {
+    const temp = selectedNavIds.value[idx]
+    selectedNavIds.value[idx] = selectedNavIds.value[idx + 1]
+    selectedNavIds.value[idx + 1] = temp
+  }
+}
+
+const moveMoreItemUp = (idx) => {
+  if (idx > 0) {
+    const temp = unselectedNavIds.value[idx]
+    unselectedNavIds.value[idx] = unselectedNavIds.value[idx - 1]
+    unselectedNavIds.value[idx - 1] = temp
+  }
+}
+
+const moveMoreItemDown = (idx) => {
+  if (idx < unselectedNavIds.value.length - 1) {
+    const temp = unselectedNavIds.value[idx]
+    unselectedNavIds.value[idx] = unselectedNavIds.value[idx + 1]
+    unselectedNavIds.value[idx + 1] = temp
+  }
+}
+
 const saveHeaderNav = async () => {
   if (selectedNavIds.value.length !== 4) {
     alert('Vui lòng chọn đúng 4 mục để thanh Header hiển thị chuẩn xác 6 mục!')
@@ -560,8 +766,8 @@ const saveHeaderNav = async () => {
   }
   isSavingNav.value = true
   try {
-    await authStore.setHeaderNav(selectedNavIds.value)
-    alert('Đã lưu cấu hình thanh Header thành công! Thanh điều hướng đã cập nhật 6 mục.')
+    await authStore.setHeaderNavAndMore(selectedNavIds.value, unselectedNavIds.value)
+    alert('Đã lưu cấu hình menu Header và danh sách Xem thêm thành công!')
   } catch (err) {
     console.error(err)
     alert('Lỗi lưu cấu hình: ' + (err.response?.data?.message || err.message))
