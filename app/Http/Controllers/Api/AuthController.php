@@ -14,6 +14,7 @@ use App\Models\CurriculumStageProgress;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -34,6 +35,7 @@ class AuthController extends Controller
         }
 
         // Create fresh token for this user
+        /** @var User $user */
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -69,6 +71,7 @@ class AuthController extends Controller
             'last_study_date' => now()->toDateString(),
         ]);
 
+        /** @var User $user */
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -88,11 +91,11 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => 'required|email|unique:users,email',
-            'name' => 'required|string|max:255',
+            'name' => 'nullable|string|max:255',
         ]);
 
         $email = trim($request->email);
-        $name = trim($request->name);
+        $name = trim($request->name ?: 'Học viên');
         $otp = (string) mt_rand(100000, 999999);
 
         // Invalidate older unused OTPs for this email
@@ -122,7 +125,7 @@ class AuthController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => $sent 
+            'message' => $sent
                 ? 'Mã OTP xác thực đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư đến (hoặc thư rác).'
                 : 'Mã xác thực OTP đã được hệ thống gửi tới địa chỉ email của bạn.',
         ]);
@@ -177,6 +180,7 @@ class AuthController extends Controller
             'email_verified_at' => now(),
         ]);
 
+        /** @var User $user */
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -228,8 +232,8 @@ class AuthController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => $sent 
-                ? 'Mã OTP khôi phục mật khẩu đã được gửi đến email của bạn.' 
+            'message' => $sent
+                ? 'Mã OTP khôi phục mật khẩu đã được gửi đến email của bạn.'
                 : 'Mã xác thực khôi phục mật khẩu đã được tạo và gửi đến email của bạn.',
         ]);
     }
@@ -278,6 +282,7 @@ class AuthController extends Controller
      */
     public function resetMyProgress(Request $request)
     {
+        /** @var User|null $user */
         $user = auth('sanctum')->user();
         if (!$user) {
             return response()->json(['status' => 'error', 'message' => 'Bạn cần đăng nhập để thực hiện.'], 401);
@@ -319,6 +324,7 @@ class AuthController extends Controller
 
     public function me(Request $request)
     {
+        /** @var User|null $user */
         $user = auth('sanctum')->user();
         if (!$user) {
             return response()->json([
@@ -372,6 +378,7 @@ class AuthController extends Controller
 
     public function updateProfile(Request $request)
     {
+        /** @var User|null $user */
         $user = auth('sanctum')->user();
         if (!$user) {
             return response()->json(['status' => 'error', 'message' => 'Bạn cần đăng nhập để cập nhật hồ sơ.'], 401);
@@ -398,9 +405,14 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $user = auth('sanctum')->user();
-        if ($user && $user->currentAccessToken()) {
-            $user->currentAccessToken()->delete();
+        /** @var User|null $user */
+        $user = auth('sanctum')->user() ?? $request->user();
+        if ($user) {
+            /** @var PersonalAccessToken|null $token */
+            $token = $user->currentAccessToken();
+            if ($token instanceof PersonalAccessToken) {
+                $token->delete();
+            }
         }
 
         return response()->json([
