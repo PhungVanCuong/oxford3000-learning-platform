@@ -1,0 +1,74 @@
+01
+Education & Learning
+
+02
+Environment & Climate
+
+03
+Technology & Digital Life
+
+04
+Health & Well-being
+
+05
+Work & Employment
+
+06
+Economy & Consumerism
+
+07
+Cities & Urban Life
+
+08
+Transport & Mobility
+
+09
+Crime & Justice
+
+10
+Government & Policy
+
+11
+Media & Advertising
+
+12
+Culture & Heritage
+
+13
+Globalisation & Trade
+
+14
+Science & Research
+
+15
+Family & Children
+
+16
+Food & Agriculture
+
+17
+Tourism & Travel
+
+18
+Housing & Communities
+
+19
+Energy & Resources
+
+20
+Equality & Social Change
+
+21
+Language & Communication
+
+22
+Population & Migration
+
+23
+Sport & Active Lifestyles
+
+24
+Oceans & Water
+
+25
+Personal Finance & Household Life
