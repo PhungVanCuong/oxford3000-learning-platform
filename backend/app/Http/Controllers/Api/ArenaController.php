@@ -31,74 +31,134 @@ class ArenaController extends Controller
     }
 
     /**
-     * Bảng xếp hạng vinh quang Đấu Trường & Toàn diện
+     * Bảng xếp hạng vinh quang Đấu Trường & Toàn diện (Liên Server)
      */
     public function leaderboard(Request $request)
     {
         $type = $request->query('type', 'all_xp'); // all_xp | streak | arena | words
+        $search = trim((string)$request->query('search', ''));
+        $tierFilter = trim((string)$request->query('tier', ''));
+        $perPageParam = $request->query('per_page', '50');
+        $page = max(1, (int)$request->query('page', 1));
+        $getAll = $request->query('all') === 'true' || $perPageParam === 'all';
+
         $currentUser = $this->resolveCurrentUser($request);
 
+        $getTier = function ($xp) {
+            if ($xp >= 5000) return ['name' => 'Đại Cao Thủ', 'badge' => '💎', 'class' => 'tier-grandmaster', 'key' => 'grandmaster'];
+            if ($xp >= 3000) return ['name' => 'Kim Cương', 'badge' => '💠', 'class' => 'tier-diamond', 'key' => 'diamond'];
+            if ($xp >= 1500) return ['name' => 'Bạch Kim', 'badge' => '🏅', 'class' => 'tier-platinum', 'key' => 'platinum'];
+            if ($xp >= 800)  return ['name' => 'Vàng', 'badge' => '🌟', 'class' => 'tier-gold', 'key' => 'gold'];
+            if ($xp >= 300)  return ['name' => 'Bạc', 'badge' => '🥈', 'class' => 'tier-silver', 'key' => 'silver'];
+            return ['name' => 'Đồng', 'badge' => '🥉', 'class' => 'tier-bronze', 'key' => 'bronze'];
+        };
+
         $query = User::select([
-            'id', 'name', 'avatar_url', 'role', 'xp_points', 'streak_days', 'last_study_date', 'created_at'
-        ]);
+            'id', 'name', 'email', 'avatar_url', 'role', 'xp_points', 'streak_days', 'last_study_date', 'created_at'
+        ])
+        ->withSum('quizRoomParticipants as arena_score', 'score')
+        ->withCount('quizRoomParticipants as arena_matches')
+        ->withCount(['vocabularyProgress as mastered_words' => function ($q) {
+            $q->where('status', 'mastered');
+        }]);
+
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
 
         if ($type === 'streak') {
             $query->orderByDesc('streak_days')->orderByDesc('xp_points');
         } elseif ($type === 'arena') {
-            $query->withSum('quizRoomParticipants as arena_score', 'score')
-                  ->withCount('quizRoomParticipants as arena_matches')
-                  ->orderByDesc('arena_score')
-                  ->orderByDesc('xp_points');
+            $query->orderByDesc('arena_score')->orderByDesc('xp_points');
         } elseif ($type === 'words') {
-            $query->withCount(['vocabularyProgress as mastered_words' => function ($q) {
-                $q->where('status', 'mastered');
-            }])->orderByDesc('mastered_words')->orderByDesc('xp_points');
+            $query->orderByDesc('mastered_words')->orderByDesc('xp_points');
         } else {
             // default all_xp
             $query->orderByDesc('xp_points')->orderByDesc('streak_days');
         }
 
-        $users = $query->take(50)->get();
+        $totalUsers = User::count();
+        $totalSystemXp = (int)User::sum('xp_points');
 
-        $getTier = function ($xp) {
-            if ($xp >= 5000) return ['name' => 'Đại Cao Thủ', 'badge' => '💎', 'class' => 'tier-grandmaster'];
-            if ($xp >= 3000) return ['name' => 'Kim Cương', 'badge' => '💠', 'class' => 'tier-diamond'];
-            if ($xp >= 1500) return ['name' => 'Bạch Kim', 'badge' => '🏅', 'class' => 'tier-platinum'];
-            if ($xp >= 800)  return ['name' => 'Vàng', 'badge' => '🌟', 'class' => 'tier-gold'];
-            if ($xp >= 300)  return ['name' => 'Bạc', 'badge' => '🥈', 'class' => 'tier-silver'];
-            return ['name' => 'Đồng', 'badge' => '🥉', 'class' => 'tier-bronze'];
-        };
+        // If tier filter is active
+        if ($tierFilter !== '' && $tierFilter !== 'all') {
+            if ($tierFilter === 'grandmaster') $query->where('xp_points', '>=', 5000);
+            elseif ($tierFilter === 'diamond') $query->whereBetween('xp_points', [3000, 4999]);
+            elseif ($tierFilter === 'platinum') $query->whereBetween('xp_points', [1500, 2999]);
+            elseif ($tierFilter === 'gold') $query->whereBetween('xp_points', [800, 1499]);
+            elseif ($tierFilter === 'silver') $query->whereBetween('xp_points', [300, 799]);
+            elseif ($tierFilter === 'bronze') $query->where('xp_points', '<', 300);
+        }
 
-        $leaderboard = $users->map(function ($u, $idx) use ($currentUser, $getTier) {
+        $filteredCount = (clone $query)->count();
+
+        if ($getAll) {
+            $users = $query->get();
+            $perPage = $users->count() ?: 1;
+            $startRank = 1;
+        } else {
+            $perPage = max(10, min(100, (int)$perPageParam));
+            $users = $query->forPage($page, $perPage)->get();
+            $startRank = ($page - 1) * $perPage + 1;
+        }
+
+        $leaderboard = $users->map(function ($u, $idx) use ($currentUser, $getTier, $startRank) {
             $tier = $getTier($u->xp_points ?? 0);
+            $rankNum = $startRank + $idx;
+
+            // Pseudo-trend based on activity (deterministic for presentation)
+            $trend = 0;
+            if ($u->streak_days > 5) {
+                $trend = ($u->id % 3) - 1; // -1, 0, 1
+                if ($trend === 0 && $u->streak_days > 10) $trend = 1;
+            }
+
             return [
-                'rank' => $idx + 1,
+                'rank' => $rankNum,
+                'trend' => $trend, // +1 (up), 0 (stable), -1 (down)
                 'user_id' => $u->id,
                 'name' => $u->name,
+                'email' => $u->email,
                 'avatar_url' => $u->avatar_url ?: ('https://api.dicebear.com/7.x/bottts/svg?seed=' . urlencode($u->name)),
                 'role' => $u->role,
-                'xp_points' => $u->xp_points ?? 0,
-                'streak_days' => $u->streak_days ?? 0,
-                'arena_score' => $u->arena_score ?? 0,
-                'arena_matches' => $u->arena_matches ?? 0,
-                'mastered_words' => $u->mastered_words ?? 0,
+                'xp_points' => (int)($u->xp_points ?? 0),
+                'streak_days' => (int)($u->streak_days ?? 0),
+                'arena_score' => (int)($u->arena_score ?? 0),
+                'arena_matches' => (int)($u->arena_matches ?? 0),
+                'mastered_words' => (int)($u->mastered_words ?? 0),
                 'tier_name' => $tier['name'],
                 'tier_badge' => $tier['badge'],
                 'tier_class' => $tier['class'],
+                'tier_key' => $tier['key'],
                 'is_current_user' => $currentUser && ($currentUser->id === $u->id),
+                'server_cluster' => 'Global VN-01',
             ];
         });
 
-        // Current user personal ranking summary
+        // Current user personal ranking summary across all users
         $myRank = null;
         if ($currentUser) {
-            $inTop = $leaderboard->firstWhere('is_current_user', true);
-            if ($inTop) {
-                $myRank = $inTop;
+            $inList = $leaderboard->firstWhere('is_current_user', true);
+            if ($inList && $search === '' && ($tierFilter === '' || $tierFilter === 'all')) {
+                $myRank = $inList;
             } else {
                 $higherCount = 0;
                 if ($type === 'streak') {
                     $higherCount = User::where('streak_days', '>', $currentUser->streak_days ?? 0)->count();
+                } elseif ($type === 'arena') {
+                    $myScore = QuizRoomParticipant::where('user_id', $currentUser->id)->sum('score') ?? 0;
+                    $higherCount = User::whereHas('quizRoomParticipants', function () {}, '>', 0)
+                        ->withSum('quizRoomParticipants as a_score', 'score')
+                        ->having('a_score', '>', $myScore)
+                        ->count();
+                } elseif ($type === 'words') {
+                    $myWords = $currentUser->vocabularyProgress()->where('status', 'mastered')->count();
+                    $higherCount = User::withCount(['vocabularyProgress as m_words' => function ($q) {
+                        $q->where('status', 'mastered');
+                    }])->having('m_words', '>', $myWords)->count();
                 } else {
                     $higherCount = User::where('xp_points', '>', $currentUser->xp_points ?? 0)->count();
                 }
@@ -106,30 +166,53 @@ class ArenaController extends Controller
                 $tier = $getTier($currentUser->xp_points ?? 0);
                 $myRank = [
                     'rank' => $higherCount + 1,
+                    'trend' => 1,
                     'user_id' => $currentUser->id,
                     'name' => $currentUser->name,
+                    'email' => $currentUser->email,
                     'avatar_url' => $currentUser->avatar_url ?: ('https://api.dicebear.com/7.x/bottts/svg?seed=' . urlencode($currentUser->name)),
                     'role' => $currentUser->role,
-                    'xp_points' => $currentUser->xp_points ?? 0,
-                    'streak_days' => $currentUser->streak_days ?? 0,
-                    'arena_score' => QuizRoomParticipant::where('user_id', $currentUser->id)->sum('score') ?? 0,
-                    'arena_matches' => QuizRoomParticipant::where('user_id', $currentUser->id)->count(),
-                    'mastered_words' => $currentUser->vocabularyProgress()->where('status', 'mastered')->count(),
+                    'xp_points' => (int)($currentUser->xp_points ?? 0),
+                    'streak_days' => (int)($currentUser->streak_days ?? 0),
+                    'arena_score' => (int)(QuizRoomParticipant::where('user_id', $currentUser->id)->sum('score') ?? 0),
+                    'arena_matches' => (int)QuizRoomParticipant::where('user_id', $currentUser->id)->count(),
+                    'mastered_words' => (int)$currentUser->vocabularyProgress()->where('status', 'mastered')->count(),
                     'tier_name' => $tier['name'],
                     'tier_badge' => $tier['badge'],
                     'tier_class' => $tier['class'],
+                    'tier_key' => $tier['key'],
                     'is_current_user' => true,
+                    'server_cluster' => 'Global VN-01',
                 ];
             }
         }
+
+        // Tier distribution counts for league overview
+        $tierCounts = [
+            'grandmaster' => User::where('xp_points', '>=', 5000)->count(),
+            'diamond' => User::whereBetween('xp_points', [3000, 4999])->count(),
+            'platinum' => User::whereBetween('xp_points', [1500, 2999])->count(),
+            'gold' => User::whereBetween('xp_points', [800, 1499])->count(),
+            'silver' => User::whereBetween('xp_points', [300, 799])->count(),
+            'bronze' => User::where('xp_points', '<', 300)->count(),
+        ];
 
         return response()->json([
             'status' => 'success',
             'data' => [
                 'type' => $type,
+                'scope' => 'cross_server',
+                'server_cluster' => 'Global VN-01 (Toàn Cầu)',
+                'season_title' => 'Mùa 1 - 2026: Chiến Thần Tri Thức Liên Server',
                 'leaderboard' => $leaderboard,
                 'my_rank' => $myRank,
-                'total_users' => User::count(),
+                'total_learners' => $totalUsers,
+                'total_system_xp' => $totalSystemXp,
+                'filtered_count' => $filteredCount,
+                'current_page' => $page,
+                'per_page' => $perPage,
+                'last_page' => max(1, (int)ceil($filteredCount / $perPage)),
+                'tier_counts' => $tierCounts,
             ],
         ]);
     }

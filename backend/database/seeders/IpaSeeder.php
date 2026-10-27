@@ -9,6 +9,10 @@ class IpaSeeder extends Seeder
 {
     public function run(): void
     {
+        \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
+        IpaSound::truncate();
+        \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
+
         $sounds = [
             // --- 1. NGUYÊN ÂM ĐƠN (12 MONOPHTHONGS) ---
             [

@@ -655,9 +655,9 @@ class UserSeeder extends Seeder
             ],
         ];
 
-        $sampleVocabIds = Vocabulary::take(100)->pluck('id')->toArray();
-        $sampleGrammarIds = Grammar::take(14)->pluck('id')->toArray();
-        $sampleCurriculumTerms = CurriculumTerm::take(50)->get(['id', 'topic_id']);
+        $sampleVocabIds = Vocabulary::take(250)->pluck('id')->toArray();
+        $sampleGrammarIds = Grammar::take(20)->pluck('id')->toArray();
+        $sampleCurriculumTerms = CurriculumTerm::take(100)->get(['id', 'topic_id']);
 
         foreach ($users as $userData) {
             $user = User::create($userData);

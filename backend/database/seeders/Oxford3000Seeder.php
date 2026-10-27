@@ -14,6 +14,11 @@ class Oxford3000Seeder extends Seeder
 {
     public function run(): void
     {
+        \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
+        UserVocabularyProgress::truncate();
+        Vocabulary::truncate();
+        \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
+
         $jsonPath = database_path('data/oxford_3000.json');
         if (!File::exists($jsonPath)) {
             $this->command->error("File $jsonPath not found!");
