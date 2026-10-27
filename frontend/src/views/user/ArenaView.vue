@@ -10,7 +10,7 @@
       </nav>
 
       <!-- League Master Header: Banner Liên Server -->
-      <div class="card p-3.5 p-md-4 rounded-4 shadow-sm border bg-card-custom mb-3.5 position-relative overflow-hidden" style="background: linear-gradient(135deg, #091e2b 0%, #064e40 50%, #087F75 100%);">
+      <div class="card p-3.5 p-md-4 rounded-4 shadow-sm border-0 bg-card-custom mb-3.5 position-relative overflow-hidden" style="background: linear-gradient(135deg, #091e2b 0%, #064e40 50%, #087F75 100%);">
         <div class="position-relative z-1 text-white">
           <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
             <div>
@@ -50,12 +50,12 @@
         </div>
       </div>
 
-      <!-- Main Navigation Tabs: Bảng Xếp Hạng vs Phòng Thi Đấu -->
-      <div class="d-flex flex-wrap align-items-center justify-content-between gap-2.5 mb-3.5 border-bottom pb-2.5">
+      <!-- Main Navigation Tabs: Không còn thanh gạch border-bottom gây thô -->
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-2.5 mb-3.5">
         <ul class="nav nav-pills gap-2 fs-7 fw-bold" role="tablist">
           <li class="nav-item">
             <button
-              class="nav-link rounded-pill px-3.5 py-1.5 d-flex align-items-center gap-2 transition-all"
+              class="nav-link rounded-pill px-3.5 py-2 d-flex align-items-center gap-2 transition-all border-0 shadow-2xs"
               :class="activeTab === 'leaderboard' ? 'active bg-teal text-white shadow-sm' : 'text-secondary bg-body-tertiary'"
               @click="switchTab('leaderboard')"
             >
@@ -68,7 +68,7 @@
           </li>
           <li class="nav-item">
             <button
-              class="nav-link rounded-pill px-3.5 py-1.5 d-flex align-items-center gap-2 transition-all"
+              class="nav-link rounded-pill px-3.5 py-2 d-flex align-items-center gap-2 transition-all border-0 shadow-2xs"
               :class="activeTab === 'rooms' ? 'active bg-teal text-white shadow-sm' : 'text-secondary bg-body-tertiary'"
               @click="switchTab('rooms')"
             >
@@ -86,12 +86,12 @@
           <button
             v-if="activeTab === 'rooms'"
             @click="openCreateModal"
-            class="btn btn-sm btn-teal text-white rounded-pill px-3 py-1.5 fw-bold fs-8 shadow-sm d-flex align-items-center gap-1.5"
+            class="btn btn-sm btn-teal text-white rounded-pill px-3.5 py-2 fw-bold fs-8 shadow-sm d-flex align-items-center gap-1.5"
           >
             <i class="bi bi-plus-circle-fill"></i>
             <span>Mở phòng thi mới</span>
           </button>
-          <router-link to="/tree" class="btn btn-sm btn-outline-teal rounded-pill px-3 py-1.5 fw-bold fs-8 d-flex align-items-center gap-1.5">
+          <router-link to="/tree" class="btn btn-sm btn-outline-teal rounded-pill px-3.5 py-2 fw-bold fs-8 d-flex align-items-center gap-1.5">
             <i class="bi bi-tree-fill text-success"></i>
             <span>Cây Tri Thức</span>
           </router-link>
@@ -100,8 +100,8 @@
 
       <!-- ================= TAB 1: BẢNG XẾP HẠNG LIÊN SERVER ================= -->
       <div v-if="activeTab === 'leaderboard'">
-        <!-- Filter & Search Toolbar (Small & Crisp) -->
-        <div class="card p-2.5 p-md-3 rounded-4 border shadow-2xs bg-card-custom mb-3">
+        <!-- Filter & Search Toolbar (Mượt mà, không đường viền thô) -->
+        <div class="card p-2.5 p-md-3 rounded-4 border-0 shadow-2xs bg-card-custom mb-3.5">
           <div class="d-flex flex-column flex-lg-row justify-content-between align-items-stretch align-items-lg-center gap-2.5">
             <!-- 4 Metric Filter Pills -->
             <div class="d-flex flex-wrap gap-1.5">
@@ -109,7 +109,7 @@
                 v-for="ft in leaderboardFilters"
                 :key="ft.type"
                 @click="changeLeaderboardType(ft.type)"
-                class="btn btn-sm rounded-pill px-3 py-1.5 fs-8 fw-bold transition-all"
+                class="btn btn-sm rounded-pill px-3 py-1.5 fs-8 fw-bold transition-all border-0"
                 :class="currentLeaderboardType === ft.type ? 'btn-teal text-white shadow-xs' : 'btn-outline-secondary'"
               >
                 <i :class="ft.icon" class="me-1"></i>
@@ -121,19 +121,19 @@
             <div class="d-flex flex-wrap align-items-center gap-2">
               <!-- Quick Search Input -->
               <div class="input-group input-group-sm" style="max-width: 240px;">
-                <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                <span class="input-group-text bg-body-tertiary border-0 text-muted"><i class="bi bi-search"></i></span>
                 <input
                   type="text"
                   v-model="searchQuery"
                   @keyup.enter="loadLeaderboard"
-                  class="form-control border-start-0 fs-8"
+                  class="form-control border-0 bg-body-tertiary fs-8"
                   placeholder="Tìm tên, email..."
                 />
-                <button @click="loadLeaderboard" class="btn btn-outline-secondary fs-8">Tìm</button>
+                <button @click="loadLeaderboard" class="btn btn-teal text-white fs-8">Tìm</button>
               </div>
 
               <!-- Tier Dropdown -->
-              <select v-model="selectedTier" @change="loadLeaderboard" class="form-select form-select-sm fs-8 rounded-pill" style="width: auto;">
+              <select v-model="selectedTier" @change="loadLeaderboard" class="form-select form-select-sm fs-8 rounded-pill border-0 bg-body-tertiary" style="width: auto;">
                 <option value="all">Tất cả cấp bậc</option>
                 <option value="grandmaster">💎 Đại Cao Thủ (≥5000 XP)</option>
                 <option value="diamond">💠 Kim Cương (3000-4999 XP)</option>
@@ -146,7 +146,7 @@
               <!-- View All Toggle -->
               <button
                 @click="toggleViewAll"
-                class="btn btn-sm rounded-pill px-2.5 py-1 fs-8 fw-semibold"
+                class="btn btn-sm rounded-pill px-2.5 py-1 fs-8 fw-semibold border-0"
                 :class="viewAll ? 'btn-warning text-dark' : 'btn-outline-secondary'"
                 title="Tính trực tiếp hiển thị tất cả danh sách người học"
               >
@@ -163,74 +163,126 @@
         </div>
 
         <div v-else>
-          <!-- COMPACT REFINED TOP 3 PODIUM -->
-          <div v-if="leaderboardData.length >= 3 && currentPage === 1 && !searchQuery" class="row g-2.5 mb-3.5">
-            <!-- 2nd Place (Silver) -->
+          <!-- ================= TOP 3 PODIUM: THIẾT KẾ MƯỢT MÀ, KHÔNG CHE KHUẤT SỐ ================= -->
+          <div v-if="leaderboardData.length >= 3 && currentPage === 1 && !searchQuery" class="row g-3 mb-4">
+            
+            <!-- TOP 2: Á QUÂN (Top 2) -->
             <div class="col-12 col-md-4 order-2 order-md-1">
-              <div class="card p-3 rounded-4 border bg-card-custom h-100 shadow-2xs d-flex flex-row align-items-center gap-3 position-relative overflow-hidden border-secondary-subtle">
-                <div class="position-relative shrink-0">
-                  <img :src="leaderboardData[1].avatar_url" class="rounded-circle border border-2 border-secondary" style="width: 52px; height: 52px; object-fit: cover;" />
-                  <span class="position-absolute bottom-0 start-50 translate-middle-x badge bg-secondary text-white rounded-pill fs-8 shadow-2xs" style="font-size: 10px;">🥈 #2</span>
+              <div class="podium-card card-silver h-100 p-3.5 rounded-4 position-relative overflow-hidden shadow-2xs">
+                <!-- Card Header: Danh hiệu & Xu hướng -->
+                <div class="d-flex justify-content-between align-items-center mb-2.5">
+                  <span class="badge-title badge-silver">
+                    <i class="bi bi-award-fill me-1"></i> 🥈 Á Quân (Top 2)
+                  </span>
+                  <span v-if="leaderboardData[1].trend !== 0" class="badge rounded-pill fs-8" :class="leaderboardData[1].trend > 0 ? 'bg-success text-white' : 'bg-danger text-white'">
+                    {{ leaderboardData[1].trend > 0 ? '▲ +' : '▼ ' }}{{ leaderboardData[1].trend }}
+                  </span>
+                  <span v-else class="text-muted fs-8 font-monospace">—</span>
                 </div>
-                <div class="flex-grow-1 min-w-0">
-                  <div class="d-flex align-items-center justify-content-between gap-1 mb-0.5">
-                    <span class="fw-bold fs-7 text-dark-emphasis text-truncate">{{ leaderboardData[1].name }}</span>
-                    <span v-if="leaderboardData[1].trend > 0" class="badge bg-success-subtle text-success fs-8">▲+{{ leaderboardData[1].trend }}</span>
-                  </div>
-                  <div class="badge rounded-pill fs-8 mb-1" :class="leaderboardData[1].tier_class">
-                    {{ leaderboardData[1].tier_badge }} {{ leaderboardData[1].tier_name }}
-                  </div>
-                  <div class="fw-black text-dark fs-6">{{ formatMetricValue(leaderboardData[1]) }}</div>
-                </div>
-              </div>
-            </div>
 
-            <!-- 1st Place (Gold Champion) -->
-            <div class="col-12 col-md-4 order-1 order-md-2">
-              <div class="card p-3 rounded-4 border border-warning bg-card-custom h-100 shadow-sm d-flex flex-row align-items-center gap-3 position-relative overflow-hidden" style="background: linear-gradient(135deg, rgba(254, 243, 199, 0.4) 0%, rgba(253, 224, 71, 0.15) 100%);">
-                <div class="position-relative shrink-0 text-center">
-                  <div class="fs-5 leading-none mb-n1">👑</div>
-                  <img :src="leaderboardData[0].avatar_url" class="rounded-circle border border-3 border-warning shadow-xs" style="width: 58px; height: 58px; object-fit: cover;" />
-                  <span class="badge bg-warning text-dark rounded-pill fs-8 fw-bold position-absolute bottom-0 start-50 translate-middle-x shadow-2xs" style="font-size: 10px;">🥇 Quán Quân</span>
-                </div>
-                <div class="flex-grow-1 min-w-0">
-                  <div class="d-flex align-items-center justify-content-between gap-1 mb-0.5">
-                    <span class="fw-black fs-6 text-dark-emphasis text-truncate">{{ leaderboardData[0].name }}</span>
-                    <span class="badge bg-warning text-dark fs-8">#1 TOP</span>
+                <!-- Card Body: Avatar & Tên học viên -->
+                <div class="d-flex align-items-center gap-3 mb-3">
+                  <div class="avatar-ring ring-silver shrink-0 position-relative">
+                    <img :src="leaderboardData[1].avatar_url" class="rounded-circle avatar-core" />
+                    <span class="mini-rank-dot dot-silver">2</span>
                   </div>
-                  <div class="badge rounded-pill fs-8 mb-1" :class="leaderboardData[0].tier_class">
-                    {{ leaderboardData[0].tier_badge }} {{ leaderboardData[0].tier_name }}
-                  </div>
-                  <div class="fw-black text-warning-emphasis fs-5">{{ formatMetricValue(leaderboardData[0]) }}</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 3rd Place (Bronze) -->
-            <div class="col-12 col-md-4 order-3 order-md-3">
-              <div class="card p-3 rounded-4 border bg-card-custom h-100 shadow-2xs d-flex flex-row align-items-center gap-3 position-relative overflow-hidden border-danger-subtle">
-                <div class="position-relative shrink-0">
-                  <img :src="leaderboardData[2].avatar_url" class="rounded-circle border border-2 border-danger-subtle" style="width: 52px; height: 52px; object-fit: cover;" />
-                  <span class="position-absolute bottom-0 start-50 translate-middle-x badge bg-danger-subtle text-danger rounded-pill fs-8 shadow-2xs" style="font-size: 10px;">🥉 #3</span>
-                </div>
-                <div class="flex-grow-1 min-w-0">
-                  <div class="d-flex align-items-center justify-content-between gap-1 mb-0.5">
-                    <span class="fw-bold fs-7 text-dark-emphasis text-truncate">{{ leaderboardData[2].name }}</span>
-                    <span v-if="leaderboardData[2].trend !== 0" class="badge" :class="leaderboardData[2].trend > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
-                      {{ leaderboardData[2].trend > 0 ? '▲+' : '▼' }}{{ leaderboardData[2].trend }}
+                  <div class="min-w-0 flex-grow-1">
+                    <div class="fw-bold fs-6 text-dark-emphasis text-truncate mb-1" :title="leaderboardData[1].name">
+                      {{ leaderboardData[1].name }}
+                    </div>
+                    <span class="badge rounded-pill fs-8" :class="leaderboardData[1].tier_class">
+                      {{ leaderboardData[1].tier_badge }} {{ leaderboardData[1].tier_name }}
                     </span>
                   </div>
-                  <div class="badge rounded-pill fs-8 mb-1" :class="leaderboardData[2].tier_class">
-                    {{ leaderboardData[2].tier_badge }} {{ leaderboardData[2].tier_name }}
+                </div>
+
+                <!-- Card Footer: Điểm số rõ ràng, không bị bất kỳ chữ nào đè lên -->
+                <div class="d-flex justify-content-between align-items-center pt-2.5 border-top border-secondary border-opacity-25">
+                  <span class="fs-8 text-muted">Điểm thành tích</span>
+                  <span class="fw-black fs-5 text-dark-emphasis">{{ formatMetricValue(leaderboardData[1]) }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- TOP 1: QUÁN QUÂN (Top 1 - Quán Quân Vô Địch) -->
+            <div class="col-12 col-md-4 order-1 order-md-2">
+              <div class="podium-card card-gold h-100 p-3.5 rounded-4 position-relative overflow-hidden shadow-sm">
+                <!-- Card Header: Danh hiệu Quán Quân & Huy hiệu Vô Địch -->
+                <div class="d-flex justify-content-between align-items-center mb-2.5">
+                  <span class="badge-title badge-gold">
+                    <i class="bi bi-trophy-fill text-warning me-1"></i> 🥇 Quán Quân (Top 1)
+                  </span>
+                  <span class="badge bg-warning text-dark rounded-pill fw-black fs-8 shadow-2xs">
+                    👑 BẬC NHẤT
+                  </span>
+                </div>
+
+                <!-- Card Body: Avatar lớn có vương miện & viền vàng óng -->
+                <div class="d-flex align-items-center gap-3 mb-3">
+                  <div class="avatar-ring ring-gold shrink-0 position-relative">
+                    <div class="crown-icon">👑</div>
+                    <img :src="leaderboardData[0].avatar_url" class="rounded-circle avatar-core-gold" />
+                    <span class="mini-rank-dot dot-gold">1</span>
                   </div>
-                  <div class="fw-black text-dark fs-6">{{ formatMetricValue(leaderboardData[2]) }}</div>
+                  <div class="min-w-0 flex-grow-1">
+                    <div class="fw-black fs-5 text-dark-emphasis text-truncate mb-1" :title="leaderboardData[0].name">
+                      {{ leaderboardData[0].name }}
+                    </div>
+                    <span class="badge rounded-pill fs-8" :class="leaderboardData[0].tier_class">
+                      {{ leaderboardData[0].tier_badge }} {{ leaderboardData[0].tier_name }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Card Footer: Điểm Quán quân to rõ, riêng biệt 100% -->
+                <div class="d-flex justify-content-between align-items-center pt-2.5 border-top border-warning border-opacity-25">
+                  <span class="fs-8 text-warning-emphasis fw-bold">Điểm Quán Quân</span>
+                  <span class="fw-black fs-4 text-warning">{{ formatMetricValue(leaderboardData[0]) }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- TOP 3: QUÝ QUÂN (Top 3) -->
+            <div class="col-12 col-md-4 order-3 order-md-3">
+              <div class="podium-card card-bronze h-100 p-3.5 rounded-4 position-relative overflow-hidden shadow-2xs">
+                <!-- Card Header: Danh hiệu & Xu hướng -->
+                <div class="d-flex justify-content-between align-items-center mb-2.5">
+                  <span class="badge-title badge-bronze">
+                    <i class="bi bi-award-fill me-1"></i> 🥉 Quý Quân (Top 3)
+                  </span>
+                  <span v-if="leaderboardData[2].trend !== 0" class="badge rounded-pill fs-8" :class="leaderboardData[2].trend > 0 ? 'bg-success text-white' : 'bg-danger text-white'">
+                    {{ leaderboardData[2].trend > 0 ? '▲ +' : '▼ ' }}{{ leaderboardData[2].trend }}
+                  </span>
+                  <span v-else class="text-muted fs-8 font-monospace">—</span>
+                </div>
+
+                <!-- Card Body: Avatar & Tên học viên -->
+                <div class="d-flex align-items-center gap-3 mb-3">
+                  <div class="avatar-ring ring-bronze shrink-0 position-relative">
+                    <img :src="leaderboardData[2].avatar_url" class="rounded-circle avatar-core" />
+                    <span class="mini-rank-dot dot-bronze">3</span>
+                  </div>
+                  <div class="min-w-0 flex-grow-1">
+                    <div class="fw-bold fs-6 text-dark-emphasis text-truncate mb-1" :title="leaderboardData[2].name">
+                      {{ leaderboardData[2].name }}
+                    </div>
+                    <span class="badge rounded-pill fs-8" :class="leaderboardData[2].tier_class">
+                      {{ leaderboardData[2].tier_badge }} {{ leaderboardData[2].tier_name }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Card Footer: Điểm số rõ ràng -->
+                <div class="d-flex justify-content-between align-items-center pt-2.5 border-top border-secondary border-opacity-25">
+                  <span class="fs-8 text-muted">Điểm thành tích</span>
+                  <span class="fw-black fs-5 text-dark-emphasis">{{ formatMetricValue(leaderboardData[2]) }}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- CURRENT USER PERSONAL RANK CARD (Compact & Sleek) -->
-          <div v-if="myRankData" class="card p-2.5 p-md-3 rounded-4 border border-teal bg-card-custom mb-3.5 shadow-2xs" style="background: linear-gradient(135deg, rgba(8, 127, 117, 0.04) 0%, rgba(20, 184, 166, 0.08) 100%);">
+          <!-- CURRENT USER PERSONAL RANK CARD (Sạch đẹp, thanh thoát) -->
+          <div v-if="myRankData" class="card p-2.5 p-md-3 rounded-4 border-0 bg-card-custom mb-3.5 shadow-2xs user-rank-highlight">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2.5">
               <div class="d-flex align-items-center gap-2.5">
                 <!-- Rank Pill -->
@@ -254,41 +306,41 @@
 
               <!-- Compact Stats Chips -->
               <div class="d-flex flex-wrap align-items-center gap-2">
-                <span class="badge bg-white text-dark border px-2.5 py-1.5 rounded-pill fs-8 shadow-2xs">
+                <span class="badge bg-body-tertiary text-dark-emphasis px-2.5 py-1.5 rounded-pill fs-8 shadow-2xs">
                   🌟 XP: <strong class="text-warning">{{ myRankData.xp_points }}</strong>
                 </span>
-                <span class="badge bg-white text-dark border px-2.5 py-1.5 rounded-pill fs-8 shadow-2xs">
+                <span class="badge bg-body-tertiary text-dark-emphasis px-2.5 py-1.5 rounded-pill fs-8 shadow-2xs">
                   🔥 Chuỗi: <strong class="text-danger">{{ myRankData.streak_days }} ngày</strong>
                 </span>
-                <span class="badge bg-white text-dark border px-2.5 py-1.5 rounded-pill fs-8 shadow-2xs">
+                <span class="badge bg-body-tertiary text-dark-emphasis px-2.5 py-1.5 rounded-pill fs-8 shadow-2xs">
                   ⚔️ Đấu trường: <strong class="text-teal">{{ myRankData.arena_score }} XP</strong>
                 </span>
-                <span class="badge bg-white text-dark border px-2.5 py-1.5 rounded-pill fs-8 shadow-2xs">
+                <span class="badge bg-body-tertiary text-dark-emphasis px-2.5 py-1.5 rounded-pill fs-8 shadow-2xs">
                   📚 Nắm vững: <strong class="text-primary">{{ myRankData.mastered_words }} từ</strong>
                 </span>
               </div>
             </div>
           </div>
 
-          <!-- FULL ALL-LEARNERS LEADERBOARD TABLE -->
-          <div class="card rounded-4 border shadow-sm bg-card-custom overflow-hidden mb-3.5">
-            <div class="card-header bg-body-tertiary border-bottom py-2.5 px-3.5 d-flex justify-content-between align-items-center">
-              <div>
-                <h6 class="fw-bold mb-0 text-dark-emphasis fs-7">
-                  <i class="bi bi-list-ol text-teal me-1"></i> Bảng Xếp Hạng Học Viên Liên Server ({{ filteredCount }})
-                </h6>
-              </div>
-              <div class="fs-8 text-muted">
-                Cập nhật trực tiếp thời gian thực
+          <!-- FULL ALL-LEARNERS LEADERBOARD (Mượt mà, không đường viền cột hàng gây thô) -->
+          <div class="card rounded-4 border-0 shadow-sm bg-card-custom overflow-hidden mb-3.5">
+            <div class="px-3.5 py-3 d-flex justify-content-between align-items-center border-bottom border-light-subtle">
+              <h6 class="fw-bold mb-0 text-dark-emphasis fs-7 d-flex align-items-center gap-2">
+                <i class="bi bi-list-ol text-teal"></i>
+                <span>Bảng Tổng Sắp Học Viên Toàn Hệ Thống</span>
+                <span class="badge bg-teal-subtle text-teal rounded-pill px-2 py-0.5 fs-8">{{ filteredCount }} người học</span>
+              </h6>
+              <div class="fs-8 text-muted d-none d-sm-block">
+                Cập nhật realtime từ cơ sở dữ liệu
               </div>
             </div>
 
             <div class="table-responsive">
-              <table class="table table-hover align-middle mb-0 fs-7">
-                <thead class="table-light fs-8 text-uppercase text-muted">
+              <table class="table clean-leaderboard-table align-middle mb-0 fs-7">
+                <thead>
                   <tr>
-                    <th style="width: 65px;" class="text-center ps-3">Hạng</th>
-                    <th style="width: 45px;" class="text-center">Xu hướng</th>
+                    <th style="width: 70px;" class="text-center ps-3">Hạng</th>
+                    <th style="width: 60px;" class="text-center">Biến động</th>
                     <th>Học viên</th>
                     <th class="text-center">Cấp bậc</th>
                     <th class="text-center">Chuỗi ngày 🔥</th>
@@ -302,27 +354,27 @@
                   <tr
                     v-for="u in leaderboardData"
                     :key="u.user_id"
-                    :class="u.is_current_user ? 'table-teal-highlight' : ''"
+                    :class="u.is_current_user ? 'row-user-highlight' : 'row-clean-hover'"
                   >
                     <!-- Rank -->
                     <td class="text-center ps-3 fw-black">
-                      <span v-if="u.rank === 1" class="badge bg-warning text-dark fs-8 rounded-pill px-2 py-0.5 shadow-2xs">🥇 1</span>
-                      <span v-else-if="u.rank === 2" class="badge bg-secondary text-white fs-8 rounded-pill px-2 py-0.5 shadow-2xs">🥈 2</span>
-                      <span v-else-if="u.rank === 3" class="badge bg-danger-subtle text-danger fs-8 rounded-pill px-2 py-0.5 shadow-2xs">🥉 3</span>
+                      <span v-if="u.rank === 1" class="badge bg-warning text-dark fs-8 rounded-pill px-2.5 py-1 shadow-2xs">🥇 1</span>
+                      <span v-else-if="u.rank === 2" class="badge bg-secondary text-white fs-8 rounded-pill px-2.5 py-1 shadow-2xs">🥈 2</span>
+                      <span v-else-if="u.rank === 3" class="badge bg-danger-subtle text-danger fs-8 rounded-pill px-2.5 py-1 shadow-2xs">🥉 3</span>
                       <span v-else class="text-muted fw-bold">#{{ u.rank }}</span>
                     </td>
 
                     <!-- Trend -->
                     <td class="text-center">
-                      <span v-if="u.trend > 0" class="badge bg-success-subtle text-success fs-8 rounded-pill px-1.5 py-0.5">▲+{{ u.trend }}</span>
-                      <span v-else-if="u.trend < 0" class="badge bg-danger-subtle text-danger fs-8 rounded-pill px-1.5 py-0.5">▼{{ u.trend }}</span>
+                      <span v-if="u.trend > 0" class="badge bg-success-subtle text-success fs-8 rounded-pill px-1.5 py-0.5">▲ +{{ u.trend }}</span>
+                      <span v-else-if="u.trend < 0" class="badge bg-danger-subtle text-danger fs-8 rounded-pill px-1.5 py-0.5">▼ {{ u.trend }}</span>
                       <span v-else class="text-muted fs-8 font-monospace">—</span>
                     </td>
 
                     <!-- User Name & Avatar -->
                     <td>
                       <div class="d-flex align-items-center gap-2">
-                        <img :src="u.avatar_url" class="rounded-circle border" style="width: 32px; height: 32px; object-fit: cover;" />
+                        <img :src="u.avatar_url" class="rounded-circle border-0" style="width: 34px; height: 34px; object-fit: cover;" />
                         <div>
                           <div class="fw-bold text-dark-emphasis d-flex align-items-center gap-1.5 fs-7">
                             <span>{{ u.name }}</span>
@@ -349,13 +401,13 @@
                     </td>
 
                     <!-- Mastered Words -->
-                    <td class="text-center text-muted fs-8">
+                    <td class="text-center text-secondary fs-8 fw-semibold">
                       {{ u.mastered_words }} từ
                     </td>
 
                     <!-- Arena Score -->
                     <td class="text-center">
-                      <span class="badge bg-body-tertiary text-secondary border rounded-pill px-2 py-0.5 fs-8">
+                      <span class="badge bg-body-tertiary text-secondary rounded-pill px-2.5 py-1 fs-8">
                         {{ u.arena_score }} XP ({{ u.arena_matches }} trận)
                       </span>
                     </td>
@@ -377,7 +429,7 @@
             </div>
 
             <!-- Pagination Bar -->
-            <div v-if="!viewAll && lastPage > 1" class="card-footer bg-body-tertiary border-top py-2 px-3.5 d-flex justify-content-between align-items-center">
+            <div v-if="!viewAll && lastPage > 1" class="px-3.5 py-2.5 d-flex justify-content-between align-items-center border-top border-light-subtle">
               <span class="fs-8 text-muted">
                 Trang <strong>{{ currentPage }}</strong> / <strong>{{ lastPage }}</strong> ({{ filteredCount }} học viên)
               </span>
@@ -415,17 +467,17 @@
       <!-- ================= TAB 2: PHÒNG THI ĐẤU REALTIME ================= -->
       <div v-else-if="activeTab === 'rooms'">
         <!-- Quick Join & Create Actions -->
-        <div class="card p-3.5 p-md-4 rounded-4 shadow-sm border bg-card-custom mb-3.5 text-center">
+        <div class="card p-3.5 p-md-4 rounded-4 shadow-sm border-0 bg-card-custom mb-3.5 text-center">
           <div class="max-w-xl mx-auto">
             <h5 class="fw-black mb-1.5">Vào Phòng Thi Trực Tiếp Qua Mã</h5>
             <p class="text-muted fs-8 mb-3">Nhập mã phòng do thầy cô hoặc trưởng nhóm chia sẻ (VD: OX-ARENA1 hoặc OX-VIP99):</p>
             <div class="input-group mb-3">
-              <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-key-fill"></i></span>
+              <span class="input-group-text bg-body-tertiary border-0 text-muted"><i class="bi bi-key-fill"></i></span>
               <input
                 type="text"
                 v-model="quickCode"
                 @keyup.enter="handleQuickJoin"
-                class="form-control form-control-lg fs-7 border-start-0"
+                class="form-control form-control-lg fs-7 border-0 bg-body-tertiary"
                 placeholder="Nhập mã phòng thi..."
               />
               <button @click="handleQuickJoin" class="btn btn-warning text-dark fw-bold px-4 fs-7">
@@ -442,14 +494,14 @@
               v-for="cat in categories"
               :key="cat.id"
               @click="selectedCategory = cat.id"
-              class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold transition-all"
+              class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold transition-all border-0"
               :class="selectedCategory === cat.id ? 'btn-teal text-white shadow-xs' : 'btn-outline-secondary'"
             >
               {{ cat.name }}
             </button>
           </div>
 
-          <button @click="loadRooms" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1.5 fs-8">
+          <button @click="loadRooms" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1.5 fs-8 border-0">
             <i class="bi bi-arrow-clockwise me-1"></i> Làm mới danh sách
           </button>
         </div>
@@ -463,7 +515,7 @@
         <!-- Rooms Grid -->
         <div v-else-if="filteredRooms.length" class="row g-3">
           <div v-for="room in filteredRooms" :key="room.id" class="col-12 col-md-6 col-lg-4">
-            <div class="card p-3.5 rounded-4 shadow-sm border bg-card-custom h-100 d-flex flex-column justify-content-between transition-all hover-card">
+            <div class="card p-3.5 rounded-4 shadow-sm border-0 bg-card-custom h-100 d-flex flex-column justify-content-between transition-all hover-card">
               <div>
                 <!-- Header Badges -->
                 <div class="d-flex justify-content-between align-items-center mb-2.5">
@@ -495,19 +547,19 @@
 
                 <!-- Host -->
                 <div class="d-flex align-items-center gap-2 mb-2.5">
-                  <img :src="room.host_avatar || 'https://api.dicebear.com/7.x/bottts/svg?seed=Teacher'" class="rounded-circle border" style="width: 24px; height: 24px;" />
+                  <img :src="room.host_avatar || 'https://api.dicebear.com/7.x/bottts/svg?seed=Teacher'" class="rounded-circle border-0" style="width: 24px; height: 24px;" />
                   <span class="fs-8 text-muted">Chủ phòng: <strong class="text-dark-emphasis">{{ room.host_name }}</strong></span>
                 </div>
 
                 <!-- Meta Pills -->
                 <div class="d-flex flex-wrap gap-1.5 mb-3">
-                  <span class="badge bg-body-tertiary text-secondary border rounded-pill px-2 py-0.5 fs-8">
+                  <span class="badge bg-body-tertiary text-secondary rounded-pill px-2 py-0.5 fs-8">
                     {{ room.total_questions }} câu
                   </span>
-                  <span class="badge bg-body-tertiary text-secondary border rounded-pill px-2 py-0.5 fs-8">
+                  <span class="badge bg-body-tertiary text-secondary rounded-pill px-2 py-0.5 fs-8">
                     {{ room.time_per_question > 0 ? room.time_per_question + 's/câu' : 'Không giới hạn' }}
                   </span>
-                  <span class="badge bg-body-tertiary text-secondary border rounded-pill px-2 py-0.5 fs-8">
+                  <span class="badge bg-body-tertiary text-secondary rounded-pill px-2 py-0.5 fs-8">
                     👥 {{ room.participants_count }}/{{ room.max_players }}
                   </span>
                 </div>
@@ -523,7 +575,7 @@
         </div>
 
         <!-- Empty State -->
-        <div v-else class="card p-5 rounded-4 border text-center bg-card-custom">
+        <div v-else class="card p-5 rounded-4 border-0 text-center bg-card-custom">
           <i class="bi bi-door-closed display-4 text-muted mb-2"></i>
           <h5 class="fw-bold text-muted">Chưa có phòng thi nào trong danh mục này</h5>
           <p class="text-secondary fs-8 mb-3">Bạn có thể tự tạo phòng thi đấu mới và gửi mã mời cho bạn bè!</p>
@@ -959,6 +1011,172 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Podium Card Styling: Mềm mại, không gượng gạo, tương thích dark mode hoàn hảo */
+.podium-card {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid transparent;
+}
+
+.podium-card:hover {
+  transform: translateY(-3px);
+}
+
+.card-gold {
+  background: linear-gradient(145deg, rgba(251, 191, 36, 0.14) 0%, rgba(217, 119, 6, 0.05) 100%);
+  border-color: rgba(251, 191, 36, 0.35) !important;
+}
+
+.card-silver {
+  background: linear-gradient(145deg, rgba(148, 163, 184, 0.12) 0%, rgba(100, 116, 139, 0.04) 100%);
+  border-color: rgba(148, 163, 184, 0.25) !important;
+}
+
+.card-bronze {
+  background: linear-gradient(145deg, rgba(217, 119, 6, 0.12) 0%, rgba(180, 83, 9, 0.04) 100%);
+  border-color: rgba(217, 119, 6, 0.25) !important;
+}
+
+/* Badge Title danh hiệu rõ ràng */
+.badge-title {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  letter-spacing: 0.2px;
+}
+
+.badge-gold {
+  background: rgba(251, 191, 36, 0.2);
+  color: #f59e0b;
+}
+
+.badge-silver {
+  background: rgba(148, 163, 184, 0.2);
+  color: #94a3b8;
+}
+
+.badge-bronze {
+  background: rgba(217, 119, 6, 0.2);
+  color: #f97316;
+}
+
+/* Avatar Rings */
+.avatar-ring {
+  border-radius: 50%;
+  padding: 2.5px;
+}
+
+.ring-gold {
+  background: linear-gradient(135deg, #fbbf24, #d97706);
+  box-shadow: 0 0 14px rgba(251, 191, 36, 0.35);
+}
+
+.ring-silver {
+  background: linear-gradient(135deg, #cbd5e1, #64748b);
+  box-shadow: 0 0 10px rgba(148, 163, 184, 0.2);
+}
+
+.ring-bronze {
+  background: linear-gradient(135deg, #fed7aa, #b45309);
+  box-shadow: 0 0 10px rgba(217, 119, 6, 0.2);
+}
+
+.avatar-core-gold {
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-core {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  display: block;
+}
+
+.crown-icon {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 15px;
+  line-height: 1;
+}
+
+.mini-rank-dot {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 900;
+  border: 1.5px solid #131e21;
+}
+
+.dot-gold {
+  background-color: #fbbf24;
+  color: #1e1b4b;
+}
+
+.dot-silver {
+  background-color: #cbd5e1;
+  color: #0f172a;
+}
+
+.dot-bronze {
+  background-color: #d97706;
+  color: #ffffff;
+}
+
+/* Clean Leaderboard Table: Mượt mà, xóa bỏ hoàn toàn đường kẻ cột hàng thô */
+.clean-leaderboard-table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border: none !important;
+}
+
+.clean-leaderboard-table thead th {
+  background: transparent !important;
+  border: none !important;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 10px 14px !important;
+}
+
+.clean-leaderboard-table tbody tr {
+  border: none !important;
+  transition: all 0.2s ease;
+}
+
+.clean-leaderboard-table tbody td {
+  border: none !important;
+  border-bottom: 1px solid var(--bs-border-color-translucent, rgba(125, 125, 125, 0.08)) !important;
+  padding: 12px 14px !important;
+}
+
+.row-clean-hover:hover {
+  background-color: var(--bs-tertiary-bg, rgba(125, 125, 125, 0.05)) !important;
+}
+
+.row-user-highlight {
+  background-color: rgba(8, 127, 117, 0.12) !important;
+}
+
+.user-rank-highlight {
+  background: linear-gradient(135deg, rgba(8, 127, 117, 0.06) 0%, rgba(20, 184, 166, 0.1) 100%);
+  border: 1px solid rgba(20, 184, 166, 0.25) !important;
+}
+
 .hover-card:hover {
   transform: translateY(-2px);
   border-color: #00b074 !important;
@@ -980,15 +1198,10 @@ onMounted(() => {
   50% { opacity: 0.5; }
 }
 
-.table-teal-highlight {
-  background-color: rgba(8, 127, 117, 0.08) !important;
-  font-weight: 600;
-}
-
 .tier-grandmaster {
   background: linear-gradient(135deg, #7e22ce, #dc2626);
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .tier-diamond {
