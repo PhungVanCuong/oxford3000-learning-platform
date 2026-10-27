@@ -1,5 +1,109 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
+// Module-level singleton state so all views share the same voice settings immediately
+const availableVoices = ref([])
+const selectedVoiceURI = ref(typeof localStorage !== 'undefined' ? (localStorage.getItem('oxford_voice_uri') || '') : '')
+const selectedSpeed = ref(typeof localStorage !== 'undefined' ? parseFloat(localStorage.getItem('oxford_speech_rate') || '1.0') : 1.0)
+let synth = null
+
+if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+  synth = window.speechSynthesis
+}
+
+const loadVoices = () => {
+  if (!synth) return []
+  const all = synth.getVoices()
+  if (!all || all.length === 0) return []
+
+  const enVoices = all.filter(v => v.lang && v.lang.toLowerCase().startsWith('en'))
+  const list = enVoices.length > 0 ? enVoices : all
+
+  availableVoices.value = list.map(v => {
+    const nameLower = v.name.toLowerCase()
+    let gender = 'female' // default
+    if (nameLower.includes('male') && !nameLower.includes('female')) {
+      gender = 'male'
+    } else if (
+      nameLower.includes('david') ||
+      nameLower.includes('guy') ||
+      nameLower.includes('george') ||
+      nameLower.includes('mark') ||
+      nameLower.includes('james') ||
+      nameLower.includes('paul') ||
+      nameLower.includes('richard') ||
+      nameLower.includes('christopher') ||
+      nameLower.includes('eric') ||
+      nameLower.includes('steffan')
+    ) {
+      gender = 'male'
+    } else if (
+      nameLower.includes('zira') ||
+      nameLower.includes('jenny') ||
+      nameLower.includes('samantha') ||
+      nameLower.includes('victoria') ||
+      nameLower.includes('karen') ||
+      nameLower.includes('aria') ||
+      nameLower.includes('susan') ||
+      nameLower.includes('catherine') ||
+      nameLower.includes('hazel') ||
+      nameLower.includes('linda')
+    ) {
+      gender = 'female'
+    }
+
+    let region = 'US'
+    if (v.lang.includes('GB') || nameLower.includes('uk') || nameLower.includes('british')) region = 'UK'
+    else if (v.lang.includes('AU') || nameLower.includes('australia')) region = 'AU'
+    else if (v.lang.includes('CA') || nameLower.includes('canada')) region = 'CA'
+    else if (v.lang.includes('IN') || nameLower.includes('india')) region = 'IN'
+
+    return {
+      name: v.name,
+      voiceURI: v.voiceURI,
+      lang: v.lang,
+      gender, // 'male' | 'female'
+      region,
+      label: `${v.name} (${region} - ${gender === 'male' ? 'Nam 👨' : 'Nữ 👩'})`,
+      default: v.default
+    }
+  })
+
+  return availableVoices.value
+}
+
+// Pre-load voices on module import
+if (synth) {
+  if (synth.onvoiceschanged !== undefined) {
+    synth.onvoiceschanged = () => {
+      loadVoices()
+    }
+  }
+  loadVoices()
+}
+
+// Get preferred voice (selected by user or fallback)
+const getPreferredVoice = () => {
+  if (!synth) return null
+  const voices = synth.getVoices()
+  if (!voices || voices.length === 0) return null
+
+  // 1. Try user selected voice (from ref or localStorage)
+  const currentTargetURI = selectedVoiceURI.value || (typeof localStorage !== 'undefined' ? (localStorage.getItem('oxford_voice_uri') || '') : '')
+  if (currentTargetURI) {
+    const found = voices.find(v => v.voiceURI === currentTargetURI || v.name === currentTargetURI)
+    if (found) return found
+  }
+
+  // 2. Default high quality US voice
+  return (
+    voices.find(v => v.lang === 'en-US' && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Samantha') || v.name.includes('David') || v.name.includes('Jenny') || v.name.includes('Guy'))) ||
+    voices.find(v => v.lang === 'en-US') ||
+    voices.find(v => v.lang.startsWith('en')) ||
+    voices[0] ||
+    null
+  )
+}
+
 export function useSpeech() {
   const isSpeaking = ref(false)
   const isListening = ref(false)
@@ -10,112 +114,14 @@ export function useSpeech() {
   const pronunciationScore = ref(null) // 0 to 100
   const pronunciationFeedback = ref('') // 'excellent', 'good', 'poor'
 
-  const availableVoices = ref([])
-  const selectedVoiceURI = ref(typeof localStorage !== 'undefined' ? (localStorage.getItem('oxford_voice_uri') || '') : '')
-  const selectedSpeed = ref(typeof localStorage !== 'undefined' ? parseFloat(localStorage.getItem('oxford_speech_rate') || '1.0') : 1.0)
-
-  let synth = null
   let recognition = null
   let currentTargetText = ''
   let currentItemId = null
   let micPermissionGranted = false
 
-  // Initialize SpeechSynthesis
-  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-    synth = window.speechSynthesis
-  }
-
-  const loadVoices = () => {
-    if (!synth) return []
-    const all = synth.getVoices()
-    if (!all || all.length === 0) return []
-
-    const enVoices = all.filter(v => v.lang && v.lang.toLowerCase().startsWith('en'))
-    const list = enVoices.length > 0 ? enVoices : all
-
-    availableVoices.value = list.map(v => {
-      const nameLower = v.name.toLowerCase()
-      let gender = 'female' // default
-      if (nameLower.includes('male') && !nameLower.includes('female')) {
-        gender = 'male'
-      } else if (
-        nameLower.includes('david') ||
-        nameLower.includes('guy') ||
-        nameLower.includes('george') ||
-        nameLower.includes('mark') ||
-        nameLower.includes('james') ||
-        nameLower.includes('paul') ||
-        nameLower.includes('richard') ||
-        nameLower.includes('christopher') ||
-        nameLower.includes('eric') ||
-        nameLower.includes('steffan')
-      ) {
-        gender = 'male'
-      } else if (
-        nameLower.includes('zira') ||
-        nameLower.includes('jenny') ||
-        nameLower.includes('samantha') ||
-        nameLower.includes('victoria') ||
-        nameLower.includes('karen') ||
-        nameLower.includes('aria') ||
-        nameLower.includes('susan') ||
-        nameLower.includes('catherine') ||
-        nameLower.includes('hazel') ||
-        nameLower.includes('linda')
-      ) {
-        gender = 'female'
-      }
-
-      let region = 'US'
-      if (v.lang.includes('GB') || nameLower.includes('uk') || nameLower.includes('british')) region = 'UK'
-      else if (v.lang.includes('AU') || nameLower.includes('australia')) region = 'AU'
-      else if (v.lang.includes('CA') || nameLower.includes('canada')) region = 'CA'
-      else if (v.lang.includes('IN') || nameLower.includes('india')) region = 'IN'
-
-      return {
-        name: v.name,
-        voiceURI: v.voiceURI,
-        lang: v.lang,
-        gender, // 'male' | 'female'
-        region,
-        label: `${v.name} (${region} - ${gender === 'male' ? 'Nam 👨' : 'Nữ 👩'})`,
-        default: v.default
-      }
-    })
-
-    return availableVoices.value
-  }
-
-  // Pre-load voices
-  if (synth) {
-    if (synth.onvoiceschanged !== undefined) {
-      synth.onvoiceschanged = () => {
-        loadVoices()
-      }
-    }
+  // Refresh voices on component mount if empty
+  if (availableVoices.value.length === 0 && synth) {
     loadVoices()
-  }
-
-  // Get preferred voice (selected by user or fallback)
-  const getPreferredVoice = () => {
-    if (!synth) return null
-    const voices = synth.getVoices()
-    if (!voices || voices.length === 0) return null
-
-    // 1. Try user selected voice
-    if (selectedVoiceURI.value) {
-      const found = voices.find(v => v.voiceURI === selectedVoiceURI.value || v.name === selectedVoiceURI.value)
-      if (found) return found
-    }
-
-    // 2. Default high quality US voice
-    return (
-      voices.find(v => v.lang === 'en-US' && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Samantha') || v.name.includes('David') || v.name.includes('Jenny') || v.name.includes('Guy'))) ||
-      voices.find(v => v.lang === 'en-US') ||
-      voices.find(v => v.lang.startsWith('en')) ||
-      voices[0] ||
-      null
-    )
   }
 
   const setVoice = (voiceURI) => {

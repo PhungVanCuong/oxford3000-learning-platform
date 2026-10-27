@@ -16,6 +16,47 @@
         <div class="text-muted fs-7 mt-2">Đang kết nối vào phòng thi đấu...</div>
       </div>
 
+      <!-- Password Required State (Locked Room) -->
+      <div v-else-if="isRoomLocked" class="card p-4 p-md-5 rounded-4 shadow-sm border bg-card-custom text-center max-w-lg mx-auto">
+        <div class="rounded-circle d-inline-flex align-items-center justify-content-center bg-danger-subtle text-danger mb-3" style="width: 64px; height: 64px;">
+          <i class="bi bi-shield-lock-fill fs-2"></i>
+        </div>
+        <h4 class="fw-black text-dark-emphasis mb-2">Phòng Thi Yêu Cầu Mật Khẩu</h4>
+        <p class="text-muted fs-7 mb-4">
+          Phòng <strong>{{ lockedRoomInfo?.room_code || route.params.idOrCode }}</strong> được bảo vệ bằng mật khẩu. Vui lòng nhập đúng mật khẩu để tham gia cùng lớp học.
+        </p>
+
+        <div v-if="unlockError" class="alert alert-danger py-2 px-3 fs-8 rounded-3 mb-3 text-start">
+          <i class="bi bi-exclamation-circle-fill me-1"></i> {{ unlockError }}
+        </div>
+
+        <div class="mb-3">
+          <input
+            type="password"
+            v-model="inputPassword"
+            @keyup.enter="submitUnlockPassword"
+            class="form-control form-control-lg text-center fs-6 rounded-3"
+            placeholder="Nhập mật khẩu phòng..."
+            autofocus
+          />
+        </div>
+
+        <div class="d-flex flex-column gap-2">
+          <button
+            @click="submitUnlockPassword"
+            :disabled="isUnlocking"
+            class="btn btn-teal text-white w-100 py-2.5 rounded-pill fw-bold fs-7 shadow-sm"
+          >
+            <span v-if="isUnlocking" class="spinner-border spinner-border-sm me-1.5" role="status"></span>
+            <i v-else class="bi bi-unlock-fill me-1.5"></i>
+            <span>{{ isUnlocking ? 'Đang kiểm tra...' : 'Mở khóa & Tham gia phòng' }}</span>
+          </button>
+          <router-link to="/arena" class="btn btn-link text-decoration-none text-muted fs-8">
+            <i class="bi bi-arrow-left me-1"></i> Quay về Sảnh Đấu Trường
+          </router-link>
+        </div>
+      </div>
+
       <!-- Error State (Never blank screen) -->
       <div v-else-if="errorMessage || !room" class="card p-4 p-md-5 rounded-4 shadow-sm border bg-card-custom text-center">
         <div class="rounded-circle d-inline-flex align-items-center justify-content-center bg-warning-subtle text-warning mb-3" style="width: 64px; height: 64px;">
@@ -110,18 +151,22 @@
 
             <!-- Countdown Timer Clock -->
             <div class="d-flex align-items-center gap-2">
-              <span class="fs-8 text-muted d-none d-sm-inline">Thời gian còn lại:</span>
+              <span class="fs-8 text-muted d-none d-sm-inline">Thời gian:</span>
               <div
+                v-if="room.time_per_question > 0"
                 class="rounded-pill px-3 py-1 fw-black fs-6 border"
                 :class="timeLeft <= 5 ? 'bg-danger text-white border-danger animate-pulse' : 'bg-warning-subtle text-dark border-warning-subtle'"
               >
                 ⏱️ {{ timeLeft }}s
               </div>
+              <div v-else class="rounded-pill px-3 py-1 fw-bold fs-7 border bg-success-subtle text-success border-success-subtle">
+                ⏱️ Không giới hạn
+              </div>
             </div>
           </div>
 
           <!-- Timer Progress Bar -->
-          <div class="progress mb-4" style="height: 6px;">
+          <div v-if="room.time_per_question > 0" class="progress mb-4" style="height: 6px;">
             <div
               class="progress-bar transition-all"
               :class="timeLeft <= 5 ? 'bg-danger' : 'bg-teal'"
@@ -293,6 +338,12 @@ const authStore = useAuthStore()
 
 const isLoading = ref(true)
 const errorMessage = ref('')
+const isRoomLocked = ref(false)
+const lockedRoomInfo = ref(null)
+const inputPassword = ref('')
+const isUnlocking = ref(false)
+const unlockError = ref('')
+
 const room = ref(null)
 const participants = ref([])
 const questions = ref([])
@@ -327,6 +378,31 @@ const copyShareLink = () => {
   setTimeout(() => { copied.value = false }, 2500)
 }
 
+const submitUnlockPassword = async () => {
+  if (!inputPassword.value.trim()) {
+    unlockError.value = 'Vui lòng nhập mật khẩu phòng thi.'
+    return
+  }
+  isUnlocking.value = true
+  unlockError.value = ''
+  try {
+    await axios.post('/api/arena/rooms/join', {
+      room_code: lockedRoomInfo.value?.room_code || route.params.idOrCode,
+      password: inputPassword.value.trim()
+    })
+    // Successfully verified! Add pwd to query and reload room
+    router.replace({
+      query: { ...route.query, pwd: inputPassword.value.trim() }
+    })
+    isRoomLocked.value = false
+    await loadRoomDetails()
+  } catch (err) {
+    unlockError.value = err.response?.data?.message || 'Mật khẩu không chính xác. Vui lòng thử lại!'
+  } finally {
+    isUnlocking.value = false
+  }
+}
+
 const startLobbyPolling = () => {
   clearInterval(lobbyPollInterval.value)
   lobbyPollInterval.value = setInterval(async () => {
@@ -335,7 +411,10 @@ const startLobbyPolling = () => {
       return
     }
     try {
-      const res = await axios.get(`/api/arena/rooms/${route.params.idOrCode}`)
+      const pwdParam = route.query.pwd || ''
+      const res = await axios.get(`/api/arena/rooms/${route.params.idOrCode}`, {
+        params: pwdParam ? { pwd: pwdParam } : {}
+      })
       const payload = res.data.data
       const updatedRoom = payload.room || payload
 
@@ -346,7 +425,8 @@ const startLobbyPolling = () => {
           total_score: p.score ?? p.total_score ?? 0,
           correct_count: p.correct_count ?? p.correct_answers_count ?? 0,
           user_name: p.user_name || (p.user ? p.user.name : 'Học viên'),
-          user_avatar: p.user_avatar || (p.user ? p.user.avatar_url : `https://api.dicebear.com/7.x/bottts/svg?seed=${p.user_id}`)
+          user_avatar: p.user_avatar || (p.user ? p.user.avatar_url : `https://api.dicebear.com/7.x/bottts/svg?seed=${p.user_id}`),
+          is_current_user: p.is_current_user || (authStore.user && (authStore.user.id === p.user_id))
         }))
       }
 
@@ -378,9 +458,22 @@ const startLobbyPolling = () => {
 
 const loadRoomDetails = async () => {
   errorMessage.value = ''
+  unlockError.value = ''
   try {
-    const res = await axios.get(`/api/arena/rooms/${route.params.idOrCode}`)
+    const pwdParam = route.query.pwd || ''
+    const res = await axios.get(`/api/arena/rooms/${route.params.idOrCode}`, {
+      params: pwdParam ? { pwd: pwdParam } : {}
+    })
     const payload = res.data.data
+
+    if (payload.requires_password) {
+      isRoomLocked.value = true
+      lockedRoomInfo.value = payload
+      isLoading.value = false
+      return
+    }
+
+    isRoomLocked.value = false
     room.value = payload.room || payload
     
     // Normalize participants
@@ -390,7 +483,8 @@ const loadRoomDetails = async () => {
       total_score: p.score ?? p.total_score ?? 0,
       correct_count: p.correct_count ?? p.correct_answers_count ?? 0,
       user_name: p.user_name || (p.user ? p.user.name : 'Học viên'),
-      user_avatar: p.user_avatar || (p.user ? p.user.avatar_url : `https://api.dicebear.com/7.x/bottts/svg?seed=${p.user_id}`)
+      user_avatar: p.user_avatar || (p.user ? p.user.avatar_url : `https://api.dicebear.com/7.x/bottts/svg?seed=${p.user_id}`),
+      is_current_user: p.is_current_user || (authStore.user && (authStore.user.id === p.user_id))
     }))
 
     // Normalize questions array
@@ -405,7 +499,7 @@ const loadRoomDetails = async () => {
       type: q.type || 'Trắc nghiệm phản xạ'
     }))
 
-    timeLeft.value = room.value.time_per_question || 15
+    timeLeft.value = (room.value.time_per_question !== undefined) ? room.value.time_per_question : 15
 
     // If waiting, start reactive polling so students auto start when teacher begins
     if (room.value.status === 'waiting') {
@@ -421,16 +515,19 @@ const loadRoomDetails = async () => {
         try {
           await axios.post('/api/arena/rooms/join', {
             room_code: room.value.room_code,
-            password: ''
+            password: pwdParam
           })
-          const refRes = await axios.get(`/api/arena/rooms/${route.params.idOrCode}`)
+          const refRes = await axios.get(`/api/arena/rooms/${route.params.idOrCode}`, {
+            params: pwdParam ? { pwd: pwdParam } : {}
+          })
           const refPayload = refRes.data.data
           participants.value = (refPayload.participants || []).map(p => ({
             ...p,
             total_score: p.score ?? p.total_score ?? 0,
             correct_count: p.correct_count ?? p.correct_answers_count ?? 0,
             user_name: p.user_name || (p.user ? p.user.name : 'Học viên'),
-            user_avatar: p.user_avatar || (p.user ? p.user.avatar_url : `https://api.dicebear.com/7.x/bottts/svg?seed=${p.user_id}`)
+            user_avatar: p.user_avatar || (p.user ? p.user.avatar_url : `https://api.dicebear.com/7.x/bottts/svg?seed=${p.user_id}`),
+            is_current_user: p.is_current_user || (authStore.user && (authStore.user.id === p.user_id))
           }))
         } catch (joinErr) {
           console.warn('Auto-join notification:', joinErr.response?.data?.message || joinErr.message)
@@ -459,20 +556,23 @@ const startGame = async () => {
 const startQuestionTimer = () => {
   selectedAnswer.value = null
   answerStartTime.value = Date.now()
-  timeLeft.value = room.value.time_per_question || 15
+  const limit = (room.value?.time_per_question !== undefined) ? room.value.time_per_question : 15
+  timeLeft.value = limit
 
   clearInterval(timerInterval.value)
-  timerInterval.value = setInterval(() => {
-    if (timeLeft.value > 0) {
-      timeLeft.value--
-    } else {
-      // Time expired: automatically advance to next question with 0 points
-      clearInterval(timerInterval.value)
-      if (selectedAnswer.value === null) {
-        chooseOption('__TIMEOUT__')
+  if (limit > 0) {
+    timerInterval.value = setInterval(() => {
+      if (timeLeft.value > 0) {
+        timeLeft.value--
+      } else {
+        // Time expired: automatically advance to next question with 0 points
+        clearInterval(timerInterval.value)
+        if (selectedAnswer.value === null) {
+          chooseOption('__TIMEOUT__')
+        }
       }
-    }
-  }, 1000)
+    }, 1000)
+  }
 }
 
 const chooseOption = async (opt) => {

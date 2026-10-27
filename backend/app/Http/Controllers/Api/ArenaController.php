@@ -31,6 +31,110 @@ class ArenaController extends Controller
     }
 
     /**
+     * Bảng xếp hạng vinh quang Đấu Trường & Toàn diện
+     */
+    public function leaderboard(Request $request)
+    {
+        $type = $request->query('type', 'all_xp'); // all_xp | streak | arena | words
+        $currentUser = $this->resolveCurrentUser($request);
+
+        $query = User::select([
+            'id', 'name', 'avatar_url', 'role', 'xp_points', 'streak_days', 'last_study_date', 'created_at'
+        ]);
+
+        if ($type === 'streak') {
+            $query->orderByDesc('streak_days')->orderByDesc('xp_points');
+        } elseif ($type === 'arena') {
+            $query->withSum('quizRoomParticipants as arena_score', 'score')
+                  ->withCount('quizRoomParticipants as arena_matches')
+                  ->orderByDesc('arena_score')
+                  ->orderByDesc('xp_points');
+        } elseif ($type === 'words') {
+            $query->withCount(['vocabularyProgress as mastered_words' => function ($q) {
+                $q->where('status', 'mastered');
+            }])->orderByDesc('mastered_words')->orderByDesc('xp_points');
+        } else {
+            // default all_xp
+            $query->orderByDesc('xp_points')->orderByDesc('streak_days');
+        }
+
+        $users = $query->take(50)->get();
+
+        $getTier = function ($xp) {
+            if ($xp >= 5000) return ['name' => 'Đại Cao Thủ', 'badge' => '💎', 'class' => 'tier-grandmaster'];
+            if ($xp >= 3000) return ['name' => 'Kim Cương', 'badge' => '💠', 'class' => 'tier-diamond'];
+            if ($xp >= 1500) return ['name' => 'Bạch Kim', 'badge' => '🏅', 'class' => 'tier-platinum'];
+            if ($xp >= 800)  return ['name' => 'Vàng', 'badge' => '🌟', 'class' => 'tier-gold'];
+            if ($xp >= 300)  return ['name' => 'Bạc', 'badge' => '🥈', 'class' => 'tier-silver'];
+            return ['name' => 'Đồng', 'badge' => '🥉', 'class' => 'tier-bronze'];
+        };
+
+        $leaderboard = $users->map(function ($u, $idx) use ($currentUser, $getTier) {
+            $tier = $getTier($u->xp_points ?? 0);
+            return [
+                'rank' => $idx + 1,
+                'user_id' => $u->id,
+                'name' => $u->name,
+                'avatar_url' => $u->avatar_url ?: ('https://api.dicebear.com/7.x/bottts/svg?seed=' . urlencode($u->name)),
+                'role' => $u->role,
+                'xp_points' => $u->xp_points ?? 0,
+                'streak_days' => $u->streak_days ?? 0,
+                'arena_score' => $u->arena_score ?? 0,
+                'arena_matches' => $u->arena_matches ?? 0,
+                'mastered_words' => $u->mastered_words ?? 0,
+                'tier_name' => $tier['name'],
+                'tier_badge' => $tier['badge'],
+                'tier_class' => $tier['class'],
+                'is_current_user' => $currentUser && ($currentUser->id === $u->id),
+            ];
+        });
+
+        // Current user personal ranking summary
+        $myRank = null;
+        if ($currentUser) {
+            $inTop = $leaderboard->firstWhere('is_current_user', true);
+            if ($inTop) {
+                $myRank = $inTop;
+            } else {
+                $higherCount = 0;
+                if ($type === 'streak') {
+                    $higherCount = User::where('streak_days', '>', $currentUser->streak_days ?? 0)->count();
+                } else {
+                    $higherCount = User::where('xp_points', '>', $currentUser->xp_points ?? 0)->count();
+                }
+
+                $tier = $getTier($currentUser->xp_points ?? 0);
+                $myRank = [
+                    'rank' => $higherCount + 1,
+                    'user_id' => $currentUser->id,
+                    'name' => $currentUser->name,
+                    'avatar_url' => $currentUser->avatar_url ?: ('https://api.dicebear.com/7.x/bottts/svg?seed=' . urlencode($currentUser->name)),
+                    'role' => $currentUser->role,
+                    'xp_points' => $currentUser->xp_points ?? 0,
+                    'streak_days' => $currentUser->streak_days ?? 0,
+                    'arena_score' => QuizRoomParticipant::where('user_id', $currentUser->id)->sum('score') ?? 0,
+                    'arena_matches' => QuizRoomParticipant::where('user_id', $currentUser->id)->count(),
+                    'mastered_words' => $currentUser->vocabularyProgress()->where('status', 'mastered')->count(),
+                    'tier_name' => $tier['name'],
+                    'tier_badge' => $tier['badge'],
+                    'tier_class' => $tier['class'],
+                    'is_current_user' => true,
+                ];
+            }
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'type' => $type,
+                'leaderboard' => $leaderboard,
+                'my_rank' => $myRank,
+                'total_users' => User::count(),
+            ],
+        ]);
+    }
+
+    /**
      * List all active/available quiz arena rooms
      */
     public function index()
@@ -266,19 +370,43 @@ class ArenaController extends Controller
 
         $room = QuizRoom::where('room_code', strtoupper(trim($validated['room_code'])))->firstOrFail();
 
-        if ($room->password && $room->password !== $validated['password']) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Mật khẩu phòng không chính xác!',
-            ], 403);
+        // 1. Check password if room has password
+        if (!empty($room->password)) {
+            $providedPwd = isset($validated['password']) ? trim((string)$validated['password']) : '';
+            if ($providedPwd !== trim((string)$room->password)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Mật khẩu phòng thi đấu không chính xác! Vui lòng thử lại.',
+                ], 403);
+            }
         }
 
-        $user = $this->resolveCurrentUser($request) ?? User::first();
+        // 2. Check login user
+        $user = $this->resolveCurrentUser($request);
         if (!$user) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Bạn cần đăng nhập để tham gia đấu trường.',
+                'message' => 'Bạn cần đăng nhập tài khoản để tham gia phòng thi đấu.',
             ], 401);
+        }
+
+        // 3. Check room status
+        if ($room->status === 'finished') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Phòng thi đấu này đã kết thúc.',
+            ], 400);
+        }
+
+        // 4. Check max players limit
+        if ($room->max_players > 0) {
+            $alreadyIn = $room->participants()->where('user_id', $user->id)->exists();
+            if (!$alreadyIn && $room->participants()->count() >= $room->max_players) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => "Phòng đã đủ số lượng tối đa ({$room->max_players} người).",
+                ], 400);
+            }
         }
 
         QuizRoomParticipant::firstOrCreate([
@@ -296,6 +424,8 @@ class ArenaController extends Controller
             'data' => [
                 'id' => $room->id,
                 'room_code' => $room->room_code,
+                'user_id' => $user->id,
+                'user_name' => $user->name,
             ],
         ]);
     }
@@ -311,16 +441,46 @@ class ArenaController extends Controller
 
         $user = $this->resolveCurrentUser($request);
         $isHost = $user && ($user->id === $room->host_user_id || $user->isAdmin());
+        $isParticipant = $user && $room->participants->contains('user_id', $user->id);
+
+        $hasPassword = !empty($room->password);
+
+        // Check password protection:
+        // If room has password and user is NOT host and NOT already joined as participant:
+        if ($hasPassword && !$isHost && !$isParticipant) {
+            $providedPwd = trim((string)($request->query('pwd') ?? $request->header('X-Room-Password') ?? ''));
+            if ($providedPwd !== trim((string)$room->password)) {
+                return response()->json([
+                    'status' => 'locked',
+                    'message' => 'Phòng này yêu cầu mật khẩu.',
+                    'data' => [
+                        'id' => $room->id,
+                        'room_code' => $room->room_code,
+                        'title' => $room->title,
+                        'category' => $room->category,
+                        'has_password' => true,
+                        'requires_password' => true,
+                        'is_host' => false,
+                        'is_participant' => false,
+                        'host_name' => $room->host ? $room->host->name : 'Giáo viên',
+                        'host_avatar' => $room->host ? $room->host->avatar_url : null,
+                        'participants_count' => $room->participants->count(),
+                        'participants' => [],
+                        'questions' => [],
+                    ]
+                ], 200);
+            }
+        }
 
         $leaderboard = $room->participants->map(function ($p, $idx) use ($user) {
             return [
                 'rank' => $idx + 1,
                 'user_id' => $p->user_id,
                 'user_name' => $p->user ? $p->user->name : 'Học viên',
-                'user_avatar' => $p->user ? $p->user->avatar_url : null,
-                'score' => $p->score,
-                'correct_count' => $p->correct_count,
-                'total_time_ms' => $p->total_time_ms,
+                'user_avatar' => $p->user ? ($p->user->avatar_url ?: ('https://api.dicebear.com/7.x/bottts/svg?seed=' . urlencode($p->user->name))) : "https://api.dicebear.com/7.x/bottts/svg?seed={$p->user_id}",
+                'score' => $p->score ?? 0,
+                'correct_count' => $p->correct_count ?? 0,
+                'total_time_ms' => $p->total_time_ms ?? 0,
                 'is_current_user' => $user && ($user->id === $p->user_id),
             ];
         });
@@ -344,6 +504,9 @@ class ArenaController extends Controller
                 'title' => $room->title,
                 'category' => $room->category,
                 'status' => $room->status,
+                'has_password' => $hasPassword,
+                'requires_password' => false,
+                'is_participant' => $isParticipant,
                 'time_per_question' => $room->time_per_question,
                 'xp_per_question' => $room->xp_per_question ?: 15,
                 'expires_at' => $room->expires_at ? $room->expires_at->toIso8601String() : null,

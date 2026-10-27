@@ -549,9 +549,11 @@
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
+import { useSpeech } from '@/composables/useSpeech'
 
 const route = useRoute()
 const router = useRouter()
+const speech = useSpeech()
 
 const stageScrollTrack = ref(null)
 const stageButtons = ref({})
@@ -699,13 +701,7 @@ const switchStage = (s) => {
 // Speech Synthesis [A]
 const speakWord = (text) => {
   if (!text) return
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel()
-    const utterance = new SpeechSynthesisUtterance(text)
-    utterance.lang = 'en-US'
-    utterance.rate = 0.9
-    window.speechSynthesis.speak(utterance)
-  }
+  speech.speak(text)
 }
 
 // Speech Recognition [D] (Luyện nói)
