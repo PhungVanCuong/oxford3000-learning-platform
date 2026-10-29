@@ -3,12 +3,12 @@
     <!-- Header with Dynamic Setting summary -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
       <div>
-        <div class="d-flex align-items-center gap-2 mb-1">
-          <span class="badge bg-teal text-white rounded-pill px-3 py-1 fs-8">
-            CHINH PHỤC 3000 TỪ VỰNG OXFORD
+        <div class="d-flex align-items-center gap-1.5 mb-1 flex-wrap">
+          <span class="badge bg-teal text-white rounded-pill px-2.5 py-1 fs-8">
+            OXFORD 3000™
           </span>
           <span class="badge bg-success-subtle text-success border border-success-subtle fs-8">
-            {{ dailyStore.wordsPerDay }} từ / ngày • {{ dailyStore.totalDays }} ngày (Mở khóa 100%)
+            {{ dailyStore.wordsPerDay }} từ/ngày • {{ dailyStore.totalDays }} ngày (Mở 100%)
           </span>
         </div>
         <h2 class="fw-black text-teal mb-0">Học Từ Vựng Theo Ngày</h2>

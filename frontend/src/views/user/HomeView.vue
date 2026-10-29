@@ -381,9 +381,106 @@
     <!-- ============================================================== -->
     <!-- VIEW B: AUTHENTICATED LEARNER DASHBOARD (When Logged In) -->
     <!-- ============================================================== -->
-    <div v-else class="container py-4 max-w-6xl">
-      <!-- Hero Banner with Deep Teal styling -->
-      <div class="rounded-4 p-4 p-md-5 mb-4 shadow-sm text-white position-relative overflow-hidden" style="background: linear-gradient(135deg, #064e40 0%, #085346 50%, #00b074 100%);">
+    <div v-else class="container py-3 py-md-4 max-w-6xl">
+      <!-- 1. MOBILE-ONLY HERO & QUICK ACTIONS (Thiết kế chuẩn Mobile App cực kỳ gọn gàng) -->
+      <div class="d-block d-md-none mb-3">
+        <!-- Compact Greeting Card -->
+        <div class="card p-3 rounded-4 border-0 text-white shadow-sm overflow-hidden mb-2.5" style="background: linear-gradient(135deg, #064e40 0%, #087F75 100%);">
+          <!-- Row 1: Avatar + Greeting + Role Badge -->
+          <div class="d-flex align-items-center justify-content-between mb-2.5">
+            <div class="d-flex align-items-center gap-2 min-w-0">
+              <img :src="authStore.userAvatar" class="rounded-circle border border-2 border-white shadow-xs shrink-0" style="width: 40px; height: 40px; object-fit: cover;" />
+              <div class="min-w-0">
+                <div class="fs-9 text-white-50 leading-none">Xin chào 👋</div>
+                <div class="fw-black fs-6 text-white text-truncate">{{ authStore.userName }}</div>
+              </div>
+            </div>
+            <span class="badge rounded-pill px-2.5 py-1 fs-9 fw-bold shrink-0 shadow-2xs" style="background: rgba(255,255,255,0.2); color: #5eead4;">
+              {{ authStore.isAdmin ? '👑 Admin' : '⭐ Học viên' }}
+            </span>
+          </div>
+
+          <!-- Row 2: 3 Mini Stats in 1 Compact Row (Streak, XP, Tree Level) -->
+          <div class="d-flex align-items-center justify-content-between gap-1 p-2 rounded-3 text-center" style="background: rgba(0, 0, 0, 0.22);">
+            <div class="flex-fill">
+              <div class="fs-9 text-white-50">Chuỗi ngày</div>
+              <div class="fw-black fs-7 text-danger">🔥 {{ currentStreak }}d</div>
+            </div>
+            <div class="border-start border-white-50 border-opacity-25 my-1" style="height: 18px;"></div>
+            <div class="flex-fill">
+              <div class="fs-9 text-white-50">Kinh nghiệm</div>
+              <div class="fw-black fs-7 text-warning">⚡ {{ userXp }}</div>
+            </div>
+            <div class="border-start border-white-50 border-opacity-25 my-1" style="height: 18px;"></div>
+            <div class="flex-fill">
+              <div class="fs-9 text-white-50">Cây tri thức</div>
+              <div class="fw-black fs-7 text-success">🌱 Lv.{{ currentTreeLevel.level }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Quick Action Cards (4 Ô biểu tượng to đẹp như Duolingo/ELSA) -->
+        <div class="row g-2">
+          <!-- Card 1: Lộ trình 25 chủ đề -->
+          <div class="col-6">
+            <router-link to="/curriculum" class="card p-2.5 rounded-3 border-0 shadow-2xs text-decoration-none h-100 transition-all text-white" style="background: linear-gradient(135deg, #064e40 0%, #087F75 100%);">
+              <div class="d-flex justify-content-between align-items-start mb-1.5">
+                <div class="rounded-2 p-1.5 bg-white bg-opacity-20 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+                  <i class="bi bi-signpost-split-fill fs-6 text-warning"></i>
+                </div>
+                <span class="badge bg-warning text-dark fs-9 rounded-pill py-0.5 px-1.5">25 Chủ đề</span>
+              </div>
+              <div class="fw-bold fs-7 leading-tight text-white">Lộ Trình IELTS</div>
+              <div class="text-white-50 fs-9 mt-0.5">5.000 từ vựng</div>
+            </router-link>
+          </div>
+
+          <!-- Card 2: Học theo ngày -->
+          <div class="col-6">
+            <router-link to="/daily" class="card p-2.5 rounded-3 border-0 shadow-2xs text-decoration-none h-100 transition-all text-white" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);">
+              <div class="d-flex justify-content-between align-items-start mb-1.5">
+                <div class="rounded-2 p-1.5 bg-white bg-opacity-20 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+                  <i class="bi bi-calendar-check-fill fs-6 text-white"></i>
+                </div>
+                <span class="badge bg-white text-dark fs-9 rounded-pill py-0.5 px-1.5">Oxford 3000</span>
+              </div>
+              <div class="fw-bold fs-7 leading-tight text-white">Học Theo Ngày</div>
+              <div class="text-white-50 fs-9 mt-0.5">Flashcard & Quiz</div>
+            </router-link>
+          </div>
+
+          <!-- Card 3: 12 Thì Ngữ pháp -->
+          <div class="col-6">
+            <router-link to="/grammar" class="card p-2.5 rounded-3 border-0 shadow-2xs text-decoration-none h-100 transition-all text-white" style="background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);">
+              <div class="d-flex justify-content-between align-items-start mb-1.5">
+                <div class="rounded-2 p-1.5 bg-white bg-opacity-20 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+                  <i class="bi bi-journal-bookmark-fill fs-6 text-white"></i>
+                </div>
+                <span class="badge bg-white text-dark fs-9 rounded-pill py-0.5 px-1.5">12 Thì</span>
+              </div>
+              <div class="fw-bold fs-7 leading-tight text-white">Ngữ Pháp Chuẩn</div>
+              <div class="text-white-50 fs-9 mt-0.5">Công thức & AI dịch</div>
+            </router-link>
+          </div>
+
+          <!-- Card 4: Đấu trường Quiz -->
+          <div class="col-6">
+            <router-link to="/arena" class="card p-2.5 rounded-3 border-0 shadow-2xs text-decoration-none h-100 transition-all text-white" style="background: linear-gradient(135deg, #b45309 0%, #d97706 100%);">
+              <div class="d-flex justify-content-between align-items-start mb-1.5">
+                <div class="rounded-2 p-1.5 bg-white bg-opacity-20 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+                  <i class="bi bi-trophy-fill fs-6 text-warning"></i>
+                </div>
+                <span class="badge bg-danger text-white fs-9 rounded-pill py-0.5 px-1.5">Live</span>
+              </div>
+              <div class="fw-bold fs-7 leading-tight text-white">Đấu Trường Quiz</div>
+              <div class="text-white-50 fs-9 mt-0.5">Thi đấu & BXH</div>
+            </router-link>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. DESKTOP-ONLY HERO BANNER (Giữ nguyên 100% giao diện PC / Laptop) -->
+      <div class="d-none d-md-block rounded-4 p-4 p-md-5 mb-4 shadow-sm text-white position-relative overflow-hidden" style="background: linear-gradient(135deg, #064e40 0%, #085346 50%, #00b074 100%);">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-4 position-relative z-1">
           <div>
             <div class="d-flex align-items-center gap-2 mb-2">
@@ -429,8 +526,26 @@
         </div>
       </div>
 
-      <!-- SPOTLIGHT: LỘ TRÌNH 25 CHỦ ĐỀ CHUYÊN SÂU (MỚI) -->
-      <div class="card border-0 rounded-4 shadow-sm mb-5 text-white overflow-hidden" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #087F75 100%);">
+      <!-- MOBILE SPOTLIGHT: LỘ TRÌNH 25 CHỦ ĐỀ (Gọn đẹp trên mobile) -->
+      <div class="card border-0 rounded-4 shadow-sm mb-3 text-white overflow-hidden d-block d-md-none" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #087F75 100%);">
+        <div class="card-body p-3">
+          <div class="d-inline-flex align-items-center gap-1.5 bg-white bg-opacity-20 px-2 py-0.5 rounded-pill mb-2 fs-9 fw-bold">
+            <i class="bi bi-stars text-warning"></i>
+            <span>25 CHỦ ĐỀ IELTS • 5.000 TỪ</span>
+          </div>
+          <h5 class="fw-black mb-1.5 text-white">Chinh Phục 25 Chủ Đề (10 Chặng)</h5>
+          <p class="fs-8 text-white-75 mb-2.5" style="line-height: 1.4;">
+            Mỗi chủ đề chia làm 10 giai đoạn: Chặng 1 học 10 thẻ từ -> Chặng 2-10 làm bài kiểm tra trắc nghiệm 12 đến 28 câu. Mở khóa 100% tự do học!
+          </p>
+          <router-link to="/curriculum" class="btn btn-warning text-dark w-100 py-2 rounded-pill fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2 fs-8">
+            <span>Vào Lộ trình 25 Chủ đề ngay</span>
+            <i class="bi bi-arrow-right"></i>
+          </router-link>
+        </div>
+      </div>
+
+      <!-- DESKTOP SPOTLIGHT: LỘ TRÌNH 25 CHỦ ĐỀ CHUYÊN SÂU (Giữ nguyên trên PC) -->
+      <div class="d-none d-md-block card border-0 rounded-4 shadow-sm mb-5 text-white overflow-hidden" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #087F75 100%);">
         <div class="card-body p-4 p-md-5 d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-4">
           <div style="max-width: 660px;">
             <div class="d-inline-flex align-items-center gap-2 bg-white bg-opacity-20 px-3 py-1 rounded-pill mb-3 fs-8 fw-bold">

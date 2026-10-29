@@ -27,8 +27,8 @@
             </div>
           </div>
 
-          <!-- Quick Jump Buttons (Requested by user) -->
-          <div class="d-flex flex-wrap gap-1.5">
+          <!-- Quick Jump Buttons (Vuốt ngang mượt mà trên điện thoại) -->
+          <div class="d-flex flex-nowrap gap-1.5 mobile-scroll-x no-scrollbar py-1">
             <button @click="scrollToSection('theory-section')" class="btn btn-sm btn-outline-teal rounded-pill px-2.5 py-1 fs-8 fw-semibold">
               <i class="bi bi-book-half me-1"></i> Lý thuyết
             </button>

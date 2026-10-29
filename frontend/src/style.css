@@ -672,4 +672,31 @@ hr {
     padding: 10px 12px !important;
     border-radius: 12px !important;
   }
+
+  /* 8. Chống tràn chiều ngang tuyệt đối trên toàn bộ màn hình điện thoại */
+  html, body {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  #app, .user-layout, .container, .container-fluid {
+    max-width: 100vw !important;
+  }
+
+  /* 9. Nút bấm và tiêu đề trên điện thoại nhỏ gọn, tinh tế */
+  .display-4, .display-5, .display-6 {
+    font-size: 1.35rem !important;
+    line-height: 1.25 !important;
+  }
+
+  /* 10. Thẻ Flashcard 3D vừa khít khung nhìn điện thoại */
+  .flashcard-3d-box,
+  .flashcard-3d-box .flashcard-3d-inner {
+    min-height: 330px !important;
+  }
+
+  /* 11. Thanh nhảy nhanh ngữ pháp không chiếm không gian màn hình nhỏ */
+  .grammar-detail-page .sticky-top {
+    position: static !important;
+  }
 }

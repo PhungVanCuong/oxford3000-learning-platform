@@ -38,20 +38,20 @@
           style="background: linear-gradient(145deg, #02231d 0%, #04382f 40%, #064e40 100%);"
         >
           <!-- Top Card Info: Category + Status -->
-          <div class="d-flex justify-content-between align-items-center position-relative z-1">
-            <span class="fs-8 fw-bold letter-spacing-1 text-uppercase" style="color: #5eead4;">
-              OXFORD 3000™ • CHINH PHỤC TỪ VỰNG
+          <div class="d-flex justify-content-between align-items-center position-relative z-1 flex-wrap gap-1">
+            <span class="fs-8 fw-bold letter-spacing-1 text-uppercase text-truncate" style="color: #5eead4; max-width: 170px;">
+              OXFORD 3000™
             </span>
-            <div class="d-flex align-items-center gap-2">
-              <span v-if="currentWord?.cefr_level" class="badge px-2.5 py-1 rounded-pill fw-bold fs-8" style="background-color: rgba(94, 234, 212, 0.2); color: #5eead4; border: 1px solid rgba(94, 234, 212, 0.35);">
+            <div class="d-flex align-items-center gap-1.5 shrink-0">
+              <span v-if="currentWord?.cefr_level" class="badge px-2 py-0.5 rounded-pill fw-bold fs-9" style="background-color: rgba(94, 234, 212, 0.2); color: #5eead4; border: 1px solid rgba(94, 234, 212, 0.35);">
                 {{ currentWord.cefr_level }}
               </span>
               <span 
-                class="badge px-3 py-1.5 rounded-pill fw-bold fs-8 shadow-xs"
+                class="badge px-2.5 py-1 rounded-pill fw-bold fs-9 shadow-xs"
                 :class="currentWord?.status === 'mastered' ? 'bg-success text-white' : 'text-white'"
                 :style="currentWord?.status !== 'mastered' ? 'background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.25);' : ''"
               >
-                {{ currentWord?.status === 'mastered' ? '✔ ĐÃ GHI NHỚ' : currentWord?.status === 'learning' ? 'CẦN ÔN' : 'CHƯA HỌC' }}
+                {{ currentWord?.status === 'mastered' ? '✔ ĐÃ NHỚ' : currentWord?.status === 'learning' ? 'CẦN ÔN' : 'CHƯA HỌC' }}
               </span>
             </div>
           </div>
@@ -164,78 +164,147 @@
       </div>
     </div>
 
-    <!-- Complete 7 Action Buttons Row (Vuốt ngang êm ái trên mobile, căn giữa trên PC) -->
-    <div class="d-flex align-items-center justify-content-start justify-content-md-center gap-1.5 flex-nowrap mobile-scroll-x no-scrollbar py-1 w-100 flashcard-controls-row">
+    <!-- 1. MOBILE-ONLY 2-ROW CONTROL KEYPAD (Thiết kế công thái học vừa khít 100% màn hình điện thoại) -->
+    <div class="d-flex d-md-none flex-column gap-1.5 w-100">
+      <!-- Row 1: Điều hướng trước / lật thẻ / tiếp theo -->
+      <div class="d-flex align-items-center gap-1.5 w-100">
+        <button
+          @click="prevCard"
+          :disabled="currentIndex === 0"
+          class="btn btn-outline-secondary btn-sm flex-fill py-2 rounded-3 shadow-2xs d-flex align-items-center justify-content-center gap-1 fs-8"
+        >
+          <i class="bi bi-chevron-left"></i>
+          <span>Trước</span>
+        </button>
+
+        <button
+          @click="toggleFlip"
+          class="btn btn-teal btn-sm flex-fill py-2 rounded-3 shadow-2xs text-white fw-bold d-flex align-items-center justify-content-center gap-1 fs-8"
+          style="background-color: #087F75;"
+        >
+          <i class="bi bi-arrow-repeat"></i>
+          <span>Lật thẻ</span>
+        </button>
+
+        <button
+          @click="nextCard"
+          :disabled="currentIndex === words.length - 1"
+          class="btn btn-outline-secondary btn-sm flex-fill py-2 rounded-3 shadow-2xs d-flex align-items-center justify-content-center gap-1 fs-8"
+        >
+          <span>Tiếp</span>
+          <i class="bi bi-chevron-right"></i>
+        </button>
+      </div>
+
+      <!-- Row 2: Nghe US / Luyện nói / Đã nhớ / Cần ôn -->
+      <div class="d-flex align-items-center gap-1.5 w-100">
+        <button
+          @click="speakCurrent"
+          class="btn btn-primary btn-sm flex-fill py-2 rounded-3 shadow-2xs d-flex align-items-center justify-content-center gap-1 fs-8"
+        >
+          <i class="bi bi-volume-up-fill"></i>
+          <span>Nghe</span>
+        </button>
+
+        <button
+          @click="recordCurrent"
+          class="btn btn-sm flex-fill py-2 rounded-3 shadow-2xs d-flex align-items-center justify-content-center gap-1 fs-8"
+          :class="speech.isListening.value ? 'btn-danger animate-mic-pulse' : 'btn-info text-white'"
+        >
+          <i class="bi" :class="speech.isListening.value ? 'bi-record-fill' : 'bi-mic-fill'"></i>
+          <span>{{ speech.isListening.value ? 'Đang nghe...' : 'Nói' }}</span>
+        </button>
+
+        <button
+          @click="markCurrentMastered"
+          class="btn btn-success btn-sm flex-fill py-2 rounded-3 shadow-2xs d-flex align-items-center justify-content-center gap-1 fs-8"
+        >
+          <i class="bi bi-check-circle-fill"></i>
+          <span>Đã nhớ</span>
+        </button>
+
+        <button
+          @click="markCurrentLearning"
+          class="btn btn-warning btn-sm text-white flex-fill py-2 rounded-3 shadow-2xs d-flex align-items-center justify-content-center gap-1 fs-8"
+        >
+          <i class="bi bi-arrow-clockwise"></i>
+          <span>Cần ôn</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 2. DESKTOP-ONLY CONTROL ROW (Giữ nguyên 100% phím tắt và thiết kế PC / Laptop) -->
+    <div class="d-none d-md-flex align-items-center justify-content-center gap-1.5 flex-nowrap py-1 w-100 flashcard-controls-row">
       <!-- [← / Q] Prev -->
       <button
         @click="prevCard"
         :disabled="currentIndex === 0"
-        class="btn btn-outline-secondary btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
+        class="btn btn-outline-secondary btn-sm px-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
         title="Lùi thẻ (Phím ← hoặc Q)"
       >
         <i class="bi bi-chevron-left"></i>
-        <span><span class="d-none d-md-inline">[Q] </span>Trước</span>
+        <span>[Q] Trước</span>
       </button>
 
       <!-- [Space] Flip -->
       <button
         @click="toggleFlip"
-        class="btn btn-teal btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
+        class="btn btn-teal btn-sm px-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
         title="Lật thẻ (Phím Space)"
       >
         <i class="bi bi-arrow-repeat"></i>
-        <span><span class="d-none d-md-inline">[Space] </span>Lật thẻ</span>
+        <span>[Space] Lật thẻ</span>
       </button>
 
       <!-- [A] Listen -->
       <button
         @click="speakCurrent"
-        class="btn btn-primary btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
+        class="btn btn-primary btn-sm px-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
         title="Nghe phát âm chuẩn US (Phím A)"
       >
         <i class="bi bi-volume-up-fill"></i>
-        <span><span class="d-none d-md-inline">[A] </span>Nghe US</span>
+        <span>[A] Nghe US</span>
       </button>
 
       <!-- [D] Speak -->
       <button
         @click="recordCurrent"
-        class="btn btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
+        class="btn btn-sm px-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
         :class="speech.isListening.value ? 'btn-danger animate-mic-pulse' : 'btn-info text-white'"
         title="Luyện nói Micro (Phím D)"
       >
         <i class="bi" :class="speech.isListening.value ? 'bi-record-fill' : 'bi-mic-fill'"></i>
-        <span><span class="d-none d-md-inline">[D] </span>{{ speech.isListening.value ? 'Đang nghe...' : 'Luyện nói' }}</span>
+        <span>[D] {{ speech.isListening.value ? 'Đang nghe...' : 'Luyện nói' }}</span>
       </button>
 
       <!-- [S] Mastered -->
       <button
         @click="markCurrentMastered"
-        class="btn btn-success btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
+        class="btn btn-success btn-sm px-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
         title="Đã nhớ từ này (Phím S)"
       >
         <i class="bi bi-check-circle-fill"></i>
-        <span><span class="d-none d-md-inline">[S] </span>Đã nhớ</span>
+        <span>[S] Đã nhớ</span>
       </button>
 
       <!-- [X] Need Review -->
       <button
         @click="markCurrentLearning"
-        class="btn btn-warning btn-sm text-white px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
+        class="btn btn-warning btn-sm text-white px-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
         title="Cần ôn lại từ này (Phím X)"
       >
         <i class="bi bi-arrow-clockwise"></i>
-        <span><span class="d-none d-md-inline">[X] </span>Cần ôn</span>
+        <span>[X] Cần ôn</span>
       </button>
 
       <!-- [→ / E] Next -->
       <button
         @click="nextCard"
         :disabled="currentIndex === words.length - 1"
-        class="btn btn-outline-secondary btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
+        class="btn btn-outline-secondary btn-sm px-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
         title="Tiếp thẻ (Phím → hoặc E)"
       >
-        <span><span class="d-none d-md-inline">[E] </span>Tiếp</span>
+        <span>[E] Tiếp</span>
         <i class="bi bi-chevron-right"></i>
       </button>
     </div>
