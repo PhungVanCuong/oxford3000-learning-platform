@@ -8,9 +8,10 @@
       ></div>
     </div>
 
-    <!-- 2. PROMINENT STAGE NAVIGATION BAR (TO RÕ ĐẸP ĐẦY ĐỦ 10 CHẶNG) -->
-    <div class="container-fluid px-3 px-md-4 px-xl-5 pt-3 pb-2">
-      <div class="card border-0 shadow-sm rounded-4 p-3.5 bg-white">
+    <!-- 2. STAGE NAVIGATION BAR (DESKTOP & MOBILE TÁCH BIỆT HOÀN HẢO) -->
+    <div class="container-fluid px-2 px-md-4 px-xl-5 pt-2 pt-md-3 pb-2">
+      <!-- 2A. DESKTOP STAGE NAVIGATION (>= 768px) -->
+      <div class="card border-0 shadow-sm rounded-4 p-3.5 bg-white d-none d-md-block">
         <!-- Top Row: Back button, Topic Name, Current Stage Status & Mode Switcher -->
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2.5 mb-3">
           <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -139,7 +140,247 @@
           </div>
         </div>
       </div>
+
+      <!-- 2B. MOBILE STAGE NAVIGATION (< 768px, ĐỈNH CAO THỤT RA - THỤT VÀO & CHỐNG TRÀN) -->
+      <div class="card border-0 shadow-sm rounded-4 p-2.5 bg-white d-md-none">
+        <!-- Mobile Row 1: Back + Topic Pill with Drawer Trigger + Mode Toggle -->
+        <div class="d-flex align-items-center justify-content-between gap-1.5 mb-2">
+          <router-link 
+            to="/curriculum" 
+            class="btn btn-sm btn-outline-secondary rounded-pill px-2.5 py-1 d-flex align-items-center gap-1 fs-8 bg-white shadow-2xs fw-semibold flex-shrink-0"
+          >
+            <i class="bi bi-arrow-left"></i>
+            <span>Lộ trình</span>
+          </router-link>
+
+          <!-- Nút Thụt Ra 25 Chủ Đề -->
+          <button
+            @click="isTopicsDrawerOpen = true"
+            class="btn btn-sm rounded-pill px-2.5 py-1 fw-bold fs-8 d-flex align-items-center gap-1 text-white text-truncate shadow-2xs"
+            style="background-color: #008060; max-width: 155px;"
+            title="Bấm để đổi chủ đề khác"
+          >
+            <i class="bi bi-book-half"></i>
+            <span class="text-truncate">{{ topic?.title || 'Chủ đề' }}</span>
+            <i class="bi bi-chevron-down fs-9"></i>
+          </button>
+
+          <!-- Mode Toggle Pill: Thẻ 3D & Trắc nghiệm -->
+          <div v-if="!isAllTermsMode" class="btn-group btn-group-sm rounded-pill border bg-light p-0.5 shadow-2xs flex-shrink-0">
+            <button 
+              class="btn btn-sm rounded-pill px-2 py-0.5 fs-8 fw-bold"
+              :class="activeMode === 'flashcard' ? 'btn-success text-white shadow-xs' : 'text-muted border-0 bg-transparent'"
+              @click="activeMode = 'flashcard'"
+            >
+              Thẻ 3D
+            </button>
+            <button 
+              class="btn btn-sm rounded-pill px-2 py-0.5 fs-8 fw-bold"
+              :class="activeMode === 'quiz' ? 'btn-success text-white shadow-xs' : 'text-muted border-0 bg-transparent'"
+              @click="activeMode = 'quiz'"
+            >
+              Quiz
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Row 2: 10 Chặng Selector & Drawer Trigger -->
+        <div v-if="!isAllTermsMode" class="d-flex align-items-center justify-content-between gap-1.5 pt-1.5 border-top">
+          <!-- Chặng Trước -->
+          <button 
+            class="btn btn-sm btn-outline-secondary rounded-pill px-2 py-1 fw-bold fs-8 d-flex align-items-center gap-0.5 bg-white shadow-2xs flex-shrink-0"
+            :disabled="currentStageNum <= 1"
+            @click="switchStage(currentStageNum - 1)"
+          >
+            <i class="bi bi-chevron-left"></i>
+            <span>Trước</span>
+          </button>
+
+          <!-- Nút Thụt Ra 10 Chặng Học -->
+          <button
+            @click="isStagesDrawerOpen = true"
+            class="btn btn-sm btn-teal text-white rounded-pill px-2.5 py-1 fw-bold fs-8 d-flex align-items-center justify-content-center gap-1.5 shadow-2xs flex-grow-1 mx-1 text-truncate"
+            style="background: linear-gradient(135deg, #00b074 0%, #064e40 100%);"
+            title="Bấm để xem danh sách 10 chặng"
+          >
+            <i class="bi bi-list-check"></i>
+            <span class="text-truncate">Chặng {{ String(currentStageNum).padStart(2, '0') }}: {{ getStageCount(currentStageNum) }} từ</span>
+            <i class="bi bi-chevron-down fs-9"></i>
+          </button>
+
+          <!-- Chặng Sau -->
+          <button 
+            class="btn btn-sm btn-outline-teal rounded-pill px-2 py-1 fw-bold fs-8 d-flex align-items-center gap-0.5 shadow-2xs flex-shrink-0"
+            :disabled="currentStageNum >= 10"
+            @click="switchStage(currentStageNum + 1)"
+          >
+            <span>Sau</span>
+            <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+
+        <!-- Mobile Continuous Progress Rail -->
+        <div v-if="!isAllTermsMode" class="mt-2 position-relative" style="height: 4px; background-color: #E2E8F0; border-radius: 999px;">
+          <div 
+            class="h-100 rounded-pill"
+            :style="{
+              width: `${(currentStageNum / 10) * 100}%`,
+              backgroundColor: '#00b074',
+              transition: 'width 0.35s cubic-bezier(0.4, 0, 0.2, 1)'
+            }"
+          ></div>
+        </div>
+      </div>
     </div>
+
+    <!-- ================= DRAWER 1: CHỌN 25 CHỦ ĐỀ (THỤT RA - THỤT VÀO) ================= -->
+    <div
+      v-if="isTopicsDrawerOpen"
+      class="topics-drawer-overlay"
+      @click="isTopicsDrawerOpen = false"
+    ></div>
+
+    <aside
+      class="topics-drawer-content d-flex flex-column p-3 shadow-lg"
+      :class="isTopicsDrawerOpen ? 'show' : ''"
+    >
+      <!-- Header -->
+      <div class="d-flex align-items-center justify-content-between pb-2.5 mb-2.5 border-bottom">
+        <div class="d-flex align-items-center gap-2">
+          <div class="rounded-3 d-flex align-items-center justify-content-center text-white fw-black shadow-xs" style="width: 36px; height: 36px; background: linear-gradient(135deg, #00b074 0%, #064e40 100%);">
+            Ox
+          </div>
+          <div>
+            <h6 class="fw-black mb-0 text-dark leading-tight">25 CHỦ ĐỀ LỘ TRÌNH</h6>
+            <span class="text-muted fs-8">Chọn chủ đề để chuyển bài</span>
+          </div>
+        </div>
+
+        <button
+          @click="isTopicsDrawerOpen = false"
+          class="btn btn-sm btn-danger text-white rounded-pill px-2.5 py-1 fw-bold fs-8 d-flex align-items-center gap-1 shadow-sm"
+        >
+          <i class="bi bi-x-lg fs-8"></i>
+          <span>Thụt lại</span>
+        </button>
+      </div>
+
+      <!-- Search in Drawer -->
+      <div class="mb-2.5 position-relative">
+        <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-teal fs-8"></i>
+        <input
+          v-model="searchTopicQuery"
+          type="text"
+          class="form-control form-control-sm rounded-pill ps-5 pe-3 py-1.5 fs-8"
+          placeholder="Tìm kiếm chủ đề (VD: Education, City...)"
+        />
+      </div>
+
+      <!-- List of 25 Topics -->
+      <div class="d-flex flex-column gap-2 overflow-y-auto flex-grow-1 pr-1">
+        <div
+          v-for="t in filteredTopics"
+          :key="t.id"
+          @click="selectTopic(t)"
+          class="p-2.5 rounded-3 border transition-all cursor-pointer"
+          :class="Number(topicId) === Number(t.id) ? 'border-teal bg-success-subtle shadow-xs' : 'bg-white border-light-subtle hover-shadow'"
+        >
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2.5 min-w-0">
+              <div
+                class="rounded-2 d-flex align-items-center justify-content-center text-white fw-black fs-8 flex-shrink-0 shadow-2xs"
+                style="width: 32px; height: 32px; background-color: #008060;"
+              >
+                {{ String(t.order_num).padStart(2, '0') }}
+              </div>
+              <div class="text-truncate">
+                <div class="fw-bold fs-7 text-dark text-truncate">{{ t.title }}</div>
+                <div class="text-muted fs-8 text-truncate">{{ t.title_vi }}</div>
+              </div>
+            </div>
+            <div class="d-flex align-items-center gap-1.5 flex-shrink-0 ms-2">
+              <span class="badge rounded-pill" :class="t.progress_percent >= 100 ? 'bg-success text-white' : 'bg-light text-muted border'" style="font-size: 10px;">
+                {{ t.progress_percent || 0 }}%
+              </span>
+              <i v-if="Number(topicId) === Number(t.id)" class="bi bi-check-circle-fill text-success fs-7"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ================= DRAWER 2: CHỌN 10 CHẶNG BÀI HỌC (THỤT RA - THỤT VÀO) ================= -->
+    <div
+      v-if="isStagesDrawerOpen"
+      class="topics-drawer-overlay"
+      @click="isStagesDrawerOpen = false"
+    ></div>
+
+    <aside
+      class="topics-drawer-content d-flex flex-column p-3 shadow-lg"
+      :class="isStagesDrawerOpen ? 'show' : ''"
+      style="max-width: 340px;"
+    >
+      <!-- Header -->
+      <div class="d-flex align-items-center justify-content-between pb-2.5 mb-2.5 border-bottom">
+        <div class="d-flex align-items-center gap-2">
+          <div class="rounded-3 d-flex align-items-center justify-content-center text-white fw-black shadow-xs" style="width: 36px; height: 36px; background: linear-gradient(135deg, #00b074 0%, #064e40 100%);">
+            <i class="bi bi-signpost-split-fill fs-6"></i>
+          </div>
+          <div class="min-w-0">
+            <h6 class="fw-black mb-0 text-dark leading-tight text-truncate">10 CHẶNG HỌC</h6>
+            <span class="text-muted fs-8 text-truncate d-block">{{ topic?.title }}</span>
+          </div>
+        </div>
+
+        <button
+          @click="isStagesDrawerOpen = false"
+          class="btn btn-sm btn-danger text-white rounded-pill px-2.5 py-1 fw-bold fs-8 d-flex align-items-center gap-1 shadow-sm flex-shrink-0 ms-2"
+        >
+          <i class="bi bi-x-lg fs-8"></i>
+          <span>Thụt lại</span>
+        </button>
+      </div>
+
+      <!-- List of 10 Stages -->
+      <div class="d-flex flex-column gap-2 overflow-y-auto flex-grow-1 pr-1">
+        <div
+          v-for="s in 10"
+          :key="s"
+          @click="selectStage(s)"
+          class="p-2.5 rounded-3 border transition-all cursor-pointer"
+          :class="s === currentStageNum ? 'border-teal bg-success-subtle shadow-xs' : 'bg-white border-light-subtle hover-shadow'"
+        >
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2.5 min-w-0">
+              <div
+                class="rounded-circle d-flex align-items-center justify-content-center fw-black fs-8 flex-shrink-0 text-white shadow-2xs"
+                :style="{
+                  width: '32px',
+                  height: '32px',
+                  backgroundColor: s === currentStageNum ? '#00b074' : (stagesProgress[s]?.is_completed ? '#10b981' : '#64748b')
+                }"
+              >
+                <i v-if="stagesProgress[s]?.is_completed" class="bi bi-check-lg fs-7"></i>
+                <span v-else>{{ String(s).padStart(2, '0') }}</span>
+              </div>
+              <div class="text-truncate">
+                <div class="fw-bold fs-7 text-dark text-truncate">
+                  Chặng {{ String(s).padStart(2, '0') }} • {{ s === 1 ? '10 thẻ từ vựng' : `${getStageCount(s)} câu trắc nghiệm` }}
+                </div>
+                <div class="fs-8 text-muted">
+                  {{ stagesProgress[s]?.is_completed ? `Đã hoàn thành (${stagesProgress[s]?.score || getStageCount(s)}/${stagesProgress[s]?.count || getStageCount(s)} từ)` : (stagesProgress[s]?.remembered_count > 0 ? `Đang học (${stagesProgress[s]?.score || 0}/${getStageCount(s)} từ)` : 'Chưa bắt đầu') }}
+                </div>
+              </div>
+            </div>
+
+            <i v-if="s === currentStageNum" class="bi bi-check-circle-fill text-success fs-6 ms-2"></i>
+            <i v-else-if="stagesProgress[s]?.is_completed" class="bi bi-patch-check-fill text-success fs-7 ms-2"></i>
+            <i v-else class="bi bi-chevron-right text-muted fs-8 ms-2"></i>
+          </div>
+        </div>
+      </div>
+    </aside>
 
     <!-- 3. TITLE & BREADCRUMB -->
     <div class="container max-w-5xl text-center py-2">
@@ -164,8 +405,8 @@
     <div v-else class="container py-2 flex-grow-1 d-flex flex-column justify-content-center" style="max-width: 960px;">
       <!-- ================= MODE 1: 3D FLASHCARD ================= -->
       <div v-if="activeMode === 'flashcard'" class="flashcard-container mx-auto w-100" style="max-width: 920px;">
-        <!-- Helper Tips Banner (Styled exactly like Daily Study & Topics 3000) -->
-        <div class="alert alert-primary bg-primary-subtle border-primary-subtle text-primary-emphasis d-flex align-items-center justify-content-between py-2 px-3 mb-3 rounded-3 shadow-xs fs-7">
+        <!-- Helper Tips Banner (Desktop only) -->
+        <div class="alert alert-primary bg-primary-subtle border-primary-subtle text-primary-emphasis d-none d-md-flex align-items-center justify-content-between py-2 px-3 mb-3 rounded-3 shadow-xs fs-7">
           <div>
             <i class="bi bi-lightbulb-fill text-warning me-1"></i>
             <strong>Phím tắt:</strong> <code>Space</code>: Lật thẻ | <code>Q</code>: Trước | <code>E</code>: Tiếp | <code>A</code>: Nghe | <code>D</code>: Luyện nói | <code>S</code>: Đã nhớ | <code>X</code>: Cần ôn
@@ -173,6 +414,17 @@
           <div class="badge bg-primary text-white ms-2 fs-7 px-2.5 py-1">
             {{ currentCardIndex + 1 }} / {{ terms.length }}
           </div>
+        </div>
+
+        <!-- Mobile Touch Helper Pill -->
+        <div class="d-md-none d-flex align-items-center justify-content-between p-2 px-3 rounded-pill bg-white border shadow-2xs mb-2.5 fs-8">
+          <span class="text-muted d-flex align-items-center gap-1.5">
+            <i class="bi bi-hand-index-thumb text-teal fs-7"></i>
+            <span>Chạm thẻ để lật xem nghĩa tiếng Việt</span>
+          </span>
+          <span class="badge bg-teal text-white fw-bold">
+            Thẻ {{ currentCardIndex + 1 }} / {{ terms.length }}
+          </span>
         </div>
 
         <!-- 3D Card (Dark Forest Teal) -->
@@ -312,8 +564,8 @@
           </div>
         </div>
 
-        <!-- Strict Single-Row Action Controls (Matches Lộ trình, Học theo ngày & Chủ đề 3000 từ) -->
-        <div class="d-flex align-items-center justify-content-center gap-1.5 flex-nowrap overflow-x-auto py-1 w-100 flashcard-controls-row mb-4">
+        <!-- CONTROLS: 1. DESKTOP SINGLE-ROW CONTROLS (>= 768px, giữ nguyên phím tắt) -->
+        <div class="d-none d-md-flex align-items-center justify-content-center gap-1.5 flex-nowrap overflow-x-auto py-1 w-100 flashcard-controls-row mb-4">
           <!-- [Q] Trước -->
           <button 
             type="button"
@@ -393,6 +645,95 @@
             <span><strong>[E]</strong> Tiếp</span>
             <i class="bi bi-chevron-right"></i>
           </button>
+        </div>
+
+        <!-- CONTROLS: 2. MOBILE DEDICATED 2-ROW ERGONOMIC TOUCH KEYPAD (< 768px, CHỐNG TRÀN 100%) -->
+        <div class="d-flex d-md-none flex-column gap-2 w-100 mb-4 px-1">
+          <!-- Hàng 1: Điều hướng & Lật Thẻ Xem Nghĩa (3 Nút Lớn Rộng Rãi) -->
+          <div class="d-flex align-items-center gap-2 w-100">
+            <!-- Trước -->
+            <button 
+              type="button"
+              class="btn btn-outline-secondary btn-sm rounded-3 py-2 px-2.5 d-flex align-items-center justify-content-center gap-1 fw-bold fs-7 shadow-2xs"
+              style="flex: 1; height: 44px;"
+              :disabled="currentCardIndex === 0"
+              @click="prevCard"
+            >
+              <i class="bi bi-chevron-left"></i>
+              <span>Trước</span>
+            </button>
+
+            <!-- Lật Thẻ Trung Tâm (Nổi bật, to rõ, dễ chạm) -->
+            <button 
+              type="button"
+              class="btn btn-teal text-white btn-sm rounded-3 py-2 px-3 d-flex align-items-center justify-content-center gap-1.5 fw-bold fs-7 shadow-sm"
+              style="flex: 2; height: 44px; background: linear-gradient(135deg, #00b074 0%, #064e40 100%);"
+              @click="isFlipped = !isFlipped"
+            >
+              <i class="bi bi-arrow-repeat fs-6"></i>
+              <span>Lật Xem Nghĩa</span>
+            </button>
+
+            <!-- Tiếp -->
+            <button 
+              type="button"
+              class="btn btn-outline-secondary btn-sm rounded-3 py-2 px-2.5 d-flex align-items-center justify-content-center gap-1 fw-bold fs-7 shadow-2xs"
+              style="flex: 1; height: 44px;"
+              :disabled="currentCardIndex >= terms.length - 1"
+              @click="nextCard"
+            >
+              <span>Tiếp</span>
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          </div>
+
+          <!-- Hàng 2: Tương tác Âm thanh & Đánh giá (4 Nút Cân Bằng Đồng Đều) -->
+          <div class="d-flex align-items-center gap-1.5 w-100">
+            <!-- Nghe US -->
+            <button 
+              type="button"
+              class="btn btn-primary btn-sm rounded-3 py-1.5 px-1 d-flex flex-column align-items-center justify-content-center gap-0.5 fw-bold text-nowrap shadow-2xs"
+              style="flex: 1; height: 48px; font-size: 11px;"
+              @click="speakWord(currentTerm?.term)"
+            >
+              <i class="bi bi-volume-up-fill fs-6"></i>
+              <span>Nghe US</span>
+            </button>
+
+            <!-- Luyện Nói -->
+            <button 
+              type="button"
+              class="btn btn-sm rounded-3 py-1.5 px-1 d-flex flex-column align-items-center justify-content-center gap-0.5 fw-bold text-nowrap shadow-2xs"
+              :class="isListening ? 'btn-danger animate-mic-pulse' : 'btn-info text-white'"
+              style="flex: 1; height: 48px; font-size: 11px;"
+              @click="startSpeechRecognition"
+            >
+              <i class="bi fs-6" :class="isListening ? 'bi-record-fill' : 'bi-mic-fill'"></i>
+              <span>{{ isListening ? 'Đang nghe...' : 'Luyện nói' }}</span>
+            </button>
+
+            <!-- Đã Nhớ -->
+            <button 
+              type="button"
+              class="btn btn-success btn-sm rounded-3 py-1.5 px-1 d-flex flex-column align-items-center justify-content-center gap-0.5 fw-bold text-nowrap shadow-2xs text-white"
+              style="flex: 1; height: 48px; font-size: 11px;"
+              @click="markTermRemembered"
+            >
+              <i class="bi bi-check-circle-fill fs-6"></i>
+              <span>Đã nhớ</span>
+            </button>
+
+            <!-- Cần Ôn -->
+            <button 
+              type="button"
+              class="btn btn-warning text-dark btn-sm rounded-3 py-1.5 px-1 d-flex flex-column align-items-center justify-content-center gap-0.5 fw-bold text-nowrap shadow-2xs"
+              style="flex: 1; height: 48px; font-size: 11px;"
+              @click="markTermLearning"
+            >
+              <i class="bi bi-arrow-clockwise fs-6"></i>
+              <span>Cần ôn</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -574,6 +915,31 @@ const isListening = ref(false)
 const recognizedText = ref('')
 const speechScore = ref(null)
 
+// Retractable Mobile Drawer States ("Thụt ra - Thụt vào")
+const isTopicsDrawerOpen = ref(false)
+const isStagesDrawerOpen = ref(false)
+const allTopics = ref([])
+const searchTopicQuery = ref('')
+
+const filteredTopics = computed(() => {
+  if (!searchTopicQuery.value) return allTopics.value
+  const q = searchTopicQuery.value.toLowerCase().trim()
+  return allTopics.value.filter(t => 
+    (t.title && t.title.toLowerCase().includes(q)) ||
+    (t.title_vi && t.title_vi.toLowerCase().includes(q))
+  )
+})
+
+const selectTopic = (targetTopic) => {
+  isTopicsDrawerOpen.value = false
+  router.push(`/curriculum/${targetTopic.id}/stage/1`)
+}
+
+const selectStage = (stageNum) => {
+  isStagesDrawerOpen.value = false
+  switchStage(stageNum)
+}
+
 // Quiz State
 const currentQuestionIndex = ref(0)
 const selectedOptionIndex = ref(null)
@@ -664,6 +1030,18 @@ const fetchData = async () => {
           pMap[st.stage_num] = st
         })
         stagesProgress.value = pMap
+      }
+    }
+
+    // Load full 25 topics for the mobile retractable drawer
+    if (allTopics.value.length === 0) {
+      try {
+        const allRes = await axios.get('/api/curriculum', { headers })
+        if (allRes.data?.data?.topics) {
+          allTopics.value = allRes.data.data.topics
+        }
+      } catch (e) {
+        console.warn('Không tải được danh sách 25 chủ đề:', e)
       }
     }
   } catch (err) {

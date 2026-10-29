@@ -47,6 +47,44 @@ body {
   }
 }
 
+/* Retractable Drawers ("Thụt ra - Thụt vào") for Topics, Stages & Curriculum */
+.topics-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1060;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.topics-drawer-content {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 88vw;
+  max-width: 330px;
+  height: 100vh;
+  z-index: 1065;
+  background: #ffffff;
+  overflow-y: auto;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  transform: translateX(-100%);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 8px 0 32px rgba(0, 0, 0, 0.2);
+}
+
+.topics-drawer-content.show {
+  transform: translateX(0);
+}
+
+[data-bs-theme="dark"] .topics-drawer-content {
+  background: #131e21;
+  color: #f1f5f9;
+  border-color: #243438;
+}
+
 /* Enhanced Buttons with Prominent Borders, Vibrant Colors & Smooth Hover Animation */
 .btn {
   border-radius: 10px;
@@ -691,8 +729,18 @@ hr {
 
   /* 10. Thẻ Flashcard 3D vừa khít khung nhìn điện thoại */
   .flashcard-3d-box,
-  .flashcard-3d-box .flashcard-3d-inner {
-    min-height: 330px !important;
+  .flashcard-3d-box .flashcard-3d-inner,
+  .curriculum-stage-detail-view .perspective-1000,
+  .curriculum-stage-detail-view .flashcard-3d-inner {
+    min-height: 350px !important;
+  }
+
+  .responsive-circle-node {
+    width: 52px !important;
+    height: 52px !important;
+  }
+  .stage-content-card-box {
+    max-width: 100% !important;
   }
 
   /* 11. Thanh nhảy nhanh ngữ pháp không chiếm không gian màn hình nhỏ */

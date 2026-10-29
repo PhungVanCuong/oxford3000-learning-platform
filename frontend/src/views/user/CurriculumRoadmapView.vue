@@ -40,8 +40,119 @@
 
         <!-- 2. MAIN 2-COLUMN VIEW -->
         <div class="row g-4">
-          <!-- 2.1 LEFT SIDEBAR: TOPICS SELECTOR (THƯ VIỆN IELTS / CHỌN CHỦ ĐỀ) -->
-          <div class="col-12 col-md-5 col-lg-5 col-xl-4">
+          <!-- 2.0 MOBILE TOPIC BAR & RETRACTABLE DRAWER TRIGGER (< 768px) -->
+          <div v-if="currentTopic" class="col-12 d-md-none mb-1">
+            <div class="card p-3 rounded-4 border-0 shadow-sm bg-white">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <div class="d-flex align-items-center gap-2.5 min-w-0">
+                  <div class="rounded-3 px-2 py-1 text-white fw-black fs-8 shadow-xs flex-shrink-0" style="background-color: #00b074;">
+                    #{{ String(currentTopic.order_num).padStart(2, '0') }}
+                  </div>
+                  <div class="min-w-0">
+                    <h5 class="fw-black text-dark mb-0 leading-tight text-truncate">{{ currentTopic.title }}</h5>
+                    <div class="text-muted fs-8 text-truncate">{{ currentTopic.title_vi }}</div>
+                  </div>
+                </div>
+                
+                <!-- Nút Thụt Ra 25 Chủ Đề -->
+                <button
+                  @click="isMobileTopicsDrawerOpen = true"
+                  class="btn btn-sm btn-outline-teal rounded-pill px-2.5 py-1.5 fw-bold fs-8 d-flex align-items-center gap-1 shadow-2xs text-nowrap flex-shrink-0 ms-2"
+                >
+                  <i class="bi bi-grid-fill"></i>
+                  <span>25 Chủ Đề</span>
+                </button>
+              </div>
+
+              <div class="d-flex align-items-center justify-content-between fs-8 text-muted mb-1">
+                <span>Tiến độ: {{ currentTopic.completed_stages_count || 0 }}/10 bài</span>
+                <span class="fw-bold text-teal">{{ currentTopic.progress_percent || 0 }}%</span>
+              </div>
+              <div class="progress" style="height: 6px; border-radius: 999px;">
+                <div class="progress-bar bg-teal" :style="{ width: `${currentTopic.progress_percent || 0}%` }"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ================= MOBILE 25 TOPICS DRAWER ("THỤT RA - THỤT VÀO") ================= -->
+          <div
+            v-if="isMobileTopicsDrawerOpen"
+            class="topics-drawer-overlay d-md-none"
+            @click="isMobileTopicsDrawerOpen = false"
+          ></div>
+
+          <aside
+            class="topics-drawer-content d-md-none d-flex flex-column p-3 shadow-lg"
+            :class="isMobileTopicsDrawerOpen ? 'show' : ''"
+          >
+            <!-- Drawer Header -->
+            <div class="d-flex align-items-center justify-content-between pb-2.5 mb-2.5 border-bottom">
+              <div class="d-flex align-items-center gap-2">
+                <div class="rounded-3 d-flex align-items-center justify-content-center text-white fw-black shadow-xs" style="width: 36px; height: 36px; background: linear-gradient(135deg, #00b074 0%, #064e40 100%);">
+                  <i class="bi bi-signpost-split-fill fs-6"></i>
+                </div>
+                <div>
+                  <h6 class="fw-black mb-0 text-dark leading-tight">25 CHỦ ĐỀ IELTS</h6>
+                  <span class="text-muted fs-8">Chọn chủ đề học 10 bài</span>
+                </div>
+              </div>
+
+              <!-- Nút Thụt Lại -->
+              <button
+                @click="isMobileTopicsDrawerOpen = false"
+                class="btn btn-sm btn-danger text-white rounded-pill px-2.5 py-1 fw-bold fs-8 d-flex align-items-center gap-1 shadow-sm"
+              >
+                <i class="bi bi-x-lg fs-8"></i>
+                <span>Thụt lại</span>
+              </button>
+            </div>
+
+            <!-- Search in Drawer -->
+            <div class="mb-2.5 position-relative">
+              <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-teal fs-8"></i>
+              <input
+                v-model="searchQuery"
+                type="text"
+                class="form-control form-control-sm rounded-pill ps-5 pe-3 py-1.5 fs-8"
+                placeholder="Tìm chủ đề..."
+              />
+            </div>
+
+            <!-- List of 25 Topics -->
+            <div class="d-flex flex-column gap-2 overflow-y-auto flex-grow-1 pr-1">
+              <div
+                v-for="t in filteredTopics"
+                :key="t.id"
+                @click="selectTopicMobile(t.id)"
+                class="p-2.5 rounded-3 border transition-all cursor-pointer"
+                :class="selectedTopicId === t.id ? 'border-teal bg-success-subtle shadow-xs' : 'bg-white border-light-subtle hover-shadow'"
+              >
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="d-flex align-items-center gap-2.5 min-w-0">
+                    <div
+                      class="rounded-2 d-flex align-items-center justify-content-center text-white fw-black fs-8 flex-shrink-0 shadow-2xs"
+                      :style="getPillBadgeStyle(t.order_num)"
+                    >
+                      {{ String(t.order_num).padStart(2, '0') }}
+                    </div>
+                    <div class="text-truncate">
+                      <div class="fw-bold fs-7 text-dark text-truncate">{{ t.title }}</div>
+                      <div class="text-muted fs-8 text-truncate">{{ t.title_vi }}</div>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-center gap-1.5 flex-shrink-0 ms-2">
+                    <span class="badge rounded-pill" :class="t.progress_percent >= 100 ? 'bg-success text-white' : 'bg-light text-muted border'" style="font-size: 10px;">
+                      {{ t.progress_percent || 0 }}%
+                    </span>
+                    <i v-if="selectedTopicId === t.id" class="bi bi-check-circle-fill text-success fs-7"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <!-- 2.1 LEFT SIDEBAR: TOPICS SELECTOR (THƯ VIỆN IELTS / CHỌN CHỦ ĐỀ - DESKTOP ONLY) -->
+          <div class="d-none d-md-block col-md-5 col-lg-5 col-xl-4">
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden w-100" style="position: sticky; top: 88px; max-height: calc(100vh - 108px); z-index: 20; display: flex; flex-direction: column;">
               <!-- Dark Forest Teal Header Card -->
               <div class="p-4 text-white" style="background: linear-gradient(135deg, #032b24 0%, #064e40 60%, #087F75 100%);">
@@ -179,13 +290,12 @@
                     class="d-flex align-items-center justify-content-start position-relative z-1 mb-4 mb-md-5"
                   >
                     <div 
-                      class="stage-content-card-box d-flex align-items-center gap-3 cursor-pointer w-100"
-                      style="max-width: 86%;"
+                      class="stage-content-card-box d-flex align-items-center gap-2 gap-md-3 cursor-pointer w-100"
                       @click="goToStage(st.stage_num)"
                     >
                       <!-- Circle Node (Attached Left) -->
                       <div 
-                        class="stage-circle-node rounded-circle d-flex flex-column align-items-center justify-content-center flex-shrink-0 bg-white"
+                        class="stage-circle-node rounded-circle d-flex flex-column align-items-center justify-content-center flex-shrink-0 bg-white responsive-circle-node"
                         :class="getNodeClass(st)"
                         style="width: 68px; height: 68px;"
                       >
@@ -246,8 +356,7 @@
                     class="d-flex align-items-center justify-content-end position-relative z-1 mb-4 mb-md-5"
                   >
                     <div 
-                      class="stage-content-card-box d-flex align-items-center gap-3 cursor-pointer w-100 justify-content-end"
-                      style="max-width: 86%;"
+                      class="stage-content-card-box d-flex align-items-center gap-2 gap-md-3 cursor-pointer w-100 justify-content-end"
                       @click="goToStage(st.stage_num)"
                     >
                       <!-- Stage Card -->
@@ -274,7 +383,7 @@
 
                       <!-- Circle Node (Attached Right) -->
                       <div 
-                        class="stage-circle-node rounded-circle d-flex flex-column align-items-center justify-content-center flex-shrink-0 bg-white"
+                        class="stage-circle-node rounded-circle d-flex flex-column align-items-center justify-content-center flex-shrink-0 bg-white responsive-circle-node"
                         :class="getNodeClass(st)"
                         style="width: 68px; height: 68px;"
                       >
@@ -326,6 +435,12 @@ const topics = ref([])
 const loading = ref(true)
 const selectedTopicId = ref(null)
 const searchQuery = ref('')
+const isMobileTopicsDrawerOpen = ref(false)
+
+const selectTopicMobile = (id) => {
+  selectedTopicId.value = id
+  isMobileTopicsDrawerOpen.value = false
+}
 
 const fetchCurriculumTopics = async () => {
   loading.value = true
@@ -448,6 +563,22 @@ onMounted(() => {
   border-width: 2px !important;
   border-style: solid !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stage-content-card-box {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .stage-content-card-box {
+    max-width: 86%;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .stage-content-card-box {
+    max-width: 100% !important;
+  }
 }
 
 .stage-content-card-box:hover .stage-circle-node {
