@@ -17,15 +17,15 @@
 
     <!-- Phrasal Verbs Table -->
     <div class="card rounded-4 border shadow-sm bg-card-custom overflow-hidden mb-4">
-      <div class="card-header bg-teal text-white py-3 px-4 d-flex justify-content-between align-items-center">
+      <div class="card-header bg-teal text-white py-2.5 py-md-3 px-3 px-md-4 d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
         <h6 class="mb-0 fw-bold">Danh Sách Cụm Từ ({{ phrases.length }})</h6>
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 w-100 w-sm-auto justify-content-end">
           <input
             v-model="searchPhrase"
             type="text"
             placeholder="Tìm kiếm cụm từ..."
-            class="form-control form-control-sm rounded-pill px-3 fs-8"
-            style="width: 220px;"
+            class="form-control form-control-sm rounded-pill px-3 fs-8 w-100 w-sm-auto"
+            style="min-width: 180px; max-width: 260px;"
           />
         </div>
       </div>

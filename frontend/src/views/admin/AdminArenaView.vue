@@ -30,10 +30,10 @@
     </div>
 
     <!-- Main Navigation Tabs: Leaderboard vs Rooms -->
-    <ul class="nav nav-pills gap-2 mb-4 border-bottom pb-3 fs-7 fw-bold" role="tablist">
+    <ul class="nav nav-pills gap-2 mb-4 border-bottom pb-2 fs-7 fw-bold flex-nowrap overflow-x-auto no-scrollbar" role="tablist">
       <li class="nav-item">
         <button
-          class="nav-link rounded-pill px-4 py-2 d-flex align-items-center gap-2"
+          class="nav-link rounded-pill px-3 px-md-4 py-2 d-flex align-items-center gap-1.5 gap-md-2 text-nowrap"
           :class="activeMainTab === 'leaderboard' ? 'active bg-teal text-white shadow-sm' : 'text-secondary bg-body-tertiary'"
           @click="switchMainTab('leaderboard')"
         >
@@ -43,7 +43,7 @@
       </li>
       <li class="nav-item">
         <button
-          class="nav-link rounded-pill px-4 py-2 d-flex align-items-center gap-2"
+          class="nav-link rounded-pill px-3 px-md-4 py-2 d-flex align-items-center gap-1.5 gap-md-2 text-nowrap"
           :class="activeMainTab === 'rooms' ? 'active bg-teal text-white shadow-sm' : 'text-secondary bg-body-tertiary'"
           @click="switchMainTab('rooms')"
         >

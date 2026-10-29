@@ -204,7 +204,7 @@
       <div class="col-12 col-lg-8">
         <!-- Bảng Top Học Viên -->
         <div class="card rounded-4 border shadow-sm bg-card-custom overflow-hidden mb-4" style="border-color: #E2E8F0;">
-          <div class="card-header bg-white py-3.5 px-4 d-flex justify-content-between align-items-center border-bottom">
+          <div class="card-header bg-white py-2.5 py-md-3.5 px-3 px-md-4 d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom">
             <h6 class="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
               <i class="bi bi-trophy-fill text-warning"></i>
               <span>Bảng Vinh Danh Top Học Viên Tích Cực</span>

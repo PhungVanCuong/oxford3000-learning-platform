@@ -699,4 +699,87 @@ hr {
   .grammar-detail-page .sticky-top {
     position: static !important;
   }
+
+  /* 12. Giao diện Web trên Điện Thoại cho Trang Quản Trị Viên (Admin) */
+  .admin-layout {
+    font-size: 0.88rem !important;
+  }
+
+  .admin-layout .card {
+    padding: 14px 14px !important;
+    border-radius: 14px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .admin-layout .card-body {
+    padding: 12px 10px !important;
+  }
+
+  .admin-layout .card-header {
+    padding: 10px 14px !important;
+    font-size: 0.88rem !important;
+  }
+
+  .admin-layout h2 {
+    font-size: 1.25rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .admin-layout h3 {
+    font-size: 1.15rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .admin-layout h5,
+  .admin-layout h6 {
+    font-size: 0.95rem !important;
+  }
+
+  .admin-layout .display-6 {
+    font-size: 1.4rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .admin-layout .btn {
+    font-size: 0.8rem !important;
+    padding: 6px 12px !important;
+  }
+
+  .admin-layout .btn-sm {
+    font-size: 0.75rem !important;
+    padding: 4px 8px !important;
+  }
+
+  .admin-layout .table {
+    font-size: 0.78rem !important;
+    margin-bottom: 0 !important;
+  }
+
+  .admin-layout .table th,
+  .admin-layout .table td {
+    padding: 7px 8px !important;
+    white-space: nowrap !important;
+  }
+
+  .admin-layout .table-responsive {
+    border-radius: 10px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Modal quản trị trên màn hình nhỏ */
+  .admin-layout .modal-dialog {
+    margin: 8px !important;
+    max-width: calc(100vw - 16px) !important;
+  }
+
+  .admin-layout .modal-content {
+    border-radius: 16px !important;
+    padding: 8px !important;
+  }
+
+  .admin-layout .modal-body {
+    padding: 12px 8px !important;
+    max-height: 75vh !important;
+    overflow-y: auto !important;
+  }
 }
