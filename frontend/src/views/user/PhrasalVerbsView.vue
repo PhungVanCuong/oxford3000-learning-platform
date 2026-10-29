@@ -1,42 +1,48 @@
 <template>
-  <div class="container py-4 max-w-6xl">
+  <div class="container py-3 py-md-4 max-w-6xl">
     <!-- 1. Header Banner -->
-    <div class="card p-4 rounded-4 shadow-sm border bg-card-custom mb-4" style="border-left: 6px solid #00b074;">
+    <div class="card p-3 p-md-4 rounded-4 shadow-sm border bg-card-custom mb-3 mb-md-4" style="border-left: 6px solid #00b074;">
       <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
         <div>
-          <div class="d-flex align-items-center gap-2 mb-1.5 flex-wrap">
-            <span class="badge bg-teal text-white rounded-pill px-3 py-1 fs-8">
+          <div class="d-flex align-items-center gap-1.5 mb-1.5 flex-wrap">
+            <span class="badge bg-teal text-white rounded-pill px-2.5 py-1 fs-8">
               CỤM TỪ & PHRASAL VERBS TOÀN DIỆN
             </span>
             <span class="badge bg-warning text-dark rounded-pill px-2.5 py-1 fs-8 fw-bold">
-              100 Cụm Động Từ + 850 Cụm Từ Thông Dụng (PDF)
+              100 Cụm Động Từ + 850 Cụm Từ Thông Dụng
             </span>
-            <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-1 fs-8">
-              Đồng bộ XP & Tiến độ tự động
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-0.5 fs-8">
+              Đồng bộ XP & Tiến độ
             </span>
           </div>
-          <h2 class="fw-black text-teal mb-1">Kho Cụm Từ & Phương Pháp Học Thực Chiến</h2>
+          <h2 class="fs-4 fs-md-3 fw-black text-teal mb-1">Kho Cụm Từ & Phương Pháp Học Thực Chiến</h2>
           <p class="text-muted fs-7 mb-0">
             Học trọn bộ 100 cụm động từ thông dụng chia theo nhóm chữ cái (A-W), 3 phương pháp học đột phá, bài tập thực hành kèm đáp án từ giáo trình và 850 mẫu câu đàm thoại chia làm 17 phần.
           </p>
         </div>
 
-        <!-- Progress Overview Badge -->
-        <div class="d-flex flex-column align-items-md-end gap-1 shrink-0">
-          <div class="d-flex align-items-center gap-2">
-            <div class="card px-3 py-2 rounded-3 border bg-white text-center shadow-xs">
-              <div class="text-muted fs-8 fw-semibold text-uppercase">Tổng số cụm</div>
-              <div class="fs-5 fw-black text-teal">{{ stats.total_phrases || 945 }}</div>
+        <!-- Progress Overview Badge (Chống vỡ chữ ĐÃ THUỘC trên mọi kích cỡ màn hình) -->
+        <div class="d-flex flex-column align-items-md-end gap-1 w-100 w-md-auto shrink-0">
+          <div class="d-flex align-items-center gap-2 w-100 justify-content-between justify-content-md-end">
+            <!-- Stat 1: Tổng số cụm -->
+            <div class="card px-2.5 px-md-3 py-2 rounded-3 border bg-white text-center shadow-xs flex-fill flex-md-initial" style="min-width: 90px;">
+              <div class="text-muted fs-8 fw-bold text-uppercase text-nowrap">Tổng số cụm</div>
+              <div class="fs-5 fw-black text-teal text-nowrap">{{ stats.total_phrases || 945 }}</div>
             </div>
-            <div class="card px-3 py-2 rounded-3 border bg-white text-center shadow-xs">
-              <div class="text-muted fs-8 fw-semibold text-uppercase">Đã thuộc</div>
-              <div class="fs-5 fw-black text-success">{{ stats.mastered || 0 }}</div>
+
+            <!-- Stat 2: Đã thuộc (text-nowrap triệt để) -->
+            <div class="card px-2.5 px-md-3 py-2 rounded-3 border bg-white text-center shadow-xs flex-fill flex-md-initial" style="min-width: 90px;">
+              <div class="text-muted fs-8 fw-bold text-uppercase text-nowrap">Đã thuộc</div>
+              <div class="fs-5 fw-black text-success text-nowrap">{{ stats.mastered || 0 }}</div>
             </div>
-            <div class="card px-3 py-2 rounded-3 border bg-white text-center shadow-xs">
-              <div class="text-muted fs-8 fw-semibold text-uppercase">Tiến độ</div>
-              <div class="fs-5 fw-black text-warning-emphasis">{{ stats.percent || 0 }}%</div>
+
+            <!-- Stat 3: Tiến độ -->
+            <div class="card px-2.5 px-md-3 py-2 rounded-3 border bg-white text-center shadow-xs flex-fill flex-md-initial" style="min-width: 90px;">
+              <div class="text-muted fs-8 fw-bold text-uppercase text-nowrap">Tiến độ</div>
+              <div class="fs-5 fw-black text-warning-emphasis text-nowrap">{{ stats.percent || 0 }}%</div>
             </div>
           </div>
+
           <div class="progress w-100 mt-1" style="height: 6px; border-radius: 999px;">
             <div
               class="progress-bar rounded-pill bg-teal"
@@ -48,28 +54,28 @@
       </div>
     </div>
 
-    <!-- 2. Main Tab Navigation -->
-    <div class="card p-2 rounded-4 shadow-sm border bg-card-custom mb-4">
-      <ul class="nav nav-pills nav-fill gap-2 flex-column flex-sm-row">
+    <!-- 2. Main Tab Navigation (Vuốt ngang mượt mà trên điện thoại, hàng ngang đầy đủ trên desktop) -->
+    <div class="card p-2 rounded-4 shadow-sm border bg-card-custom mb-3 mb-md-4">
+      <ul class="nav nav-pills gap-2 flex-nowrap overflow-x-auto pb-1 no-scrollbar w-100">
         <!-- Tab 1: 1000 Cụm từ thông dụng -->
-        <li class="nav-item">
+        <li class="nav-item flex-shrink-0">
           <button
             @click="activeMainTab = 'pdf_phrases'"
-            class="nav-link py-2.5 px-3 rounded-3 fw-bold fs-7 d-flex align-items-center justify-content-center gap-2 text-nowrap transition-all"
-            :class="activeMainTab === 'pdf_phrases' ? 'active-pill-teal' : 'text-dark-emphasis'"
+            class="nav-link py-2 px-3 rounded-pill fw-bold fs-7 d-inline-flex align-items-center gap-2 text-nowrap transition-all border"
+            :class="activeMainTab === 'pdf_phrases' ? 'active-pill-teal border-teal' : 'border-light-subtle bg-white text-dark-emphasis'"
           >
             <i class="bi bi-collection-fill"></i>
-            <span>1000 Cụm Từ Thông Dụng (17 Phần)</span>
+            <span>1000 Cụm Từ Thông Dụng</span>
             <span class="badge rounded-pill bg-light text-dark ms-1" style="font-size: 10px;">850 câu</span>
           </button>
         </li>
 
         <!-- Tab 2: 100 Cụm động từ A-W -->
-        <li class="nav-item">
+        <li class="nav-item flex-shrink-0">
           <button
             @click="activeMainTab = 'phrasal_verbs_100'"
-            class="nav-link py-2.5 px-3 rounded-3 fw-bold fs-7 d-flex align-items-center justify-content-center gap-2 text-nowrap transition-all"
-            :class="activeMainTab === 'phrasal_verbs_100' ? 'active-pill-teal' : 'text-dark-emphasis'"
+            class="nav-link py-2 px-3 rounded-pill fw-bold fs-7 d-inline-flex align-items-center gap-2 text-nowrap transition-all border"
+            :class="activeMainTab === 'phrasal_verbs_100' ? 'active-pill-teal border-teal' : 'border-light-subtle bg-white text-dark-emphasis'"
           >
             <i class="bi bi-puzzle-fill"></i>
             <span>100 Cụm Động Từ (A-W)</span>
@@ -78,23 +84,23 @@
         </li>
 
         <!-- Tab 3: Phương pháp học -->
-        <li class="nav-item">
+        <li class="nav-item flex-shrink-0">
           <button
             @click="activeMainTab = 'methods'"
-            class="nav-link py-2.5 px-3 rounded-3 fw-bold fs-7 d-flex align-items-center justify-content-center gap-2 text-nowrap transition-all"
-            :class="activeMainTab === 'methods' ? 'active-pill-teal' : 'text-dark-emphasis'"
+            class="nav-link py-2 px-3 rounded-pill fw-bold fs-7 d-inline-flex align-items-center gap-2 text-nowrap transition-all border"
+            :class="activeMainTab === 'methods' ? 'active-pill-teal border-teal' : 'border-light-subtle bg-white text-dark-emphasis'"
           >
             <i class="bi bi-lightbulb-fill"></i>
-            <span>Phương Pháp Học Đột Phá</span>
+            <span>Phương Pháp Đột Phá</span>
           </button>
         </li>
 
         <!-- Tab 4: Bài tập thực hành -->
-        <li class="nav-item">
+        <li class="nav-item flex-shrink-0">
           <button
             @click="activeMainTab = 'exercises'"
-            class="nav-link py-2.5 px-3 rounded-3 fw-bold fs-7 d-flex align-items-center justify-content-center gap-2 text-nowrap transition-all"
-            :class="activeMainTab === 'exercises' ? 'active-pill-teal' : 'text-dark-emphasis'"
+            class="nav-link py-2 px-3 rounded-pill fw-bold fs-7 d-inline-flex align-items-center gap-2 text-nowrap transition-all border"
+            :class="activeMainTab === 'exercises' ? 'active-pill-teal border-teal' : 'border-light-subtle bg-white text-dark-emphasis'"
           >
             <i class="bi bi-pencil-square"></i>
             <span>Bài Tập Thực Hành (+XP)</span>
@@ -102,11 +108,11 @@
         </li>
 
         <!-- Tab 5: Thẻ Flashcard 3D -->
-        <li class="nav-item">
+        <li class="nav-item flex-shrink-0">
           <button
             @click="activeMainTab = 'flashcard'"
-            class="nav-link py-2.5 px-3 rounded-3 fw-bold fs-7 d-flex align-items-center justify-content-center gap-2 text-nowrap transition-all"
-            :class="activeMainTab === 'flashcard' ? 'active-pill-teal' : 'text-dark-emphasis'"
+            class="nav-link py-2 px-3 rounded-pill fw-bold fs-7 d-inline-flex align-items-center gap-2 text-nowrap transition-all border"
+            :class="activeMainTab === 'flashcard' ? 'active-pill-teal border-teal' : 'border-light-subtle bg-white text-dark-emphasis'"
           >
             <i class="bi bi-card-text"></i>
             <span>Thẻ Flashcard 3D</span>
@@ -115,23 +121,24 @@
       </ul>
     </div>
 
-    <!-- TAB 1: 1000 CỤM TỪ THÔNG DỤNG (CHIA 17 PHẦN) -->
+    <!-- ================= TAB 1: 1000 CỤM TỪ THÔNG DỤNG (CHIA 17 PHẦN) ================= -->
     <div v-if="activeMainTab === 'pdf_phrases'">
       <!-- Part Selector Carousel / Pills -->
       <div class="card p-3 rounded-4 shadow-sm border bg-card-custom mb-3">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <span class="fs-8 fw-bold text-uppercase text-muted d-flex align-items-center gap-1">
-            <i class="bi bi-signpost-2-fill text-teal"></i>
-            <span>Chọn Phần Học (Mỗi phần 50 câu đàm thoại thông dụng):</span>
+        <!-- Part Header: Chống vỡ chữ dọc thành 1 chữ/dòng trên mobile -->
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-2.5">
+          <span class="fs-8 fw-bold text-uppercase text-muted d-flex align-items-center gap-1.5 text-nowrap">
+            <i class="bi bi-signpost-2-fill text-teal fs-7"></i>
+            <span>Chọn Phần Học (50 câu / phần):</span>
           </span>
-          <div class="d-flex align-items-center gap-2">
-            <span class="badge bg-teal-subtle text-teal fw-bold fs-8">
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <span class="badge bg-teal-subtle text-teal fw-bold fs-8 px-2.5 py-1.5 rounded-pill text-nowrap">
               Đang xem: {{ selectedPartNumber ? `Phần ${selectedPartNumber}` : 'Tất cả 17 phần' }}
             </span>
             <button
               v-if="selectedPartNumber"
               @click="startFlashcardForPart(selectedPartNumber)"
-              class="btn btn-sm btn-teal text-white rounded-pill px-3 py-1 fw-bold fs-8 d-inline-flex align-items-center gap-1 shadow-2xs text-nowrap"
+              class="btn btn-sm btn-teal text-white rounded-pill px-3 py-1.5 fw-bold fs-8 d-inline-flex align-items-center gap-1.5 shadow-2xs text-nowrap"
             >
               <i class="bi bi-card-text"></i>
               <span>Luyện Thẻ 3D Phần {{ selectedPartNumber }}</span>
@@ -139,11 +146,12 @@
           </div>
         </div>
 
-        <div class="d-flex gap-1.5 overflow-x-auto pb-1" style="scrollbar-width: thin;">
+        <!-- Part Pills: Vuốt ngang mượt mà -->
+        <div class="d-flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
           <button
             @click="selectPart(null)"
-            class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold text-nowrap"
-            :class="selectedPartNumber === null ? 'btn-teal text-white' : 'btn-outline-secondary'"
+            class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold text-nowrap border"
+            :class="selectedPartNumber === null ? 'btn-teal text-white border-teal' : 'btn-outline-secondary'"
           >
             Tất cả (850 câu)
           </button>
@@ -151,8 +159,8 @@
             v-for="part in 17"
             :key="part"
             @click="selectPart(part)"
-            class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold text-nowrap d-flex align-items-center gap-1"
-            :class="selectedPartNumber === part ? 'btn-teal text-white' : 'btn-outline-secondary'"
+            class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold text-nowrap d-flex align-items-center gap-1.5 border"
+            :class="selectedPartNumber === part ? 'btn-teal text-white border-teal' : 'btn-outline-secondary'"
           >
             <span>Phần {{ part }}</span>
             <span class="badge rounded-pill bg-white text-dark" style="font-size: 9px;">
@@ -200,103 +208,159 @@
         </div>
       </div>
 
-      <!-- Table View for 1000 Phrases -->
-      <div class="card rounded-4 border shadow-sm overflow-hidden bg-card-custom mb-4">
-        <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
-            <thead class="table-light fs-8 text-uppercase">
-              <tr>
-                <th style="width: 50px;" class="text-center">STT</th>
-                <th>Cụm từ / Mẫu câu tiếng Anh</th>
-                <th>Dịch nghĩa tiếng Việt</th>
-                <th style="width: 140px;" class="text-center">Phần học</th>
-                <th style="width: 120px;" class="text-center">Trạng thái</th>
-                <th style="width: 130px;" class="text-center">Thao tác</th>
-              </tr>
-            </thead>
-            <tbody class="fs-7">
-              <tr v-if="isLoading">
-                <td colspan="6" class="text-center py-5">
-                  <div class="spinner-border text-teal" role="status"></div>
-                  <div class="text-muted fs-8 mt-2">Đang tải danh sách cụm từ...</div>
-                </td>
-              </tr>
-              <tr v-else-if="phrases.length === 0">
-                <td colspan="6" class="text-center py-5 text-muted">
-                  <i class="bi bi-inbox fs-2 d-block mb-2"></i>
-                  Không tìm thấy cụm từ nào phù hợp với bộ lọc hiện tại.
-                </td>
-              </tr>
-              <tr v-for="(item, idx) in phrases" :key="item.id" :class="{ 'table-success-subtle': item.status === 'mastered' }">
-                <td class="text-center text-muted fw-bold">
-                  {{ item.id }}
-                </td>
-                <td>
-                  <div class="d-flex align-items-center gap-2">
-                    <button
-                      @click="speech.speak(item.phrase)"
-                      class="btn btn-sm btn-outline-teal rounded-circle p-0 d-flex align-items-center justify-content-center shrink-0"
-                      style="width: 28px; height: 28px;"
-                      title="Phát âm"
-                    >
-                      <i class="bi bi-volume-up-fill fs-8"></i>
-                    </button>
-                    <div>
-                      <div class="fw-bold text-teal fs-6">{{ item.phrase }}</div>
-                      <div v-if="item.example_en" class="text-muted fs-8 fst-italic">{{ item.example_en }}</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="fw-semibold text-dark-emphasis">
-                  {{ item.meaning_vi }}
-                </td>
-                <td class="text-center">
-                  <span class="badge bg-light text-muted border px-2.5 py-1 rounded-pill fs-8">
+      <!-- State: Loading -->
+      <div v-if="isLoading" class="text-center py-5">
+        <div class="spinner-border text-teal" role="status"></div>
+        <div class="text-muted fs-8 mt-2">Đang tải danh sách cụm từ...</div>
+      </div>
+
+      <!-- State: Empty -->
+      <div v-else-if="phrases.length === 0" class="card p-5 rounded-4 text-center border bg-card-custom text-muted mb-4">
+        <i class="bi bi-inbox fs-1 d-block mb-2 text-teal"></i>
+        <h6 class="fw-bold text-dark">Không tìm thấy cụm từ nào</h6>
+        <p class="fs-8 text-muted mb-0">Hãy thử đổi từ khóa tìm kiếm hoặc chọn lại phần học khác.</p>
+      </div>
+
+      <!-- GIAO DIỆN THẺ DẠNG TRA CỨU HIỆN ĐẠI (THAY THẾ BẢNG CŨ, ĐÁNH SỐ TỪ #1, MICRO ĐỘC LẬP TỪNG THẺ) -->
+      <div v-else class="row g-3 mb-4">
+        <div
+          v-for="(item, idx) in phrases"
+          :key="item.id"
+          class="col-12 col-md-6"
+        >
+          <div
+            class="card p-3 rounded-4 shadow-sm border bg-card-custom h-100 d-flex flex-column justify-content-between hover-card transition-all"
+            :class="{ 'border-success-subtle bg-success-subtle/10': item.status === 'mastered' }"
+          >
+            <div>
+              <!-- Card Header: Số thứ tự chuẩn từ #1, Phần học, Trạng thái & Nút Nghe / Mic -->
+              <div class="d-flex justify-content-between align-items-start mb-2 gap-2">
+                <div class="d-flex align-items-center gap-1.5 flex-wrap">
+                  <!-- Đánh số thứ tự tuần tự #1, #2... chuẩn xác, loại bỏ hoàn toàn lỗi hiển thị STT 96 -->
+                  <span class="badge bg-light text-muted border rounded-pill px-2.5 py-1 fs-8 fw-bold">
+                    #{{ (selectedPartNumber ? (selectedPartNumber - 1) * 50 : 0) + idx + 1 }}
+                  </span>
+                  <span class="badge bg-teal-subtle text-teal rounded-pill px-2 py-0.5 fs-8 fw-semibold">
                     Phần {{ item.part_number || Math.ceil(item.id / 50) }}
                   </span>
-                </td>
-                <td class="text-center">
                   <span
-                    class="badge px-2.5 py-1 rounded-pill fw-bold fs-8"
-                    :class="item.status === 'mastered' ? 'bg-success text-white' : item.status === 'learning' ? 'bg-warning text-dark' : 'bg-secondary text-white'"
+                    class="badge rounded-pill px-2.5 py-1 fs-8 fw-bold"
+                    :class="item.status === 'mastered' ? 'bg-success text-white' : item.status === 'learning' ? 'bg-warning text-dark' : 'bg-secondary-subtle text-secondary-emphasis'"
                   >
                     {{ item.status === 'mastered' ? '✓ Đã nhớ' : item.status === 'learning' ? 'Cần ôn' : 'Chưa học' }}
                   </span>
-                </td>
-                <td class="text-center">
-                  <div class="d-inline-flex align-items-center justify-content-center gap-1.5 text-nowrap">
-                    <button
-                      @click="markPhraseStatus(item, item.status === 'mastered' ? 'unlearned' : 'mastered')"
-                      class="btn btn-sm rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1 text-nowrap shadow-2xs"
-                      :class="item.status === 'mastered' ? 'btn-success text-white' : 'btn-outline-success'"
-                      title="Đánh dấu đã thuộc"
-                    >
-                      <i class="bi" :class="item.status === 'mastered' ? 'bi-check2-circle' : 'bi-check2'"></i>
-                      <span class="fs-8 fw-semibold text-nowrap">{{ item.status === 'mastered' ? 'Đã thuộc' : 'Thuộc' }}</span>
-                    </button>
-                    <button
-                      @click="markPhraseStatus(item, 'learning')"
-                      class="btn btn-sm btn-outline-warning rounded-pill px-2 py-1 d-inline-flex align-items-center gap-1 text-nowrap shadow-2xs"
-                      title="Cần ôn lại"
-                    >
-                      <i class="bi bi-arrow-clockwise"></i>
-                    </button>
+                </div>
+
+                <!-- Quick Sound (Nghe US) & Independent Mic (Luyện nói riêng từng thẻ) -->
+                <div class="d-flex align-items-center gap-1.5 flex-shrink-0">
+                  <button
+                    type="button"
+                    @click="speech.speak(item.phrase)"
+                    class="btn btn-sm btn-outline-teal rounded-circle p-1.5 d-flex align-items-center justify-content-center shadow-2xs"
+                    style="width: 32px; height: 32px;"
+                    title="Nghe phát âm chuẩn US"
+                  >
+                    <i class="bi bi-volume-up-fill fs-7"></i>
+                  </button>
+                  <button
+                    type="button"
+                    @click.stop="toggleSpeechForPhrase(item)"
+                    class="btn btn-sm rounded-circle p-1.5 d-flex align-items-center justify-content-center shadow-2xs transition-all"
+                    :class="activeListeningPhraseId === item.id && speech.isListening.value ? 'btn-danger animate-mic-pulse text-white' : 'btn-outline-info'"
+                    style="width: 32px; height: 32px;"
+                    :title="activeListeningPhraseId === item.id && speech.isListening.value ? 'Đang lắng nghe... bấm để dừng' : 'Luyện nói câu này'"
+                  >
+                    <i class="bi" :class="activeListeningPhraseId === item.id && speech.isListening.value ? 'bi-record-fill' : 'bi-mic-fill'"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Hộp cảnh báo Đang lắng nghe (Chỉ hiển thị DUY NHẤT trên thẻ người dùng vừa bấm Micro) -->
+              <div
+                v-if="activeListeningPhraseId === item.id && speech.isListening.value"
+                class="alert alert-warning py-1.5 px-2.5 rounded-3 my-2 fs-8 d-flex align-items-center gap-2 border-warning shadow-xs"
+              >
+                <span class="spinner-grow spinner-grow-sm text-danger flex-shrink-0" role="status"></span>
+                <span class="fw-semibold text-dark">
+                  Đang nghe... Hãy đọc to: <strong class="text-danger">"{{ item.phrase }}"</strong>
+                </span>
+              </div>
+
+              <!-- Hộp kết quả chấm điểm phát âm (Chỉ hiển thị trên đúng thẻ đó) -->
+              <div
+                v-else-if="phraseScoreResults[item.id]"
+                class="alert py-1.5 px-2.5 rounded-3 my-2 fs-8 border shadow-xs"
+                :class="phraseScoreResults[item.id].score >= 80 ? 'alert-success border-success' : phraseScoreResults[item.id].score >= 50 ? 'alert-warning border-warning' : 'alert-danger border-danger'"
+              >
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center gap-1.5 text-truncate me-2">
+                    <i class="bi" :class="phraseScoreResults[item.id].score >= 80 ? 'bi-check-circle-fill text-success' : 'bi-exclamation-circle-fill text-warning'"></i>
+                    <span class="text-truncate">
+                      Bạn đọc: <strong>"{{ phraseScoreResults[item.id].transcript || '...' }}"</strong>
+                    </span>
                   </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                  <span
+                    class="badge flex-shrink-0"
+                    :class="phraseScoreResults[item.id].score >= 80 ? 'bg-success text-white' : 'bg-warning text-dark'"
+                  >
+                    {{ phraseScoreResults[item.id].score }}%
+                  </span>
+                </div>
+              </div>
+
+              <!-- Tiêu đề Cụm từ tiếng Anh & Dịch nghĩa tiếng Việt -->
+              <div class="mb-2">
+                <h5 class="fw-black text-teal mb-1 leading-snug">{{ item.phrase }}</h5>
+                <div class="fw-bold text-success fs-7 mb-1">{{ item.meaning_vi }}</div>
+              </div>
+
+              <!-- Câu ví dụ minh họa (nếu có) -->
+              <div v-if="item.example_en" class="p-2.5 rounded-3 bg-body-tertiary border mb-2 fs-8">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="badge bg-light text-muted border">Ví dụ thực tế:</span>
+                  <button @click="speech.speak(item.example_en)" class="btn btn-sm btn-link p-0 text-teal fs-8 text-decoration-none">
+                    <i class="bi bi-volume-up"></i> Nghe
+                  </button>
+                </div>
+                <div class="fw-medium text-dark-emphasis mb-0.5">"{{ item.example_en }}"</div>
+                <div v-if="item.example_vi" class="text-muted fst-italic">→ {{ item.example_vi }}</div>
+              </div>
+            </div>
+
+            <!-- Thao tác đánh dấu: Nút bấm có viền màu bo góc rõ ràng dễ hiểu -->
+            <div class="mt-auto pt-2.5 border-top d-flex align-items-center justify-content-between gap-2">
+              <button
+                @click="markPhraseStatus(item, item.status === 'mastered' ? 'unlearned' : 'mastered')"
+                class="btn btn-sm rounded-pill px-3 py-1.5 fw-bold fs-8 d-inline-flex align-items-center gap-1.5 shadow-2xs transition-all border"
+                :class="item.status === 'mastered' ? 'btn-success text-white border-success' : 'btn-outline-success border-success-subtle'"
+                title="Đánh dấu đã thuộc cụm từ này"
+              >
+                <i class="bi" :class="item.status === 'mastered' ? 'bi-check2-circle' : 'bi-check2'"></i>
+                <span>{{ item.status === 'mastered' ? 'Đã thuộc ✓' : 'Đánh dấu thuộc' }}</span>
+              </button>
+
+              <button
+                @click="markPhraseStatus(item, 'learning')"
+                class="btn btn-sm rounded-pill px-2.5 py-1.5 fw-semibold fs-8 d-inline-flex align-items-center gap-1 text-nowrap shadow-2xs border"
+                :class="item.status === 'learning' ? 'btn-warning text-dark border-warning' : 'btn-outline-warning border-warning-subtle'"
+                title="Cần ôn lại cụm từ này"
+              >
+                <i class="bi bi-arrow-clockwise"></i>
+                <span>{{ item.status === 'learning' ? 'Đang ôn' : 'Cần ôn' }}</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- TAB 2: 100 CỤM ĐỘNG TỪ (A-W) -->
+    <!-- ================= TAB 2: 100 CỤM ĐỘNG TỪ (A-W) ================= -->
     <div v-if="activeMainTab === 'phrasal_verbs_100'">
       <!-- Alphabet Navigator Bar -->
       <div class="card p-3 rounded-4 shadow-sm border bg-card-custom mb-3">
         <div class="d-flex justify-content-between align-items-center mb-2">
-          <span class="fs-8 fw-bold text-uppercase text-muted d-flex align-items-center gap-1">
-            <i class="bi bi-sort-alpha-down text-teal"></i>
+          <span class="fs-8 fw-bold text-uppercase text-muted d-flex align-items-center gap-1.5">
+            <i class="bi bi-sort-alpha-down text-teal fs-7"></i>
             <span>Chọn Bảng Chữ Cái (A - W):</span>
           </span>
           <span class="badge bg-teal text-white fw-bold fs-8">
@@ -304,11 +368,11 @@
           </span>
         </div>
 
-        <div class="d-flex gap-1.5 overflow-x-auto pb-1" style="scrollbar-width: thin;">
+        <div class="d-flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
           <button
             @click="selectedLetter = null; fetchPhrasalVerbs100()"
-            class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold text-nowrap"
-            :class="selectedLetter === null ? 'btn-teal text-white' : 'btn-outline-secondary'"
+            class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold text-nowrap border"
+            :class="selectedLetter === null ? 'btn-teal text-white border-teal' : 'btn-outline-secondary'"
           >
             Tất cả (95 cụm)
           </button>
@@ -316,9 +380,9 @@
             v-for="letter in alphabetLetters"
             :key="letter"
             @click="selectedLetter = letter; fetchPhrasalVerbs100()"
-            class="btn btn-sm rounded-circle p-0 fw-bold d-flex align-items-center justify-content-center shrink-0"
+            class="btn btn-sm rounded-circle p-0 fw-bold d-flex align-items-center justify-content-center shrink-0 border"
             style="width: 32px; height: 32px;"
-            :class="selectedLetter === letter ? 'btn-teal text-white shadow-xs' : 'btn-outline-secondary'"
+            :class="selectedLetter === letter ? 'btn-teal text-white border-teal shadow-xs' : 'btn-outline-secondary'"
           >
             {{ letter }}
           </button>
@@ -327,122 +391,148 @@
 
       <!-- Phrasal Verbs Cards Grid -->
       <div class="row g-3">
-        <div v-for="pv in phrasalVerbs100List" :key="pv.id" class="col-12 col-md-6 col-lg-4">
+        <div v-for="(pv, idx) in phrasalVerbs100List" :key="pv.id" class="col-12 col-md-6 col-lg-4">
           <div
-            class="card p-3.5 rounded-4 border h-100 shadow-sm transition-all bg-card-custom hover-card"
-            :class="{ 'border-success bg-success-subtle': pv.status === 'mastered' }"
+            class="card p-3 rounded-4 border h-100 shadow-sm transition-all bg-card-custom hover-card d-flex flex-column justify-content-between"
+            :class="{ 'border-success bg-success-subtle/10': pv.status === 'mastered' }"
           >
-            <!-- Card Header -->
-            <div class="d-flex justify-content-between align-items-start mb-2">
-              <span class="badge bg-teal-subtle text-teal fw-bold fs-8 px-2 py-0.5 rounded-pill">
-                Chữ [{{ (pv.phrase || 'A')[0].toUpperCase() }}]
-              </span>
-              <span
-                class="badge px-2 py-0.5 rounded-pill fs-8 fw-semibold"
-                :class="pv.status === 'mastered' ? 'bg-success text-white' : pv.status === 'learning' ? 'bg-warning text-dark' : 'bg-light text-muted border'"
-              >
-                {{ pv.status === 'mastered' ? '✓ Đã nhớ' : pv.status === 'learning' ? 'Cần ôn' : 'Chưa học' }}
-              </span>
-            </div>
-
-            <!-- Phrase & Sound -->
-            <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
-              <h5 class="fw-black text-teal mb-0">{{ pv.phrase }}</h5>
-              <button
-                @click="speech.speak(pv.phrase)"
-                class="btn btn-sm btn-outline-teal rounded-circle p-0 d-flex align-items-center justify-content-center shrink-0"
-                style="width: 30px; height: 30px;"
-                title="Phát âm"
-              >
-                <i class="bi bi-volume-up-fill"></i>
-              </button>
-            </div>
-
-            <!-- Meaning -->
-            <div class="fw-bold text-dark-emphasis fs-7 mb-2 pb-2 border-bottom">
-              {{ pv.meaning_vi }}
-            </div>
-
-            <!-- Component Words Decomposed -->
-            <div v-if="pv.component_words_json && pv.component_words_json.length" class="mb-2.5">
-              <div class="text-muted fs-8 fw-semibold mb-1">Ghép từ các từ đơn:</div>
-              <div class="d-flex gap-1 flex-wrap">
+            <div>
+              <!-- Card Header: Số thứ tự #1, Chữ cái & Trạng thái -->
+              <div class="d-flex justify-content-between align-items-start mb-2 gap-2">
+                <div class="d-flex align-items-center gap-1.5">
+                  <span class="badge bg-light text-muted border rounded-pill px-2 py-0.5 fs-8 fw-bold">
+                    #{{ idx + 1 }}
+                  </span>
+                  <span class="badge bg-teal-subtle text-teal fw-bold fs-8 px-2 py-0.5 rounded-pill">
+                    Chữ [{{ (pv.phrase || 'A')[0].toUpperCase() }}]
+                  </span>
+                </div>
                 <span
-                  v-for="cw in pv.component_words_json"
-                  :key="cw"
-                  class="badge bg-primary-subtle text-primary border border-primary-subtle font-monospace px-2 py-0.5 rounded-pill fs-8"
+                  class="badge px-2 py-0.5 rounded-pill fs-8 fw-semibold"
+                  :class="pv.status === 'mastered' ? 'bg-success text-white' : pv.status === 'learning' ? 'bg-warning text-dark' : 'bg-light text-muted border'"
                 >
-                  + {{ cw }}
+                  {{ pv.status === 'mastered' ? '✓ Đã nhớ' : pv.status === 'learning' ? 'Cần ôn' : 'Chưa học' }}
                 </span>
               </div>
-            </div>
 
-            <!-- Example EN & VI -->
-            <div v-if="pv.example_en" class="p-2.5 rounded-3 bg-body-tertiary border mb-3">
-              <div class="d-flex justify-content-between align-items-center mb-1">
-                <span class="badge bg-light text-dark border fs-8">Ví dụ thực tế:</span>
-                <button @click="speech.speak(pv.example_en)" class="btn btn-sm btn-link p-0 text-teal fs-8 text-decoration-none">
-                  <i class="bi bi-volume-up"></i> Nghe
-                </button>
-              </div>
-              <div class="fs-8 fw-medium text-dark-emphasis mb-1">"{{ pv.example_en }}"</div>
-              <div class="fs-8 text-muted fst-italic">→ {{ pv.example_vi }}</div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="mt-auto pt-2 border-top">
-              <div class="d-flex justify-content-between align-items-center">
-                <button
-                  @click="speech.startListening(pv.phrase, 'pv_' + pv.id)"
-                  class="btn btn-sm px-2.5 py-1 rounded-pill fs-8 fw-semibold d-inline-flex align-items-center gap-1 text-nowrap"
-                  :class="speech.listeningId.value === ('pv_' + pv.id) ? 'btn-danger animate-mic-pulse' : 'btn-outline-info'"
-                >
-                  <i class="bi" :class="speech.listeningId.value === ('pv_' + pv.id) ? 'bi-record-fill' : 'bi-mic-fill'"></i>
-                  <span>{{ speech.listeningId.value === ('pv_' + pv.id) ? 'Đang nghe...' : 'Luyện nói' }}</span>
-                </button>
-
-                <div class="d-inline-flex align-items-center gap-1 text-nowrap">
+              <!-- Phrase & Sound -->
+              <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
+                <h5 class="fw-black text-teal mb-0 leading-tight">{{ pv.phrase }}</h5>
+                <div class="d-flex align-items-center gap-1.5 flex-shrink-0">
                   <button
-                    @click="markPhraseStatus(pv, pv.status === 'mastered' ? 'unlearned' : 'mastered')"
-                    class="btn btn-sm rounded-pill px-3 py-1 fw-bold fs-8 d-inline-flex align-items-center gap-1 text-nowrap"
-                    :class="pv.status === 'mastered' ? 'btn-success' : 'btn-teal text-white'"
+                    @click="speech.speak(pv.phrase)"
+                    class="btn btn-sm btn-outline-teal rounded-circle p-1 d-flex align-items-center justify-content-center shadow-2xs"
+                    style="width: 30px; height: 30px;"
+                    title="Nghe phát âm chuẩn US"
                   >
-                    <i class="bi bi-check2"></i>
-                    <span>{{ pv.status === 'mastered' ? 'Đã thuộc' : 'Thuộc từ' }}</span>
+                    <i class="bi bi-volume-up-fill fs-8"></i>
+                  </button>
+                  <button
+                    type="button"
+                    @click.stop="toggleSpeechForPhrase(pv)"
+                    class="btn btn-sm rounded-circle p-1 d-flex align-items-center justify-content-center shadow-2xs transition-all"
+                    :class="activeListeningPhraseId === pv.id && speech.isListening.value ? 'btn-danger animate-mic-pulse text-white' : 'btn-outline-info'"
+                    style="width: 30px; height: 30px;"
+                    :title="activeListeningPhraseId === pv.id && speech.isListening.value ? 'Đang lắng nghe... bấm để dừng' : 'Luyện nói cụm từ này'"
+                  >
+                    <i class="bi" :class="activeListeningPhraseId === pv.id && speech.isListening.value ? 'bi-record-fill' : 'bi-mic-fill'"></i>
                   </button>
                 </div>
               </div>
 
-              <!-- Scoped Mic Results for this Card -->
-              <div v-if="speech.itemResults.value['pv_' + pv.id]" class="mt-2 p-2 rounded-3 bg-white border fs-8">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                  <span class="text-muted">Bạn đã đọc:</span>
-                  <span class="badge" :class="speech.itemResults.value['pv_' + pv.id].score >= 80 ? 'bg-success' : speech.itemResults.value['pv_' + pv.id].score >= 55 ? 'bg-warning text-dark' : 'bg-danger'">
-                    {{ speech.itemResults.value['pv_' + pv.id].score }}%
+              <!-- Scoped Mic Alert & Result for this Card -->
+              <div
+                v-if="activeListeningPhraseId === pv.id && speech.isListening.value"
+                class="alert alert-warning py-1 px-2 rounded-3 my-1.5 fs-8 d-flex align-items-center gap-2 border-warning"
+              >
+                <span class="spinner-grow spinner-grow-sm text-danger flex-shrink-0" role="status"></span>
+                <span class="fw-semibold text-dark">Đang nghe: <strong class="text-danger">"{{ pv.phrase }}"</strong></span>
+              </div>
+
+              <div
+                v-else-if="phraseScoreResults[pv.id]"
+                class="alert py-1 px-2 rounded-3 my-1.5 fs-8 border"
+                :class="phraseScoreResults[pv.id].score >= 80 ? 'alert-success border-success' : 'alert-warning border-warning'"
+              >
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="text-truncate me-1">Bạn đọc: <strong>"{{ phraseScoreResults[pv.id].transcript || '...' }}"</strong></span>
+                  <span class="badge" :class="phraseScoreResults[pv.id].score >= 80 ? 'bg-success text-white' : 'bg-warning text-dark'">
+                    {{ phraseScoreResults[pv.id].score }}%
                   </span>
                 </div>
-                <div class="fw-semibold text-dark-emphasis">"{{ speech.itemResults.value['pv_' + pv.id].transcript }}"</div>
               </div>
+
+              <!-- Meaning -->
+              <div class="fw-bold text-success fs-7 mb-2 pb-1.5 border-bottom">
+                {{ pv.meaning_vi }}
+              </div>
+
+              <!-- Component Words Decomposed -->
+              <div v-if="pv.component_words_json && pv.component_words_json.length" class="mb-2">
+                <div class="text-muted fs-8 fw-semibold mb-1">Ghép từ các từ đơn:</div>
+                <div class="d-flex gap-1 flex-wrap">
+                  <span
+                    v-for="cw in pv.component_words_json"
+                    :key="cw"
+                    class="badge bg-primary-subtle text-primary border border-primary-subtle font-monospace px-2 py-0.5 rounded-pill fs-8"
+                  >
+                    + {{ cw }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Example EN & VI -->
+              <div v-if="pv.example_en" class="p-2 rounded-3 bg-body-tertiary border mb-2.5 fs-8">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="badge bg-light text-muted border fs-8">Ví dụ:</span>
+                  <button @click="speech.speak(pv.example_en)" class="btn btn-sm btn-link p-0 text-teal fs-8 text-decoration-none">
+                    <i class="bi bi-volume-up"></i> Nghe
+                  </button>
+                </div>
+                <div class="fw-medium text-dark-emphasis mb-0.5">"{{ pv.example_en }}"</div>
+                <div class="text-muted fst-italic">→ {{ pv.example_vi }}</div>
+              </div>
+            </div>
+
+            <!-- Action Buttons with colored borders -->
+            <div class="mt-auto pt-2 border-top d-flex align-items-center justify-content-between gap-2">
+              <button
+                @click="markPhraseStatus(pv, pv.status === 'mastered' ? 'unlearned' : 'mastered')"
+                class="btn btn-sm rounded-pill px-3 py-1.5 fw-bold fs-8 d-inline-flex align-items-center gap-1.5 text-nowrap shadow-2xs border"
+                :class="pv.status === 'mastered' ? 'btn-success text-white border-success' : 'btn-outline-success border-success-subtle'"
+              >
+                <i class="bi" :class="pv.status === 'mastered' ? 'bi-check2-circle' : 'bi-check2'"></i>
+                <span>{{ pv.status === 'mastered' ? 'Đã thuộc ✓' : 'Đánh dấu thuộc' }}</span>
+              </button>
+
+              <button
+                @click="markPhraseStatus(pv, 'learning')"
+                class="btn btn-sm rounded-pill px-2.5 py-1.5 fw-semibold fs-8 d-inline-flex align-items-center gap-1 text-nowrap shadow-2xs border"
+                :class="pv.status === 'learning' ? 'btn-warning text-dark border-warning' : 'btn-outline-warning border-warning-subtle'"
+              >
+                <i class="bi bi-arrow-clockwise"></i>
+                <span>{{ pv.status === 'learning' ? 'Đang ôn' : 'Cần ôn' }}</span>
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- TAB 3: PHƯƠNG PHÁP HỌC CỤM TỪ ĐỘT PHÁ -->
+    <!-- ================= TAB 3: PHƯƠNG PHÁP HỌC CỤM TỪ ĐỘT PHÁ ================= -->
     <div v-if="activeMainTab === 'methods'">
-      <div class="card p-4 rounded-4 shadow-sm border bg-card-custom mb-4">
+      <div class="card p-3 p-md-4 rounded-4 shadow-sm border bg-card-custom mb-4">
         <div class="text-center max-w-2xl mx-auto mb-4">
           <span class="badge bg-teal-subtle text-teal fw-bold px-3 py-1.5 rounded-pill fs-8 mb-2">
             BÍ QUYẾT TỪ GIÁO TRÌNH
           </span>
-          <h3 class="fw-black text-teal mb-2">{{ methodsData?.title || 'Phương Pháp Học Cụm Động Từ Tiếng Anh Thực Chiến' }}</h3>
+          <h3 class="fs-4 fs-md-3 fw-black text-teal mb-2">{{ methodsData?.title || 'Phương Pháp Học Cụm Động Từ Tiếng Anh Thực Chiến' }}</h3>
           <p class="text-muted fs-7 mb-0">{{ methodsData?.description }}</p>
         </div>
 
-        <div class="row g-4">
+        <div class="row g-3 g-md-4">
           <div v-for="method in methodsData?.methods || []" :key="method.id" class="col-12 col-lg-4">
-            <div class="card p-4 rounded-4 border h-100 shadow-sm bg-white hover-card" style="border-top: 4px solid #00b074 !important;">
+            <div class="card p-3.5 p-md-4 rounded-4 border h-100 shadow-sm bg-white hover-card" style="border-top: 4px solid #00b074 !important;">
               <div class="d-flex justify-content-between align-items-center mb-3">
                 <span class="badge rounded-pill px-2.5 py-1 fs-8" :class="`bg-${method.badge_color || 'teal'} text-white`">
                   {{ method.badge }}
@@ -456,7 +546,7 @@
         </div>
 
         <!-- Deep Dive Study Tips -->
-        <div class="p-4 rounded-4 border bg-body-tertiary mt-4">
+        <div class="p-3 p-md-4 rounded-4 border bg-body-tertiary mt-4">
           <h6 class="fw-bold text-teal mb-3 d-flex align-items-center gap-2">
             <i class="bi bi-compass-fill"></i>
             <span>Bảng Ý Nghĩa Cốt Lõi Của Một Số Từ Phụ Trợ (Particles) Thường Gặp:</span>
@@ -478,18 +568,18 @@
                 </tr>
                 <tr>
                   <td class="fw-bold text-teal">OFF</td>
-                  <td>Tách rời, gián đoạn, hủy bỏ, rời khỏi vị trí ban đầu</td>
-                  <td><em>take off</em> (cất cánh / cởi đồ), <em>call off</em> (hủy bỏ), <em>turn off</em> (tắt thiết bị)</td>
+                  <td>Tách rời, gián đoạn, rời khỏi một vị trí</td>
+                  <td><em>take off</em> (cất cánh / cởi đồ), <em>turn off</em> (tắt máy), <em>call off</em> (hủy bỏ)</td>
                 </tr>
                 <tr>
                   <td class="fw-bold text-teal">UP</td>
-                  <td>Hoàn tất, triệt để, gia tăng hoặc hướng lên trên</td>
-                  <td><em>use up</em> (dùng cạn kiệt), <em>cheer up</em> (vui lên), <em>turn up</em> (vặn to lên / xuất hiện)</td>
+                  <td>Hoàn thành triệt để, tiến lên phía trước, gia tăng</td>
+                  <td><em>eat up</em> (ăn hết sạch), <em>give up</em> (từ bỏ hoàn toàn), <em>cheer up</em> (vui lên)</td>
                 </tr>
                 <tr>
                   <td class="fw-bold text-teal">DOWN</td>
-                  <td>Giảm bớt, suy giảm, hạ thấp hoặc ghi chép lại</td>
-                  <td><em>turn down</em> (vặn nhỏ lại / từ chối), <em>write down</em> (ghi lại), <em>calm down</em> (bình tĩnh lại)</td>
+                  <td>Giảm bớt, lắng xuống, ghi chép lại hoặc hỏng hóc</td>
+                  <td><em>turn down</em> (vặn nhỏ / từ chối), <em>calm down</em> (bình tĩnh lại), <em>break down</em> (hỏng)</td>
                 </tr>
               </tbody>
             </table>
@@ -498,140 +588,86 @@
       </div>
     </div>
 
-    <!-- TAB 4: BÀI TẬP THỰC HÀNH & CHẤM ĐIỂM -->
+    <!-- ================= TAB 4: BÀI TẬP THỰC HÀNH ================= -->
     <div v-if="activeMainTab === 'exercises'">
-      <!-- Exercise Part 1 -->
-      <div class="card p-4 rounded-4 shadow-sm border bg-card-custom mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+      <div class="card p-3 p-md-4 rounded-4 shadow-sm border bg-card-custom mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
           <div>
-            <span class="badge bg-primary text-white rounded-pill px-2.5 py-1 fs-8 mb-1">BÀI 1 (+15 XP / CÂU)</span>
-            <h5 class="fw-bold text-teal mb-0">{{ exercisesData?.part1?.title || 'Bài 1: Điền cụm từ tiếng Anh thích hợp' }}</h5>
-            <div class="text-muted fs-8">{{ exercisesData?.part1?.instructions }}</div>
+            <h4 class="fw-black text-teal mb-1">{{ exercisesData?.title || 'Bài Tập Thực Hành Điền Khuyết Cụm Từ' }}</h4>
+            <p class="text-muted fs-7 mb-0">Hoàn thành các câu bài tập để nhận ngay +15 XP cho mỗi câu trả lời chính xác!</p>
           </div>
-          <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1.5 rounded-pill fs-7 fw-bold">
-            10 Câu hỏi thực chiến
+          <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold fs-7 shadow-xs">
+            +15 XP / câu đúng
           </span>
         </div>
 
-        <div class="space-y-3">
+        <div class="d-flex flex-column gap-3">
           <div
-            v-for="(q, idx) in exercisesData?.part1?.questions || []"
+            v-for="(q, idx) in exercisesData?.questions || []"
             :key="q.id"
-            class="p-3 rounded-4 border transition-all mb-3"
-            :class="qResults['p1_' + q.id]?.is_correct ? 'border-success bg-success-subtle' : 'border-light-subtle bg-white'"
+            class="p-3.5 rounded-4 border bg-white shadow-2xs"
           >
-            <div class="d-flex justify-content-between align-items-start mb-2">
-              <span class="fw-bold text-muted fs-7">Câu {{ idx + 1 }}:</span>
-              <span v-if="qResults['p1_' + q.id]" class="badge rounded-pill px-2.5 py-1 fs-8" :class="qResults['p1_' + q.id]?.is_correct ? 'bg-success text-white' : 'bg-danger text-white'">
-                {{ qResults['p1_' + q.id]?.is_correct ? '✓ CHÍNH XÁC (+15 XP)' : '✕ CHƯA ĐÚNG' }}
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="badge bg-teal text-white rounded-pill px-2.5 py-0.5 fs-8 fw-bold">
+                Câu {{ idx + 1 }}
+              </span>
+              <span v-if="qResults[q.id]?.is_correct" class="badge bg-success text-white px-2.5 py-1 rounded-pill fs-8">
+                ✓ Chính xác (+15 XP)
+              </span>
+              <span v-else-if="qResults[q.id]" class="badge bg-danger text-white px-2.5 py-1 rounded-pill fs-8">
+                ✕ Chưa chính xác
               </span>
             </div>
 
-            <p class="fs-6 fw-semibold text-dark-emphasis mb-2.5">{{ q.prompt }}</p>
+            <!-- Question Sentence -->
+            <div class="fs-6 fw-bold text-dark-emphasis mb-1">
+              {{ q.sentence_en }}
+            </div>
+            <div class="fs-8 text-muted fst-italic mb-2.5">
+              Dịch nghĩa: {{ q.sentence_vi }}
+            </div>
 
-            <!-- Input & Check Button -->
-            <div class="d-flex align-items-center gap-2 flex-wrap">
+            <!-- Input & Check Form -->
+            <div class="d-flex gap-2 flex-wrap">
               <input
-                v-model="userAnswers['p1_' + q.id]"
-                @keyup.enter="submitAnswer('p1_' + q.id, q.expected)"
+                v-model="userAnswers[q.id]"
+                @keyup.enter="submitAnswer(q.id, q.correct_phrase)"
                 type="text"
-                class="form-control form-control-sm rounded-pill px-3 py-1.5 fs-7"
-                style="max-width: 320px;"
-                placeholder="Nhập cụm từ đúng (VD: break out)..."
-                :disabled="qResults['p1_' + q.id]?.is_correct"
+                class="form-control form-control-sm rounded-pill px-3 py-1.5 fs-7 flex-grow-1"
+                placeholder="Nhập cụm từ phù hợp (VD: run out of, give up...)"
+                :disabled="qResults[q.id]?.is_correct"
               />
               <button
-                @click="submitAnswer('p1_' + q.id, q.expected)"
-                class="btn btn-sm btn-teal text-white rounded-pill px-3 py-1.5 fw-bold fs-8"
-                :disabled="qResults['p1_' + q.id]?.is_correct || !userAnswers['p1_' + q.id]"
+                @click="submitAnswer(q.id, q.correct_phrase)"
+                class="btn btn-sm btn-teal text-white rounded-pill px-3 py-1.5 fw-bold fs-8 d-inline-flex align-items-center gap-1 shadow-2xs text-nowrap"
+                :disabled="qResults[q.id]?.is_correct || !userAnswers[q.id]"
               >
-                Kiểm tra
+                <i class="bi bi-send-fill"></i>
+                <span>Kiểm tra</span>
               </button>
               <button
-                v-if="!qResults['p1_' + q.id]?.is_correct"
-                @click="showHint['p1_' + q.id] = !showHint['p1_' + q.id]"
-                class="btn btn-sm btn-outline-secondary rounded-pill px-2.5 py-1.5 fs-8"
+                @click="showHint[q.id] = !showHint[q.id]"
+                class="btn btn-sm btn-outline-secondary rounded-pill px-2.5 py-1.5 fs-8 text-nowrap"
+                type="button"
               >
-                {{ showHint['p1_' + q.id] ? 'Ẩn đáp án' : 'Xem đáp án gợi ý' }}
+                <i class="bi bi-lightbulb"></i>
+                <span>Gợi ý</span>
               </button>
             </div>
 
-            <!-- Answer Feedback & Explanation -->
-            <div v-if="qResults['p1_' + q.id] || showHint['p1_' + q.id]" class="mt-2.5 pt-2 border-top fs-8">
-              <div class="fw-bold text-success mb-0.5">
-                Đáp án chuẩn: <span class="font-monospace text-teal fs-7">{{ q.expected }}</span>
-              </div>
-              <div class="text-muted">
-                <i class="bi bi-info-circle me-1"></i>Giải thích: {{ q.explain }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Exercise Part 2 -->
-      <div class="card p-4 rounded-4 shadow-sm border bg-card-custom mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-          <div>
-            <span class="badge bg-warning text-dark rounded-pill px-2.5 py-1 fs-8 mb-1">BÀI 2 (+15 XP / CÂU)</span>
-            <h5 class="fw-bold text-teal mb-0">{{ exercisesData?.part2?.title || 'Bài 2: Hoàn thành dạng đúng của cụm động từ theo ngữ cảnh' }}</h5>
-            <div class="text-muted fs-8">{{ exercisesData?.part2?.instructions }}</div>
-          </div>
-          <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-1.5 rounded-pill fs-7 fw-bold">
-            10 Câu ngữ cảnh
-          </span>
-        </div>
-
-        <div class="space-y-3">
-          <div
-            v-for="(q, idx) in exercisesData?.part2?.questions || []"
-            :key="q.id"
-            class="p-3 rounded-4 border transition-all mb-3"
-            :class="qResults['p2_' + q.id]?.is_correct ? 'border-success bg-success-subtle' : 'border-light-subtle bg-white'"
-          >
-            <div class="d-flex justify-content-between align-items-start mb-2">
-              <span class="fw-bold text-muted fs-7">Câu {{ idx + 1 }}:</span>
-              <span v-if="qResults['p2_' + q.id]" class="badge rounded-pill px-2.5 py-1 fs-8" :class="qResults['p2_' + q.id]?.is_correct ? 'bg-success text-white' : 'bg-danger text-white'">
-                {{ qResults['p2_' + q.id]?.is_correct ? '✓ CHÍNH XÁC (+15 XP)' : '✕ CHƯA ĐÚNG' }}
-              </span>
+            <!-- Hint Display -->
+            <div v-if="showHint[q.id]" class="mt-2 p-2 rounded-3 bg-warning-subtle text-warning-emphasis fs-8 border border-warning-subtle">
+              <i class="bi bi-info-circle me-1"></i>
+              Gợi ý: Cụm từ bắt đầu bằng chữ cái <strong>"{{ (q.correct_phrase || '')[0]?.toUpperCase() }}"</strong> (Gồm {{ (q.correct_phrase || '').split(' ').length }} từ).
             </div>
 
-            <p class="fs-6 fw-semibold text-dark-emphasis mb-2.5">{{ q.prompt }}</p>
-
-            <!-- Input & Check Button -->
-            <div class="d-flex align-items-center gap-2 flex-wrap">
-              <input
-                v-model="userAnswers['p2_' + q.id]"
-                @keyup.enter="submitAnswer('p2_' + q.id, q.expected)"
-                type="text"
-                class="form-control form-control-sm rounded-pill px-3 py-1.5 fs-7"
-                style="max-width: 320px;"
-                placeholder="Nhập cụm từ đúng (VD: look for)..."
-                :disabled="qResults['p2_' + q.id]?.is_correct"
-              />
-              <button
-                @click="submitAnswer('p2_' + q.id, q.expected)"
-                class="btn btn-sm btn-teal text-white rounded-pill px-3 py-1.5 fw-bold fs-8"
-                :disabled="qResults['p2_' + q.id]?.is_correct || !userAnswers['p2_' + q.id]"
-              >
-                Kiểm tra
-              </button>
-              <button
-                v-if="!qResults['p2_' + q.id]?.is_correct"
-                @click="showHint['p2_' + q.id] = !showHint['p2_' + q.id]"
-                class="btn btn-sm btn-outline-secondary rounded-pill px-2.5 py-1.5 fs-8"
-              >
-                {{ showHint['p2_' + q.id] ? 'Ẩn đáp án' : 'Xem đáp án gợi ý' }}
-              </button>
-            </div>
-
-            <!-- Answer Feedback & Explanation -->
-            <div v-if="qResults['p2_' + q.id] || showHint['p2_' + q.id]" class="mt-2.5 pt-2 border-top fs-8">
-              <div class="fw-bold text-success mb-0.5">
-                Đáp án chuẩn: <span class="font-monospace text-teal fs-7">{{ q.expected }}</span>
+            <!-- Answer Feedback -->
+            <div v-if="qResults[q.id]" class="mt-2.5 p-2.5 rounded-3 fs-8" :class="qResults[q.id].is_correct ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-danger-subtle text-danger border border-danger-subtle'">
+              <div v-if="qResults[q.id].is_correct">
+                <strong>Tuyệt vời!</strong> Đáp án đúng là: <u>{{ q.correct_phrase }}</u>.
               </div>
-              <div class="text-muted">
-                <i class="bi bi-info-circle me-1"></i>Giải thích: {{ q.explain }}
+              <div v-else>
+                <strong>Chưa đúng rồi!</strong> Đáp án chính xác là: <u>{{ q.correct_phrase }}</u>.
               </div>
             </div>
           </div>
@@ -639,129 +675,129 @@
       </div>
     </div>
 
-    <!-- TAB 5: FLASHCARD 3D PLAYER -->
+    <!-- ================= TAB 5: THẺ FLASHCARD 3D TƯƠNG TÁC ================= -->
     <div v-if="activeMainTab === 'flashcard'">
-      <!-- Part Selector for Flashcards -->
-      <div class="card p-3 rounded-4 shadow-sm border bg-card-custom mb-3 max-w-3xl mx-auto">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <span class="fs-8 fw-bold text-uppercase text-muted d-flex align-items-center gap-1">
-            <i class="bi bi-filter-circle text-teal"></i>
-            <span>Chọn Nội Dung Luyện Thẻ 3D:</span>
-          </span>
-          <span class="badge bg-teal text-white fw-bold fs-8">
-            {{ getFlashPartLabel() }}
-          </span>
-        </div>
-
-        <div class="d-flex gap-1.5 overflow-x-auto pb-1" style="scrollbar-width: thin;">
-          <button
-            @click="setFlashPart('all_1000')"
-            class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold text-nowrap"
-            :class="selectedFlashPart === 'all_1000' ? 'btn-teal text-white' : 'btn-outline-secondary'"
-          >
-            Tất cả 1000 cụm từ
-          </button>
-          <button
-            @click="setFlashPart('pv_100')"
-            class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold text-nowrap"
-            :class="selectedFlashPart === 'pv_100' ? 'btn-teal text-white' : 'btn-outline-secondary'"
-          >
-            100 Phrasal Verbs (A-W)
-          </button>
-          <button
-            v-for="part in 17"
-            :key="part"
-            @click="setFlashPart(part)"
-            class="btn btn-sm rounded-pill px-2.5 py-1.5 fw-semibold text-nowrap"
-            :class="selectedFlashPart === part ? 'btn-teal text-white' : 'btn-outline-secondary'"
-          >
-            Phần {{ part }}
-          </button>
-        </div>
-      </div>
-
-      <div v-if="flashcardItems.length > 0" class="flashcard-player w-100 max-w-3xl mx-auto my-3">
-        <!-- Progress Info -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <span class="text-muted fs-7">
-            Cụm từ số <strong>{{ currentFlashIndex + 1 }}</strong> / {{ flashcardItems.length }}
-          </span>
-          <div class="d-flex gap-2 align-items-center">
-            <span class="badge bg-secondary-subtle text-secondary px-2.5 py-1 fs-8">
-              {{ currentFlashItem?.category === 'phrasal_verb_100' ? '100 Phrasal Verbs' : '1000 Cụm từ thông dụng' }}
+      <div class="card p-3 p-md-4 rounded-4 shadow-sm border bg-card-custom mb-4">
+        <!-- Flashcard Header & Part Switcher -->
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <h4 class="fw-black text-teal mb-0">Luyện Phản Xạ Thẻ 3D</h4>
+            <span class="badge bg-teal text-white rounded-pill px-2.5 py-1 fs-8">
+              {{ getFlashPartLabel() }}
             </span>
+          </div>
+
+          <div class="dropdown">
+            <button
+              class="btn btn-sm btn-outline-teal dropdown-toggle rounded-pill px-3 py-1.5 fw-semibold fs-8"
+              type="button"
+              data-bs-toggle="dropdown"
+            >
+              <i class="bi bi-filter me-1"></i> Đổi nguồn thẻ ({{ flashcardItems.length }} thẻ)
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm fs-8">
+              <li><button class="dropdown-item" @click="setFlashPart('all_1000')">Toàn bộ 1000 cụm từ</button></li>
+              <li><button class="dropdown-item" @click="setFlashPart('pv_100')">100 Cụm Động Từ (A-W)</button></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><h6 class="dropdown-header">Chia theo từng phần (50 câu):</h6></li>
+              <li v-for="part in 17" :key="part">
+                <button class="dropdown-item" @click="setFlashPart(part)">Phần {{ part }} (50 câu)</button>
+              </li>
+            </ul>
           </div>
         </div>
 
-        <!-- 3D Card Box -->
+        <!-- 1. Helper Tips Banner (Desktop: Phím tắt bàn phím) -->
+        <div class="alert alert-primary bg-primary-subtle border-primary-subtle text-primary-emphasis d-none d-md-flex align-items-center justify-content-between py-2 px-3 mb-3 rounded-3 shadow-xs fs-7">
+          <div>
+            <i class="bi bi-lightbulb-fill text-warning me-1"></i>
+            <strong>Phím tắt:</strong> <code>Space</code>: Lật thẻ | <code>Q / ←</code>: Trước | <code>E / →</code>: Tiếp | <code>A</code>: Nghe | <code>D</code>: Luyện nói | <code>S</code>: Đã nhớ | <code>X</code>: Cần ôn
+          </div>
+          <div class="badge bg-primary text-white ms-2 fs-7 px-2.5 py-1 rounded-pill">
+            {{ currentFlashIndex + 1 }} / {{ flashcardItems.length }}
+          </div>
+        </div>
+
+        <!-- 2. Mobile Quick Hint Banner (Điện thoại: Hướng dẫn chạm ngón tay) -->
+        <div class="d-flex d-md-none align-items-center justify-content-between py-1.5 px-3 mb-2.5 rounded-3 bg-primary-subtle text-primary-emphasis fs-8 shadow-2xs">
+          <div class="d-flex align-items-center gap-1.5">
+            <i class="bi bi-hand-index-thumb-fill text-warning"></i>
+            <span><strong>Chạm thẻ</strong> để lật xem nghĩa tiếng Việt & ví dụ</span>
+          </div>
+          <div class="badge bg-primary text-white fs-8 px-2 py-0.5 rounded-pill">
+            {{ currentFlashIndex + 1 }} / {{ flashcardItems.length }}
+          </div>
+        </div>
+
+        <!-- 3D Card Box Container -->
         <div
           class="perspective-1000 w-100 cursor-pointer select-none mb-3"
-          style="min-height: 380px;"
           @click="isFlipped = !isFlipped"
+          style="min-height: 350px;"
         >
           <div
-            class="position-relative w-100 h-100 rounded-4 shadow-lg border border-2 transform-style-preserve-3d flashcard-3d-inner"
+            class="position-relative w-100 rounded-4 shadow-lg border-0 transform-style-preserve-3d"
             :class="{ 'rotate-y-180': isFlipped }"
-            style="min-height: 380px;"
+            style="min-height: 350px; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);"
           >
-            <!-- FRONT SIDE -->
+            <!-- FRONT SIDE: Dark Forest Teal matching Roadmap style -->
             <div
-              class="position-absolute top-0 start-0 w-100 h-100 backface-hidden rounded-4 p-4 p-md-5 d-flex flex-column justify-content-between"
-              :class="authStore.themeMode === 'dark' ? 'bg-dark text-white border-secondary' : 'bg-white text-dark border-light-subtle'"
+              class="position-absolute top-0 start-0 w-100 h-100 backface-hidden rounded-4 p-4 p-md-5 d-flex flex-column justify-content-between text-white border-0 overflow-hidden"
+              style="background: linear-gradient(145deg, #02231d 0%, #04382f 40%, #064e40 100%); min-height: 350px;"
             >
               <div class="d-flex justify-content-between align-items-center">
-                <span class="badge bg-teal text-white px-3 py-1.5 rounded-pill fs-8">
-                  MẶT TRƯỚC • TIẾNG ANH & CÁC TỪ GHÉP
+                <span class="badge rounded-pill px-3 py-1.5 fs-8 fw-bold" style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(8px);">
+                  CỤM TỪ THỰC CHIẾN
                 </span>
-                <span class="badge" :class="currentFlashItem?.status === 'mastered' ? 'bg-success' : currentFlashItem?.status === 'learning' ? 'bg-warning text-dark' : 'bg-secondary'">
-                  {{ currentFlashItem?.status === 'mastered' ? 'Đã nhớ' : currentFlashItem?.status === 'learning' ? 'Cần ôn' : 'Chưa học' }}
+                <span
+                  class="badge px-3 py-1.5 rounded-pill fs-8 fw-bold"
+                  :class="currentFlashItem?.status === 'mastered' ? 'bg-success text-white' : currentFlashItem?.status === 'learning' ? 'bg-warning text-dark' : 'bg-light text-dark'"
+                >
+                  {{ currentFlashItem?.status === 'mastered' ? '✓ ĐÃ GHI NHỚ' : currentFlashItem?.status === 'learning' ? 'CẦN ÔN' : 'CHƯA HỌC' }}
                 </span>
               </div>
 
-              <div class="text-center my-auto py-3">
-                <h1 class="display-5 fw-black text-teal mb-3 tracking-tight">
+              <div class="my-auto py-3 text-center">
+                <h1 class="display-5 fw-black mb-3 tracking-tight text-white leading-tight">
                   {{ currentFlashItem?.phrase }}
                 </h1>
 
-                <!-- Component Words Indicator -->
-                <div v-if="currentFlashItem?.component_words_json && currentFlashItem?.component_words_json.length" class="d-flex justify-content-center align-items-center gap-2 flex-wrap mb-3">
-                  <span class="fs-8 text-muted fw-semibold">Từ ghép thành:</span>
-                  <span
-                    v-for="word in currentFlashItem?.component_words_json"
-                    :key="word"
-                    class="badge bg-primary-subtle text-primary border border-primary-subtle px-2.5 py-1 rounded-pill fs-7 font-monospace"
-                  >
-                    + {{ word }}
-                  </span>
-                </div>
-
-                <!-- Example EN -->
-                <div v-if="currentFlashItem?.example_en" class="bg-body-tertiary p-3 rounded-3 text-start border my-2" @click.stop>
+                <!-- Example Sentence EN on Front -->
+                <div v-if="currentFlashItem?.example_en" class="p-3 rounded-3 text-start mt-3" style="background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.1);">
                   <div class="d-flex justify-content-between align-items-center mb-1">
-                    <span class="badge bg-teal text-white fs-8">CÂU VÍ DỤ</span>
-                    <button @click="speech.speak(currentFlashItem?.example_en)" class="btn btn-sm btn-outline-teal py-0 px-2 rounded-pill fs-8">
-                      <i class="bi bi-volume-up-fill"></i> Nghe câu
+                    <span class="badge bg-teal text-white fs-8">CÂU VÍ DỤ SONG NGỮ</span>
+                    <button
+                      @click.stop="speech.speak(currentFlashItem?.example_en)"
+                      class="btn btn-sm btn-link p-0 text-white-50 fs-8 text-decoration-none hover-white"
+                    >
+                      <i class="bi bi-volume-up-fill text-warning"></i> Nghe câu
                     </button>
                   </div>
-                  <p class="fs-6 fw-semibold mb-0 text-teal">{{ currentFlashItem?.example_en }}</p>
+                  <p class="fs-6 text-white mb-0 fst-italic">
+                    {{ currentFlashItem?.example_en }}
+                  </p>
                 </div>
               </div>
 
-              <div class="text-center pt-2 border-top text-muted fs-8">
-                <i class="bi bi-arrow-repeat me-1"></i>Bấm <strong>Space</strong> hoặc nhấp chuột để lật thẻ
+              <div class="text-center pt-2 border-top border-white-10 text-white-50 fs-8">
+                <i class="bi bi-arrow-repeat me-1"></i>Chạm thẻ để lật xem nghĩa tiếng Việt & câu ví dụ
               </div>
             </div>
 
-            <!-- BACK SIDE -->
+            <!-- BACK SIDE: Clean White / Dark theme -->
             <div
               class="position-absolute top-0 start-0 w-100 h-100 backface-hidden rotate-y-180 rounded-4 p-4 p-md-5 d-flex flex-column justify-content-between"
-              :class="authStore.themeMode === 'dark' ? 'bg-dark text-white border-secondary' : 'bg-white text-dark border-light-subtle'"
+              :class="authStore.themeMode === 'dark' ? 'bg-dark text-white border border-secondary' : 'bg-white text-dark border border-light-subtle'"
+              style="min-height: 350px;"
             >
               <div class="d-flex justify-content-between align-items-center">
                 <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-1.5 rounded-pill fs-8">
                   MẶT SAU • NGHĨA TIẾNG VIỆT
                 </span>
-                <span class="badge" :class="currentFlashItem?.status === 'mastered' ? 'bg-success' : currentFlashItem?.status === 'learning' ? 'bg-warning text-dark' : 'bg-secondary'">
+                <span
+                  class="badge px-3 py-1.5 rounded-pill fs-8 fw-bold"
+                  :class="currentFlashItem?.status === 'mastered' ? 'bg-success text-white' : currentFlashItem?.status === 'learning' ? 'bg-warning text-dark' : 'bg-secondary text-white'"
+                >
                   {{ currentFlashItem?.status === 'mastered' ? 'Đã nhớ' : currentFlashItem?.status === 'learning' ? 'Cần ôn' : 'Chưa học' }}
                 </span>
               </div>
@@ -781,19 +817,19 @@
               </div>
 
               <div class="text-center pt-2 border-top text-muted fs-8">
-                <i class="bi bi-arrow-repeat me-1"></i>Bấm <strong>Space</strong> hoặc nhấp chuột để lật lại mặt trước
+                <i class="bi bi-arrow-repeat me-1"></i>Chạm thẻ để lật lại mặt trước
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Strict Single-Row Action Controls -->
-        <div class="d-flex align-items-center justify-content-center gap-1.5 flex-nowrap overflow-x-auto py-1 w-100 flashcard-controls-row">
+        <!-- ================= CONTROLS: 1. DESKTOP SINGLE-ROW CONTROLS (>= 768px, ĐẦY ĐỦ PHÍM TẮT) ================= -->
+        <div class="d-none d-md-flex align-items-center justify-content-center gap-1.5 flex-nowrap overflow-x-auto py-1 w-100 flashcard-controls-row">
           <!-- [← / Q] Prev -->
           <button
             @click="prevFlash"
             :disabled="currentFlashIndex === 0"
-            class="btn btn-outline-secondary btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
+            class="btn btn-outline-secondary btn-sm px-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-semibold"
             title="Lùi thẻ (Phím ← hoặc Q)"
           >
             <i class="bi bi-chevron-left"></i>
@@ -803,38 +839,38 @@
           <!-- [Space] Flip -->
           <button
             @click="isFlipped = !isFlipped"
-            class="btn btn-teal btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
+            class="btn btn-teal btn-sm px-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-bold"
             title="Lật thẻ (Phím Space)"
           >
             <i class="bi bi-arrow-repeat"></i>
-            <span>[Space] Lật</span>
+            <span>[Space] Lật thẻ</span>
           </button>
 
           <!-- [A] Listen -->
           <button
             @click="speech.speak(currentFlashItem?.phrase)"
-            class="btn btn-primary btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
-            title="Nghe phát âm chuẩn (Phím A)"
+            class="btn btn-primary btn-sm px-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-bold"
+            title="Nghe phát âm chuẩn US (Phím A)"
           >
             <i class="bi bi-volume-up-fill"></i>
-            <span>[A] Nghe</span>
+            <span>[A] Nghe US</span>
           </button>
 
           <!-- [D] Speak -->
           <button
-            @click="speech.startListening(currentFlashItem?.phrase, 'flash_' + currentFlashItem?.id)"
-            class="btn btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
-            :class="speech.listeningId.value === ('flash_' + currentFlashItem?.id) ? 'btn-danger animate-mic-pulse' : 'btn-info text-white'"
+            @click="toggleSpeechForFlashcard"
+            class="btn btn-sm px-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-bold"
+            :class="speech.isListening.value ? 'btn-danger animate-mic-pulse text-white' : 'btn-info text-white'"
             title="Luyện nói Micro (Phím D)"
           >
-            <i class="bi" :class="speech.listeningId.value === ('flash_' + currentFlashItem?.id) ? 'bi-record-fill' : 'bi-mic-fill'"></i>
-            <span>[D] {{ speech.listeningId.value === ('flash_' + currentFlashItem?.id) ? 'Đang nghe...' : 'Luyện nói' }}</span>
+            <i class="bi" :class="speech.isListening.value ? 'bi-record-fill' : 'bi-mic-fill'"></i>
+            <span>[D] {{ speech.isListening.value ? 'Đang nghe...' : 'Luyện nói' }}</span>
           </button>
 
           <!-- [S] Mastered -->
           <button
             @click="markPhraseStatus(currentFlashItem, 'mastered')"
-            class="btn btn-success btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
+            class="btn btn-success btn-sm px-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-bold"
             title="Đã nhớ cụm này (Phím S)"
           >
             <i class="bi bi-check-circle-fill"></i>
@@ -844,7 +880,7 @@
           <!-- [X] Need Review -->
           <button
             @click="markPhraseStatus(currentFlashItem, 'learning')"
-            class="btn btn-warning btn-sm text-white px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
+            class="btn btn-warning btn-sm text-dark px-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-bold"
             title="Cần ôn lại cụm này (Phím X)"
           >
             <i class="bi bi-arrow-clockwise"></i>
@@ -855,7 +891,7 @@
           <button
             @click="nextFlash"
             :disabled="currentFlashIndex === flashcardItems.length - 1"
-            class="btn btn-outline-secondary btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
+            class="btn btn-outline-secondary btn-sm px-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-semibold"
             title="Tiếp thẻ (Phím → hoặc E)"
           >
             <span>[E] Tiếp</span>
@@ -863,11 +899,87 @@
           </button>
         </div>
 
-        <!-- Mic result under card -->
-        <div v-if="speech.itemResults.value['flash_' + currentFlashItem?.id]" class="mt-2 p-2 rounded-3 bg-light border text-center fs-8">
-          <span class="text-muted">Bạn vừa đọc:</span> <strong>"{{ speech.itemResults.value['flash_' + currentFlashItem?.id].transcript }}"</strong>
-          <span class="badge ms-2" :class="speech.itemResults.value['flash_' + currentFlashItem?.id].score >= 80 ? 'bg-success' : 'bg-warning text-dark'">
-            {{ speech.itemResults.value['flash_' + currentFlashItem?.id].score }}%
+        <!-- ================= CONTROLS: 2. MOBILE DEDICATED 2-ROW ERGONOMIC TOUCH KEYPAD (< 768px, CHỐNG TRÀN 100%) ================= -->
+        <div class="d-flex d-md-none flex-column gap-2 w-100 mt-2">
+          <!-- Row 1: Điều hướng & Lật thẻ nút lớn dễ chạm -->
+          <div class="d-flex align-items-center gap-1.5 w-100">
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm py-2 px-2.5 rounded-3 shadow-2xs d-inline-flex align-items-center justify-content-center gap-1 flex-1 fs-8 fw-bold"
+              :disabled="currentFlashIndex === 0"
+              @click="prevFlash"
+            >
+              <i class="bi bi-chevron-left"></i>
+              <span>Trước</span>
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-teal text-white btn-sm py-2.5 px-3 rounded-3 shadow-sm d-inline-flex align-items-center justify-content-center gap-1.5 flex-2 fs-7 fw-black"
+              @click="isFlipped = !isFlipped"
+              style="min-height: 44px;"
+            >
+              <i class="bi bi-arrow-repeat fs-6"></i>
+              <span>Lật Xem Nghĩa</span>
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm py-2 px-2.5 rounded-3 shadow-2xs d-inline-flex align-items-center justify-content-center gap-1 flex-1 fs-8 fw-bold"
+              :disabled="currentFlashIndex === flashcardItems.length - 1"
+              @click="nextFlash"
+            >
+              <span>Tiếp</span>
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          </div>
+
+          <!-- Row 2: Âm thanh & Trạng thái có viền màu sắc rõ ràng -->
+          <div class="d-flex align-items-center gap-1.5 w-100">
+            <button
+              type="button"
+              class="btn btn-outline-primary btn-sm py-2 px-1 rounded-3 shadow-2xs d-inline-flex align-items-center justify-content-center gap-1 flex-1 fs-8 fw-bold border"
+              @click="speech.speak(currentFlashItem?.phrase)"
+            >
+              <i class="bi bi-volume-up-fill"></i>
+              <span>Nghe</span>
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-sm py-2 px-1 rounded-3 shadow-2xs d-inline-flex align-items-center justify-content-center gap-1 flex-1 fs-8 fw-bold border"
+              :class="speech.isListening.value ? 'btn-danger animate-mic-pulse text-white' : 'btn-outline-info'"
+              @click="toggleSpeechForFlashcard"
+            >
+              <i class="bi" :class="speech.isListening.value ? 'bi-record-fill' : 'bi-mic-fill'"></i>
+              <span>Nói</span>
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-outline-success btn-sm py-2 px-1 rounded-3 shadow-2xs d-inline-flex align-items-center justify-content-center gap-1 flex-1 fs-8 fw-bold border"
+              @click="markPhraseStatus(currentFlashItem, 'mastered')"
+            >
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Đã nhớ</span>
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-outline-warning btn-sm py-2 px-1 rounded-3 shadow-2xs d-inline-flex align-items-center justify-content-center gap-1 flex-1 fs-8 fw-bold border"
+              @click="markPhraseStatus(currentFlashItem, 'learning')"
+            >
+              <i class="bi bi-arrow-clockwise"></i>
+              <span>Cần ôn</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mic Result Feedback under 3D Flashcard -->
+        <div v-if="flashScoreResult" class="mt-3 p-2.5 rounded-3 bg-light border text-center fs-8 shadow-xs">
+          <span class="text-muted">Bạn vừa đọc:</span> <strong>"{{ flashScoreResult.transcript }}"</strong>
+          <span class="badge ms-2" :class="flashScoreResult.score >= 80 ? 'bg-success text-white' : 'bg-warning text-dark'">
+            {{ flashScoreResult.score }}%
           </span>
         </div>
       </div>
@@ -876,7 +988,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore'
 import { useSpeech } from '@/composables/useSpeech'
@@ -905,6 +1017,10 @@ const searchQuery = ref('')
 const filterStatus = ref('all')
 const isLoading = ref(false)
 
+// Independent Speech State for individual cards (Fix: không bao giờ bị nhảy mic toàn bộ các thẻ)
+const activeListeningPhraseId = ref(null)
+const phraseScoreResults = ref({})
+
 // Tab 2: 100 Phrasal Verbs
 const phrasalVerbs100List = ref([])
 const selectedLetter = ref(null)
@@ -923,17 +1039,20 @@ const showHint = ref({})
 const currentFlashIndex = ref(0)
 const isFlipped = ref(false)
 const selectedFlashPart = ref('all_1000') // 'all_1000' | 'pv_100' | number 1-17
+const flashScoreResult = ref(null)
 
+// Flashcard Part management
 const setFlashPart = (part) => {
   selectedFlashPart.value = part
   currentFlashIndex.value = 0
   isFlipped.value = false
+  flashScoreResult.value = null
 }
 
 const getFlashPartLabel = () => {
-  if (selectedFlashPart.value === 'all_1000') return 'Tất cả 1000 cụm từ'
-  if (selectedFlashPart.value === 'pv_100') return '100 Phrasal Verbs'
-  return `Phần ${selectedFlashPart.value}`
+  if (selectedFlashPart.value === 'all_1000') return 'Toàn bộ 1000 cụm từ'
+  if (selectedFlashPart.value === 'pv_100') return '100 Phrasal Verbs (A-W)'
+  return `Phần ${selectedFlashPart.value} (50 câu)`
 }
 
 const startFlashcardForPart = (part) => {
@@ -941,6 +1060,7 @@ const startFlashcardForPart = (part) => {
   selectedFlashPart.value = part
   currentFlashIndex.value = 0
   isFlipped.value = false
+  flashScoreResult.value = null
 }
 
 const flashcardItems = computed(() => {
@@ -957,6 +1077,52 @@ const flashcardItems = computed(() => {
 const currentFlashItem = computed(() => {
   if (flashcardItems.value.length === 0) return null
   return flashcardItems.value[currentFlashIndex.value] || null
+})
+
+// Toggle Speech Recognition for individual Phrase Card
+const toggleSpeechForPhrase = (item) => {
+  if (activeListeningPhraseId.value === item.id && speech.isListening.value) {
+    speech.stopListening()
+    activeListeningPhraseId.value = null
+    return
+  }
+  activeListeningPhraseId.value = item.id
+  speech.startListening(item.phrase, 'phrase_' + item.id)
+}
+
+// Toggle Speech Recognition for 3D Flashcard
+const toggleSpeechForFlashcard = () => {
+  if (!currentFlashItem.value) return
+  if (speech.isListening.value) {
+    speech.stopListening()
+    return
+  }
+  speech.startListening(currentFlashItem.value.phrase, 'flash_' + currentFlashItem.value.id)
+}
+
+// Watch Speech State to harvest results accurately
+watch(() => speech.isListening.value, (isListening) => {
+  if (!isListening) {
+    // 1. If listening to an individual phrase card
+    if (activeListeningPhraseId.value) {
+      const phraseId = activeListeningPhraseId.value
+      const key = 'phrase_' + phraseId
+      const res = speech.itemResults.value[key]
+      if (res) {
+        phraseScoreResults.value[phraseId] = res
+      }
+      activeListeningPhraseId.value = null
+    }
+
+    // 2. If listening to 3D flashcard
+    if (currentFlashItem.value) {
+      const flashKey = 'flash_' + currentFlashItem.value.id
+      const res = speech.itemResults.value[flashKey]
+      if (res) {
+        flashScoreResult.value = res
+      }
+    }
+  }
 })
 
 // Fetch Overview Stats
@@ -1048,7 +1214,6 @@ const submitAnswer = async (key, expected) => {
       await authStore.fetchMe()
     }
   } catch (e) {
-    // Local fallback matching
     const norm = (s) => (s || '').toLowerCase().replace(/[.,?!:;"'_\-()]/g, ' ').replace(/\b(and|or|with)\b/g, ' ').replace(/\s+/g, ' ').trim()
     const cleanUser = norm(userAns)
     const cleanExp = norm(expected)
@@ -1082,6 +1247,7 @@ const selectPart = (part) => {
 }
 
 const markPhraseStatus = async (phrase, status) => {
+  if (!phrase) return
   if (!authStore.isAuthenticated) {
     authStore.promptLogin('Vui lòng đăng nhập để lưu tiến độ học cụm từ và tích lũy điểm số!')
     return
@@ -1104,6 +1270,7 @@ const prevFlash = () => {
   if (currentFlashIndex.value > 0) {
     currentFlashIndex.value--
     isFlipped.value = false
+    flashScoreResult.value = null
   }
 }
 
@@ -1111,6 +1278,7 @@ const nextFlash = () => {
   if (currentFlashIndex.value < flashcardItems.value.length - 1) {
     currentFlashIndex.value++
     isFlipped.value = false
+    flashScoreResult.value = null
   }
 }
 
@@ -1136,9 +1304,7 @@ const handleKeyDown = (e) => {
     }
   } else if (e.key === 'd' || e.key === 'D') {
     e.preventDefault()
-    if (currentFlashItem.value?.phrase) {
-      speech.startListening(currentFlashItem.value.phrase, 'flash_' + currentFlashItem.value.id)
-    }
+    toggleSpeechForFlashcard()
   } else if (e.key === 's' || e.key === 'S') {
     e.preventDefault()
     if (currentFlashItem.value) {
@@ -1193,5 +1359,13 @@ onUnmounted(() => {
 
 .rotate-y-180 {
   transform: rotateY(180deg);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 </style>
