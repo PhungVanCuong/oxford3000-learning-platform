@@ -32,16 +32,16 @@
             </div>
 
             <!-- Mini stats counter -->
-            <div class="d-flex gap-2 shrink-0">
-              <div class="px-3 py-2 rounded-3 text-center" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(4px);">
+            <div class="d-flex w-100 w-md-auto justify-content-between gap-1.5 gap-md-2 mt-2 mt-md-0">
+              <div class="flex-fill px-2 py-1.5 px-md-3 py-md-2 rounded-3 text-center" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(4px);">
                 <div class="fs-8 text-white-50">Học viên</div>
                 <div class="fw-black fs-6 text-white">{{ totalLearners }}</div>
               </div>
-              <div class="px-3 py-2 rounded-3 text-center" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(4px);">
+              <div class="flex-fill px-2 py-1.5 px-md-3 py-md-2 rounded-3 text-center" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(4px);">
                 <div class="fs-8 text-white-50">Tổng XP</div>
                 <div class="fw-black fs-6 text-warning">{{ (totalSystemXp / 1000).toFixed(1) }}k</div>
               </div>
-              <div class="px-3 py-2 rounded-3 text-center" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(4px);">
+              <div class="flex-fill px-2 py-1.5 px-md-3 py-md-2 rounded-3 text-center" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(4px);">
                 <div class="fs-8 text-white-50">Phòng mở</div>
                 <div class="fw-black fs-6 text-success">{{ rooms.length }}</div>
               </div>
@@ -100,16 +100,16 @@
 
       <!-- ================= TAB 1: BẢNG XẾP HẠNG LIÊN SERVER ================= -->
       <div v-if="activeTab === 'leaderboard'">
-        <!-- Filter & Search Toolbar (Mượt mà, không đường viền thô) -->
+        <!-- Filter & Search Toolbar (Mượt mà, vuốt ngang dễ dàng trên di động) -->
         <div class="card p-2.5 p-md-3 rounded-4 border-0 shadow-2xs bg-card-custom mb-3.5">
           <div class="d-flex flex-column flex-lg-row justify-content-between align-items-stretch align-items-lg-center gap-2.5">
-            <!-- 4 Metric Filter Pills -->
-            <div class="d-flex flex-wrap gap-1.5">
+            <!-- 4 Metric Filter Pills (Vuốt ngang trên mobile với no-scrollbar) -->
+            <div class="mobile-scroll-x no-scrollbar pb-1">
               <button
                 v-for="ft in leaderboardFilters"
                 :key="ft.type"
                 @click="changeLeaderboardType(ft.type)"
-                class="btn btn-sm rounded-pill px-3 py-1.5 fs-8 fw-bold transition-all border-0"
+                class="btn btn-sm rounded-pill px-3 py-1.5 fs-8 fw-bold transition-all border-0 shrink-0 text-nowrap"
                 :class="currentLeaderboardType === ft.type ? 'btn-teal text-white shadow-xs' : 'btn-outline-secondary'"
               >
                 <i :class="ft.icon" class="me-1"></i>
@@ -120,7 +120,7 @@
             <!-- Search & Tier Filter -->
             <div class="d-flex flex-wrap align-items-center gap-2">
               <!-- Quick Search Input -->
-              <div class="input-group input-group-sm" style="max-width: 240px;">
+              <div class="input-group input-group-sm flex-grow-1 flex-sm-grow-0" style="min-width: 170px; max-width: 240px;">
                 <span class="input-group-text bg-body-tertiary border-0 text-muted"><i class="bi bi-search"></i></span>
                 <input
                   type="text"
@@ -133,7 +133,7 @@
               </div>
 
               <!-- Tier Dropdown -->
-              <select v-model="selectedTier" @change="loadLeaderboard" class="form-select form-select-sm fs-8 rounded-pill border-0 bg-body-tertiary" style="width: auto;">
+              <select v-model="selectedTier" @change="loadLeaderboard" class="form-select form-select-sm fs-8 rounded-pill border-0 bg-body-tertiary flex-grow-1 flex-sm-grow-0" style="width: auto;">
                 <option value="all">Tất cả cấp bậc</option>
                 <option value="grandmaster">💎 Đại Cao Thủ (≥5000 XP)</option>
                 <option value="diamond">💠 Kim Cương (3000-4999 XP)</option>
@@ -146,7 +146,7 @@
               <!-- View All Toggle -->
               <button
                 @click="toggleViewAll"
-                class="btn btn-sm rounded-pill px-2.5 py-1 fs-8 fw-semibold border-0"
+                class="btn btn-sm rounded-pill px-2.5 py-1 fs-8 fw-semibold border-0 shrink-0 text-nowrap"
                 :class="viewAll ? 'btn-warning text-dark' : 'btn-outline-secondary'"
                 title="Tính trực tiếp hiển thị tất cả danh sách người học"
               >
@@ -339,15 +339,15 @@
               <table class="table clean-leaderboard-table align-middle mb-0 fs-7">
                 <thead>
                   <tr>
-                    <th style="width: 70px;" class="text-center ps-3">Hạng</th>
-                    <th style="width: 60px;" class="text-center">Biến động</th>
+                    <th style="width: 50px;" class="text-center ps-2 ps-md-3">Hạng</th>
+                    <th style="width: 60px;" class="text-center d-none d-md-table-cell">Biến động</th>
                     <th>Học viên</th>
-                    <th class="text-center">Cấp bậc</th>
-                    <th class="text-center">Chuỗi ngày 🔥</th>
-                    <th class="text-center">Từ nắm vững 📚</th>
-                    <th class="text-center">Đấu trường ⚔️</th>
-                    <th class="text-center">Cụm Server</th>
-                    <th class="text-end pe-3.5">Tổng XP 🌟</th>
+                    <th class="text-center d-none d-md-table-cell">Cấp bậc</th>
+                    <th class="text-center d-none d-lg-table-cell">Chuỗi ngày 🔥</th>
+                    <th class="text-center d-none d-xl-table-cell">Từ nắm vững 📚</th>
+                    <th class="text-center d-none d-lg-table-cell">Đấu trường ⚔️</th>
+                    <th class="text-center d-none d-md-table-cell">Cụm Server</th>
+                    <th class="text-end pe-2 pe-md-3.5">Tổng XP 🌟</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -357,71 +357,80 @@
                     :class="u.is_current_user ? 'row-user-highlight' : 'row-clean-hover'"
                   >
                     <!-- Rank -->
-                    <td class="text-center ps-3 fw-black">
-                      <span v-if="u.rank === 1" class="badge bg-warning text-dark fs-8 rounded-pill px-2.5 py-1 shadow-2xs">🥇 1</span>
-                      <span v-else-if="u.rank === 2" class="badge bg-secondary text-white fs-8 rounded-pill px-2.5 py-1 shadow-2xs">🥈 2</span>
-                      <span v-else-if="u.rank === 3" class="badge bg-danger-subtle text-danger fs-8 rounded-pill px-2.5 py-1 shadow-2xs">🥉 3</span>
+                    <td class="text-center ps-2 ps-md-3 fw-black">
+                      <span v-if="u.rank === 1" class="badge bg-warning text-dark fs-8 rounded-pill px-2 py-0.5 shadow-2xs">🥇 1</span>
+                      <span v-else-if="u.rank === 2" class="badge bg-secondary text-white fs-8 rounded-pill px-2 py-0.5 shadow-2xs">🥈 2</span>
+                      <span v-else-if="u.rank === 3" class="badge bg-danger-subtle text-danger fs-8 rounded-pill px-2 py-0.5 shadow-2xs">🥉 3</span>
                       <span v-else class="text-muted fw-bold">#{{ u.rank }}</span>
                     </td>
 
-                    <!-- Trend -->
-                    <td class="text-center">
+                    <!-- Trend (Desktop only) -->
+                    <td class="text-center d-none d-md-table-cell">
                       <span v-if="u.trend > 0" class="badge bg-success-subtle text-success fs-8 rounded-pill px-1.5 py-0.5">▲ +{{ u.trend }}</span>
                       <span v-else-if="u.trend < 0" class="badge bg-danger-subtle text-danger fs-8 rounded-pill px-1.5 py-0.5">▼ {{ u.trend }}</span>
                       <span v-else class="text-muted fs-8 font-monospace">—</span>
                     </td>
 
-                    <!-- User Name & Avatar -->
+                    <!-- User Name & Avatar & Subtitle on Mobile -->
                     <td>
                       <div class="d-flex align-items-center gap-2">
-                        <img :src="u.avatar_url" class="rounded-circle border-0" style="width: 34px; height: 34px; object-fit: cover;" />
-                        <div>
-                          <div class="fw-bold text-dark-emphasis d-flex align-items-center gap-1.5 fs-7">
-                            <span>{{ u.name }}</span>
-                            <span v-if="u.is_current_user" class="badge bg-teal text-white rounded-pill" style="font-size: 8px;">Bạn</span>
-                            <span v-if="u.role === 'admin'" class="badge bg-danger-subtle text-danger rounded-pill" style="font-size: 8px;">Admin</span>
-                            <span v-else-if="u.role === 'tutor'" class="badge bg-info-subtle text-info rounded-pill" style="font-size: 8px;">Trợ giảng</span>
+                        <img :src="u.avatar_url" class="rounded-circle border-0 shrink-0" style="width: 32px; height: 32px; object-fit: cover;" />
+                        <div class="min-w-0">
+                          <div class="fw-bold text-dark-emphasis d-flex align-items-center gap-1 fs-7 text-truncate">
+                            <span class="text-truncate">{{ u.name }}</span>
+                            <span v-if="u.is_current_user" class="badge bg-teal text-white rounded-pill shrink-0" style="font-size: 8px;">Bạn</span>
+                            <span v-if="u.role === 'admin'" class="badge bg-danger-subtle text-danger rounded-pill shrink-0" style="font-size: 8px;">Admin</span>
+                            <span v-else-if="u.role === 'tutor'" class="badge bg-info-subtle text-info rounded-pill shrink-0" style="font-size: 8px;">Trợ giảng</span>
+                          </div>
+                          <!-- Mobile sub-info: Cấp bậc + Chuỗi ngày (hiển thị trực tiếp dưới tên học viên trên mobile) -->
+                          <div class="d-flex align-items-center gap-1.5 mt-0.5 d-md-none">
+                            <span class="badge rounded-pill px-1.5 py-0" :class="u.tier_class" style="font-size: 10px;">
+                              {{ u.tier_badge }} {{ u.tier_name }}
+                            </span>
+                            <span v-if="u.streak_days > 0" class="text-danger fw-bold" style="font-size: 10px;">
+                              <i class="bi bi-fire"></i> {{ u.streak_days }}d
+                            </span>
                           </div>
                         </div>
                       </div>
                     </td>
 
-                    <!-- Tier -->
-                    <td class="text-center">
+                    <!-- Tier (Desktop only) -->
+                    <td class="text-center d-none d-md-table-cell">
                       <span class="badge rounded-pill fs-8" :class="u.tier_class">
                         {{ u.tier_badge }} {{ u.tier_name }}
                       </span>
                     </td>
 
-                    <!-- Streak -->
-                    <td class="text-center">
+                    <!-- Streak (Desktop only) -->
+                    <td class="text-center d-none d-lg-table-cell">
                       <span class="fw-bold text-danger">
                         <i class="bi bi-fire"></i> {{ u.streak_days }} ngày
                       </span>
                     </td>
 
-                    <!-- Mastered Words -->
-                    <td class="text-center text-secondary fs-8 fw-semibold">
+                    <!-- Mastered Words (Desktop only) -->
+                    <td class="text-center text-secondary fs-8 fw-semibold d-none d-xl-table-cell">
                       {{ u.mastered_words }} từ
                     </td>
 
-                    <!-- Arena Score -->
-                    <td class="text-center">
+                    <!-- Arena Score (Desktop only) -->
+                    <td class="text-center d-none d-lg-table-cell">
                       <span class="badge bg-body-tertiary text-secondary rounded-pill px-2.5 py-1 fs-8">
                         {{ u.arena_score }} XP ({{ u.arena_matches }} trận)
                       </span>
                     </td>
 
-                    <!-- Cluster -->
-                    <td class="text-center">
+                    <!-- Cluster (Desktop only) -->
+                    <td class="text-center d-none d-md-table-cell">
                       <span class="badge bg-secondary-subtle text-secondary rounded-pill fs-8">
                         {{ u.server_cluster || 'Global VN-01' }}
                       </span>
                     </td>
 
                     <!-- Total XP -->
-                    <td class="text-end pe-3.5 fw-black text-warning fs-6">
-                      {{ u.xp_points.toLocaleString() }} XP
+                    <td class="text-end pe-2 pe-md-3.5 fw-black text-warning fs-7 fs-md-6 text-nowrap">
+                      {{ u.xp_points.toLocaleString() }} <span class="fs-9 text-muted d-none d-sm-inline">XP</span>
                     </td>
                   </tr>
                 </tbody>

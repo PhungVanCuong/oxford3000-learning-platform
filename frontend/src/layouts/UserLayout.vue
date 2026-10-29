@@ -235,17 +235,145 @@
     </nav>
 
     <!-- Main View Outlet -->
-    <main class="flex-grow-1">
+    <main class="flex-grow-1 user-main-content">
       <router-view />
     </main>
 
-    <!-- Footer -->
-    <footer class="border-top py-4 text-center text-muted fs-8 mt-5" :class="authStore.themeMode === 'dark' ? 'bg-dark border-secondary' : 'bg-white border-light-subtle'">
+    <!-- Footer (Ẩn trên mobile để nhường không gian cho bottom nav) -->
+    <footer class="border-top py-4 text-center text-muted fs-8 mt-5 d-none d-md-block" :class="authStore.themeMode === 'dark' ? 'bg-dark border-secondary' : 'bg-white border-light-subtle'">
       <div class="container">
         <div><strong>OXVOCAB™ - Nền Tảng Học Từ Vựng & Lộ Trình Tiếng Anh Toàn Diện</strong> • Full-Stack Vue 3 + Laravel API</div>
         <div class="text-secondary mt-1">Lộ trình 3000 từ vựng • 25 Chủ đề IELTS • Học Cụm từ • 12 Thì Ngữ pháp • 44 Âm IPA • Trắc nghiệm & Luyện nói AI</div>
       </div>
     </footer>
+
+    <!-- MOBILE BOTTOM NAVIGATION (Phong cách Ứng dụng Di Động) -->
+    <nav class="mobile-bottom-nav d-flex d-md-none border-top position-fixed bottom-0 start-0 w-100 z-3 align-items-center justify-content-around">
+      <router-link to="/" class="mobile-nav-item" exact-active-class="active">
+        <i class="bi bi-house-door-fill"></i>
+        <span>Trang chủ</span>
+        <span v-if="$route.path === '/'" class="mobile-nav-active-dot"></span>
+      </router-link>
+
+      <router-link to="/curriculum" class="mobile-nav-item" active-class="active">
+        <i class="bi bi-signpost-split-fill"></i>
+        <span>Lộ trình</span>
+        <span v-if="$route.path.startsWith('/curriculum')" class="mobile-nav-active-dot"></span>
+      </router-link>
+
+      <router-link to="/daily" class="mobile-nav-item" active-class="active">
+        <i class="bi bi-calendar-check-fill"></i>
+        <span>Học ngày</span>
+        <span v-if="$route.path.startsWith('/daily')" class="mobile-nav-active-dot"></span>
+      </router-link>
+
+      <router-link to="/arena" class="mobile-nav-item" active-class="active">
+        <i class="bi bi-trophy-fill"></i>
+        <span>Đấu trường</span>
+        <span v-if="$route.path.startsWith('/arena')" class="mobile-nav-active-dot"></span>
+      </router-link>
+
+      <button @click="toggleMobileDrawer" class="mobile-nav-item border-0 bg-transparent" :class="{ 'active': isMobileDrawerOpen }">
+        <i class="bi bi-grid-fill"></i>
+        <span>Menu</span>
+        <span v-if="isMobileDrawerOpen" class="mobile-nav-active-dot"></span>
+      </button>
+    </nav>
+
+    <!-- MOBILE DRAWER / OFFCANVAS (Menu trượt toàn diện trên điện thoại) -->
+    <div v-if="isMobileDrawerOpen" class="mobile-drawer-overlay d-md-none" @click="closeMobileDrawer"></div>
+    <div
+      v-if="isMobileDrawerOpen"
+      class="mobile-drawer-content d-md-none p-3 d-flex flex-column"
+      :class="authStore.themeMode === 'dark' ? 'bg-dark text-white' : 'bg-white text-dark'"
+    >
+      <!-- Drawer Header -->
+      <div class="d-flex justify-content-between align-items-center pb-2.5 border-bottom border-light-subtle mb-3">
+        <div class="d-flex align-items-center gap-2">
+          <div class="rounded-3 d-flex align-items-center justify-content-center text-white fw-black shadow-xs" style="width: 32px; height: 32px; background: linear-gradient(135deg, #00b074 0%, #064e40 100%);">
+            <span class="fs-6">Ox</span>
+          </div>
+          <span class="fw-black fs-6 text-teal text-uppercase">OxVocab Menu</span>
+        </div>
+        <button @click="closeMobileDrawer" class="btn btn-sm btn-outline-secondary rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; line-height: 1;">
+          <i class="bi bi-x-lg fs-8"></i>
+        </button>
+      </div>
+
+      <!-- User Profile Card in Drawer (if logged in) -->
+      <div v-if="authStore.isAuthenticated" class="card p-2.5 rounded-3 mb-3 bg-card-custom border shadow-2xs">
+        <div class="d-flex align-items-center gap-2 mb-2">
+          <img :src="authStore.userAvatar" class="rounded-circle border border-2 border-teal" style="width: 38px; height: 38px; object-fit: cover;" />
+          <div class="min-w-0 flex-grow-1">
+            <div class="fw-bold fs-7 text-truncate">{{ authStore.userName }}</div>
+            <div class="text-muted fs-8 text-truncate">{{ authStore.userEmail }}</div>
+          </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-between pt-1.5 border-top border-light-subtle">
+          <span class="badge bg-warning text-dark fs-8 rounded-pill">⚡ {{ authStore.user?.xp_points || 0 }} XP</span>
+          <span class="badge bg-danger text-white fs-8 rounded-pill">🔥 {{ authStore.user?.streak_days || 0 }} ngày</span>
+          <span class="badge bg-teal text-white fs-8 rounded-pill">{{ authStore.isAdmin ? 'Admin' : 'Học viên' }}</span>
+        </div>
+      </div>
+
+      <!-- Guest Login / Register CTA in Drawer -->
+      <div v-else class="d-flex gap-2 mb-3">
+        <router-link to="/login" @click="closeMobileDrawer" class="btn btn-sm btn-outline-secondary flex-fill rounded-pill py-1.5 fs-8 fw-bold">
+          Đăng nhập
+        </router-link>
+        <router-link to="/register" @click="closeMobileDrawer" class="btn btn-sm btn-teal text-white flex-fill rounded-pill py-1.5 fs-8 fw-bold">
+          Bắt đầu ngay
+        </router-link>
+      </div>
+
+      <!-- All Features List -->
+      <div class="flex-grow-1 overflow-y-auto no-scrollbar py-1">
+        <div class="fs-8 fw-bold text-muted text-uppercase mb-2">Chức năng học tập</div>
+        <div class="d-flex flex-column gap-1 mb-3">
+          <router-link
+            v-for="item in NAV_CATALOG"
+            :key="item.id"
+            :to="item.to"
+            @click="closeMobileDrawer"
+            class="d-flex align-items-center justify-content-between p-2 rounded-3 text-decoration-none transition-all"
+            :class="authStore.themeMode === 'dark' ? 'text-white' : 'text-dark'"
+            style="background: rgba(125, 125, 125, 0.05);"
+          >
+            <div class="d-flex align-items-center gap-2 fs-7">
+              <i :class="[item.icon, item.iconClass, 'fs-6']"></i>
+              <span class="fw-semibold">{{ item.fullLabel || item.label }}</span>
+            </div>
+            <span v-if="item.badge" class="badge bg-warning text-dark fs-8 rounded-pill py-0.5">{{ item.badge }}</span>
+          </router-link>
+        </div>
+
+        <div class="fs-8 fw-bold text-muted text-uppercase mb-2">Hệ thống & Tài khoản</div>
+        <div class="d-flex flex-column gap-1">
+          <router-link to="/profile" @click="closeMobileDrawer" class="d-flex align-items-center gap-2 p-2 rounded-3 text-decoration-none fs-7 text-dark-emphasis">
+            <i class="bi bi-person-circle text-primary fs-6"></i>
+            <span>Hồ sơ & Cài đặt Giọng đọc</span>
+          </router-link>
+
+          <router-link v-if="authStore.isAdmin || authStore.isStaff" to="/admin" @click="closeMobileDrawer" class="d-flex align-items-center gap-2 p-2 rounded-3 text-decoration-none fs-7 text-danger fw-bold">
+            <i class="bi bi-shield-lock-fill text-danger fs-6"></i>
+            <span>Trang Quản trị Admin</span>
+          </router-link>
+
+          <button @click="authStore.toggleTheme" class="d-flex align-items-center justify-content-between p-2 rounded-3 border-0 bg-transparent text-start w-100 fs-7 text-dark-emphasis">
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi fs-6" :class="authStore.themeMode === 'light' ? 'bi-moon-stars-fill text-warning' : 'bi-sun-fill text-warning'"></i>
+              <span>Giao diện {{ authStore.themeMode === 'light' ? 'Tối' : 'Sáng' }}</span>
+            </div>
+            <span class="badge bg-body-tertiary text-secondary fs-8 rounded-pill">Đổi</span>
+          </button>
+
+          <button v-if="authStore.isAuthenticated" @click="handleDrawerLogout" class="d-flex align-items-center gap-2 p-2 rounded-3 border-0 bg-transparent text-danger text-start w-100 fs-7 mt-1">
+            <i class="bi bi-box-arrow-right text-danger fs-6"></i>
+            <span>Đăng xuất tài khoản</span>
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- Global Login Required Gate Modal -->
     <LoginRequiredModal />
@@ -266,6 +394,19 @@ const dropdownRef = ref(null)
 
 const isMoreMenuOpen = ref(false)
 const moreMenuRef = ref(null)
+
+const isMobileDrawerOpen = ref(false)
+const toggleMobileDrawer = () => {
+  isMobileDrawerOpen.value = !isMobileDrawerOpen.value
+}
+const closeMobileDrawer = () => {
+  isMobileDrawerOpen.value = false
+}
+const handleDrawerLogout = async () => {
+  closeMobileDrawer()
+  await authStore.logout()
+  router.push('/login')
+}
 
 const NAV_CATALOG = [
   { id: 'curriculum', label: 'Lộ trình', fullLabel: 'Lộ trình (25 Chủ đề)', to: '/curriculum', icon: 'bi bi-signpost-split-fill', iconClass: 'icon-curriculum', badge: '25 CHỦ ĐỀ' },
