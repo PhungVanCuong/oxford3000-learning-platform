@@ -16,13 +16,18 @@
           </div>
         </router-link>
 
-        <!-- Toggle Button for Mobile -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#userNavbar" aria-controls="userNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <!-- Toggle Button for Mobile (Bấm mở / đóng Drawer trượt toàn màn hình) -->
+        <button
+          class="navbar-toggler border-0 p-1.5 rounded-3 d-lg-none"
+          type="button"
+          @click="toggleMobileDrawer"
+          aria-label="Toggle navigation"
+        >
           <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- Nav Links -->
-        <div class="collapse navbar-collapse" id="userNavbar">
+        <!-- Nav Links (Desktop Only - Trên điện thoại sử dụng Drawer thông minh) -->
+        <div class="collapse navbar-collapse d-none d-lg-flex" id="userNavbar">
           <!-- UNIFIED 6-SLOT NAVIGATION BAR (Slot 1: Trang chủ, Slots 2-5: Customizable 4 items, Slot 6: Xem thêm) -->
           <ul class="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold fs-7 gap-1.5 gap-lg-2 align-items-center flex-nowrap">
             <!-- Slot 1: Trang chủ (Fixed) -->
@@ -287,16 +292,24 @@
       class="mobile-drawer-content d-md-none p-3 d-flex flex-column"
       :class="authStore.themeMode === 'dark' ? 'bg-dark text-white' : 'bg-white text-dark'"
     >
-      <!-- Drawer Header -->
+      <!-- Drawer Header: Có nút Đóng / Thụt lại menu cực kỳ to rõ -->
       <div class="d-flex justify-content-between align-items-center pb-2.5 border-bottom border-light-subtle mb-3">
         <div class="d-flex align-items-center gap-2">
-          <div class="rounded-3 d-flex align-items-center justify-content-center text-white fw-black shadow-xs" style="width: 32px; height: 32px; background: linear-gradient(135deg, #00b074 0%, #064e40 100%);">
+          <div class="rounded-3 d-flex align-items-center justify-content-center text-white fw-black shadow-xs" style="width: 34px; height: 34px; background: linear-gradient(135deg, #00b074 0%, #064e40 100%);">
             <span class="fs-6">Ox</span>
           </div>
-          <span class="fw-black fs-6 text-teal text-uppercase">OxVocab Menu</span>
+          <div>
+            <div class="fw-black fs-6 text-teal text-uppercase leading-none">OxVocab™</div>
+            <div class="text-muted" style="font-size: 10px;">Menu Học Tập Di Động</div>
+          </div>
         </div>
-        <button @click="closeMobileDrawer" class="btn btn-sm btn-outline-secondary rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; line-height: 1;">
-          <i class="bi bi-x-lg fs-8"></i>
+        <button
+          @click="closeMobileDrawer"
+          class="btn btn-sm btn-outline-danger rounded-pill px-3 py-1 d-flex align-items-center gap-1.5 fw-bold fs-8 shadow-xs"
+          title="Đóng / Thụt lại menu"
+        >
+          <i class="bi bi-x-lg"></i>
+          <span>Thụt lại</span>
         </button>
       </div>
 
@@ -326,28 +339,40 @@
         </router-link>
       </div>
 
-      <!-- All Features List -->
+      <!-- FULL TẤT CẢ CÁC MỤC HỌC TẬP (Liệt kê 100% đầy đủ mọi tính năng, bấm là thụt lại ngay) -->
       <div class="flex-grow-1 overflow-y-auto no-scrollbar py-1">
-        <div class="fs-8 fw-bold text-muted text-uppercase mb-2">Chức năng học tập</div>
-        <div class="d-flex flex-column gap-1 mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+          <span class="fs-8 fw-bold text-muted text-uppercase">Tất cả mục học tập ({{ MOBILE_FULL_NAV.length }})</span>
+          <span class="badge bg-body-tertiary text-secondary fs-9 rounded-pill">Chạm để mở</span>
+        </div>
+
+        <div class="d-flex flex-column gap-1.5 mb-3">
           <router-link
-            v-for="item in NAV_CATALOG"
+            v-for="item in MOBILE_FULL_NAV"
             :key="item.id"
             :to="item.to"
             @click="closeMobileDrawer"
-            class="d-flex align-items-center justify-content-between p-2 rounded-3 text-decoration-none transition-all"
-            :class="authStore.themeMode === 'dark' ? 'text-white' : 'text-dark'"
+            class="d-flex align-items-center justify-content-between p-2 rounded-3 text-decoration-none transition-all mobile-drawer-link"
+            :class="[
+              authStore.themeMode === 'dark' ? 'text-white' : 'text-dark',
+              $route.path === item.to || ($route.path.startsWith(item.to) && item.to !== '/') ? 'active-mobile-link' : ''
+            ]"
             style="background: rgba(125, 125, 125, 0.05);"
           >
-            <div class="d-flex align-items-center gap-2 fs-7">
-              <i :class="[item.icon, item.iconClass, 'fs-6']"></i>
-              <span class="fw-semibold">{{ item.fullLabel || item.label }}</span>
+            <div class="d-flex align-items-center gap-2.5 fs-7 min-w-0">
+              <div class="rounded-2 d-flex align-items-center justify-content-center shrink-0 shadow-2xs" :style="{ width: '32px', height: '32px', backgroundColor: item.color + '22', color: item.color }">
+                <i :class="item.icon" class="fs-6"></i>
+              </div>
+              <div class="min-w-0">
+                <div class="fw-bold fs-7 text-truncate">{{ item.label }}</div>
+                <div class="text-muted fs-9 text-truncate" style="font-size: 11px;">{{ item.desc }}</div>
+              </div>
             </div>
-            <span v-if="item.badge" class="badge bg-warning text-dark fs-8 rounded-pill py-0.5">{{ item.badge }}</span>
+            <span v-if="item.badge" class="badge bg-warning text-dark fs-9 rounded-pill px-2 py-0.5 shrink-0 ms-1">{{ item.badge }}</span>
           </router-link>
         </div>
 
-        <div class="fs-8 fw-bold text-muted text-uppercase mb-2">Hệ thống & Tài khoản</div>
+        <div class="fs-8 fw-bold text-muted text-uppercase mb-2 px-1">Cài đặt & Tài khoản</div>
         <div class="d-flex flex-column gap-1">
           <router-link to="/profile" @click="closeMobileDrawer" class="d-flex align-items-center gap-2 p-2 rounded-3 text-decoration-none fs-7 text-dark-emphasis">
             <i class="bi bi-person-circle text-primary fs-6"></i>
@@ -419,6 +444,21 @@ const NAV_CATALOG = [
   { id: 'tree', label: 'Cây tri thức', fullLabel: 'Vườn Cây Tri Thức', to: '/tree', icon: 'bi bi-tree-fill text-success', iconClass: '' },
   { id: 'stats', label: 'Năng suất', fullLabel: 'Báo Cáo Năng Suất', to: '/stats', icon: 'bi bi-bar-chart-fill text-primary', iconClass: '' },
   { id: 'topics', label: 'Chủ đề', fullLabel: 'Chủ đề 3000 từ', to: '/topics', icon: 'bi bi-grid-1x2-fill text-secondary', iconClass: '' },
+]
+
+// FULL TẤT CẢ 11 MỤC HỌC TẬP CHO GIAO DIỆN DI ĐỘNG (Liệt kê 100% đầy đủ, không ẩn)
+const MOBILE_FULL_NAV = [
+  { id: 'home', label: 'Trang chủ', desc: 'Tổng quan & Lộ trình học thông minh', to: '/', icon: 'bi bi-house-door-fill', color: '#00b074' },
+  { id: 'curriculum', label: 'Lộ trình 25 Chủ đề', desc: '5.000 từ vựng & 10 giai đoạn kiểm tra', to: '/curriculum', icon: 'bi bi-signpost-split-fill', color: '#087F75', badge: '25 CHỦ ĐỀ' },
+  { id: 'daily', label: 'Học theo Ngày (3000 từ)', desc: 'Flashcard 3D & 15 câu trắc nghiệm', to: '/daily', icon: 'bi bi-calendar-check-fill', color: '#0d9488', badge: '3000 TỪ' },
+  { id: 'grammar', label: '12 Thì Ngữ pháp', desc: 'Chuyên đề ngữ pháp, dịch câu & trắc nghiệm', to: '/grammar', icon: 'bi bi-journal-bookmark-fill', color: '#6366f1', badge: '12 THÌ' },
+  { id: 'phrasal_verbs', label: 'Học theo Cụm từ', desc: 'Phrasal Verbs & bài tập phản xạ', to: '/phrasal-verbs', icon: 'bi bi-puzzle-fill', color: '#ec4899' },
+  { id: 'arena', label: 'Đấu trường Quiz & Bảng vàng', desc: 'Thi đấu realtime & BXH liên server', to: '/arena', icon: 'bi bi-trophy-fill', color: '#eab308', badge: 'LIVE' },
+  { id: 'tree', label: 'Vườn Cây Tri Thức', desc: '30 cấp độ tiến hóa & nuôi mầm xanh', to: '/tree', icon: 'bi bi-tree-fill', color: '#16a34a', badge: '30 CẤP' },
+  { id: 'ipa', label: 'Bảng 44 Âm IPA', desc: 'Nguyên âm & phụ âm chuẩn quốc tế', to: '/ipa', icon: 'bi bi-soundwave', color: '#06b6d4' },
+  { id: 'stats', label: 'Báo Cáo Năng Suất', desc: 'Thống kê tần suất & chuỗi ngày Streak', to: '/stats', icon: 'bi bi-bar-chart-fill', color: '#3b82f6' },
+  { id: 'dictionary', label: 'Tra cứu Từ điển Oxford', desc: 'Kho 3.351 từ & giải thích Gemini AI', to: '/dictionary', icon: 'bi bi-search-heart-fill', color: '#14b8a6' },
+  { id: 'tips', label: 'Mẹo học tiếng Anh', desc: 'Chiến thuật ghi nhớ đỉnh cao', to: '/tips', icon: 'bi bi-lightbulb-fill', color: '#f59e0b' },
 ]
 
 const visibleNavItems = computed(() => {

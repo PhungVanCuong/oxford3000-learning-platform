@@ -49,21 +49,21 @@
           </div>
         </div>
 
-        <!-- Mode Switcher: Flashcard vs Table List -->
-        <div class="d-flex gap-2 mt-3 pt-3 border-top">
+        <!-- Mode Switcher: Flashcard vs Table List (Vuốt ngang mượt mà trên mobile) -->
+        <div class="d-flex gap-2 mt-3 pt-3 border-top mobile-scroll-x no-scrollbar">
           <button
             @click="dayStudyMode = 'flashcard'"
-            class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold"
+            class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold shrink-0 text-nowrap"
             :class="dayStudyMode === 'flashcard' ? 'btn-teal' : 'btn-outline-secondary'"
           >
-            <i class="bi bi-card-text me-1"></i> Thẻ Flashcard 3D & Phím tắt
+            <i class="bi bi-card-text me-1"></i> Thẻ Flashcard 3D <span class="d-none d-md-inline">& Phím tắt</span>
           </button>
           <button
             @click="dayStudyMode = 'list'"
-            class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold"
+            class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold shrink-0 text-nowrap"
             :class="dayStudyMode === 'list' ? 'btn-teal' : 'btn-outline-secondary'"
           >
-            <i class="bi bi-list-ul me-1"></i> Danh sách từ vựng chi tiết
+            <i class="bi bi-list-ul me-1"></i> Danh sách từ vựng <span class="d-none d-md-inline">chi tiết</span>
           </button>
         </div>
       </div>

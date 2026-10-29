@@ -1,7 +1,7 @@
 <template>
   <div class="flashcard-player w-100 mx-auto my-3" style="max-width: 920px;">
-    <!-- Helper Tips Banner -->
-    <div class="alert alert-primary bg-primary-subtle border-primary-subtle text-primary-emphasis d-flex align-items-center justify-content-between py-2 px-3 mb-3 rounded-3 shadow-sm fs-7">
+    <!-- Helper Tips Banner (Desktop: phím tắt bàn phím; Mobile: chỉ dẫn chạm màn hình) -->
+    <div class="alert alert-primary bg-primary-subtle border-primary-subtle text-primary-emphasis d-none d-md-flex align-items-center justify-content-between py-2 px-3 mb-3 rounded-3 shadow-sm fs-7">
       <div>
         <i class="bi bi-lightbulb-fill text-warning me-1"></i>
         <strong>Phím tắt:</strong> <code>Space</code>: Lật thẻ | <code>Q / ←</code>: Trước | <code>E / →</code>: Tiếp | <code>A</code>: Nghe | <code>D</code>: Luyện nói | <code>S</code>: Đã nhớ | <code>X</code>: Cần ôn
@@ -11,16 +11,26 @@
       </div>
     </div>
 
+    <!-- Mobile Quick Hint Banner -->
+    <div class="d-flex d-md-none align-items-center justify-content-between py-1.5 px-3 mb-2 rounded-3 bg-primary-subtle text-primary-emphasis fs-8 shadow-2xs">
+      <div class="d-flex align-items-center gap-1.5">
+        <i class="bi bi-hand-index-thumb-fill text-warning"></i>
+        <span><strong>Chạm thẻ</strong> để lật xem nghĩa & bản dịch</span>
+      </div>
+      <div class="badge bg-primary text-white fs-8 px-2 py-0.5 rounded-pill">
+        {{ currentIndex + 1 }} / {{ words.length }}
+      </div>
+    </div>
+
     <!-- 3D Card Box -->
     <div
-      class="perspective-1000 w-100 cursor-pointer select-none mb-3"
-      style="min-height: 430px;"
+      class="perspective-1000 w-100 cursor-pointer select-none mb-3 flashcard-3d-box"
       @click="toggleFlip"
     >
       <div
         class="position-relative w-100 h-100 rounded-4 shadow-lg border-0 transform-style-preserve-3d flashcard-3d-inner"
         :class="{ 'rotate-y-180': isFlipped }"
-        style="min-height: 430px; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);"
+        style="transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);"
       >
         <!-- FRONT SIDE: Dark Forest Teal with Wave Decoration (Matching Roadmap) -->
         <div
@@ -154,8 +164,8 @@
       </div>
     </div>
 
-    <!-- Complete 7 Action Buttons Row with Shortcut Labels (Strict Single Row) -->
-    <div class="d-flex align-items-center justify-content-center gap-1.5 flex-nowrap overflow-x-auto py-1 w-100 flashcard-controls-row">
+    <!-- Complete 7 Action Buttons Row (Vuốt ngang êm ái trên mobile, căn giữa trên PC) -->
+    <div class="d-flex align-items-center justify-content-start justify-content-md-center gap-1.5 flex-nowrap mobile-scroll-x no-scrollbar py-1 w-100 flashcard-controls-row">
       <!-- [← / Q] Prev -->
       <button
         @click="prevCard"
@@ -164,7 +174,7 @@
         title="Lùi thẻ (Phím ← hoặc Q)"
       >
         <i class="bi bi-chevron-left"></i>
-        <span>[Q] Trước</span>
+        <span><span class="d-none d-md-inline">[Q] </span>Trước</span>
       </button>
 
       <!-- [Space] Flip -->
@@ -174,7 +184,7 @@
         title="Lật thẻ (Phím Space)"
       >
         <i class="bi bi-arrow-repeat"></i>
-        <span>[Space] Lật</span>
+        <span><span class="d-none d-md-inline">[Space] </span>Lật thẻ</span>
       </button>
 
       <!-- [A] Listen -->
@@ -184,7 +194,7 @@
         title="Nghe phát âm chuẩn US (Phím A)"
       >
         <i class="bi bi-volume-up-fill"></i>
-        <span>[A] Nghe US</span>
+        <span><span class="d-none d-md-inline">[A] </span>Nghe US</span>
       </button>
 
       <!-- [D] Speak -->
@@ -195,7 +205,7 @@
         title="Luyện nói Micro (Phím D)"
       >
         <i class="bi" :class="speech.isListening.value ? 'bi-record-fill' : 'bi-mic-fill'"></i>
-        <span>[D] {{ speech.isListening.value ? 'Đang nghe...' : 'Luyện nói' }}</span>
+        <span><span class="d-none d-md-inline">[D] </span>{{ speech.isListening.value ? 'Đang nghe...' : 'Luyện nói' }}</span>
       </button>
 
       <!-- [S] Mastered -->
@@ -205,7 +215,7 @@
         title="Đã nhớ từ này (Phím S)"
       >
         <i class="bi bi-check-circle-fill"></i>
-        <span>[S] Đã nhớ</span>
+        <span><span class="d-none d-md-inline">[S] </span>Đã nhớ</span>
       </button>
 
       <!-- [X] Need Review -->
@@ -215,7 +225,7 @@
         title="Cần ôn lại từ này (Phím X)"
       >
         <i class="bi bi-arrow-clockwise"></i>
-        <span>[X] Cần ôn</span>
+        <span><span class="d-none d-md-inline">[X] </span>Cần ôn</span>
       </button>
 
       <!-- [→ / E] Next -->
@@ -225,7 +235,7 @@
         class="btn btn-outline-secondary btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8"
         title="Tiếp thẻ (Phím → hoặc E)"
       >
-        <span>[E] Tiếp</span>
+        <span><span class="d-none d-md-inline">[E] </span>Tiếp</span>
         <i class="bi bi-chevron-right"></i>
       </button>
     </div>

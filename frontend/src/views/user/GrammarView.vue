@@ -68,7 +68,7 @@
     </div>
 
     <!-- Category Filter Tabs -->
-    <div class="d-flex align-items-center gap-2 mb-4 overflow-x-auto pb-1 flex-nowrap">
+    <div class="d-flex align-items-center gap-2 mb-4 overflow-x-auto pb-1 flex-nowrap mobile-scroll-x no-scrollbar">
       <button
         v-for="cat in categories"
         :key="cat.key"

@@ -52,7 +52,7 @@
       </div>
 
       <!-- Mode Tabs (Theo Chủ đề, Bảng chữ cái, Số thứ tự, CEFR, Mới thêm) -->
-      <div class="d-flex align-items-center gap-2 overflow-x-auto pb-2 border-bottom mb-3 flex-nowrap fs-7">
+      <div class="d-flex align-items-center gap-2 overflow-x-auto pb-2 border-bottom mb-3 flex-nowrap fs-7 mobile-scroll-x no-scrollbar">
         <button
           @click="setTab('all')"
           class="btn btn-sm text-nowrap rounded-pill px-3 py-1"

@@ -69,26 +69,26 @@
           <div class="d-flex align-items-center justify-content-between gap-2.5">
             <!-- Left Arrow Button -->
             <button 
-              class="btn btn-sm btn-outline-secondary rounded-pill px-3.5 py-2 fw-bold fs-7 d-flex align-items-center gap-1.5 text-nowrap flex-shrink-0 bg-white shadow-xs"
+              class="btn btn-sm btn-outline-secondary rounded-pill px-2 px-md-3.5 py-1.5 py-md-2 fw-bold fs-8 fs-md-7 d-flex align-items-center gap-1 text-nowrap flex-shrink-0 bg-white shadow-xs"
               :disabled="currentStageNum <= 1"
               @click="switchStage(currentStageNum - 1)"
               title="Chặng trước"
             >
               <i class="bi bi-chevron-left"></i>
-              <span>Chặng trước</span>
+              <span><span class="d-none d-sm-inline">Chặng </span>Trước</span>
             </button>
 
             <!-- 10 Big Stage Pills in a Smooth Horizontally Auto-Centering Track -->
             <div 
               ref="stageScrollTrack"
-              class="d-flex align-items-center gap-2 overflow-x-auto py-2 px-1 flex-grow-1 stage-scroll-track"
+              class="d-flex align-items-center gap-2 overflow-x-auto py-2 px-1 flex-grow-1 stage-scroll-track mobile-scroll-x no-scrollbar"
               style="scroll-behavior: smooth;"
             >
               <button
                 v-for="s in 10"
                 :key="s"
                 :ref="el => { if (el) stageButtons[s] = el }"
-                class="btn btn-sm rounded-pill px-3.5 py-2 fw-bold fs-7 d-flex align-items-center gap-2 text-nowrap transition-all flex-shrink-0"
+                class="btn btn-sm rounded-pill px-3 py-1.5 py-md-2 fw-bold fs-8 fs-md-7 d-flex align-items-center gap-1.5 text-nowrap transition-all flex-shrink-0"
                 :style="s === currentStageNum 
                   ? 'background-color: #008060; color: #ffffff !important; border: 1.5px solid #00664d; box-shadow: 0 4px 12px rgba(0, 128, 96, 0.25);' 
                   : ''"
@@ -102,12 +102,12 @@
                 @click="switchStage(s)"
               >
                 <i v-if="stagesProgress[s]?.is_completed && s !== currentStageNum" class="bi bi-check-circle-fill text-success"></i>
-                <span class="fw-black fs-7">{{ String(s).padStart(2, '0') }}</span>
+                <span class="fw-black fs-8 fs-md-7">{{ String(s).padStart(2, '0') }}</span>
                 <span>Chặng {{ String(s).padStart(2, '0') }}</span>
                 <span 
-                  class="badge rounded-pill px-2 py-0.5" 
+                  class="badge rounded-pill px-1.5 py-0.5" 
                   :class="s === currentStageNum ? 'bg-white text-teal' : 'bg-secondary bg-opacity-10 text-muted'" 
-                  style="font-size: 11px;"
+                  style="font-size: 10px;"
                 >
                   {{ getStageCount(s) }} từ
                 </span>
@@ -116,12 +116,12 @@
 
             <!-- Right Arrow Button -->
             <button 
-              class="btn btn-sm btn-outline-teal rounded-pill px-3.5 py-2 fw-bold fs-7 d-flex align-items-center gap-1.5 text-nowrap flex-shrink-0 shadow-xs"
+              class="btn btn-sm btn-outline-teal rounded-pill px-2 px-md-3.5 py-1.5 py-md-2 fw-bold fs-8 fs-md-7 d-flex align-items-center gap-1 text-nowrap flex-shrink-0 shadow-xs"
               :disabled="currentStageNum >= 10"
               @click="switchStage(currentStageNum + 1)"
               title="Chặng tiếp theo"
             >
-              <span>Chặng sau</span>
+              <span><span class="d-none d-sm-inline">Chặng </span>Sau</span>
               <i class="bi bi-chevron-right"></i>
             </button>
           </div>

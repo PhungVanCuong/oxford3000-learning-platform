@@ -558,21 +558,118 @@ hr {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   z-index: 1050;
   transition: opacity 0.25s ease;
+}
+
+@keyframes slideDrawerIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 .mobile-drawer-content {
   position: fixed;
   top: 0;
   right: 0;
-  width: 85vw;
-  max-width: 320px;
+  width: 86vw;
+  max-width: 340px;
   height: 100vh;
   z-index: 1055;
   overflow-y: auto;
-  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.25);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: -6px 0 28px rgba(0, 0, 0, 0.35);
+  animation: slideDrawerIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.mobile-drawer-link:hover,
+.mobile-drawer-link:active {
+  background-color: rgba(8, 127, 117, 0.12) !important;
+  transform: translateX(-2px);
+}
+
+.active-mobile-link {
+  background-color: rgba(8, 127, 117, 0.15) !important;
+  border-left: 3px solid #087F75 !important;
+}
+
+[data-bs-theme="dark"] .active-mobile-link {
+  background-color: rgba(94, 234, 212, 0.15) !important;
+  border-left: 3px solid #5eead4 !important;
+}
+
+/* ============================================================== */
+/* TOÀN BỘ GIAO DIỆN DI ĐỘNG CHO TẤT CẢ CÁC MỤC & CHỦ ĐỀ CHỨC NĂNG */
+/* ============================================================== */
+@media (max-width: 767.98px) {
+  /* 1. Flashcard Player 3D thích ứng điện thoại */
+  .flashcard-3d-box,
+  .flashcard-3d-box .flashcard-3d-inner {
+    min-height: 350px !important;
+  }
+
+  .flashcard-3d-inner .display-5,
+  .flashcard-3d-inner .display-4 {
+    font-size: 1.65rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .flashcard-3d-inner .p-md-5 {
+    padding: 16px 16px !important;
+  }
+
+  /* 2. Modal Dialogs trên mobile không bị tràn màn hình */
+  .modal-dialog {
+    margin: 10px !important;
+    max-width: calc(100vw - 20px) !important;
+  }
+
+  .modal-content {
+    border-radius: 16px !important;
+  }
+
+  /* 3. Bài trắc nghiệm (Quiz 15 câu, Kiểm tra chặng, Đấu trường) */
+  .quiz-option-btn,
+  .choice-btn,
+  .answer-option {
+    padding: 10px 14px !important;
+    font-size: 0.85rem !important;
+    min-height: 46px !important;
+    text-align: left !important;
+    border-radius: 10px !important;
+    touch-action: manipulation;
+  }
+
+  /* 4. Thẻ ngày học (Daily Study 200 ngày) */
+  .day-card {
+    padding: 10px 8px !important;
+    border-radius: 12px !important;
+  }
+
+  /* 5. Thẻ chủ đề (Curriculum Roadmap & Grammar) */
+  .curriculum-stage-pills {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    padding-bottom: 6px !important;
+    gap: 6px !important;
+  }
+
+  /* 6. Bảng IPA 44 âm */
+  .ipa-card {
+    padding: 8px 6px !important;
+    font-size: 0.8rem !important;
+    border-radius: 8px !important;
+  }
+
+  /* 7. Lưới thống kê & Điểm XP */
+  .stat-card-mobile {
+    padding: 10px 12px !important;
+    border-radius: 12px !important;
+  }
 }
