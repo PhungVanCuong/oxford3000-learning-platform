@@ -113,4 +113,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(QuizHistory::class)->orderBy('created_at', 'desc');
     }
+
+    public function quizRoomParticipants(): HasMany
+    {
+        return $this->hasMany(QuizRoomParticipant::class, 'user_id');
+    }
 }

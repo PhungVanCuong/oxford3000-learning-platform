@@ -12,16 +12,16 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            UserSeeder::class,
             TopicSeeder::class,
             Oxford3000Seeder::class,
             PhrasalVerbSeeder::class,
             CurriculumRoadmapSeeder::class,
             GrammarPdfFullSeeder::class,
             UpdateGrammarExercisesSeeder::class,
-            ArenaSampleSeeder::class,
             IpaSeeder::class,
             LearningTipSeeder::class,
+            UserSeeder::class,
+            ArenaSampleSeeder::class,
         ]);
     }
 }

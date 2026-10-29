@@ -9,6 +9,10 @@ class LearningTipSeeder extends Seeder
 {
     public function run(): void
     {
+        \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
+        LearningTip::truncate();
+        \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
+
         $tips = [
             [
                 'title' => 'Phương pháp Lặp lại ngắt quãng (Spaced Repetition System - SRS)',

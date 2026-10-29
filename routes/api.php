@@ -49,6 +49,7 @@ Route::post('/grammars/{id}/quiz', [GrammarController::class, 'submitQuiz']);
 Route::get('/grammars/quiz/{id}', [GrammarController::class, 'getQuestions']);
 
 // 4.1 Classroom Quiz Arena (Đấu trường Trắc nghiệm Trực tiếp)
+Route::get('/arena/leaderboard', [ArenaController::class, 'leaderboard']);
 Route::get('/arena/rooms', [ArenaController::class, 'index']);
 Route::post('/arena/rooms', [ArenaController::class, 'store']);
 Route::post('/arena/rooms/join', [ArenaController::class, 'join']);

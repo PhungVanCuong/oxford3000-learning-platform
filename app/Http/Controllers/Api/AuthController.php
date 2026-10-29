@@ -125,7 +125,7 @@ class AuthController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => $sent
+            'message' => $sent 
                 ? 'Mã OTP xác thực đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư đến (hoặc thư rác).'
                 : 'Mã xác thực OTP đã được hệ thống gửi tới địa chỉ email của bạn.',
         ]);
@@ -232,8 +232,8 @@ class AuthController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => $sent
-                ? 'Mã OTP khôi phục mật khẩu đã được gửi đến email của bạn.'
+            'message' => $sent 
+                ? 'Mã OTP khôi phục mật khẩu đã được gửi đến email của bạn.' 
                 : 'Mã xác thực khôi phục mật khẩu đã được tạo và gửi đến email của bạn.',
         ]);
     }
