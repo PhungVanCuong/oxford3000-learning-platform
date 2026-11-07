@@ -316,8 +316,8 @@
               </div>
             </div>
 
-            <!-- Lesson Navigation Pills Carousel (Vuốt ngang mượt mà) -->
-            <div class="d-flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+            <!-- Lesson Navigation Pills Carousel (Nhấn giữ chuột trái kéo qua & vuốt ngang mượt mà) -->
+            <div v-drag-scroll class="d-flex gap-1.5 overflow-x-auto pb-1 no-scrollbar drag-scroll-x">
               <button
                 v-for="l in currentLevel?.lessons || []"
                 :key="l.lesson_number"
@@ -333,8 +333,8 @@
               </button>
             </div>
 
-            <!-- Learning Mode Selector -->
-            <div class="d-flex gap-2 mt-3 pt-3 border-top overflow-x-auto pb-1 no-scrollbar">
+            <!-- Learning Mode Selector (Nhấn giữ chuột trái kéo qua & ẩn thanh kéo) -->
+            <div v-drag-scroll class="d-flex gap-2 mt-3 pt-3 border-top overflow-x-auto pb-1 no-scrollbar drag-scroll-x">
               <button
                 @click="activeMode = 'flashcard'"
                 class="btn btn-sm rounded-pill px-3 py-1.5 fw-bold text-nowrap border"
@@ -671,22 +671,23 @@
       </div>
     </div>
 
-    <!-- ================= MOBILE OFFCANVAS DRAWER: CHỌN BẬC & BÀI HỌC ================= -->
+    <!-- ================= MOBILE OFFCANVAS DRAWER: CHỌN BẬC & BÀI HỌC (CHỈ HIỆN TRÊN MOBILE, KHÔNG BAO GIỜ HIỆN TRÊN DESKTOP) ================= -->
     <div
       v-if="isMobileDrawerOpen"
-      class="mobile-drawer-overlay"
+      class="mobile-drawer-overlay d-lg-none"
       @click="isMobileDrawerOpen = false"
     ></div>
 
     <aside
-      class="mobile-drawer-content d-flex flex-column p-3 shadow-lg"
-      :class="{ 'show': isMobileDrawerOpen }"
+      v-if="isMobileDrawerOpen"
+      class="cefr-mobile-drawer d-lg-none d-flex flex-column p-3 shadow-lg no-scrollbar"
+      :class="authStore.themeMode === 'dark' ? 'bg-dark text-white' : 'bg-white text-dark'"
       style="max-width: 320px;"
     >
       <div class="d-flex align-items-center justify-content-between pb-2.5 mb-2.5 border-bottom">
         <div>
           <span class="fs-8 fw-bold text-uppercase text-muted">TỪ VỰNG CƠ BẢN</span>
-          <h6 class="fw-black mb-0 text-dark">CHỌN PHẦN HỌC CEFR</h6>
+          <h6 class="fw-black mb-0 text-teal">CHỌN PHẦN HỌC CEFR</h6>
         </div>
         <button
           @click="isMobileDrawerOpen = false"
@@ -698,13 +699,13 @@
       </div>
 
       <!-- Level Selector on Mobile Drawer -->
-      <div class="d-flex flex-column gap-2 overflow-y-auto flex-grow-1 pr-1">
+      <div class="d-flex flex-column gap-2 overflow-y-auto flex-grow-1 pr-1 no-scrollbar">
         <div
           v-for="lvl in manifest.levels"
           :key="lvl.id"
           @click="selectLevel(lvl.id)"
           class="p-2.5 rounded-3 border transition-all cursor-pointer"
-          :class="selectedLevelId === lvl.id ? 'active-level-card' : 'bg-white hover-shadow'"
+          :class="selectedLevelId === lvl.id ? 'active-level-card' : (authStore.themeMode === 'dark' ? 'bg-secondary-subtle' : 'bg-white hover-shadow')"
         >
           <div class="d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-2 min-w-0">
@@ -715,7 +716,7 @@
                 {{ lvl.code }}
               </div>
               <div class="text-truncate">
-                <div class="fw-bold fs-7 text-dark text-truncate">{{ lvl.title }}</div>
+                <div class="fw-bold fs-7 text-truncate" :class="authStore.themeMode === 'dark' ? 'text-white' : 'text-dark'">{{ lvl.title }}</div>
                 <div class="text-muted fs-8">{{ lvl.total_lessons }} bài • {{ lvl.total_words }} từ</div>
               </div>
             </div>

@@ -76,8 +76,8 @@
       </div>
     </div>
 
-    <!-- Category Filter Tabs -->
-    <div class="d-flex align-items-center gap-2 mb-4 overflow-x-auto pb-1 flex-nowrap mobile-scroll-x no-scrollbar">
+    <!-- Category Filter Tabs (Kéo chuột trái lướt ngang mượt mà) -->
+    <div v-drag-scroll class="d-flex align-items-center gap-2 mb-4 overflow-x-auto pb-1 flex-nowrap mobile-scroll-x no-scrollbar drag-scroll-x">
       <button
         v-for="cat in categories"
         :key="cat.key"

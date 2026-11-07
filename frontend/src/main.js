@@ -5,6 +5,7 @@ import router from './router'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import './style.css'
 import App from './App.vue'
+import { vDragScroll, initGlobalDragScroll } from './directives/vDragScroll'
 
 // Tự động nhận diện URL Backend thông minh đa môi trường (Localhost & Domain deloydz.io.vn):
 function resolveApiBaseUrl() {
@@ -44,5 +45,9 @@ const pinia = createPinia()
 
 app.use(pinia)
 app.use(router)
+app.directive('drag-scroll', vDragScroll)
 
 app.mount('#app')
+
+// Kích hoạt tính năng kéo lướt ngang bằng chuột trái toàn hệ thống
+initGlobalDragScroll()

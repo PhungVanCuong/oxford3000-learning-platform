@@ -19,8 +19,8 @@
         </button>
       </div>
 
-      <!-- Mode Switcher -->
-      <div class="d-flex gap-2 mt-4 pt-3 border-top">
+      <!-- Mode Switcher (Kéo chuột trái lướt ngang mượt mà) -->
+      <div v-drag-scroll class="d-flex gap-2 mt-4 pt-3 border-top overflow-x-auto pb-1 no-scrollbar drag-scroll-x">
         <button
           @click="activeTab = 'vocab'"
           class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold"

@@ -56,7 +56,7 @@
 
     <!-- 2. Main Tab Navigation (Vuốt ngang mượt mà trên điện thoại, hàng ngang đầy đủ trên desktop) -->
     <div class="card p-2 rounded-4 shadow-sm border bg-card-custom mb-3 mb-md-4">
-      <ul class="nav nav-pills gap-2 flex-nowrap overflow-x-auto pb-1 no-scrollbar w-100">
+      <ul v-drag-scroll class="nav nav-pills gap-2 flex-nowrap overflow-x-auto pb-1 no-scrollbar drag-scroll-x w-100">
         <!-- Tab 1: 1000 Cụm từ thông dụng -->
         <li class="nav-item flex-shrink-0">
           <button
@@ -146,8 +146,8 @@
           </div>
         </div>
 
-        <!-- Part Pills: Vuốt ngang mượt mà -->
-        <div class="d-flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+        <!-- Part Pills: Nhấn giữ chuột trái kéo qua & vuốt ngang mượt mà (không hiện thanh cuộn thô) -->
+        <div v-drag-scroll class="d-flex gap-1.5 overflow-x-auto pb-1 no-scrollbar drag-scroll-x">
           <button
             @click="selectPart(null)"
             class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold text-nowrap border"
@@ -368,7 +368,7 @@
           </span>
         </div>
 
-        <div class="d-flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+        <div v-drag-scroll class="d-flex gap-1.5 overflow-x-auto pb-1 no-scrollbar drag-scroll-x">
           <button
             @click="selectedLetter = null; fetchPhrasalVerbs100()"
             class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold text-nowrap border"

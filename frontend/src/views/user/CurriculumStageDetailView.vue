@@ -79,10 +79,11 @@
               <span><span class="d-none d-sm-inline">Chặng </span>Trước</span>
             </button>
 
-            <!-- 10 Big Stage Pills in a Smooth Horizontally Auto-Centering Track -->
+            <!-- 10 Big Stage Pills in a Smooth Horizontally Auto-Centering Track (Kéo chuột trái lướt ngang) -->
             <div 
               ref="stageScrollTrack"
-              class="d-flex align-items-center gap-2 overflow-x-auto py-2 px-1 flex-grow-1 stage-scroll-track mobile-scroll-x no-scrollbar"
+              v-drag-scroll
+              class="d-flex align-items-center gap-2 overflow-x-auto py-2 px-1 flex-grow-1 stage-scroll-track mobile-scroll-x no-scrollbar drag-scroll-x"
               style="scroll-behavior: smooth;"
             >
               <button

@@ -882,3 +882,90 @@ html.high-contrast-mode .btn-teal {
   border-color: #00ff9d !important;
   font-weight: 800 !important;
 }
+
+/* ========================================================
+   UNIVERSAL DRAG-TO-SCROLL & SCROLLBAR ELIMINATION
+   Xóa bỏ 100% các thanh kéo chiếm diện tích & cho phép nhấn giữ chuột trái kéo qua
+   ======================================================== */
+
+/* Xóa triệt để tất cả thanh cuộn ngang (horizontal scrollbars) trên toàn website */
+*::-webkit-scrollbar:horizontal {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.drag-scroll-x,
+.mobile-scroll-x,
+.no-scrollbar,
+.overflow-x-auto,
+[class*="overflow-x"] {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.drag-scroll-x::-webkit-scrollbar,
+.mobile-scroll-x::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar,
+.overflow-x-auto::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Thanh cuộn dọc siêu mảnh, tinh tế, không thô trắng */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 0px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.28);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+.drag-scroll-x,
+.drag-scroll-active {
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.drag-scroll-active:active {
+  cursor: grabbing !important;
+}
+
+/* CEFR Mobile Specific Drawer - Chỉ hiện trên Mobile khi bấm nút */
+.cefr-mobile-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 86vw;
+  max-width: 320px;
+  height: 100vh;
+  z-index: 1070;
+  overflow-y: auto;
+  box-shadow: 6px 0 28px rgba(0, 0, 0, 0.45);
+  animation: slideDrawerFromLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.cefr-mobile-drawer::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+}
+
+@keyframes slideDrawerFromLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}

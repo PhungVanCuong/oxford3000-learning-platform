@@ -51,8 +51,8 @@
         </div>
       </div>
 
-      <!-- Mode Tabs (Theo Chủ đề, Bảng chữ cái, Số thứ tự, CEFR, Mới thêm) -->
-      <div class="d-flex align-items-center gap-2 overflow-x-auto pb-2 border-bottom mb-3 flex-nowrap fs-7 mobile-scroll-x no-scrollbar">
+      <!-- Mode Tabs (Theo Chủ đề, Bảng chữ cái, Số thứ tự, CEFR, Mới thêm) - Kéo chuột trái lướt ngang -->
+      <div v-drag-scroll class="d-flex align-items-center gap-2 overflow-x-auto pb-2 border-bottom mb-3 flex-nowrap fs-7 mobile-scroll-x no-scrollbar drag-scroll-x">
         <button
           @click="setTab('all')"
           class="btn btn-sm text-nowrap rounded-pill px-3 py-1"
@@ -104,7 +104,7 @@
 
       <!-- Sub-filters based on activeTab -->
       <!-- Sub: Alphabet A-Z bar -->
-      <div v-if="activeTab === 'alphabet'" class="d-flex align-items-center gap-1 overflow-x-auto pb-1 flex-nowrap">
+      <div v-if="activeTab === 'alphabet'" v-drag-scroll class="d-flex align-items-center gap-1 overflow-x-auto pb-1 flex-nowrap no-scrollbar drag-scroll-x">
         <button
           @click="selectLetter('')"
           class="btn btn-sm px-2 py-0.5 rounded-2 fs-8"
@@ -136,7 +136,7 @@
       </div>
 
       <!-- Sub: Index Range filter -->
-      <div v-if="activeTab === 'index'" class="d-flex gap-1 overflow-x-auto pb-1 flex-nowrap">
+      <div v-if="activeTab === 'index'" v-drag-scroll class="d-flex gap-1 overflow-x-auto pb-1 flex-nowrap no-scrollbar drag-scroll-x">
         <button
           v-for="range in indexRanges"
           :key="range.value"
