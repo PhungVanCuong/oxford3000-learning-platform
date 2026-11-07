@@ -20,6 +20,8 @@ import KnowledgeTreeView from '@/views/user/KnowledgeTreeView.vue'
 import ActivityStatsView from '@/views/user/ActivityStatsView.vue'
 import ArenaView from '@/views/user/ArenaView.vue'
 import ArenaRoomView from '@/views/user/ArenaRoomView.vue'
+import CefrVocabularyView from '@/views/user/CefrVocabularyView.vue'
+import VocabularyNotebookView from '@/views/user/VocabularyNotebookView.vue'
 
 // Admin Views
 import AdminDashboardView from '@/views/admin/AdminDashboardView.vue'
@@ -57,6 +59,9 @@ const routes = [
       { path: 'stats', name: 'activity-stats', component: ActivityStatsView },
       { path: 'arena', name: 'arena', component: ArenaView },
       { path: 'arena/:idOrCode', name: 'arena-room', component: ArenaRoomView },
+      { path: 'cefr', name: 'cefr-vocabulary', component: CefrVocabularyView },
+      { path: 'cefr/:levelId/lesson/:lessonNum', name: 'cefr-lesson-detail', component: CefrVocabularyView },
+      { path: 'notebook', name: 'notebook', component: VocabularyNotebookView },
       { path: 'profile', name: 'profile', component: ProfileView },
     ],
   },

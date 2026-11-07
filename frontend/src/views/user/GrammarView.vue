@@ -17,10 +17,19 @@
         </p>
       </div>
 
-      <div class="d-flex align-items-center gap-2">
-        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fs-7 fw-bold shadow-2xs">
-          <i class="bi bi-unlock-fill me-1"></i> Mở khóa 100% tự do chọn bài
-        </span>
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <!-- Segmented Toggle: Ngữ pháp | Từ vựng chủ đề | Từ vựng CEFR -->
+        <div class="btn-group p-1 rounded-pill border bg-white shadow-xs">
+          <button class="btn btn-sm rounded-pill px-3.5 py-2 fs-7 fw-bold text-white shadow-xs" style="background-color: #032b24;">
+            Ngữ pháp
+          </button>
+          <router-link to="/curriculum" class="btn btn-sm rounded-pill px-3.5 py-2 fs-7 fw-bold text-dark text-decoration-none">
+            Từ vựng chủ đề
+          </router-link>
+          <router-link to="/cefr" class="btn btn-sm rounded-pill px-3.5 py-2 fs-7 fw-bold text-dark text-decoration-none">
+            Từ vựng CEFR
+          </router-link>
+        </div>
       </div>
     </div>
 

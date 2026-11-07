@@ -642,13 +642,24 @@ hr {
 }
 
 /* ============================================================== */
+/* FLASHCARD 3D CHUẨN XỊN (CHỐNG SỤP CHIỀU CAO TRÊN PC & MOBILE) */
+/* ============================================================== */
+.flashcard-3d-box {
+  min-height: 440px;
+  position: relative;
+}
+.flashcard-3d-box .flashcard-3d-inner {
+  min-height: 440px;
+}
+
+/* ============================================================== */
 /* TOÀN BỘ GIAO DIỆN DI ĐỘNG CHO TẤT CẢ CÁC MỤC & CHỦ ĐỀ CHỨC NĂNG */
 /* ============================================================== */
 @media (max-width: 767.98px) {
   /* 1. Flashcard Player 3D thích ứng điện thoại */
   .flashcard-3d-box,
   .flashcard-3d-box .flashcard-3d-inner {
-    min-height: 350px !important;
+    min-height: 380px !important;
   }
 
   .flashcard-3d-inner .display-5,
@@ -830,4 +841,44 @@ hr {
     max-height: 75vh !important;
     overflow-y: auto !important;
   }
+}
+
+/* ========================================================
+   ACCESSIBILITY (A11Y) & INTERNATIONALIZATION (I18N) STYLES
+   ======================================================== */
+html.font-size-sm {
+  font-size: 14px !important;
+}
+
+html.font-size-md {
+  font-size: 16px !important;
+}
+
+html.font-size-lg {
+  font-size: 18px !important;
+}
+
+html.high-contrast-mode body {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+html.high-contrast-mode .card,
+html.high-contrast-mode .modal-content,
+html.high-contrast-mode .dropdown-menu {
+  background-color: #0a0a0a !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+html.high-contrast-mode .text-muted,
+html.high-contrast-mode .text-secondary {
+  color: #d1d5db !important;
+}
+
+html.high-contrast-mode .btn-teal {
+  background-color: #00ff9d !important;
+  color: #000000 !important;
+  border-color: #00ff9d !important;
+  font-weight: 800 !important;
 }

@@ -26,14 +26,17 @@
               </p>
             </div>
 
-            <!-- Toggle: Ngữ pháp | Từ vựng -->
+            <!-- Toggle: Ngữ pháp | Từ vựng chủ đề | Từ vựng CEFR (Ảnh người dùng yêu cầu) -->
             <div class="btn-group p-1 rounded-pill border bg-white shadow-xs">
-              <router-link to="/grammar" class="btn btn-sm rounded-pill px-4 py-2 fs-7 fw-bold text-dark">
+              <router-link to="/grammar" class="btn btn-sm rounded-pill px-3.5 py-2 fs-7 fw-bold text-dark text-decoration-none">
                 Ngữ pháp
               </router-link>
-              <button class="btn btn-sm rounded-pill px-4 py-2 fs-7 fw-bold text-white shadow-xs" style="background-color: #032b24;">
-                Từ vựng
+              <button class="btn btn-sm rounded-pill px-3.5 py-2 fs-7 fw-bold text-white shadow-xs" style="background-color: #032b24;">
+                Từ vựng chủ đề
               </button>
+              <router-link to="/cefr" class="btn btn-sm rounded-pill px-3.5 py-2 fs-7 fw-bold text-dark text-decoration-none">
+                Từ vựng CEFR
+              </router-link>
             </div>
           </div>
         </div>
