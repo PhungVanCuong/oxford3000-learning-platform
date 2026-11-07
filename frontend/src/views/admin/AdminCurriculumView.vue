@@ -258,28 +258,15 @@
           </table>
         </div>
 
-        <!-- Pagination -->
-        <div v-if="termsPagination.total > termsPagination.per_page" class="card-footer bg-white p-3 d-flex justify-content-between align-items-center">
-          <span class="fs-8 text-muted">
-            Hiển thị {{ termsPagination.from }} - {{ termsPagination.to }} trong tổng {{ termsPagination.total }} từ
-          </span>
-          <div class="btn-group">
-            <button 
-              class="btn btn-sm btn-outline-secondary"
-              :disabled="termsPagination.current_page <= 1"
-              @click="fetchTerms(termsPagination.current_page - 1)"
-            >
-              Trước
-            </button>
-            <button 
-              class="btn btn-sm btn-outline-secondary"
-              :disabled="termsPagination.current_page >= termsPagination.last_page"
-              @click="fetchTerms(termsPagination.current_page + 1)"
-            >
-              Sau
-            </button>
-          </div>
-        </div>
+        <!-- Smart 50-Item Pagination -->
+        <SmartPagination
+          v-if="termsPagination.total > 0"
+          v-model:currentPage="termsPagination.current_page"
+          v-model:pageSize="perPage"
+          :totalItems="termsPagination.total || 0"
+          :pageSizeOptions="[25, 50, 100, 200]"
+          @change="fetchTerms"
+        />
       </div>
     </div>
 
@@ -397,6 +384,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import SmartPagination from '@/components/SmartPagination.vue'
 
 const topics = ref([])
 const loadingTopics = ref(true)
@@ -406,7 +394,7 @@ const terms = ref([])
 const loadingTerms = ref(false)
 const termSearch = ref('')
 const selectedStageFilter = ref('')
-const perPage = ref(200)
+const perPage = ref(50)
 const termsPagination = ref({})
 
 // Modal States

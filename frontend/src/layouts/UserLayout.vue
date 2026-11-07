@@ -80,20 +80,31 @@
             </li>
           </ul>
 
-          <!-- Right Side: Notebook + Arena Icon + A11y & Accent + Theme toggle + Auth state -->
-          <div class="d-flex align-items-center gap-2 gap-lg-2.5 mt-3 mt-lg-0 flex-nowrap">
-            <!-- Sổ tay từ vựng nhanh -->
+          <!-- Right Side: Review Deck + History + Arena Icon + Display Filter Settings + Theme toggle + Auth state -->
+          <div class="d-flex align-items-center gap-1.5 gap-lg-2 mt-3 mt-lg-0 flex-nowrap">
+            <!-- Bộ thẻ ôn tập nhanh -->
             <router-link
-              to="/notebook"
+              to="/review"
               class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center shadow-sm position-relative text-decoration-none"
               style="width: 36px; height: 36px;"
               :class="authStore.themeMode === 'dark' ? 'border-secondary' : 'border-light-subtle'"
-              title="Sổ tay từ vựng & Flashcard cá nhân"
+              title="Bộ thẻ ôn tập (Spaced Repetition)"
             >
-              <i class="bi bi-bookmark-star-fill text-warning fs-7"></i>
+              <i class="bi bi-clock-history text-success fs-7"></i>
             </router-link>
 
-            <!-- Arena Circular Icon Button (Left of Theme Toggle) -->
+            <!-- Lịch sử học & bài tập đã làm -->
+            <router-link
+              to="/history"
+              class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center shadow-sm position-relative text-decoration-none"
+              style="width: 36px; height: 36px;"
+              :class="authStore.themeMode === 'dark' ? 'border-secondary' : 'border-light-subtle'"
+              title="Lịch sử bài làm & ôn câu sai"
+            >
+              <i class="bi bi-journal-check text-info fs-7"></i>
+            </router-link>
+
+            <!-- Arena Circular Icon Button -->
             <router-link
               to="/arena"
               class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center shadow-sm position-relative text-decoration-none"
@@ -107,53 +118,125 @@
               </span>
             </router-link>
 
-            <!-- A11y & Accent Dropdown (Cỡ chữ, Tương phản, Giọng đọc US/UK) -->
+            <!-- BỘ LỌC HIỂN THỊ & CÀI ĐẶT CHUẨN QUỐC TẾ (Độ sáng, Độ tương phản, Độ ấm, Độ xám) -->
             <div class="position-relative" ref="a11yMenuRef">
               <button
                 @click="toggleA11yMenu"
                 class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center shadow-sm"
                 style="width: 36px; height: 36px;"
                 :class="authStore.themeMode === 'dark' ? 'border-secondary' : 'border-light-subtle'"
-                title="Hỗ trợ tiếp cận & Giọng đọc chuẩn quốc tế"
+                title="Bộ lọc màn hình & Cài đặt chuẩn quốc tế"
               >
-                <i class="bi bi-universal-access-circle fs-6 text-teal"></i>
+                <i class="bi bi-sliders fs-6 text-teal"></i>
               </button>
 
               <div
                 v-if="isA11yOpen"
                 class="dropdown-menu show position-absolute end-0 mt-2 shadow-lg border rounded-4 p-3 z-3"
                 :class="authStore.themeMode === 'dark' ? 'dropdown-menu-dark bg-dark border-secondary' : 'bg-white border-light-subtle'"
-                style="min-width: 270px;"
+                style="min-width: 300px;"
               >
                 <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-2.5">
-                  <span class="fw-bold fs-8 text-teal text-uppercase">Cài đặt chuẩn Quốc tế</span>
+                  <div class="d-flex align-items-center gap-1.5">
+                    <i class="bi bi-sliders text-teal fs-6"></i>
+                    <span class="fw-bold fs-8 text-teal text-uppercase">Bộ Lọc & Chuẩn Quốc Tế</span>
+                  </div>
                   <button @click="isA11yOpen = false" class="btn-close fs-9"></button>
                 </div>
 
-                <!-- Cỡ chữ -->
-                <div class="mb-2.5">
+                <!-- Cỡ chữ hiển thị -->
+                <div class="mb-3">
                   <label class="fs-9 fw-bold text-muted text-uppercase d-block mb-1">Cỡ chữ hiển thị</label>
                   <div class="btn-group btn-group-sm w-100 p-0.5 rounded-pill bg-body-tertiary border">
-                    <button @click="setFontSize('sm')" class="btn btn-sm rounded-pill fs-9 py-1" :class="currentFontSize === 'sm' ? 'btn-teal text-white' : 'btn-light'">A- Nhỏ</button>
-                    <button @click="setFontSize('md')" class="btn btn-sm rounded-pill fs-9 py-1" :class="currentFontSize === 'md' ? 'btn-teal text-white' : 'btn-light'">Chuẩn</button>
-                    <button @click="setFontSize('lg')" class="btn btn-sm rounded-pill fs-9 py-1" :class="currentFontSize === 'lg' ? 'btn-teal text-white' : 'btn-light'">A+ Lớn</button>
+                    <button @click="setFontSize('sm')" class="btn btn-sm rounded-pill fs-9 py-1 fw-bold" :class="currentFontSize === 'sm' ? 'btn-teal text-white' : 'btn-light'">A- Nhỏ</button>
+                    <button @click="setFontSize('md')" class="btn btn-sm rounded-pill fs-9 py-1 fw-bold" :class="currentFontSize === 'md' ? 'btn-teal text-white' : 'btn-light'">Chuẩn</button>
+                    <button @click="setFontSize('lg')" class="btn btn-sm rounded-pill fs-9 py-1 fw-bold" :class="currentFontSize === 'lg' ? 'btn-teal text-white' : 'btn-light'">A+ Lớn</button>
                   </div>
                 </div>
 
-                <!-- Giọng đọc US / UK -->
-                <div class="mb-2.5">
-                  <label class="fs-9 fw-bold text-muted text-uppercase d-block mb-1">Giọng đọc phát âm</label>
+                <!-- Giọng đọc phát âm -->
+                <div class="mb-3">
+                  <label class="fs-9 fw-bold text-muted text-uppercase d-block mb-1">Giọng đọc tiếng Anh</label>
                   <div class="btn-group btn-group-sm w-100 p-0.5 rounded-pill bg-body-tertiary border">
-                    <button @click="setVoiceAccent('US')" class="btn btn-sm rounded-pill fs-9 py-1" :class="currentAccent === 'US' ? 'btn-teal text-white' : 'btn-light'">🇺🇸 Anh - Mỹ (US)</button>
-                    <button @click="setVoiceAccent('UK')" class="btn btn-sm rounded-pill fs-9 py-1" :class="currentAccent === 'UK' ? 'btn-teal text-white' : 'btn-light'">🇬🇧 Anh - Anh (UK)</button>
+                    <button @click="setVoiceAccent('US')" class="btn btn-sm rounded-pill fs-9 py-1 fw-bold" :class="currentAccent === 'US' ? 'btn-teal text-white' : 'btn-light'">🇺🇸 US (Nữ - Chuẩn)</button>
+                    <button @click="setVoiceAccent('UK')" class="btn btn-sm rounded-pill fs-9 py-1 fw-bold" :class="currentAccent === 'UK' ? 'btn-teal text-white' : 'btn-light'">🇬🇧 UK (Anh - Anh)</button>
                   </div>
                 </div>
 
-                <!-- Tương phản cao High-Contrast -->
-                <div class="d-flex justify-content-between align-items-center pt-2 border-top border-light-subtle">
-                  <span class="fs-8 fw-semibold">Tương phản cao (A11y)</span>
-                  <div class="form-check form-switch mb-0">
-                    <input class="form-check-input" type="checkbox" role="switch" v-model="isHighContrast" @change="toggleHighContrast">
+                <div class="border-top pt-2.5 mb-2">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fs-9 fw-bold text-muted text-uppercase">Bộ lọc màn hình chuyên sâu</span>
+                    <button @click="resetDisplayFilters" class="btn btn-link btn-sm p-0 fs-9 text-teal text-decoration-none fw-bold">
+                      <i class="bi bi-arrow-counterclockwise"></i> Đặt lại
+                    </button>
+                  </div>
+
+                  <!-- 1. Độ sáng (Brightness: 70 - 130%) -->
+                  <div class="mb-2">
+                    <div class="d-flex justify-content-between align-items-center fs-9 mb-0.5">
+                      <span class="fw-semibold">☀️ Độ sáng</span>
+                      <span class="badge bg-secondary-subtle text-secondary px-1.5 py-0.5 rounded-pill">{{ filterBrightness }}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="70"
+                      max="130"
+                      step="2"
+                      v-model.number="filterBrightness"
+                      @input="applyDisplayFilters"
+                      class="form-range form-range-sm"
+                    />
+                  </div>
+
+                  <!-- 2. Độ tương phản (Contrast: 70 - 150%) -->
+                  <div class="mb-2">
+                    <div class="d-flex justify-content-between align-items-center fs-9 mb-0.5">
+                      <span class="fw-semibold">🌓 Độ tương phản</span>
+                      <span class="badge bg-secondary-subtle text-secondary px-1.5 py-0.5 rounded-pill">{{ filterContrast }}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="70"
+                      max="150"
+                      step="2"
+                      v-model.number="filterContrast"
+                      @input="applyDisplayFilters"
+                      class="form-range form-range-sm"
+                    />
+                  </div>
+
+                  <!-- 3. Độ ấm / Lọc ánh sáng xanh (Warmth: 0 - 60%) -->
+                  <div class="mb-2">
+                    <div class="d-flex justify-content-between align-items-center fs-9 mb-0.5">
+                      <span class="fw-semibold">🍵 Độ ấm (Ánh sáng vàng)</span>
+                      <span class="badge bg-secondary-subtle text-secondary px-1.5 py-0.5 rounded-pill">{{ filterWarmth }}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="60"
+                      step="2"
+                      v-model.number="filterWarmth"
+                      @input="applyDisplayFilters"
+                      class="form-range form-range-sm"
+                    />
+                  </div>
+
+                  <!-- 4. Độ xám (Grayscale: 0 - 100%) -->
+                  <div>
+                    <div class="d-flex justify-content-between align-items-center fs-9 mb-0.5">
+                      <span class="fw-semibold">⚪ Độ xám (Tập trung đọc)</span>
+                      <span class="badge bg-secondary-subtle text-secondary px-1.5 py-0.5 rounded-pill">{{ filterGrayscale }}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      step="5"
+                      v-model.number="filterGrayscale"
+                      @input="applyDisplayFilters"
+                      class="form-range form-range-sm"
+                    />
                   </div>
                 </div>
               </div>
@@ -504,7 +587,29 @@ const toggleA11yMenu = () => {
 // Accessibility & Accent State
 const currentFontSize = ref(localStorage.getItem('oxford_font_size') || 'md')
 const currentAccent = ref(localStorage.getItem('oxford_accent_pref') || 'US')
-const isHighContrast = ref(localStorage.getItem('oxford_high_contrast') === 'true')
+
+// Display Filters State (Độ sáng, Độ tương phản, Độ ấm, Độ xám)
+const filterBrightness = ref(parseInt(localStorage.getItem('oxford_filter_brightness') || '100', 10))
+const filterContrast = ref(parseInt(localStorage.getItem('oxford_filter_contrast') || '100', 10))
+const filterWarmth = ref(parseInt(localStorage.getItem('oxford_filter_warmth') || '0', 10))
+const filterGrayscale = ref(parseInt(localStorage.getItem('oxford_filter_grayscale') || '0', 10))
+
+const applyDisplayFilters = () => {
+  const el = document.getElementById('app') || document.documentElement
+  el.style.filter = `brightness(${filterBrightness.value}%) contrast(${filterContrast.value}%) sepia(${filterWarmth.value}%) grayscale(${filterGrayscale.value}%)`
+  localStorage.setItem('oxford_filter_brightness', filterBrightness.value)
+  localStorage.setItem('oxford_filter_contrast', filterContrast.value)
+  localStorage.setItem('oxford_filter_warmth', filterWarmth.value)
+  localStorage.setItem('oxford_filter_grayscale', filterGrayscale.value)
+}
+
+const resetDisplayFilters = () => {
+  filterBrightness.value = 100
+  filterContrast.value = 100
+  filterWarmth.value = 0
+  filterGrayscale.value = 0
+  applyDisplayFilters()
+}
 
 const setFontSize = (size) => {
   currentFontSize.value = size
@@ -516,15 +621,6 @@ const setFontSize = (size) => {
 const setVoiceAccent = (accent) => {
   currentAccent.value = accent
   localStorage.setItem('oxford_accent_pref', accent)
-}
-
-const toggleHighContrast = () => {
-  localStorage.setItem('oxford_high_contrast', isHighContrast.value ? 'true' : 'false')
-  if (isHighContrast.value) {
-    document.documentElement.classList.add('high-contrast-mode')
-  } else {
-    document.documentElement.classList.remove('high-contrast-mode')
-  }
 }
 
 const isMobileDrawerOpen = ref(false)
@@ -540,58 +636,57 @@ const handleDrawerLogout = async () => {
   router.push('/login')
 }
 
+// BẢNG ĐIỀU HƯỚNG CHUẨN: Lộ trình luôn đứng thứ 2, sau đó là Ngữ pháp, Từ vựng CEFR, Học theo ngày, Cụm từ, Ôn tập, Lịch sử... Mẹo học luôn nằm cuối
 const NAV_CATALOG = [
-  { id: 'curriculum', label: 'Lộ trình', fullLabel: 'Lộ trình (25 Chủ đề)', to: '/curriculum', icon: 'bi bi-signpost-split-fill', iconClass: 'icon-curriculum', badge: '25 CHỦ ĐỀ' },
-  { id: 'daily', label: 'Học theo Ngày', fullLabel: 'Học theo Ngày', to: '/daily', icon: 'bi bi-calendar-check-fill', iconClass: 'icon-daily' },
-  { id: 'grammar', label: 'Ngữ pháp', fullLabel: 'Ngữ pháp (12 Thì & Bài tập)', to: '/grammar', icon: 'bi bi-journal-bookmark-fill', iconClass: 'icon-grammar' },
-  { id: 'phrasal_verbs', label: 'Cụm từ', fullLabel: 'Cụm từ (Phrasal Verbs & 1000 Cụm từ)', to: '/phrasal-verbs', icon: 'bi bi-puzzle-fill', iconClass: 'icon-phrasal' },
-  { id: 'cefr', label: 'Từ vựng CEFR', fullLabel: 'Từ vựng CEFR (A1 - C2 Chuẩn Châu Âu)', to: '/cefr', icon: 'bi bi-award-fill text-success', iconClass: 'icon-cefr', badge: 'A1-C2' },
-  { id: 'notebook', label: 'Sổ tay từ', fullLabel: 'Sổ tay từ vựng & Flashcard cá nhân', to: '/notebook', icon: 'bi bi-bookmark-star-fill text-warning', iconClass: 'icon-notebook' },
-  { id: 'dictionary', label: 'Tra cứu', fullLabel: 'Tra cứu 3000 từ', to: '/dictionary', icon: 'bi bi-search-heart-fill', iconClass: 'icon-dict' },
-  { id: 'ipa', label: '44 Âm IPA', fullLabel: 'Bảng 44 Âm IPA', to: '/ipa', icon: 'bi bi-soundwave', iconClass: 'icon-ipa' },
-  { id: 'tips', label: 'Mẹo học', fullLabel: 'Mẹo Học Tiếng Anh Hiệu Quả', to: '/tips', icon: 'bi bi-lightbulb-fill text-warning', iconClass: '' },
-  { id: 'tree', label: 'Cây tri thức', fullLabel: 'Vườn Cây Tri Thức', to: '/tree', icon: 'bi bi-tree-fill text-success', iconClass: '' },
-  { id: 'stats', label: 'Năng suất', fullLabel: 'Báo Cáo Năng Suất', to: '/stats', icon: 'bi bi-bar-chart-fill text-primary', iconClass: '' },
-  { id: 'topics', label: 'Chủ đề', fullLabel: 'Chủ đề 3000 từ', to: '/topics', icon: 'bi bi-grid-1x2-fill text-secondary', iconClass: '' },
+  { id: 'curriculum', label: 'Lộ trình', to: '/curriculum', icon: 'bi bi-signpost-split-fill', iconClass: 'icon-curriculum' },
+  { id: 'grammar', label: 'Ngữ pháp', to: '/grammar', icon: 'bi bi-journal-bookmark-fill', iconClass: 'icon-grammar' },
+  { id: 'cefr', label: 'Từ vựng CEFR', to: '/cefr', icon: 'bi bi-award-fill text-success', iconClass: 'icon-cefr' },
+  { id: 'daily', label: 'Học theo ngày', to: '/daily', icon: 'bi bi-calendar-check-fill', iconClass: 'icon-daily' },
+  { id: 'phrasal_verbs', label: 'Cụm từ', to: '/phrasal-verbs', icon: 'bi bi-puzzle-fill', iconClass: 'icon-phrasal' },
+  { id: 'review', label: 'Ôn tập', to: '/review', icon: 'bi bi-clock-history text-warning', iconClass: '' },
+  { id: 'history', label: 'Lịch sử', to: '/history', icon: 'bi bi-journal-check text-info', iconClass: '' },
+  { id: 'arena', label: 'Đấu trường', to: '/arena', icon: 'bi bi-trophy-fill text-warning', iconClass: '' },
+  { id: 'dictionary', label: 'Tra cứu', to: '/dictionary', icon: 'bi bi-search-heart-fill', iconClass: 'icon-dict' },
+  { id: 'ipa', label: '44 Âm IPA', to: '/ipa', icon: 'bi bi-soundwave', iconClass: 'icon-ipa' },
+  { id: 'tree', label: 'Cây tri thức', to: '/tree', icon: 'bi bi-tree-fill text-success', iconClass: '' },
+  { id: 'stats', label: 'Năng suất', to: '/stats', icon: 'bi bi-bar-chart-fill text-primary', iconClass: '' },
+  { id: 'tips', label: 'Mẹo học', to: '/tips', icon: 'bi bi-lightbulb-fill text-warning', iconClass: '' },
 ]
 
-// FULL TẤT CẢ CÁC MỤC HỌC TẬP CHO GIAO DIỆN DI ĐỘNG (Liệt kê 100% đầy đủ, không ẩn)
+// FULL TẤT CẢ CÁC MỤC HỌC TẬP CHO GIAO DIỆN DI ĐỘNG (Liệt kê 100% đầy đủ, gọn gàng, Mẹo học luôn nằm cuối)
 const MOBILE_FULL_NAV = [
   { id: 'home', label: 'Trang chủ', desc: 'Tổng quan & Lộ trình học thông minh', to: '/', icon: 'bi bi-house-door-fill', color: '#00b074' },
-  { id: 'curriculum', label: 'Lộ trình 25 Chủ đề', desc: '5.000 từ vựng & 10 giai đoạn kiểm tra', to: '/curriculum', icon: 'bi bi-signpost-split-fill', color: '#087F75', badge: '25 CHỦ ĐỀ' },
-  { id: 'cefr', label: 'Từ vựng CEFR (A1 - C2)', desc: '4.922 từ vựng chuẩn Châu Âu • 6 phần 247 bài', to: '/cefr', icon: 'bi bi-award-fill', color: '#10b981', badge: 'MỚI' },
-  { id: 'notebook', label: 'Sổ tay từ vựng', desc: 'Từ mới đã lưu & Flashcard cá nhân', to: '/notebook', icon: 'bi bi-bookmark-star-fill', color: '#f59e0b' },
-  { id: 'daily', label: 'Học theo Ngày (3000 từ)', desc: 'Flashcard 3D & 15 câu trắc nghiệm', to: '/daily', icon: 'bi bi-calendar-check-fill', color: '#0d9488', badge: '3000 TỪ' },
-  { id: 'grammar', label: '12 Thì Ngữ pháp', desc: 'Chuyên đề ngữ pháp, dịch câu & trắc nghiệm', to: '/grammar', icon: 'bi bi-journal-bookmark-fill', color: '#6366f1', badge: '12 THÌ' },
-  { id: 'phrasal_verbs', label: 'Học theo Cụm từ', desc: 'Phrasal Verbs & bài tập phản xạ', to: '/phrasal-verbs', icon: 'bi bi-puzzle-fill', color: '#ec4899' },
-  { id: 'arena', label: 'Đấu trường Quiz & Bảng vàng', desc: 'Thi đấu realtime & BXH liên server', to: '/arena', icon: 'bi bi-trophy-fill', color: '#eab308', badge: 'LIVE' },
-  { id: 'tree', label: 'Vườn Cây Tri Thức', desc: '30 cấp độ tiến hóa & nuôi mầm xanh', to: '/tree', icon: 'bi bi-tree-fill', color: '#16a34a', badge: '30 CẤP' },
-  { id: 'ipa', label: 'Bảng 44 Âm IPA', desc: 'Nguyên âm & phụ âm chuẩn quốc tế', to: '/ipa', icon: 'bi bi-soundwave', color: '#06b6d4' },
-  { id: 'stats', label: 'Báo Cáo Năng Suất', desc: 'Thống kê tần suất & chuỗi ngày Streak', to: '/stats', icon: 'bi bi-bar-chart-fill', color: '#3b82f6' },
-  { id: 'dictionary', label: 'Tra cứu Từ điển Oxford', desc: 'Kho 3.351 từ & giải thích Gemini AI', to: '/dictionary', icon: 'bi bi-search-heart-fill', color: '#14b8a6' },
-  { id: 'tips', label: 'Mẹo học tiếng Anh', desc: 'Chiến thuật ghi nhớ đỉnh cao', to: '/tips', icon: 'bi bi-lightbulb-fill', color: '#f59e0b' },
+  { id: 'curriculum', label: 'Lộ trình', desc: '5.000 từ vựng & 10 giai đoạn kiểm tra', to: '/curriculum', icon: 'bi bi-signpost-split-fill', color: '#087F75' },
+  { id: 'grammar', label: 'Ngữ pháp', desc: '12 thì chuyên đề, dịch câu & bài tập', to: '/grammar', icon: 'bi bi-journal-bookmark-fill', color: '#6366f1' },
+  { id: 'cefr', label: 'Từ vựng CEFR', desc: '4.922 từ vựng chuẩn Châu Âu 6 phần', to: '/cefr', icon: 'bi bi-award-fill', color: '#10b981' },
+  { id: 'daily', label: 'Học theo ngày', desc: 'Flashcard 3D & 20 từ mỗi ngày', to: '/daily', icon: 'bi bi-calendar-check-fill', color: '#0d9488' },
+  { id: 'phrasal_verbs', label: 'Cụm từ', desc: 'Phrasal Verbs & 1000 cụm đàm thoại', to: '/phrasal-verbs', icon: 'bi bi-puzzle-fill', color: '#ec4899' },
+  { id: 'review', label: 'Ôn tập', desc: 'Bộ thẻ Spaced Repetition ôn tập ngắt quãng', to: '/review', icon: 'bi bi-clock-history', color: '#f59e0b' },
+  { id: 'history', label: 'Lịch sử', desc: 'Lịch sử học tập & xem lại câu sai', to: '/history', icon: 'bi bi-journal-check', color: '#06b6d4' },
+  { id: 'arena', label: 'Đấu trường', desc: 'Thi đấu realtime & BXH liên server', to: '/arena', icon: 'bi bi-trophy-fill', color: '#eab308' },
+  { id: 'tree', label: 'Cây tri thức', desc: '30 cấp độ tiến hóa & nuôi mầm xanh', to: '/tree', icon: 'bi bi-tree-fill', color: '#16a34a' },
+  { id: 'ipa', label: '44 Âm IPA', desc: 'Nguyên âm & phụ âm chuẩn quốc tế', to: '/ipa', icon: 'bi bi-soundwave', color: '#06b6d4' },
+  { id: 'stats', label: 'Năng suất', desc: 'Thống kê tần suất & chuỗi ngày Streak', to: '/stats', icon: 'bi bi-bar-chart-fill', color: '#3b82f6' },
+  { id: 'dictionary', label: 'Tra cứu', desc: 'Kho 3.351 từ & giải thích Gemini AI', to: '/dictionary', icon: 'bi bi-search-heart-fill', color: '#14b8a6' },
+  { id: 'tips', label: 'Mẹo học', desc: 'Chiến thuật ghi nhớ đỉnh cao', to: '/tips', icon: 'bi bi-lightbulb-fill', color: '#f59e0b' },
 ]
 
+const defaultHeaderItems = ['curriculum', 'grammar', 'cefr', 'daily', 'phrasal_verbs', 'review', 'history']
+
 const visibleNavItems = computed(() => {
-  const chosenIds = authStore.headerNavItems || ['curriculum', 'daily', 'grammar', 'phrasal_verbs']
+  const chosenIds = authStore.headerNavItems || defaultHeaderItems
   return chosenIds.map(id => NAV_CATALOG.find(item => item.id === id)).filter(Boolean)
 })
 
 const moreNavItems = computed(() => {
-  const chosenIds = authStore.headerNavItems || ['curriculum', 'daily', 'grammar', 'phrasal_verbs']
-  const moreOrder = authStore.moreNavOrder || []
+  const chosenIds = authStore.headerNavItems || defaultHeaderItems
   const unchosen = NAV_CATALOG.filter(item => !chosenIds.includes(item.id))
-  if (moreOrder.length > 0) {
-    return [...unchosen].sort((a, b) => {
-      const idxA = moreOrder.indexOf(a.id)
-      const idxB = moreOrder.indexOf(b.id)
-      if (idxA === -1 && idxB === -1) return 0
-      if (idxA === -1) return 1
-      if (idxB === -1) return -1
-      return idxA - idxB
-    })
-  }
-  return unchosen
+  // Đảm bảo "Mẹo học" (tips) LUÔN LUÔN nằm cuối cùng danh sách Xem thêm
+  return [...unchosen].sort((a, b) => {
+    if (a.id === 'tips') return 1
+    if (b.id === 'tips') return -1
+    return 0
+  })
 })
 
 const toggleDropdown = () => {
@@ -622,6 +717,7 @@ const handleLogout = async () => {
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
+  applyDisplayFilters()
 })
 
 onUnmounted(() => {

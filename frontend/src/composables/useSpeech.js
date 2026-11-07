@@ -81,7 +81,7 @@ if (synth) {
   loadVoices()
 }
 
-// Get preferred voice (selected by user or fallback)
+// Get preferred voice (selected by user or default Google US English Female)
 const getPreferredVoice = () => {
   if (!synth) return null
   const voices = synth.getVoices()
@@ -94,14 +94,40 @@ const getPreferredVoice = () => {
     if (found) return found
   }
 
-  // 2. Default high quality US voice
-  return (
-    voices.find(v => v.lang === 'en-US' && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Samantha') || v.name.includes('David') || v.name.includes('Jenny') || v.name.includes('Guy'))) ||
-    voices.find(v => v.lang === 'en-US') ||
-    voices.find(v => v.lang.startsWith('en')) ||
-    voices[0] ||
-    null
-  )
+  // 2. Default requested priority: "Google US English (US - Nữ)"
+  const googleUsFemale = voices.find(v => {
+    const n = v.name.toLowerCase()
+    return (n.includes('google us english') || (n.includes('google') && v.lang === 'en-US')) && !n.includes('male')
+  })
+  if (googleUsFemale) {
+    selectedVoiceURI.value = googleUsFemale.voiceURI
+    return googleUsFemale
+  }
+
+  // 3. Fallback to top quality US Female voices
+  const usFemale = voices.find(v => {
+    const n = v.name.toLowerCase()
+    return v.lang === 'en-US' && (
+      n.includes('jenny') ||
+      n.includes('samantha') ||
+      n.includes('aria') ||
+      n.includes('zira') ||
+      n.includes('natural')
+    ) && !n.includes('male')
+  })
+  if (usFemale) {
+    selectedVoiceURI.value = usFemale.voiceURI
+    return usFemale
+  }
+
+  // 4. Any US voice
+  const anyUs = voices.find(v => v.lang === 'en-US')
+  if (anyUs) {
+    selectedVoiceURI.value = anyUs.voiceURI
+    return anyUs
+  }
+
+  return voices.find(v => v.lang.startsWith('en')) || voices[0] || null
 }
 
 export function useSpeech() {

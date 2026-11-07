@@ -87,18 +87,14 @@
         </table>
       </div>
 
-      <!-- Pagination -->
-      <div v-if="totalPages > 1" class="d-flex justify-content-between align-items-center p-3 border-top">
-        <span class="text-muted fs-8">Trang {{ currentPage }} / {{ totalPages }}</span>
-        <div class="btn-group btn-group-sm">
-          <button @click="goToPage(currentPage - 1)" :disabled="currentPage <= 1" class="btn btn-outline-secondary">
-            Trước
-          </button>
-          <button @click="goToPage(currentPage + 1)" :disabled="currentPage >= totalPages" class="btn btn-outline-secondary">
-            Tiếp
-          </button>
-        </div>
-      </div>
+      <!-- Smart 50-Item Pagination -->
+      <SmartPagination
+        v-model:currentPage="currentPage"
+        v-model:pageSize="pageSize"
+        :totalItems="totalCount"
+        :pageSizeOptions="[25, 50, 100, 200]"
+        @change="fetchVocabs"
+      />
     </div>
 
     <!-- VOCABULARY MODAL WITH GEMINI AI GENERATION -->
@@ -188,10 +184,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import SmartPagination from '@/components/SmartPagination.vue'
 
 const vocabList = ref([])
 const totalCount = ref(0)
 const currentPage = ref(1)
+const pageSize = ref(50)
 const totalPages = ref(1)
 const vocabSearch = ref('')
 const isLoading = ref(false)
@@ -217,7 +215,7 @@ const fetchVocabs = async (page = 1) => {
       params: {
         q: vocabSearch.value || undefined,
         page,
-        per_page: 20,
+        per_page: pageSize.value,
       },
     })
     vocabList.value = res.data.data.items || []

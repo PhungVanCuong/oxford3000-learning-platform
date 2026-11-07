@@ -992,6 +992,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore'
 import { useSpeech } from '@/composables/useSpeech'
+import { useReviewStore } from '@/stores/reviewStore'
 
 const authStore = useAuthStore()
 const speech = useSpeech()
@@ -1259,6 +1260,23 @@ const markPhraseStatus = async (phrase, status) => {
       status,
     })
     phrase.status = status
+
+    if (status === 'learning') {
+      try {
+        const reviewStore = useReviewStore()
+        reviewStore.addWordToReview({
+          word: phrase.phrase,
+          meaning_vi: phrase.meaning_vi,
+          part_of_speech: 'Cụm từ',
+          level: 'Phrasal Verbs',
+          example_en: phrase.example_en || '',
+          example_vi: phrase.example_vi || '',
+        })
+      } catch (e) {
+        console.warn('Failed to sync phrase to reviewStore:', e)
+      }
+    }
+
     await fetchStats()
     await authStore.fetchMe()
   } catch (err) {

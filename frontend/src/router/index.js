@@ -21,6 +21,8 @@ import ActivityStatsView from '@/views/user/ActivityStatsView.vue'
 import ArenaView from '@/views/user/ArenaView.vue'
 import ArenaRoomView from '@/views/user/ArenaRoomView.vue'
 import CefrVocabularyView from '@/views/user/CefrVocabularyView.vue'
+import ReviewSpacedRepetitionView from '@/views/user/ReviewSpacedRepetitionView.vue'
+import HistoryStudyView from '@/views/user/HistoryStudyView.vue'
 import VocabularyNotebookView from '@/views/user/VocabularyNotebookView.vue'
 
 // Admin Views
@@ -31,6 +33,8 @@ import AdminVocabulariesView from '@/views/admin/AdminVocabulariesView.vue'
 import AdminPhrasalVerbsView from '@/views/admin/AdminPhrasalVerbsView.vue'
 import AdminCurriculumView from '@/views/admin/AdminCurriculumView.vue'
 import AdminArenaView from '@/views/admin/AdminArenaView.vue'
+import AdminGrammarsView from '@/views/admin/AdminGrammarsView.vue'
+import AdminCefrView from '@/views/admin/AdminCefrView.vue'
 
 // Auth Views
 import LoginView from '@/views/auth/LoginView.vue'
@@ -61,7 +65,9 @@ const routes = [
       { path: 'arena/:idOrCode', name: 'arena-room', component: ArenaRoomView },
       { path: 'cefr', name: 'cefr-vocabulary', component: CefrVocabularyView },
       { path: 'cefr/:levelId/lesson/:lessonNum', name: 'cefr-lesson-detail', component: CefrVocabularyView },
-      { path: 'notebook', name: 'notebook', component: VocabularyNotebookView },
+      { path: 'review', name: 'review', component: ReviewSpacedRepetitionView },
+      { path: 'history', name: 'history', component: HistoryStudyView },
+      { path: 'notebook', redirect: '/review' }, // Sổ tay cũ chuyển hướng sang Bộ thẻ ôn tập
       { path: 'profile', name: 'profile', component: ProfileView },
     ],
   },
@@ -175,6 +181,36 @@ const routes = [
           const canAccess = user.role === 'admin' || user.email === 'cuongphung1810@gmail.com' || (user.permissions || []).includes('manage_arena')
           if (!canAccess) {
             alert('Bạn không có quyền truy cập vào mục Quản lý Đấu trường.')
+            next('/admin')
+          } else {
+            next()
+          }
+        }
+      },
+      {
+        path: 'grammars',
+        name: 'admin-grammars',
+        component: AdminGrammarsView,
+        beforeEnter: (to, from, next) => {
+          const user = JSON.parse(localStorage.getItem('oxford_user') || '{}')
+          const canAccess = user.role === 'admin' || user.email === 'cuongphung1810@gmail.com' || (user.permissions || []).includes('manage_curriculum')
+          if (!canAccess) {
+            alert('Bạn không có quyền truy cập vào mục Quản lý Ngữ pháp.')
+            next('/admin')
+          } else {
+            next()
+          }
+        }
+      },
+      {
+        path: 'cefr',
+        name: 'admin-cefr',
+        component: AdminCefrView,
+        beforeEnter: (to, from, next) => {
+          const user = JSON.parse(localStorage.getItem('oxford_user') || '{}')
+          const canAccess = user.role === 'admin' || user.email === 'cuongphung1810@gmail.com' || (user.permissions || []).includes('manage_vocab')
+          if (!canAccess) {
+            alert('Bạn không có quyền truy cập vào mục Quản lý Từ vựng CEFR.')
             next('/admin')
           } else {
             next()

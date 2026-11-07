@@ -331,7 +331,7 @@
               @change="onVoiceChanged"
               class="form-select border-start-0 py-2 fs-7"
             >
-              <option value="">-- Mặc định (Google US English / Trình duyệt) --</option>
+              <option value="">-- Mặc định: Google US English (US - Nữ) --</option>
               <option
                 v-for="v in speech.availableVoices.value"
                 :key="v.voiceURI"
@@ -672,19 +672,22 @@ const isResetting = ref(false)
 const isSavingNav = ref(false)
 
 const availableNavOptions = [
-  { id: 'curriculum', label: 'Lộ trình', desc: '25 Chủ đề IELTS 5000 từ', icon: 'bi bi-signpost-split-fill', color: 'text-success' },
-  { id: 'daily', label: 'Học theo Ngày', desc: 'Lộ trình từng ngày 3000 từ', icon: 'bi bi-calendar-check-fill', color: 'text-warning' },
-  { id: 'grammar', label: 'Ngữ pháp', desc: '12 thì và bài tập dịch câu', icon: 'bi bi-journal-bookmark-fill', color: 'text-danger' },
-  { id: 'phrasal_verbs', label: 'Cụm từ', desc: '100 Phrasal Verbs & 1000 Cụm từ', icon: 'bi bi-puzzle-fill', color: 'text-info' },
+  { id: 'curriculum', label: 'Lộ trình', desc: '5000 từ vựng 25 chủ đề IELTS', icon: 'bi bi-signpost-split-fill', color: 'text-success' },
+  { id: 'grammar', label: 'Ngữ pháp', desc: '12 thì chuyên đề & bài tập dịch câu', icon: 'bi bi-journal-bookmark-fill', color: 'text-danger' },
+  { id: 'cefr', label: 'Từ vựng CEFR', desc: '4.922 từ chuẩn Châu Âu 6 bậc A1-C2', icon: 'bi bi-award-fill', color: 'text-success' },
+  { id: 'daily', label: 'Học theo ngày', desc: '20 từ vựng mỗi ngày & kiểm tra', icon: 'bi bi-calendar-check-fill', color: 'text-warning' },
+  { id: 'phrasal_verbs', label: 'Cụm từ', desc: '100 Phrasal Verbs & 1000 cụm từ', icon: 'bi bi-puzzle-fill', color: 'text-info' },
+  { id: 'review', label: 'Ôn tập', desc: 'Bộ thẻ Spaced Repetition ôn ngắt quãng', icon: 'bi bi-clock-history', color: 'text-warning' },
+  { id: 'history', label: 'Lịch sử', desc: 'Lịch sử học tập & xem lại câu sai', icon: 'bi bi-journal-check', color: 'text-info' },
+  { id: 'arena', label: 'Đấu trường', desc: 'Đấu trường trực tiếp & Bảng xếp hạng', icon: 'bi bi-trophy-fill', color: 'text-warning' },
   { id: 'dictionary', label: 'Tra cứu', desc: 'Từ điển tra cứu 3000 từ vựng', icon: 'bi bi-search-heart-fill', color: 'text-teal' },
-  { id: 'ipa', label: '44 Âm IPA', desc: 'Bảng phiên âm chuẩn quốc tế', icon: 'bi bi-soundwave', color: 'text-primary' },
-  { id: 'tips', label: 'Mẹo học', desc: 'Phương pháp & bí quyết học từ', icon: 'bi bi-lightbulb-fill', color: 'text-warning' },
-  { id: 'tree', label: 'Cây tri thức', desc: 'Vườn cây tiến độ học tập', icon: 'bi bi-tree-fill', color: 'text-success' },
-  { id: 'stats', label: 'Năng suất', desc: 'Biểu đồ giờ học & streak', icon: 'bi bi-bar-chart-fill', color: 'text-primary' },
-  { id: 'topics', label: 'Chủ đề', desc: 'Danh mục chủ đề từ vựng', icon: 'bi bi-grid-1x2-fill', color: 'text-secondary' },
+  { id: 'ipa', label: '44 Âm IPA', desc: 'Bảng phiên âm quốc tế chuẩn IPA', icon: 'bi bi-soundwave', color: 'text-primary' },
+  { id: 'tree', label: 'Cây tri thức', desc: 'Vườn cây tiến độ học tập 30 cấp', icon: 'bi bi-tree-fill', color: 'text-success' },
+  { id: 'stats', label: 'Năng suất', desc: 'Biểu đồ giờ học & streak liên tục', icon: 'bi bi-bar-chart-fill', color: 'text-primary' },
+  { id: 'tips', label: 'Mẹo học', desc: 'Chiến thuật ghi nhớ đỉnh cao', icon: 'bi bi-lightbulb-fill', color: 'text-warning' },
 ]
 
-const selectedNavIds = ref([...(authStore.headerNavItems || ['curriculum', 'daily', 'grammar', 'phrasal_verbs'])])
+const selectedNavIds = ref([...(authStore.headerNavItems || ['curriculum', 'grammar', 'cefr', 'daily', 'phrasal_verbs', 'review', 'history'])])
 
 const computeUnselectedNavIds = () => {
   const allIds = availableNavOptions.map(opt => opt.id)

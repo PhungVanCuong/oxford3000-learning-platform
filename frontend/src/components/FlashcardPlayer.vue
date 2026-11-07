@@ -406,6 +406,7 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useSpeech } from '@/composables/useSpeech'
 import { useAuthStore } from '@/stores/authStore'
+import { useReviewStore } from '@/stores/reviewStore'
 
 const props = defineProps({
   words: {
@@ -569,6 +570,12 @@ const markCurrentLearning = () => {
   }
   if (currentWord.value) {
     currentWord.value.status = 'learning'
+    try {
+      const reviewStore = useReviewStore()
+      reviewStore.addWordToReview(currentWord.value)
+    } catch (e) {
+      console.warn('Failed to sync to reviewStore:', e)
+    }
     emit('status-updated', { wordId: currentWord.value.id, status: 'learning' })
     emit('update-status', { wordId: currentWord.value.id, status: 'learning' })
     if (currentIndex.value < props.words.length - 1) {

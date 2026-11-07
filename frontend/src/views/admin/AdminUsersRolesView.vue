@@ -77,7 +77,7 @@
             </tr>
           </thead>
           <tbody class="fs-7">
-            <tr v-for="u in filteredUsers" :key="u.id">
+            <tr v-for="u in paginatedUsers" :key="u.id">
               <td class="text-muted fw-bold">{{ u.id }}</td>
               <td>
                 <div class="d-flex align-items-center gap-2">
@@ -148,6 +148,14 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Smart 50-Item Pagination -->
+      <SmartPagination
+        v-model:currentPage="currentPage"
+        v-model:pageSize="pageSize"
+        :totalItems="filteredUsers.length"
+        :pageSizeOptions="[25, 50, 100, 200]"
+      />
     </div>
 
     <!-- MODAL: PHÂN QUYỀN & CHỨC VỤ -->
@@ -213,11 +221,14 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore'
+import SmartPagination from '@/components/SmartPagination.vue'
 
 const authStore = useAuthStore()
 
 const users = ref([])
 const searchUser = ref('')
+const currentPage = ref(1)
+const pageSize = ref(50) // Mặc định 50 học viên/trang
 const selectedUserForRole = ref(null)
 const roleForm = ref({
   role: 'user',
@@ -236,6 +247,11 @@ const filteredUsers = computed(() => {
   if (!searchUser.value.trim()) return users.value
   const q = searchUser.value.toLowerCase().trim()
   return users.value.filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q))
+})
+
+const paginatedUsers = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value
+  return filteredUsers.value.slice(start, start + pageSize.value)
 })
 
 const permName = (key) => {

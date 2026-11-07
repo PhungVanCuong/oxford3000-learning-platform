@@ -45,7 +45,7 @@
             </tr>
           </thead>
           <tbody class="fs-7">
-            <tr v-for="p in filteredPhrases" :key="p.id">
+            <tr v-for="p in paginatedPhrases" :key="p.id">
               <td class="text-muted fw-bold">{{ p.id }}</td>
               <td class="fw-bold text-teal fs-6">{{ p.phrase }}</td>
               <td>
@@ -82,6 +82,14 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Smart 50-Item Pagination -->
+      <SmartPagination
+        v-model:currentPage="currentPage"
+        v-model:pageSize="pageSize"
+        :totalItems="filteredPhrases.length"
+        :pageSizeOptions="[25, 50, 100, 200]"
+      />
     </div>
 
     <!-- MODAL: ADD / EDIT PHRASAL VERB -->
@@ -157,9 +165,12 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
+import SmartPagination from '@/components/SmartPagination.vue'
 
 const phrases = ref([])
 const searchPhrase = ref('')
+const currentPage = ref(1)
+const pageSize = ref(50) // Mặc định 50 mục/trang
 const showModal = ref(false)
 const editingPhrase = ref(null)
 
@@ -177,6 +188,11 @@ const filteredPhrases = computed(() => {
   if (!searchPhrase.value.trim()) return phrases.value
   const q = searchPhrase.value.toLowerCase().trim()
   return phrases.value.filter(p => p.phrase.toLowerCase().includes(q) || p.meaning_vi.toLowerCase().includes(q))
+})
+
+const paginatedPhrases = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value
+  return filteredPhrases.value.slice(start, start + pageSize.value)
 })
 
 const fetchPhrases = async () => {

@@ -263,38 +263,15 @@
           <div class="fw-bold text-muted fs-6">Không tìm thấy học viên nào phù hợp bộ lọc.</div>
         </div>
 
-        <!-- Pagination Footer -->
-        <div v-if="!viewAll && lastPage > 1" class="card-footer bg-body-tertiary border-top py-2.5 px-4 d-flex justify-content-between align-items-center">
-          <span class="fs-8 text-muted">
-            Hiển thị trang <strong>{{ currentPage }}</strong> / <strong>{{ lastPage }}</strong> (Tổng {{ filteredCount }} kết quả)
-          </span>
-
-          <div class="d-flex gap-1">
-            <button
-              :disabled="currentPage <= 1"
-              @click="changePage(currentPage - 1)"
-              class="btn btn-sm btn-outline-secondary rounded-pill px-2.5 py-1 fs-8"
-            >
-              ← Trước
-            </button>
-            <button
-              v-for="p in lastPage"
-              :key="p"
-              @click="changePage(p)"
-              class="btn btn-sm rounded-pill px-2.5 py-1 fs-8 fw-bold"
-              :class="currentPage === p ? 'btn-teal text-white' : 'btn-outline-secondary'"
-            >
-              {{ p }}
-            </button>
-            <button
-              :disabled="currentPage >= lastPage"
-              @click="changePage(currentPage + 1)"
-              class="btn btn-sm btn-outline-secondary rounded-pill px-2.5 py-1 fs-8"
-            >
-              Sau →
-            </button>
-          </div>
-        </div>
+        <!-- Smart 50-Item Pagination -->
+        <SmartPagination
+          v-if="!viewAll && filteredCount > 0"
+          v-model:currentPage="currentPage"
+          v-model:pageSize="perPage"
+          :totalItems="filteredCount"
+          :pageSizeOptions="[25, 50, 100, 200]"
+          @change="loadLeaderboard"
+        />
       </div>
     </div>
 
@@ -440,6 +417,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
+import SmartPagination from '@/components/SmartPagination.vue'
 
 const activeMainTab = ref('leaderboard')
 
@@ -450,6 +428,7 @@ const totalLearners = ref(0)
 const totalSystemXp = ref(0)
 const filteredCount = ref(0)
 const currentPage = ref(1)
+const perPage = ref(50)
 const lastPage = ref(1)
 const viewAll = ref(false)
 const searchQuery = ref('')

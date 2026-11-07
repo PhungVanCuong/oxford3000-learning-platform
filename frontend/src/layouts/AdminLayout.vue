@@ -199,6 +199,28 @@
           </router-link>
 
           <router-link
+            v-if="authStore.canManageVocab || authStore.isAdmin"
+            to="/admin/cefr"
+            class="admin-nav-link"
+            active-class="admin-nav-active"
+            @click="closeMobileAdminSidebar"
+          >
+            <i class="bi bi-award-fill text-success"></i>
+            <span>Từ vựng CEFR (A1-C2)</span>
+          </router-link>
+
+          <router-link
+            v-if="authStore.canManageCurriculum || authStore.isAdmin"
+            to="/admin/grammars"
+            class="admin-nav-link"
+            active-class="admin-nav-active"
+            @click="closeMobileAdminSidebar"
+          >
+            <i class="bi bi-journal-bookmark-fill text-danger"></i>
+            <span>12 Thì Ngữ pháp</span>
+          </router-link>
+
+          <router-link
             v-if="authStore.canManagePhrases || authStore.isAdmin"
             to="/admin/phrasal-verbs"
             class="admin-nav-link"
@@ -322,6 +344,26 @@
               >
                 <i class="bi bi-book-half icon-admin-vocab"></i>
                 <span>Kho 3000 từ vựng & AI</span>
+              </router-link>
+
+              <router-link
+                v-if="authStore.canManageVocab || authStore.isAdmin"
+                to="/admin/cefr"
+                class="admin-nav-link"
+                active-class="admin-nav-active"
+              >
+                <i class="bi bi-award-fill text-success"></i>
+                <span>Từ vựng CEFR (A1-C2)</span>
+              </router-link>
+
+              <router-link
+                v-if="authStore.canManageCurriculum || authStore.isAdmin"
+                to="/admin/grammars"
+                class="admin-nav-link"
+                active-class="admin-nav-active"
+              >
+                <i class="bi bi-journal-bookmark-fill text-danger"></i>
+                <span>12 Thì Ngữ pháp</span>
               </router-link>
 
               <router-link
