@@ -23,6 +23,36 @@ manifest = {
 total_words = 0
 total_lessons = 0
 
+def generate_lesson_counts(total_words, num_lessons, start_count=12, end_count=27):
+    # Generates monotonic non-decreasing integers from start_count to end_count summing to total_words
+    counts = []
+    for i in range(num_lessons):
+        val = start_count + (end_count - start_count) * (i / (num_lessons - 1))
+        counts.append(int(round(val)))
+    
+    # Adjust difference across middle lessons
+    diff = total_words - sum(counts)
+    if diff != 0:
+        step = 1 if diff > 0 else -1
+        indices = [int(round(1 + i * (num_lessons - 3) / abs(diff))) for i in range(abs(diff))]
+        for idx in indices:
+            counts[min(num_lessons - 2, max(1, idx))] += step
+            
+    if counts[0] != 12: 
+        counts[0] = 12
+    if num_lessons > 1 and counts[1] <= 12: 
+        counts[1] = 13
+        counts[num_lessons // 2] -= 1
+        
+    # Sort to ensure smooth non-decreasing progression
+    counts.sort()
+    # Guarantee first is 12, second is 13
+    counts[0] = 12
+    counts[1] = 13
+    diff_final = total_words - sum(counts)
+    counts[-1] += diff_final
+    return counts
+
 for level_id, file_path, title, code, num_lessons, color, desc in levels_spec:
     words = []
     with open(file_path, mode='r', encoding='utf-8') as f:
@@ -64,14 +94,14 @@ for level_id, file_path, title, code, num_lessons, color, desc in levels_spec:
     total_words += len(words)
     total_lessons += num_lessons
     
-    words_per_lesson = math.ceil(len(words) / num_lessons)
+    end_c = 28 if level_id in ('c1', 'c2') else 27
+    counts = generate_lesson_counts(len(words), num_lessons, 12, end_c)
+    
     lessons = []
-    for l_idx in range(num_lessons):
-        start = l_idx * words_per_lesson
-        end = min(len(words), (l_idx + 1) * words_per_lesson)
-        lesson_words = words[start:end]
-        if not lesson_words and words:
-            lesson_words = [words[-1]]
+    curr_offset = 0
+    for l_idx, count in enumerate(counts):
+        lesson_words = words[curr_offset : curr_offset + count]
+        curr_offset += count
         lessons.append({
             'lesson_number': l_idx + 1,
             'title': f'Bài {l_idx + 1:02d}',

@@ -234,7 +234,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-1.5">
                   <label class="fs-8 fw-bold text-light mb-0">✍️ Gõ lại từ tiếng Anh để nhớ sâu:</label>
                   <button
-                    @click="revealCardSpelling"
+                    @click.stop="revealCardSpelling"
                     type="button"
                     class="btn btn-xs rounded-pill px-2.5 py-1 fw-bold fs-9 shadow-xs"
                     style="border: 1.5px solid #22c55e; color: #22c55e; background: rgba(34, 197, 94, 0.1);"

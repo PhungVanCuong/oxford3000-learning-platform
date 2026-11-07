@@ -128,18 +128,26 @@
           </div>
         </div>
 
-        <!-- ================= BACK SIDE ================= -->
+        <!-- ================= BACK SIDE (ĐÃ THÊM @click.stop ĐỂ KHÔNG BAO GIỜ BỊ LẬT THẺ KHI BẤM XEM KẾT QUẢ / NHẬP LIỆU) ================= -->
         <div
-          class="position-absolute top-0 start-0 w-100 h-100 backface-hidden rotate-y-180 rounded-4 p-4 p-md-5 d-flex flex-column justify-content-between text-dark border-0 shadow-lg"
+          class="position-absolute top-0 start-0 w-100 h-100 backface-hidden rotate-y-180 rounded-4 p-3.5 p-md-5 d-flex flex-column justify-content-between text-dark border-0 shadow-lg"
           style="background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); min-height: 440px;"
+          @click.stop
         >
-          <div class="d-flex justify-content-between align-items-center">
-            <span class="badge bg-success-subtle text-success fw-bold fs-8 px-3 py-1 rounded-pill border border-success-subtle">
+          <!-- Top Bar Mặt Sau: Có nút Quay Lại Mặt Trước rõ ràng -->
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span class="badge bg-success-subtle text-success fw-bold fs-8 px-3 py-1.5 rounded-pill border border-success-subtle shadow-2xs">
               MẶT SAU • NGHĨA & BẢN DỊCH
             </span>
-            <span class="fs-8 text-muted">
-              <i class="bi bi-arrow-repeat me-1"></i>Chạm để quay lại mặt trước
-            </span>
+            <button
+              type="button"
+              @click.stop="toggleFlip"
+              class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 fs-8 fw-bold d-inline-flex align-items-center gap-1.5 shadow-2xs transition-all hover-shadow"
+              title="Lật thẻ về mặt trước"
+            >
+              <i class="bi bi-arrow-return-left"></i>
+              <span>Lật về mặt trước</span>
+            </button>
           </div>
 
           <!-- Meaning & Vietnamese Translation -->
@@ -157,21 +165,23 @@
               </p>
             </div>
 
-            <!-- TÍNH NĂNG MỚI: Ô NHẬP LẠI TỪ TIẾNG ANH (ACTIVE RECALL / SPELLING TEST) -->
+            <!-- TÍNH NĂNG: GÕ LẠI TỪ TIẾNG ANH & NÚT [XEM KẾT QUẢ] HIỆN NGAY KẾT QUẢ KHÔNG LẬT THẺ -->
             <div class="p-3 rounded-4 bg-light-subtle border border-success-subtle shadow-xs my-2 text-start" @click.stop>
-              <div class="d-flex justify-content-between align-items-center mb-1.5 flex-wrap gap-1">
+              <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
                 <label class="fs-8 fw-bold text-teal d-flex align-items-center gap-1.5 mb-0">
-                  <i class="bi bi-pencil-square"></i>
+                  <i class="bi bi-pencil-square text-teal"></i>
                   <span>Gõ lại từ tiếng Anh (Luyện nhớ chính tả):</span>
                 </label>
+                <!-- NÚT XEM KẾT QUẢ: Bo góc mềm mại, hiển thị rõ nét, đổ bóng tinh tế, hiệu ứng bấm siêu mượt mà -->
                 <button
                   type="button"
-                  @click.stop="toggleShowAnswer"
-                  class="btn btn-sm btn-outline-teal rounded-pill px-2.5 py-0.5 fs-8 fw-bold d-inline-flex align-items-center gap-1 shadow-2xs transition-all border"
-                  title="Bấm để xem đáp án từ vựng"
+                  @click.stop="revealResultNow"
+                  class="btn btn-sm rounded-pill px-3 py-1 fs-8 fw-bold d-inline-flex align-items-center gap-1.5 shadow-xs transition-all border border-teal text-teal bg-white hover-bg-teal"
+                  style="border-width: 1.5px !important;"
+                  title="Bấm hiện ngay kết quả và điền từ tiếng Anh chuẩn xác (không bị lật thẻ)"
                 >
-                  <i class="bi" :class="showAnswer ? 'bi-eye-slash-fill' : 'bi-eye-fill'"></i>
-                  <span>{{ showAnswer ? 'Ẩn đáp án' : 'Xem đáp án' }}</span>
+                  <i class="bi bi-eye-fill text-teal"></i>
+                  <span>Xem kết quả</span>
                 </button>
               </div>
 
@@ -180,8 +190,9 @@
                   type="text"
                   v-model="typedRecallWord"
                   @input="checkSpellRecall"
-                  @keyup.enter="submitSpellRecall"
-                  class="form-control rounded-pill-start py-1.5 px-3 fs-7 border"
+                  @keyup.enter.stop="submitSpellRecall"
+                  @click.stop
+                  class="form-control rounded-pill-start py-2 px-3 fs-7 border"
                   :class="{
                     'border-success bg-success-subtle text-success fw-bold': isSpellCorrect === true,
                     'border-danger bg-danger-subtle': isSpellCorrect === false
@@ -192,42 +203,49 @@
                 <button
                   type="button"
                   @click.stop="submitSpellRecall"
-                  class="btn btn-sm btn-teal text-white rounded-pill-end px-3 fw-bold d-flex align-items-center gap-1"
+                  class="btn btn-sm btn-teal text-white rounded-pill-end px-3.5 fw-bold d-flex align-items-center gap-1 shadow-2xs"
                 >
                   <i class="bi bi-check2-circle"></i>
                   <span>Kiểm tra</span>
                 </button>
               </div>
 
-              <!-- Correct Feedback -->
-              <div v-if="isSpellCorrect === true" class="mt-1.5 text-success fs-8 fw-bold d-flex align-items-center gap-1.5">
-                <i class="bi bi-check-circle-fill"></i>
-                <span>Chính xác 100%! Bạn đã nhớ đúng từ "{{ currentWord?.word }}".</span>
+              <!-- Correct Feedback / Answer Display -->
+              <div v-if="isSpellCorrect === true" class="mt-2 text-success fs-8 fw-bold d-flex align-items-center gap-1.5 p-2 rounded-3 bg-success-subtle border border-success-subtle">
+                <i class="bi bi-check-circle-fill fs-6"></i>
+                <span>Chính xác tuyệt đối! Đáp án đúng: <strong>{{ currentWord?.word }}</strong></span>
               </div>
-              <div v-else-if="isSpellCorrect === false" class="mt-1.5 text-danger fs-8 fw-semibold d-flex align-items-center gap-1.5">
-                <i class="bi bi-x-circle-fill"></i>
-                <span>Chưa đúng rồi! Bấm "Xem đáp án" nếu bạn cần gợi ý nhé.</span>
+              <div v-else-if="isSpellCorrect === false" class="mt-2 text-danger fs-8 fw-semibold d-flex align-items-center justify-content-between gap-1.5 p-2 rounded-3 bg-danger-subtle border border-danger-subtle">
+                <div class="d-flex align-items-center gap-1.5">
+                  <i class="bi bi-x-circle-fill fs-6"></i>
+                  <span>Chưa chính xác! Thử lại hoặc bấm <strong>"Xem kết quả"</strong>.</span>
+                </div>
+                <button type="button" @click.stop="revealResultNow" class="btn btn-xs btn-outline-danger rounded-pill px-2 py-0.5 fs-9 fw-bold">
+                  Hiện đáp án
+                </button>
               </div>
 
-              <!-- Answer Box -->
-              <div v-if="showAnswer" class="mt-2 p-2 rounded-3 bg-teal-subtle text-teal border border-teal d-flex justify-content-between align-items-center">
-                <div>
-                  <span class="fs-8 text-muted me-1">Đáp án:</span>
+              <!-- Extra Answer Box when triggered -->
+              <div v-if="showAnswer" class="mt-2 p-2.5 rounded-3 bg-teal-subtle text-teal border border-teal d-flex justify-content-between align-items-center shadow-2xs">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge bg-teal text-white fs-9 rounded-pill">ĐÁP ÁN</span>
                   <strong class="fs-6 text-teal font-monospace">{{ currentWord?.word }}</strong>
+                  <span v-if="currentWord?.phonetic_us" class="text-muted fs-8 font-monospace">({{ currentWord.phonetic_us }})</span>
                 </div>
                 <button
                   type="button"
-                  @click.stop="fillAnswer"
-                  class="btn btn-xs btn-teal text-white rounded-pill px-2.5 py-0.5 fs-8 fw-bold"
+                  @click.stop="speakCurrent"
+                  class="btn btn-xs btn-teal text-white rounded-pill px-2.5 py-1 fs-9 fw-bold d-inline-flex align-items-center gap-1"
                 >
-                  Điền vào ô
+                  <i class="bi bi-volume-up-fill"></i> Phát âm
                 </button>
               </div>
             </div>
           </div>
 
-          <div class="text-center pt-2 border-top text-muted fs-8">
-            <i class="bi bi-arrow-repeat me-1"></i>Bấm <strong>Space</strong> hoặc nhấp chuột để lật lại mặt trước
+          <!-- Bottom hint to flip back -->
+          <div @click.stop="toggleFlip" class="text-center pt-2 border-top text-muted fs-8 cursor-pointer hover-text-teal">
+            <i class="bi bi-arrow-repeat me-1"></i>Bấm vào đây hoặc phím <strong>Space</strong> để lật lại mặt trước
           </div>
         </div>
       </div>
@@ -428,27 +446,38 @@ const toggleFlip = () => {
   }
 }
 
-const toggleShowAnswer = () => {
-  showAnswer.value = !showAnswer.value
-}
+const clean = (s) => (s || '').toLowerCase().trim().replace(/[.,?!:;"'_\-()\/\\\[\]]/g, '')
 
-const clean = (s) => (s || '').toLowerCase().trim().replace(/[.,?!:;"'_\-()]/g, '')
+const isWordMatching = (input, target) => {
+  if (!input || !target) return false
+  const normInput = clean(input)
+  const normTarget = clean(target)
+  if (normInput === normTarget) return true
+  // Allow variants separated by comma or slash e.g. "a, an" or "travel/trip"
+  const parts = target.split(/[,/|]/).map(clean).filter(Boolean)
+  if (parts.includes(normInput)) return true
+  return false
+}
 
 const checkSpellRecall = () => {
   if (!currentWord.value?.word || !typedRecallWord.value) {
     isSpellCorrect.value = null
     return
   }
-  if (clean(typedRecallWord.value) === clean(currentWord.value.word)) {
+  if (isWordMatching(typedRecallWord.value, currentWord.value.word)) {
     isSpellCorrect.value = true
   } else {
     isSpellCorrect.value = null
   }
 }
 
-const submitSpellRecall = () => {
+const submitSpellRecall = (e) => {
+  if (e) {
+    e.stopPropagation()
+    e.preventDefault()
+  }
   if (!currentWord.value?.word) return
-  if (clean(typedRecallWord.value) === clean(currentWord.value.word)) {
+  if (isWordMatching(typedRecallWord.value, currentWord.value.word)) {
     isSpellCorrect.value = true
     speech.speak(currentWord.value.word)
   } else {
@@ -456,11 +485,34 @@ const submitSpellRecall = () => {
   }
 }
 
-const fillAnswer = () => {
+// BẤM XEM KẾT QUẢ: Hiện ngay kết quả, điền từ chuẩn xác vào ô mà TUYỆT ĐỐI KHÔNG BỊ LẬT THẺ
+const revealResultNow = (e) => {
+  if (e) {
+    e.stopPropagation()
+    e.preventDefault()
+  }
   if (currentWord.value?.word) {
     typedRecallWord.value = currentWord.value.word
+    showAnswer.value = true
     isSpellCorrect.value = true
+    speech.speak(currentWord.value.word)
   }
+}
+
+const toggleShowAnswer = (e) => {
+  if (e) {
+    e.stopPropagation()
+    e.preventDefault()
+  }
+  revealResultNow(e)
+}
+
+const fillAnswer = (e) => {
+  if (e) {
+    e.stopPropagation()
+    e.preventDefault()
+  }
+  revealResultNow(e)
 }
 
 const nextCard = () => {

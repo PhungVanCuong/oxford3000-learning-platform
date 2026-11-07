@@ -118,105 +118,260 @@
         </div>
       </div>
 
-      <!-- CỘT PHẢI: BÀI HỌC VÀ KHÔNG GIAN HỌC TẬP -->
+      <!-- CỘT PHẢI: BÀI HỌC VÀ KHÔNG GIAN HỌC TẬP (HỖ TRỢ CẢ GIAO DIỆN LỘ TRÌNH CHUẨN ẢNH VÀ CHẾ ĐỘ HỌC TƯƠNG TÁC) -->
       <div class="col-12 col-lg-8">
-        <!-- Lesson Header & Selector Carousel -->
-        <div class="card p-3 p-md-3.5 rounded-4 shadow-sm border bg-card-custom mb-3">
-          <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-2.5">
-            <div>
-              <div class="d-flex align-items-center gap-2 mb-0.5">
-                <span class="badge px-2.5 py-1 rounded-pill text-white fw-black fs-8" :style="{ backgroundColor: currentLevel?.color || '#00b074' }">
-                  {{ currentLevel?.code }}
+        <!-- Chuyển đổi giữa [ Lộ trình bài học ] và [ Không gian luyện tập ] -->
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+          <div class="btn-group p-1 rounded-pill bg-body-tertiary border shadow-2xs">
+            <button
+              @click="viewMode = 'roadmap'"
+              class="btn btn-sm rounded-pill px-3 py-1.5 fw-bold fs-8 transition-all"
+              :class="viewMode === 'roadmap' ? 'btn-teal text-white shadow-xs' : 'text-muted'"
+            >
+              <i class="bi bi-diagram-3-fill me-1"></i> Lộ trình bài học ({{ currentLevel?.total_lessons }} bài)
+            </button>
+            <button
+              @click="viewMode = 'study'"
+              class="btn btn-sm rounded-pill px-3 py-1.5 fw-bold fs-8 transition-all"
+              :class="viewMode === 'study' ? 'btn-teal text-white shadow-xs' : 'text-muted'"
+            >
+              <i class="bi bi-mortarboard-fill me-1"></i> Luyện tập: Bài {{ currentLessonNumber }}
+            </button>
+          </div>
+
+          <button
+            v-if="viewMode === 'study'"
+            @click="viewMode = 'roadmap'"
+            class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1.5 fw-bold fs-8 shadow-2xs d-flex align-items-center gap-1.5"
+          >
+            <i class="bi bi-arrow-left"></i>
+            <span>Về danh sách bài</span>
+          </button>
+        </div>
+
+        <!-- ================= GIAO DIỆN 1: LỘ TRÌNH BÀI HỌC (CHUẨN 100% THEO ẢNH NGƯỜI DÙNG) ================= -->
+        <div v-if="viewMode === 'roadmap'">
+          <!-- Phân cấp phần học Banner (Phần 01, 0/45 bài học, 0/450 ⭐, Nút Toàn bộ thẻ →) -->
+          <div class="card p-3.5 p-md-4 rounded-4 border-0 shadow-sm text-white mb-3.5" style="background: linear-gradient(135deg, #02231d 0%, #064e40 100%);">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+              <div>
+                <span class="badge bg-warning text-dark fs-9 fw-black rounded-pill px-2.5 py-1 mb-1.5 d-inline-block">
+                  PHẦN {{ String(getLevelIndex(selectedLevelId) + 1).padStart(2, '0') }}
                 </span>
-                <h5 class="fw-black text-teal mb-0">
-                  {{ currentLevel?.title }} • Bài {{ currentLessonNumber }}
-                </h5>
+                <div class="d-flex align-items-center gap-3 fs-6 fw-bold">
+                  <span>{{ completedLessonsInCurrentLevel }} / {{ currentLevel?.total_lessons }} bài học</span>
+                  <span class="text-warning">⭐ {{ completedLessonsInCurrentLevel * 10 }} / {{ (currentLevel?.total_lessons || 45) * 10 }}</span>
+                </div>
               </div>
-              <div class="text-muted fs-8">
-                {{ currentLessonWords.length }} từ vựng trọng tâm • Đã thuộc: {{ masteredInCurrentLesson }} / {{ currentLessonWords.length }} từ ({{ lessonPercent }}%)
-              </div>
+              <button
+                @click="startAllCards"
+                class="btn btn-sm rounded-pill px-3.5 py-2 fw-bold fs-8 shadow-xs border text-white d-flex align-items-center gap-1"
+                style="background-color: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.25) !important;"
+              >
+                <span>Toàn bộ thẻ</span>
+                <i class="bi bi-arrow-right"></i>
+              </button>
             </div>
 
-            <!-- Fast Lesson Dropdown -->
-            <div class="dropdown">
-              <button
-                class="btn btn-sm btn-outline-teal dropdown-toggle rounded-pill px-3 py-1.5 fw-semibold fs-8"
-                type="button"
-                data-bs-toggle="dropdown"
-              >
-                <span>Chuyển nhanh bài ({{ currentLevel?.total_lessons }} bài)</span>
-              </button>
-              <ul class="dropdown-menu dropdown-menu-end shadow-sm fs-8 overflow-y-auto" style="max-height: 280px;">
-                <li v-for="l in currentLevel?.lessons || []" :key="l.lesson_number">
-                  <button
-                    class="dropdown-item d-flex justify-content-between align-items-center"
-                    :class="{ 'active bg-teal text-white': currentLessonNumber === l.lesson_number }"
-                    @click="selectLesson(l.lesson_number)"
-                  >
-                    <span>{{ l.title }} ({{ l.word_count }} từ)</span>
-                    <i v-if="isLessonCompleted(currentLevel?.id, l.lesson_number)" class="bi bi-check-circle-fill text-success ms-2"></i>
-                  </button>
-                </li>
-              </ul>
+            <!-- Banner: Thi vượt cấp chủ đề -->
+            <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.16); backdrop-filter: blur(4px);">
+              <div class="d-flex justify-content-between align-items-center flex-wrap gap-2.5">
+                <div class="max-w-xl">
+                  <div class="fw-bold fs-7 text-white mb-0.5">Thi vượt cấp chủ đề</div>
+                  <div class="text-white-50 fs-8 mb-0 leading-relaxed">
+                    30 câu theo mức khó: 25 câu bài tập và 5 câu nghe viết. Đúng từ 25 câu là mở khoá mọi bài, mọi mức của chủ đề.
+                  </div>
+                </div>
+                <button
+                  @click="startPlacementExam"
+                  class="btn btn-sm btn-light text-dark rounded-pill px-3.5 py-2 fw-bold fs-8 shadow-sm d-flex align-items-center gap-1 flex-shrink-0"
+                >
+                  <span>Làm bài thi</span>
+                  <i class="bi bi-arrow-right"></i>
+                </button>
+              </div>
             </div>
           </div>
 
-          <!-- Lesson Navigation Pills Carousel (Vuốt ngang mượt mà) -->
-          <div class="d-flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
-            <button
+          <!-- Danh sách từng thẻ bài học (Bài 01, Bài 02... đến bài cuối cùng) -->
+          <div class="d-flex flex-column gap-3">
+            <div
               v-for="l in currentLevel?.lessons || []"
               :key="l.lesson_number"
-              @click="selectLesson(l.lesson_number)"
-              class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold text-nowrap d-flex align-items-center gap-1.5 border"
-              :class="currentLessonNumber === l.lesson_number ? 'btn-teal text-white border-teal shadow-xs' : 'btn-outline-secondary'"
+              class="card p-3 p-md-3.5 rounded-4 border bg-card-custom shadow-2xs hover-shadow transition-all"
             >
-              <span>{{ l.title }}</span>
-              <span class="badge rounded-pill" :class="currentLessonNumber === l.lesson_number ? 'bg-white text-dark' : 'bg-light text-muted'" style="font-size: 9px;">
-                {{ l.word_count }} từ
-              </span>
-              <i v-if="isLessonCompleted(currentLevel?.id, l.lesson_number)" class="bi bi-check-circle-fill text-success fs-9"></i>
-            </button>
-          </div>
+              <!-- Card Header -->
+              <div class="d-flex justify-content-between align-items-center pb-2.5 mb-2.5 border-bottom flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                  <h6 class="fw-black text-teal mb-0 fs-6">{{ l.title }}</h6>
+                  <span class="text-muted fs-8 fw-semibold">{{ l.word_count }} mục từ</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <span
+                    class="badge rounded-pill px-2.5 py-1 fs-9 fw-bold"
+                    :class="isLessonCompleted(currentLevel?.id, l.lesson_number) ? 'bg-success text-white' : (currentLessonNumber === l.lesson_number ? 'bg-teal text-white' : 'bg-body-secondary text-muted')"
+                  >
+                    {{ isLessonCompleted(currentLevel?.id, l.lesson_number) ? 'Đã hoàn thành' : (currentLessonNumber === l.lesson_number ? 'Đang học' : 'Chưa mở') }}
+                  </span>
+                  <span class="text-warning fw-bold fs-8">
+                    {{ isLessonCompleted(currentLevel?.id, l.lesson_number) ? '10/10 ⭐' : '0/10 ⭐' }}
+                  </span>
+                </div>
+              </div>
 
-          <!-- Learning Mode Selector -->
-          <div class="d-flex gap-2 mt-3 pt-3 border-top overflow-x-auto pb-1 no-scrollbar">
-            <button
-              @click="activeMode = 'flashcard'"
-              class="btn btn-sm rounded-pill px-3 py-1.5 fw-bold text-nowrap border"
-              :class="activeMode === 'flashcard' ? 'btn-teal text-white border-teal shadow-xs' : 'btn-outline-secondary'"
-            >
-              <i class="bi bi-card-text me-1"></i> Thẻ Flashcard 3D & Gõ từ
-            </button>
-            <button
-              @click="activeMode = 'dictation'"
-              class="btn btn-sm rounded-pill px-3 py-1.5 fw-bold text-nowrap border"
-              :class="activeMode === 'dictation' ? 'btn-teal text-white border-teal shadow-xs' : 'btn-outline-secondary'"
-            >
-              <i class="bi bi-headphones me-1"></i> Luyện Nghe & Viết
-            </button>
-            <button
-              @click="activeMode = 'speech'"
-              class="btn btn-sm rounded-pill px-3 py-1.5 fw-bold text-nowrap border"
-              :class="activeMode === 'speech' ? 'btn-teal text-white border-teal shadow-xs' : 'btn-outline-secondary'"
-            >
-              <i class="bi bi-mic-fill me-1"></i> Luyện Phát Âm AI
-            </button>
-            <button
-              @click="activeMode = 'quiz'"
-              class="btn btn-sm rounded-pill px-3 py-1.5 fw-bold text-nowrap border"
-              :class="activeMode === 'quiz' ? 'btn-teal text-white border-teal shadow-xs' : 'btn-outline-secondary'"
-            >
-              <i class="bi bi-patch-check-fill me-1 text-warning"></i> Trắc Nghiệm (+XP)
-            </button>
-            <button
-              @click="activeMode = 'list'"
-              class="btn btn-sm rounded-pill px-3 py-1.5 fw-bold text-nowrap border"
-              :class="activeMode === 'list' ? 'btn-teal text-white border-teal shadow-xs' : 'btn-outline-secondary'"
-            >
-              <i class="bi bi-list-ul me-1"></i> Danh Sách Từ Vựng
-            </button>
+              <!-- Card Content: 2 cột (Cột 1: Để qua bài, Cột 2: Luyện thêm tuỳ chọn) -->
+              <div class="row g-3 align-items-center">
+                <!-- Để qua bài: (1) Học thẻ, (2) Bài tập -->
+                <div class="col-12 col-md-6 border-end-md">
+                  <div class="fs-9 fw-bold text-muted text-uppercase mb-2">Để qua bài</div>
+                  <div class="d-flex align-items-center gap-2">
+                    <button
+                      @click="openLessonStudy(l.lesson_number, 'flashcard')"
+                      class="btn btn-sm rounded-pill px-3 py-2 fw-bold fs-8 d-flex align-items-center gap-2 flex-fill justify-content-center shadow-xs transition-all"
+                      :class="currentLessonNumber === l.lesson_number || isLessonCompleted(currentLevel?.id, l.lesson_number) ? 'btn-teal text-white' : 'btn-outline-secondary'"
+                      title="Học thẻ Flashcard 3D"
+                    >
+                      <span class="rounded-circle bg-white text-dark d-inline-flex align-items-center justify-content-center fw-black shadow-2xs" style="width: 20px; height: 20px; font-size: 11px;">1</span>
+                      <span>Học thẻ</span>
+                    </button>
+
+                    <button
+                      @click="openLessonStudy(l.lesson_number, 'quiz')"
+                      class="btn btn-sm rounded-pill px-3 py-2 fw-bold fs-8 d-flex align-items-center gap-2 flex-fill justify-content-center shadow-xs transition-all"
+                      :class="isLessonCompleted(currentLevel?.id, l.lesson_number) ? 'btn-success text-white' : 'btn-outline-secondary'"
+                      title="Làm bài tập trắc nghiệm"
+                    >
+                      <span class="rounded-circle bg-white text-dark d-inline-flex align-items-center justify-content-center fw-black shadow-2xs" style="width: 20px; height: 20px; font-size: 11px;">2</span>
+                      <span>{{ isLessonCompleted(currentLevel?.id, l.lesson_number) ? 'Bài tập' : 'Khoá' }}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Luyện thêm tuỳ chọn: Nghe viết, Phát âm -->
+                <div class="col-12 col-md-6">
+                  <div class="fs-9 fw-bold text-muted text-uppercase mb-2">Luyện thêm tuỳ chọn</div>
+                  <div class="d-flex align-items-center gap-2">
+                    <button
+                      @click="openLessonStudy(l.lesson_number, 'dictation')"
+                      class="btn btn-sm btn-outline-teal rounded-pill px-3 py-2 fw-semibold fs-8 d-flex align-items-center gap-1.5 flex-fill justify-content-center shadow-2xs transition-all"
+                    >
+                      <i class="bi bi-headphones"></i>
+                      <span>Nghe viết</span>
+                    </button>
+
+                    <button
+                      @click="openLessonStudy(l.lesson_number, 'speech')"
+                      class="btn btn-sm btn-outline-teal rounded-pill px-3 py-2 fw-semibold fs-8 d-flex align-items-center gap-1.5 flex-fill justify-content-center shadow-2xs transition-all"
+                    >
+                      <i class="bi bi-mic-fill"></i>
+                      <span>Phát âm</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+
+        <!-- ================= GIAO DIỆN 2: KHÔNG GIAN HỌC TẬP TƯƠNG TÁC (FLASHCARD, DICTATION, SPEECH, QUIZ) ================= -->
+        <div v-else>
+          <!-- Lesson Header & Selector Carousel -->
+          <div class="card p-3 p-md-3.5 rounded-4 shadow-sm border bg-card-custom mb-3">
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-2.5">
+              <div>
+                <div class="d-flex align-items-center gap-2 mb-0.5">
+                  <span class="badge px-2.5 py-1 rounded-pill text-white fw-black fs-8" :style="{ backgroundColor: currentLevel?.color || '#00b074' }">
+                    {{ currentLevel?.code }}
+                  </span>
+                  <h5 class="fw-black text-teal mb-0">
+                    {{ currentLevel?.title }} • Bài {{ currentLessonNumber }}
+                  </h5>
+                </div>
+                <div class="text-muted fs-8">
+                  {{ currentLessonWords.length }} từ vựng trọng tâm • Đã thuộc: {{ masteredInCurrentLesson }} / {{ currentLessonWords.length }} từ ({{ lessonPercent }}%)
+                </div>
+              </div>
+
+              <!-- Fast Lesson Dropdown -->
+              <div class="dropdown">
+                <button
+                  class="btn btn-sm btn-outline-teal dropdown-toggle rounded-pill px-3 py-1.5 fw-semibold fs-8"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                >
+                  <span>Chuyển nhanh bài ({{ currentLevel?.total_lessons }} bài)</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm fs-8 overflow-y-auto" style="max-height: 280px;">
+                  <li v-for="l in currentLevel?.lessons || []" :key="l.lesson_number">
+                    <button
+                      class="dropdown-item d-flex justify-content-between align-items-center"
+                      :class="{ 'active bg-teal text-white': currentLessonNumber === l.lesson_number }"
+                      @click="selectLesson(l.lesson_number)"
+                    >
+                      <span>{{ l.title }} ({{ l.word_count }} từ)</span>
+                      <i v-if="isLessonCompleted(currentLevel?.id, l.lesson_number)" class="bi bi-check-circle-fill text-success ms-2"></i>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Lesson Navigation Pills Carousel (Vuốt ngang mượt mà) -->
+            <div class="d-flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+              <button
+                v-for="l in currentLevel?.lessons || []"
+                :key="l.lesson_number"
+                @click="selectLesson(l.lesson_number)"
+                class="btn btn-sm rounded-pill px-3 py-1.5 fw-semibold text-nowrap d-flex align-items-center gap-1.5 border"
+                :class="currentLessonNumber === l.lesson_number ? 'btn-teal text-white border-teal shadow-xs' : 'btn-outline-secondary'"
+              >
+                <span>{{ l.title }}</span>
+                <span class="badge rounded-pill" :class="currentLessonNumber === l.lesson_number ? 'bg-white text-dark' : 'bg-light text-muted'" style="font-size: 9px;">
+                  {{ l.word_count }} từ
+                </span>
+                <i v-if="isLessonCompleted(currentLevel?.id, l.lesson_number)" class="bi bi-check-circle-fill text-success fs-9"></i>
+              </button>
+            </div>
+
+            <!-- Learning Mode Selector -->
+            <div class="d-flex gap-2 mt-3 pt-3 border-top overflow-x-auto pb-1 no-scrollbar">
+              <button
+                @click="activeMode = 'flashcard'"
+                class="btn btn-sm rounded-pill px-3 py-1.5 fw-bold text-nowrap border"
+                :class="activeMode === 'flashcard' ? 'btn-teal text-white border-teal shadow-xs' : 'btn-outline-secondary'"
+              >
+                <i class="bi bi-card-text me-1"></i> Thẻ Flashcard 3D & Gõ từ
+              </button>
+              <button
+                @click="activeMode = 'dictation'"
+                class="btn btn-sm rounded-pill px-3 py-1.5 fw-bold text-nowrap border"
+                :class="activeMode === 'dictation' ? 'btn-teal text-white border-teal shadow-xs' : 'btn-outline-secondary'"
+              >
+                <i class="bi bi-headphones me-1"></i> Luyện Nghe & Viết
+              </button>
+              <button
+                @click="activeMode = 'speech'"
+                class="btn btn-sm rounded-pill px-3 py-1.5 fw-bold text-nowrap border"
+                :class="activeMode === 'speech' ? 'btn-teal text-white border-teal shadow-xs' : 'btn-outline-secondary'"
+              >
+                <i class="bi bi-mic-fill me-1"></i> Luyện Phát Âm AI
+              </button>
+              <button
+                @click="activeMode = 'quiz'"
+                class="btn btn-sm rounded-pill px-3 py-1.5 fw-bold text-nowrap border"
+                :class="activeMode === 'quiz' ? 'btn-teal text-white border-teal shadow-xs' : 'btn-outline-secondary'"
+              >
+                <i class="bi bi-patch-check-fill me-1 text-warning"></i> Trắc Nghiệm (+XP)
+              </button>
+              <button
+                @click="activeMode = 'list'"
+                class="btn btn-sm rounded-pill px-3 py-1.5 fw-bold text-nowrap border"
+                :class="activeMode === 'list' ? 'btn-teal text-white border-teal shadow-xs' : 'btn-outline-secondary'"
+              >
+                <i class="bi bi-list-ul me-1"></i> Danh Sách Từ Vựng
+              </button>
+            </div>
+          </div>
 
         <!-- ================= MODE 1: THẺ FLASHCARD 3D TƯƠNG TÁC + GÕ LẠI TỪ MẶT SAU ================= -->
         <div v-if="activeMode === 'flashcard'">
@@ -512,6 +667,7 @@
             </table>
           </div>
         </div>
+        </div> <!-- End of v-else (Interactive Study Mode) -->
       </div>
     </div>
 
@@ -621,11 +777,47 @@ const levelDatasets = {
   c2: c2Data,
 }
 
-// Current level & lesson state
+// View mode: 'roadmap' (mặc định theo giao diện ảnh người dùng cung cấp) hoặc 'study' (không gian luyện tập)
+const viewMode = ref('roadmap')
 const selectedLevelId = ref(route.params.levelId || 'a1')
 const currentLessonNumber = ref(parseInt(route.params.lessonNum) || 1)
 const activeMode = ref('flashcard') // 'flashcard' | 'dictation' | 'speech' | 'quiz' | 'list'
 const isMobileDrawerOpen = ref(false)
+
+const getLevelIndex = (lvlId) => {
+  return manifest.levels.findIndex(l => l.id === lvlId)
+}
+
+const completedLessonsInCurrentLevel = computed(() => {
+  const lvl = currentLevel.value
+  if (!lvl || !lvl.lessons) return 0
+  return lvl.lessons.filter(l => isLessonCompleted(lvl.id, l.lesson_number)).length
+})
+
+const openLessonStudy = (lessonNum, mode = 'flashcard') => {
+  currentLessonNumber.value = lessonNum
+  activeMode.value = mode
+  viewMode.value = 'study'
+  dictationIndex.value = 0
+  dictationInput.value = ''
+  dictationResult.value = null
+  dictationShowAnswer.value = false
+  generateQuiz()
+  window.scrollTo({ top: 120, behavior: 'smooth' })
+}
+
+const startAllCards = () => {
+  activeMode.value = 'flashcard'
+  viewMode.value = 'study'
+  window.scrollTo({ top: 120, behavior: 'smooth' })
+}
+
+const startPlacementExam = () => {
+  activeMode.value = 'quiz'
+  viewMode.value = 'study'
+  generateQuiz()
+  window.scrollTo({ top: 120, behavior: 'smooth' })
+}
 
 // User progress storage (localStorage)
 const userWordStatus = ref({})
