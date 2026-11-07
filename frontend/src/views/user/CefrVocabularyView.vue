@@ -4,7 +4,7 @@
       <!-- 1. TOP HEADER BANNER (ĐỒNG BỘ 100% CẢ VỊ TRÍ, KÍCH THƯỚC VÀ NÚT CHUYỂN ĐỔI) -->
       <LearningNavHeader
         category="LỘ TRÌNH TỪ VỰNG CEFR"
-        title="Kho Từ Vựng CEFR Toàn Diện & Phản Xạ 3D"
+        title="Lộ Trình Từ Vựng CEFR Toàn Diện"
         description="Học trọn bộ từ vựng 6 bậc từ A1 đến C2 theo chuẩn châu Âu. Luyện nhớ chủ động với tính năng gõ lại từ tiếng Anh ở mặt sau, nghe chuẩn US, luyện nói AI và bài tập trắc nghiệm."
         activeTab="cefr"
       >
