@@ -1,67 +1,27 @@
 <template>
-  <div class="container py-3 py-md-4 max-w-6xl cefr-vocabulary-page">
-    <!-- ================= 1. UNIVERSAL LEARNING TABS (Ngữ pháp | Từ vựng chủ đề | Từ vựng CEFR) ================= -->
-    <div class="d-flex justify-content-center mb-3 mb-md-4">
-      <div class="learning-tabs-pill d-inline-flex p-1 rounded-pill bg-dark-subtle border shadow-xs">
-        <router-link
-          to="/grammar"
-          class="btn btn-sm rounded-pill px-3 py-1.5 fw-bold fs-7 text-decoration-none transition-all"
-          :class="route.path.startsWith('/grammar') ? 'btn-teal text-white shadow-xs' : 'text-muted'"
-        >
-          <i class="bi bi-journal-bookmark-fill me-1"></i> Ngữ pháp
-        </router-link>
-        <router-link
-          to="/curriculum"
-          class="btn btn-sm rounded-pill px-3 py-1.5 fw-bold fs-7 text-decoration-none transition-all"
-          :class="route.path.startsWith('/curriculum') ? 'btn-teal text-white shadow-xs' : 'text-muted'"
-        >
-          <i class="bi bi-signpost-split-fill me-1"></i> Từ vựng chủ đề
-        </router-link>
-        <router-link
-          to="/cefr"
-          class="btn btn-sm rounded-pill px-3 py-1.5 fw-bold fs-7 text-decoration-none transition-all btn-teal text-white shadow-xs"
-        >
-          <i class="bi bi-award-fill me-1 text-warning"></i> Từ vựng CEFR
-        </router-link>
-      </div>
-    </div>
+  <div class="cefr-vocabulary-page min-vh-100 pb-5" :style="authStore.themeMode === 'dark' ? '' : 'background-color: #F8F7F4;'">
+    <div class="container-fluid px-3 px-md-4 px-xl-5 pt-3 pt-md-4 max-w-7xl mx-auto">
+      <!-- 1. TOP HEADER BANNER (ĐỒNG BỘ 100% CẢ VỊ TRÍ, KÍCH THƯỚC VÀ NÚT CHUYỂN ĐỔI) -->
+      <LearningNavHeader
+        category="LỘ TRÌNH TỪ VỰNG CEFR"
+        title="Kho Từ Vựng CEFR Toàn Diện & Phản Xạ 3D"
+        description="Học trọn bộ từ vựng 6 bậc từ A1 đến C2 theo chuẩn châu Âu. Luyện nhớ chủ động với tính năng gõ lại từ tiếng Anh ở mặt sau, nghe chuẩn US, luyện nói AI và bài tập trắc nghiệm."
+        activeTab="cefr"
+      >
+        <template #badge>
+          <!-- Mobile Drawer Toggle Button -->
+          <button
+            @click="isMobileDrawerOpen = true"
+            class="btn btn-xs btn-outline-teal rounded-pill px-2.5 py-1 fw-bold fs-9 d-inline-flex d-lg-none align-items-center gap-1 ms-2"
+          >
+            <i class="bi bi-list-nested"></i>
+            <span>Chọn bài ({{ currentLevel?.code }} • Bài {{ currentLessonNumber }})</span>
+          </button>
+        </template>
+      </LearningNavHeader>
 
-    <!-- ================= 2. BANNER GIỚI THIỆU CHUẨN QUỐC TẾ ================= -->
-    <div class="card p-3 p-md-4 rounded-4 shadow-sm border bg-card-custom mb-3 mb-md-4" style="border-left: 6px solid #f59e0b;">
-      <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
-        <div>
-          <div class="d-flex align-items-center gap-1.5 mb-1.5 flex-wrap">
-            <span class="badge bg-warning text-dark rounded-pill px-2.5 py-1 fs-8 fw-bold">
-              CHUẨN KHUNG CHÂU ÂU (CEFR)
-            </span>
-            <span class="badge bg-teal text-white rounded-pill px-2.5 py-1 fs-8 fw-bold">
-              6 Bậc • A1, A2, B1, B2, C1, C2
-            </span>
-            <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-1 fs-8">
-              4.922 Từ Vựng • 247 Bài Học
-            </span>
-          </div>
-          <h2 class="fs-4 fs-md-3 fw-black text-teal mb-1">
-            Kho Từ Vựng CEFR Toàn Diện & Phản Xạ 3D
-          </h2>
-          <p class="text-muted fs-7 mb-0">
-            Học trọn bộ từ vựng phân cấp từ sơ cấp A1 đến thành thạo C2. Luyện nhớ chủ động với tính năng <strong>gõ lại từ tiếng Anh ở mặt sau</strong>, nghe chuẩn US, luyện nói AI và bài tập trắc nghiệm.
-          </p>
-        </div>
-
-        <!-- Mobile Drawer Toggle Button -->
-        <button
-          @click="isMobileDrawerOpen = true"
-          class="btn btn-teal text-white rounded-pill px-3.5 py-2 fw-bold fs-8 d-inline-flex d-lg-none align-items-center gap-2 shadow-sm text-nowrap w-100 justify-content-center"
-        >
-          <i class="bi bi-list-nested fs-7"></i>
-          <span>Chọn Bậc ({{ currentLevel?.code }}) & Bài Học (Bài {{ currentLessonNumber }})</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- ================= 3. MAIN WORKSPACE: 2 CỘT (SIDEBAR + CONTENT) ================= -->
-    <div class="row g-3 g-md-4">
+      <!-- ================= 2. MAIN WORKSPACE: 2 CỘT (SIDEBAR + CONTENT) ================= -->
+      <div class="row g-3 g-md-4">
       <!-- CỘT TRÁI: DANH SÁCH 6 BẬC CEFR (DESKTOP) -->
       <div class="col-12 col-lg-4 d-none d-lg-block">
         <div class="card p-3 rounded-4 shadow-sm border bg-card-custom sticky-top" style="top: 80px;">
@@ -745,6 +705,7 @@
       </div>
     </aside>
   </div>
+</div>
 </template>
 
 <script setup>
@@ -752,6 +713,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { useSpeech } from '@/composables/useSpeech'
+import LearningNavHeader from '@/components/LearningNavHeader.vue'
 import FlashcardPlayer from '@/components/FlashcardPlayer.vue'
 
 // Import manifest & level datasets

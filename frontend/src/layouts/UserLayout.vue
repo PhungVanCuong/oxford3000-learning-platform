@@ -302,9 +302,13 @@
       </div>
     </nav>
 
-    <!-- Main View Outlet -->
+    <!-- Main View Outlet với hiệu ứng chuyển trang siêu mượt mà không delay -->
     <main class="flex-grow-1 user-main-content">
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <transition name="page-fade" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </main>
 
     <!-- Footer (Ẩn trên mobile để nhường không gian cho bottom nav) -->
@@ -686,7 +690,22 @@ onUnmounted(() => {
 
 :global([data-bs-theme="dark"]) .nav-custom-link:hover,
 .bg-dark .nav-custom-link:hover {
-  background-color: rgba(0, 176, 116, 0.16);
   color: #5eead4;
+}
+
+/* Page Transition: Chuyển cảnh siêu mượt mà, chuyển trang êm ái không giật lag */
+.page-fade-enter-active,
+.page-fade-leave-active {
+  transition: opacity 0.14s cubic-bezier(0.16, 1, 0.3, 1), transform 0.14s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.page-fade-enter-from {
+  opacity: 0;
+  transform: translateY(3px);
+}
+
+.page-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-3px);
 }
 </style>

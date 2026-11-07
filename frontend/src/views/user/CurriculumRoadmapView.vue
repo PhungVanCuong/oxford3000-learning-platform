@@ -1,8 +1,16 @@
 <template>
-  <div class="curriculum-roadmap-view pb-5" style="background-color: #F8F7F4; min-height: 100vh;">
-    <div class="container-fluid px-3 px-md-4 px-xl-5 pt-4">
-      <!-- Loading State -->
-      <div v-if="loading" class="text-center py-5 my-5">
+  <div class="curriculum-roadmap-view pb-5 min-vh-100" :style="authStore.themeMode === 'dark' ? '' : 'background-color: #F8F7F4;'">
+    <div class="container-fluid px-3 px-md-4 px-xl-5 pt-3 pt-md-4 max-w-7xl mx-auto">
+      <!-- 1. TOP HEADER BANNER (ĐỒNG BỘ 100% CẢ VỊ TRÍ, KÍCH THƯỚC VÀ NÚT CHUYỂN ĐỔI) -->
+      <LearningNavHeader
+        category="LỘ TRÌNH TỪ VỰNG"
+        :title="currentTopic?.title || 'Education & Learning'"
+        :description="currentTopic?.description || 'Từ vựng về hệ thống giáo dục, cơ hội học tập và quá trình phát triển kỹ năng.'"
+        activeTab="curriculum"
+      />
+
+      <!-- Loading State (Chỉ hiện khi lần đầu tải dữ liệu) -->
+      <div v-if="loading && topics.length === 0" class="text-center py-5 my-5">
         <div class="spinner-border text-teal" role="status">
           <span class="visually-hidden">Đang tải...</span>
         </div>
@@ -10,37 +18,6 @@
       </div>
 
       <div v-else>
-        <!-- 1. TOP HEADER BANNER (MATCHING IMAGE 1) -->
-        <div v-if="currentTopic" class="mb-4">
-          <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
-            <div>
-              <div class="d-inline-flex align-items-center gap-2 mb-1.5">
-                <span class="rounded-circle bg-teal" style="width: 7px; height: 7px;"></span>
-                <span class="fw-bold fs-8 text-teal text-uppercase letter-spacing-1">LỘ TRÌNH TỪ VỰNG</span>
-              </div>
-              <h1 class="display-5 fw-black text-dark-emphasis mb-1">
-                {{ currentTopic.title }}
-              </h1>
-              <p class="text-muted fs-7 mb-0">
-                {{ currentTopic.description || 'Từ vựng về hệ thống giáo dục, cơ hội học tập và quá trình phát triển kỹ năng.' }}
-              </p>
-            </div>
-
-            <!-- Toggle: Ngữ pháp | Từ vựng chủ đề | Từ vựng CEFR (Ảnh người dùng yêu cầu) -->
-            <div class="btn-group p-1 rounded-pill border bg-white shadow-xs">
-              <router-link to="/grammar" class="btn btn-sm rounded-pill px-3.5 py-2 fs-7 fw-bold text-dark text-decoration-none">
-                Ngữ pháp
-              </router-link>
-              <button class="btn btn-sm rounded-pill px-3.5 py-2 fs-7 fw-bold text-white shadow-xs" style="background-color: #032b24;">
-                Từ vựng chủ đề
-              </button>
-              <router-link to="/cefr" class="btn btn-sm rounded-pill px-3.5 py-2 fs-7 fw-bold text-dark text-decoration-none">
-                Từ vựng CEFR
-              </router-link>
-            </div>
-          </div>
-        </div>
-
         <!-- 2. MAIN 2-COLUMN VIEW -->
         <div class="row g-4">
           <!-- 2.0 MOBILE TOPIC BAR & RETRACTABLE DRAWER TRIGGER (< 768px) -->
@@ -432,11 +409,16 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import LearningNavHeader from '@/components/LearningNavHeader.vue'
+import { useAuthStore } from '@/stores/authStore'
 
 const router = useRouter()
-const topics = ref([])
-const loading = ref(true)
-const selectedTopicId = ref(null)
+const authStore = useAuthStore()
+
+// Cache tức thì trong bộ nhớ RAM để chuyển trang 0ms không bao giờ bị delay
+const topics = ref(window.__oxford_curriculum_cache || [])
+const loading = ref(!window.__oxford_curriculum_cache || window.__oxford_curriculum_cache.length === 0)
+const selectedTopicId = ref(window.__oxford_curriculum_cache?.[0]?.id || null)
 const searchQuery = ref('')
 const isMobileTopicsDrawerOpen = ref(false)
 
@@ -446,13 +428,16 @@ const selectTopicMobile = (id) => {
 }
 
 const fetchCurriculumTopics = async () => {
-  loading.value = true
+  if (topics.value.length === 0) {
+    loading.value = true
+  }
   try {
     const token = localStorage.getItem('oxford_token')
     const headers = token ? { Authorization: `Bearer ${token}` } : {}
     const res = await axios.get('/api/curriculum', { headers })
     if (res.data && res.data.status === 'success') {
       topics.value = res.data.data
+      window.__oxford_curriculum_cache = res.data.data
       if (topics.value.length > 0 && !selectedTopicId.value) {
         selectedTopicId.value = topics.value[0].id
       }

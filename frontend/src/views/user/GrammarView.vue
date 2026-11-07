@@ -1,37 +1,13 @@
 <template>
-  <div class="container py-4 max-w-6xl">
-    <!-- Header Banner -->
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-      <div>
-        <div class="d-inline-flex align-items-center gap-2 mb-1.5">
-          <span class="rounded-circle bg-teal" style="width: 8px; height: 8px;"></span>
-          <span class="badge bg-teal-subtle text-teal border border-teal-subtle rounded-pill px-3 py-1 fs-8 fw-bold">
-            CHUYÊN ĐỀ NGỮ PHÁP TIẾNG ANH
-          </span>
-        </div>
-        <h2 class="display-6 fw-black text-dark-emphasis mb-1">
-          Hệ Thống <span class="text-teal">12 Thì & Ngữ Pháp</span> Toàn Diện
-        </h2>
-        <p class="text-muted fs-7 mb-0">
-          Tổng hợp toàn bộ công thức chủ động & bị động, dấu hiệu nhận biết, phát âm đuôi -ed/-s và kho bài tập dịch câu Việt - Anh có AI chấm điểm chuẩn xác.
-        </p>
-      </div>
-
-      <div class="d-flex align-items-center gap-2 flex-wrap">
-        <!-- Segmented Toggle: Ngữ pháp | Từ vựng chủ đề | Từ vựng CEFR -->
-        <div class="btn-group p-1 rounded-pill border bg-white shadow-xs">
-          <button class="btn btn-sm rounded-pill px-3.5 py-2 fs-7 fw-bold text-white shadow-xs" style="background-color: #032b24;">
-            Ngữ pháp
-          </button>
-          <router-link to="/curriculum" class="btn btn-sm rounded-pill px-3.5 py-2 fs-7 fw-bold text-dark text-decoration-none">
-            Từ vựng chủ đề
-          </router-link>
-          <router-link to="/cefr" class="btn btn-sm rounded-pill px-3.5 py-2 fs-7 fw-bold text-dark text-decoration-none">
-            Từ vựng CEFR
-          </router-link>
-        </div>
-      </div>
-    </div>
+  <div class="grammar-view min-vh-100 pb-5" :style="authStore.themeMode === 'dark' ? '' : 'background-color: #F8F7F4;'">
+    <div class="container-fluid px-3 px-md-4 px-xl-5 pt-3 pt-md-4 max-w-7xl mx-auto">
+      <!-- 1. TOP HEADER BANNER (ĐỒNG BỘ 100% CẢ VỊ TRÍ, KÍCH THƯỚC VÀ NÚT CHUYỂN ĐỔI) -->
+      <LearningNavHeader
+        category="CHUYÊN ĐỀ NGỮ PHÁP"
+        title="12 Thì & Ngữ Pháp Toàn Diện"
+        description="Tổng hợp toàn bộ công thức chủ động & bị động, dấu hiệu nhận biết, phát âm đuôi -ed/-s và kho bài tập dịch câu Việt - Anh có AI chấm điểm chuẩn xác."
+        activeTab="grammar"
+      />
 
     <!-- Top Overall Progress Dashboard (Matching Curriculum & Daily) -->
     <div class="card p-4 rounded-4 shadow-sm border bg-card-custom mb-4" style="border-left: 6px solid #00b074;">
@@ -188,14 +164,18 @@
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
+import LearningNavHeader from '@/components/LearningNavHeader.vue'
+import { useAuthStore } from '@/stores/authStore'
 
-const grammars = ref([])
-const isLoading = ref(true)
+const authStore = useAuthStore()
+const grammars = ref(window.__oxford_grammars_cache || [])
+const isLoading = ref(!window.__oxford_grammars_cache || window.__oxford_grammars_cache.length === 0)
 const selectedCategory = ref('all')
 const localProgressMap = ref({})
 
@@ -265,10 +245,13 @@ const categories = [
 ]
 
 const fetchGrammars = async () => {
-  isLoading.value = true
+  if (grammars.value.length === 0) {
+    isLoading.value = true
+  }
   try {
     const res = await axios.get('/api/grammars')
     grammars.value = res.data.data || []
+    window.__oxford_grammars_cache = grammars.value
   } catch (err) {
     console.error('Failed to load grammars:', err)
   } finally {
