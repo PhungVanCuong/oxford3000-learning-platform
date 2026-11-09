@@ -197,6 +197,7 @@ import axios from 'axios'
 import confetti from 'canvas-confetti'
 import { useAuthStore } from '@/stores/authStore'
 import { useSpeech } from '@/composables/useSpeech'
+import { useHistoryStore } from '@/stores/historyStore'
 import * as bootstrap from 'bootstrap'
 
 const props = defineProps({
@@ -210,6 +211,7 @@ const emit = defineEmits(['quiz-completed'])
 
 const authStore = useAuthStore()
 const speech = useSpeech()
+const historyStore = useHistoryStore()
 
 const modalElement = ref(null)
 const currentIndex = ref(0)
@@ -328,6 +330,36 @@ const submitFinalQuiz = async () => {
     if (quizResult.value.accuracy_percent >= 80) {
       triggerConfetti()
     }
+
+    // Đồng bộ ngay vào Lịch sử (HistoryStudyView)
+    try {
+      historyStore.addAttemptRecord({
+        title: props.quizData?.reference_info || 'Bài kiểm tra trắc nghiệm',
+        category: props.quizData?.quiz_type === 'grammar' ? 'Ngữ pháp' : 'Từ vựng',
+        score: quizResult.value.correct_answers_count ?? 0,
+        total: quizResult.value.total_questions ?? questions.value.length,
+        difficulty: props.quizData?.difficulty || 'Dễ',
+        status_note: `${quizResult.value.correct_answers_count ?? 0}/${quizResult.value.total_questions ?? questions.value.length} câu • ${quizResult.value.is_passed ? 'Đạt chuẩn' : 'Cần cải thiện'}`,
+        questions: questions.value.map((q, qIdx) => {
+          const ua = userAnswers.value.find(a => a.question_id === q.id)
+          const isCorrect = ua ? ua.is_correct : false
+          const isTimeout = !ua || !ua.selected_answer
+          return {
+            num: qIdx + 1,
+            status: isCorrect ? 'correct' : (isTimeout ? 'timeout' : 'incorrect'),
+            status_label: isCorrect ? 'Đúng' : (isTimeout ? 'Hết giờ' : 'Sai'),
+            type_label: q.title || 'Chọn phương án đúng.',
+            prompt: q.prompt,
+            user_answer: ua?.selected_answer || null,
+            correct_answer: q.correct_answer,
+            explanation: q.explanation || ''
+          }
+        })
+      })
+    } catch (e) {
+      console.warn('Failed to sync history attempt:', e)
+    }
+
     authStore.fetchMe()
     emit('quiz-completed', quizResult.value)
   } catch (err) {

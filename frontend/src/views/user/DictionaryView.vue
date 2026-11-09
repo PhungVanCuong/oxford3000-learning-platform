@@ -390,9 +390,13 @@ import { ref, onMounted, watch } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore'
 import { useSpeech } from '@/composables/useSpeech'
+import { useToast } from '@/composables/useToast'
+import { useReviewStore } from '@/stores/reviewStore'
 
 const authStore = useAuthStore()
 const speech = useSpeech()
+const toast = useToast()
+const reviewStore = useReviewStore()
 
 const words = ref([])
 const totalWords = ref(0)
@@ -575,6 +579,15 @@ const toggleStatus = async (word, targetStatus) => {
       vocabulary_id: word.id,
       status: newStatus,
     })
+
+    if (newStatus === 'learning') {
+      reviewStore.addWordToReview(word, 'Từ điển Oxford')
+      toast.review(`Đã đưa "${word.word}" vào danh sách cần ôn tập.`, 'Cần ôn tập')
+    } else if (newStatus === 'mastered') {
+      toast.remembered(`Đã đánh dấu "${word.word}" là đã nhớ.`, 'Đã nhớ từ vựng')
+    } else {
+      toast.info(`Đã chuyển trạng thái "${word.word}" về chưa học.`, 'Cập nhật')
+    }
   } catch (err) {
     console.error('Failed to update status:', err)
   }

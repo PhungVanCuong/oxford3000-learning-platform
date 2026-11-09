@@ -726,11 +726,13 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore'
 import { useSpeech } from '@/composables/useSpeech'
+import { useToast } from '@/composables/useToast'
 import { useReviewStore } from '@/stores/reviewStore'
 import FlashcardPlayer from '@/components/FlashcardPlayer.vue'
 
 const authStore = useAuthStore()
 const speech = useSpeech()
+const toast = useToast()
 
 // Tabs
 const activeMainTab = ref('pdf_phrases') // 'pdf_phrases' | 'phrasal_verbs_100' | 'methods' | 'exercises' | 'flashcard'
@@ -1038,6 +1040,9 @@ const markPhraseStatus = async (phrase, status) => {
       } catch (e) {
         console.warn('Failed to sync phrase to reviewStore:', e)
       }
+      toast.review(`Đã đưa cụm từ "${phrase.phrase}" vào danh sách cần ôn tập.`, 'Cần ôn tập')
+    } else if (status === 'mastered') {
+      toast.remembered(`Đã đánh dấu "${phrase.phrase}" là đã nhớ.`, 'Đã nhớ cụm từ')
     }
 
     await fetchStats()

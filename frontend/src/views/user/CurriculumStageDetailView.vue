@@ -570,11 +570,17 @@ import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { useSpeech } from '@/composables/useSpeech'
+import { useToast } from '@/composables/useToast'
+import { useReviewStore } from '@/stores/reviewStore'
+import { useHistoryStore } from '@/stores/historyStore'
 import FlashcardPlayer from '@/components/FlashcardPlayer.vue'
 
 const route = useRoute()
 const router = useRouter()
 const speech = useSpeech()
+const toast = useToast()
+const reviewStore = useReviewStore()
+const historyStore = useHistoryStore()
 
 const stageScrollTrack = ref(null)
 const stageButtons = ref({})
@@ -876,6 +882,7 @@ const nextCard = () => {
 // Mark Remembered [S]
 const markTermRemembered = async () => {
   if (!currentTerm.value) return
+  const wordName = currentTerm.value.word || currentTerm.value.term || 'từ vựng'
   try {
     const token = localStorage.getItem('oxford_token')
     const headers = token ? { Authorization: `Bearer ${token}` } : {}
@@ -894,6 +901,8 @@ const markTermRemembered = async () => {
       stagesProgress.value[currentStageNum.value].remembered_count = res.data.data.stage_remembered_count
     }
 
+    toast.remembered(`Đã đánh dấu "${wordName}" là đã nhớ.`, 'Đã nhớ từ vựng')
+
     // Auto advance to next card after marking
     if (currentCardIndex.value < terms.value.length - 1) {
       setTimeout(() => nextCard(), 250)
@@ -906,6 +915,7 @@ const markTermRemembered = async () => {
 // Mark Learning [X]
 const markTermLearning = async () => {
   if (!currentTerm.value) return
+  const wordName = currentTerm.value.word || currentTerm.value.term || 'từ vựng'
   try {
     const token = localStorage.getItem('oxford_token')
     const headers = token ? { Authorization: `Bearer ${token}` } : {}
@@ -922,6 +932,10 @@ const markTermLearning = async () => {
       stagesProgress.value[currentStageNum.value].is_completed = res.data.data.stage_completed
       stagesProgress.value[currentStageNum.value].remembered_count = res.data.data.stage_remembered_count
     }
+
+    // Tự động đưa từ vào Bộ thẻ ôn tập (Spaced Repetition Review)
+    reviewStore.addWordToReview(currentTerm.value, topic.value?.title || 'Lộ trình 25 chủ đề')
+    toast.review(`Đã đưa "${wordName}" vào danh sách cần ôn tập.`, 'Cần ôn tập')
   } catch (err) {
     console.error('Lỗi lưu từ cần ôn:', err)
   }
@@ -981,6 +995,33 @@ const submitQuizResult = async () => {
     if (stagesProgress.value[currentStageNum.value]) {
       stagesProgress.value[currentStageNum.value].is_completed = true
       stagesProgress.value[currentStageNum.value].score = quizScore.value
+    }
+
+    // Tự động ghi lại kết quả vào Lịch sử học tập (HistoryStudyView)
+    try {
+      historyStore.addAttemptRecord({
+        title: `${topic.value?.title || 'Chủ đề'} • Giai đoạn ${currentStageNum.value}`,
+        category: 'Lộ trình',
+        score: quizScore.value,
+        total: quizQuestions.value.length,
+        difficulty: currentStageNum.value <= 3 ? 'Dễ' : currentStageNum.value <= 7 ? 'Trung bình' : 'Khó',
+        status_note: `${quizScore.value}/${quizQuestions.value.length} câu • ${quizScore.value >= Math.ceil(quizQuestions.value.length * 0.8) ? 'Đạt chuẩn' : 'Cần cải thiện'}`,
+        questions: quizQuestions.value.map((q, idx) => {
+          const isCorrect = masteredTermIds.value.includes(q.question_id)
+          return {
+            num: idx + 1,
+            status: isCorrect ? 'correct' : 'incorrect',
+            status_label: isCorrect ? 'Đúng' : 'Sai',
+            type_label: 'Chọn phương án đúng.',
+            prompt: q.prompt,
+            user_answer: isCorrect ? q.correct_answer : 'Sai',
+            correct_answer: q.correct_answer,
+            explanation: q.explanation || ''
+          }
+        })
+      })
+    } catch (e) {
+      console.warn('Failed to sync history attempt:', e)
     }
 
     showResultModal.value = true
