@@ -29,7 +29,7 @@
       <div v-if="loading">
         <h4 class="fw-bold mb-2">Đang xác thực Google...</h4>
         <p class="text-secondary fs-7 mb-0">
-          Hệ thống đang kiểm tra thông tin và đồng bộ tài khoản học tập của bạn. Vui lòng đợi trong giây lát!
+          Đang hoàn tất đăng nhập và tự động quay về trang chủ...
         </p>
       </div>
 
@@ -37,7 +37,7 @@
       <div v-else-if="success">
         <h4 class="fw-black text-success mb-2">Đăng Nhập Thành Công!</h4>
         <p class="text-secondary fs-7 mb-3">
-          Chào mừng <strong>{{ loggedUserName }}</strong> quay trở lại với Oxford 3000™. Đang chuyển hướng...
+          Chào mừng <strong>{{ loggedUserName }}</strong>. Tab này đang tự đóng...
         </p>
         <div class="progress" style="height: 6px;">
           <div class="progress-bar bg-success progress-bar-striped progress-bar-animated w-100"></div>
@@ -68,18 +68,79 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore'
 
 const route = useRoute()
-const router = useRouter()
 const authStore = useAuthStore()
 
 const loading = ref(true)
 const success = ref(false)
 const errorMessage = ref('')
 const loggedUserName = ref('')
+
+/**
+ * Gửi tín hiệu xác thực đa kênh (BroadcastChannel + Storage Event + postMessage)
+ * và tự động tắt ngay tab Google, đưa trình duyệt ban đầu về trang chủ!
+ */
+const dispatchAuthSuccessAndClose = (token, user) => {
+  const payload = {
+    type: 'GOOGLE_AUTH_SUCCESS',
+    token,
+    user
+  }
+
+  // 1. Kênh BroadcastChannel: Hoạt động ngay lập tức qua mọi tab/popup cùng origin
+  try {
+    const channel = new BroadcastChannel('oxvocab_google_auth')
+    channel.postMessage(payload)
+    channel.close()
+  } catch (e) {
+    console.warn('BroadcastChannel error:', e)
+  }
+
+  // 2. Kênh LocalStorage Event: Kích hoạt sự kiện storage ở tab mẹ
+  try {
+    localStorage.setItem('oxford_oauth_sync', JSON.stringify({
+      ...payload,
+      timestamp: Date.now()
+    }))
+  } catch (e) {
+    console.warn('localStorage sync error:', e)
+  }
+
+  // 3. Kênh Window opener postMessage: Nếu trình duyệt còn giữ opener
+  if (window.opener && !window.opener.closed) {
+    try {
+      window.opener.postMessage(payload, '*')
+    } catch (e) {
+      console.warn('postMessage error:', e)
+    }
+  }
+
+  loading.value = false
+  success.value = true
+
+  // 4. TỰ ĐỘNG TẮT TAB GOOGLE NÀY NGAY LẬP TỨC
+  try {
+    window.close()
+  } catch (e) {}
+
+  setTimeout(() => {
+    try {
+      window.open('', '_self', '')
+      window.close()
+    } catch (e) {}
+  }, 80)
+
+  // 5. Dự phòng: Nếu trình duyệt chặn hoàn toàn lệnh window.close()
+  // (ví dụ: mở bằng cách dán URL trực tiếp hoặc trên trình duyệt di động):
+  // Tự động chuyển hướng tab này về trang chủ sau 300ms!
+  setTimeout(() => {
+    window.location.replace('/')
+  }, 300)
+}
 
 onMounted(async () => {
   try {
@@ -97,20 +158,24 @@ onMounted(async () => {
       return
     }
 
-    // 2. Trường hợp A: Backend redirect về kèm token và user (Web redirect flow)
+    // 2. Trường hợp A: Backend redirect về kèm token và user
     if (route.query.token) {
       const token = route.query.token
       let user = null
 
       if (route.query.user) {
         try {
-          user = JSON.parse(atob(route.query.user))
+          user = JSON.parse(decodeURIComponent(escape(atob(route.query.user))))
         } catch (e) {
-          console.warn('Không giải mã được user payload từ query:', e)
+          try {
+            user = JSON.parse(atob(route.query.user))
+          } catch (e2) {
+            console.warn('Không giải mã được user payload từ query:', e2)
+          }
         }
       }
 
-      // Lưu trữ phiên đăng nhập
+      // Lưu trữ phiên đăng nhập vào localStorage
       authStore.token = token
       localStorage.setItem('oxford_token', token)
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
@@ -121,32 +186,8 @@ onMounted(async () => {
         loggedUserName.value = user.name || 'Học viên'
       }
 
-      // Nạp thông tin tài khoản đầy đủ từ /api/auth/me
-      await authStore.fetchMe()
-
-      // Nếu mở trong popup, gửi thông điệp về cửa sổ cha và đóng popup
-      if (window.opener && !window.opener.closed) {
-        try {
-          window.opener.postMessage({
-            type: 'GOOGLE_AUTH_SUCCESS',
-            token,
-            user: authStore.user || user
-          }, '*')
-          setTimeout(() => {
-            window.close()
-          }, 300)
-          return
-        } catch (e) {
-          console.warn('Không gửi được postMessage:', e)
-        }
-      }
-
-      loading.value = false
-      success.value = true
-
-      setTimeout(() => {
-        router.push('/')
-      }, 1200)
+      // Kích hoạt đóng tab Google và báo cho trình duyệt ban đầu về trang chủ
+      dispatchAuthSuccessAndClose(token, user)
       return
     }
 
@@ -169,32 +210,10 @@ onMounted(async () => {
         localStorage.setItem('oxford_user', JSON.stringify(user))
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
 
-        loggedUserName.value = user.name || 'Học viên'
-        await authStore.fetchMe()
+        loggedUserName.value = user?.name || 'Học viên'
 
-        // Nếu mở trong popup, gửi postMessage và đóng
-        if (window.opener && !window.opener.closed) {
-          try {
-            window.opener.postMessage({
-              type: 'GOOGLE_AUTH_SUCCESS',
-              token,
-              user: authStore.user || user
-            }, '*')
-            setTimeout(() => {
-              window.close()
-            }, 300)
-            return
-          } catch (e) {
-            console.warn('Không gửi được postMessage:', e)
-          }
-        }
-
-        loading.value = false
-        success.value = true
-
-        setTimeout(() => {
-          router.push('/')
-        }, 1200)
+        // Kích hoạt đóng tab Google và báo cho trình duyệt ban đầu về trang chủ
+        dispatchAuthSuccessAndClose(token, user)
         return
       } else {
         loading.value = false
@@ -216,7 +235,7 @@ onMounted(async () => {
 
 <style scoped>
 .max-w-md {
-  max-w: 460px;
+  max-width: 460px;
 }
 .bg-card-dark {
   background-color: #1e293b;

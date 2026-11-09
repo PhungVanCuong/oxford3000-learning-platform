@@ -55,8 +55,8 @@
 <body>
     <div class="card">
         <div class="spinner"></div>
-        <h3>Xác thực thành công!</h3>
-        <p>Đang đồng bộ dữ liệu vào hệ thống và đóng cửa sổ này...</p>
+        <h3>Đăng nhập thành công!</h3>
+        <p>Đang tự động tắt tab này và đưa bạn về trang chủ...</p>
     </div>
 
     <script>
@@ -67,23 +67,48 @@
                 user: @json($user)
             };
 
-            // Nếu mở bằng Popup Window, gửi dữ liệu về cửa sổ mẹ và tự đóng
+            // 1. BroadcastChannel
+            try {
+                const channel = new BroadcastChannel('oxvocab_google_auth');
+                channel.postMessage(authData);
+                channel.close();
+            } catch (e) {}
+
+            // 2. LocalStorage Event
+            try {
+                localStorage.setItem('oxford_token', authData.token);
+                localStorage.setItem('oxford_user', JSON.stringify(authData.user));
+                localStorage.setItem('oxford_oauth_sync', JSON.stringify({
+                    ...authData,
+                    timestamp: Date.now()
+                }));
+            } catch (e) {}
+
+            // 3. window.opener.postMessage
             if (window.opener && !window.opener.closed) {
                 try {
                     window.opener.postMessage(authData, '*');
-                    setTimeout(function() {
-                        window.close();
-                    }, 250);
-                } catch (e) {
-                    console.error('Không gửi được postMessage:', e);
-                    window.close();
-                }
-            } else {
-                // Nếu người dùng mở bằng toàn tab, chuyển hướng về Frontend
-                const frontendUrl = @json($frontendUrl);
-                const payload = btoa(unescape(encodeURIComponent(JSON.stringify(authData.user))));
-                window.location.href = frontendUrl + '/auth/google/callback?token=' + encodeURIComponent(authData.token) + '&user=' + payload;
+                } catch (e) {}
             }
+
+            // 4. Tự động đóng tab ngay lập tức
+            try {
+                window.close();
+            } catch (e) {}
+
+            setTimeout(function() {
+                try {
+                    window.open('', '_self', '');
+                    window.close();
+                } catch (e) {}
+            }, 80);
+
+            // 5. Nếu không đóng được, chuyển hướng về Frontend
+            const frontendUrl = @json($frontendUrl);
+            setTimeout(function() {
+                const payload = btoa(unescape(encodeURIComponent(JSON.stringify(authData.user))));
+                window.location.replace(frontendUrl + '/auth/google/callback?token=' + encodeURIComponent(authData.token) + '&user=' + payload);
+            }, 300);
         })();
     </script>
 </body>
