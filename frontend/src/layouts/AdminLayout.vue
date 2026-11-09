@@ -353,7 +353,7 @@
                 active-class="admin-nav-active"
               >
                 <i class="bi bi-award-fill text-success"></i>
-                <span>Từ vựng CEFR (A1-C2)</span>
+                <span>Từ vựng CEFR</span>
               </router-link>
 
               <router-link
