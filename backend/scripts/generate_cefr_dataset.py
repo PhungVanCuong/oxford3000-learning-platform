@@ -5,16 +5,20 @@ import sys
 import math
 import os
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
+
 levels_spec = [
-    ('a1', 'Tài liệu tiếng Anh/forumflash-tu-vung-co-ban-a1.csv', 'Từ vựng cơ bản A1', 'A1', 45, '#00b074', 'Nền tảng giao tiếp cơ bản hàng ngày'),
-    ('a2', 'Tài liệu tiếng Anh/forumflash-tu-vung-co-ban-a2.csv', 'Từ vựng cơ bản A2', 'A2', 40, '#06b6d4', 'Mở rộng vốn từ sơ trung cấp thực tế'),
-    ('b1', 'Tài liệu tiếng Anh/forumflash-tu-vung-co-ban-b1.csv', 'Từ vựng cơ bản B1', 'B1', 34, '#f43f5e', 'Trung cấp - Đàm thoại & công việc linh hoạt'),
-    ('b2', 'Tài liệu tiếng Anh/forumflash-tu-vung-co-ban-b2.csv', 'Từ vựng cơ bản B2', 'B2', 27, '#f59e0b', 'Trung cao cấp - Diễn đạt chuyên sâu & học thuật'),
-    ('c1', 'Tài liệu tiếng Anh/forumflash-tu-vung-co-ban-c1.csv', 'Từ vựng cơ bản C1', 'C1', 65, '#6366f1', 'Cao cấp - IELTS 7.0+ & nghiên cứu chuyên nghiệp'),
-    ('c2', 'Tài liệu tiếng Anh/forumflash-tu-vung-co-ban-c2.csv', 'Từ vựng cơ bản C2', 'C2', 36, '#ec4899', 'Thành thạo bản xứ - Tinh hoa ngôn ngữ đỉnh cao'),
+    ('a1', os.path.join(PROJECT_ROOT, 'Tài liệu tiếng Anh', 'forumflash-tu-vung-co-ban-a1.csv'), 'Từ vựng cơ bản A1', 'A1', 45, '#00b074', 'Nền tảng giao tiếp cơ bản hàng ngày'),
+    ('a2', os.path.join(PROJECT_ROOT, 'Tài liệu tiếng Anh', 'forumflash-tu-vung-co-ban-a2.csv'), 'Từ vựng cơ bản A2', 'A2', 40, '#06b6d4', 'Mở rộng vốn từ sơ trung cấp thực tế'),
+    ('b1', os.path.join(PROJECT_ROOT, 'Tài liệu tiếng Anh', 'forumflash-tu-vung-co-ban-b1.csv'), 'Từ vựng cơ bản B1', 'B1', 34, '#f43f5e', 'Trung cấp - Đàm thoại & công việc linh hoạt'),
+    ('b2', os.path.join(PROJECT_ROOT, 'Tài liệu tiếng Anh', 'forumflash-tu-vung-co-ban-b2.csv'), 'Từ vựng cơ bản B2', 'B2', 27, '#f59e0b', 'Trung cao cấp - Diễn đạt chuyên sâu & học thuật'),
+    ('c1', os.path.join(PROJECT_ROOT, 'Tài liệu tiếng Anh', 'forumflash-tu-vung-co-ban-c1.csv'), 'Từ vựng cơ bản C1', 'C1', 65, '#6366f1', 'Cao cấp - IELTS 7.0+ & nghiên cứu chuyên nghiệp'),
+    ('c2', os.path.join(PROJECT_ROOT, 'Tài liệu tiếng Anh', 'forumflash-tu-vung-co-ban-c2.csv'), 'Từ vựng cơ bản C2', 'C2', 36, '#ec4899', 'Thành thạo bản xứ - Tinh hoa ngôn ngữ đỉnh cao'),
 ]
 
-os.makedirs('frontend/src/data/cefr', exist_ok=True)
+output_dir = os.path.join(PROJECT_ROOT, 'frontend', 'src', 'data', 'cefr')
+os.makedirs(output_dir, exist_ok=True)
 
 manifest = {
     'levels': []
@@ -121,7 +125,7 @@ for level_id, file_path, title, code, num_lessons, color, desc in levels_spec:
     }
 
     # Write individual level json for instant lazy loading
-    with open(f'frontend/src/data/cefr/{level_id}.json', 'w', encoding='utf-8') as f:
+    with open(os.path.join(output_dir, f'{level_id}.json'), 'w', encoding='utf-8') as f:
         json.dump(level_data, f, ensure_ascii=False)
     
     # Add to manifest (without heavy word payload, for fast navigation)
@@ -139,7 +143,7 @@ for level_id, file_path, title, code, num_lessons, color, desc in levels_spec:
         ]
     })
 
-with open('frontend/src/data/cefr/manifest.json', 'w', encoding='utf-8') as f:
+with open(os.path.join(output_dir, 'manifest.json'), 'w', encoding='utf-8') as f:
     json.dump(manifest, f, ensure_ascii=False, indent=2)
 
 print(f'Generated CEFR manifest + individual level JSONs! Total: {total_words} words, {total_lessons} lessons.')
