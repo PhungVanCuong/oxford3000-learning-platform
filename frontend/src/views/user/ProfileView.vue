@@ -644,11 +644,13 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { useSpeech } from '@/composables/useSpeech'
+import { useToast } from '@/composables/useToast'
 import axios from 'axios'
 
 const authStore = useAuthStore()
 const router = useRouter()
 const speech = useSpeech()
+const toast = useToast()
 
 const selectedVoiceURI = ref(localStorage.getItem('oxford_voice_uri') || '')
 const currentSpeed = ref(parseFloat(localStorage.getItem('oxford_speech_rate') || '1.0'))
@@ -717,13 +719,13 @@ const getNavOption = (id) => availableNavOptions.find(opt => opt.id === id)
 const toggleNavItem = (id) => {
   if (selectedNavIds.value.includes(id)) {
     if (selectedNavIds.value.length <= 1) {
-      alert('Vui lòng chọn ít nhất 1 mục hiển thị trên thanh Header!')
+      toast.warning('Vui lòng chọn ít nhất 1 mục hiển thị trên thanh Header!', 'Cấu hình Header')
       return
     }
     selectedNavIds.value = selectedNavIds.value.filter(item => item !== id)
   } else {
     if (selectedNavIds.value.length >= 4) {
-      alert('Tối đa 4 mục tùy chỉnh trên thanh Header (kết hợp với Trang chủ và Xem thêm là tròn 6 mục)! Hãy bỏ bớt 1 mục trước khi chọn thêm.')
+      toast.warning('Tối đa 4 mục tùy chỉnh trên thanh Header (kết hợp Trang chủ và Xem thêm)! Hãy bỏ bớt 1 mục trước.', 'Giới hạn Header')
       return
     }
     selectedNavIds.value.push(id)
@@ -764,16 +766,16 @@ const moveMoreItemDown = (idx) => {
 
 const saveHeaderNav = async () => {
   if (selectedNavIds.value.length !== 4) {
-    alert('Vui lòng chọn đúng 4 mục để thanh Header hiển thị chuẩn xác 6 mục!')
+    toast.warning('Vui lòng chọn đúng 4 mục để thanh Header hiển thị chuẩn xác 6 mục!', 'Cấu hình Header')
     return
   }
   isSavingNav.value = true
   try {
     await authStore.setHeaderNavAndMore(selectedNavIds.value, unselectedNavIds.value)
-    alert('Đã lưu cấu hình menu Header và danh sách Xem thêm thành công!')
+    toast.success('Đã lưu cấu hình menu Header và danh sách Xem thêm thành công!', 'Đã lưu cài đặt')
   } catch (err) {
     console.error(err)
-    alert('Lỗi lưu cấu hình: ' + (err.response?.data?.message || err.message))
+    toast.error('Lỗi lưu cấu hình: ' + (err.response?.data?.message || err.message), 'Lỗi hệ thống')
   } finally {
     isSavingNav.value = false
   }
@@ -850,7 +852,7 @@ const saveProfile = async () => {
   isSaving.value = true
   await authStore.updateProfile(form.value)
   isSaving.value = false
-  alert('Đã cập nhật thông tin thành công!')
+  toast.success('Đã cập nhật thông tin hồ sơ thành công!', 'Hồ sơ cá nhân')
 }
 
 const executeResetProgress = async () => {
@@ -859,9 +861,9 @@ const executeResetProgress = async () => {
     const res = await axios.post('/api/auth/reset-progress')
     await authStore.fetchMe()
     showResetConfirm.value = false
-    alert(res.data.message || 'Đã đặt lại tiến độ học thành công!')
+    toast.success(res.data.message || 'Đã đặt lại toàn bộ tiến độ học thành công!', 'Đặt lại tiến độ')
   } catch (err) {
-    alert('Lỗi đặt lại tiến độ: ' + (err.response?.data?.message || err.message))
+    toast.error('Lỗi đặt lại tiến độ: ' + (err.response?.data?.message || err.message), 'Lỗi hệ thống')
   } finally {
     isResetting.value = false
   }

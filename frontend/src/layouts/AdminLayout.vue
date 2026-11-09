@@ -54,22 +54,8 @@
 
         <div class="vr mx-0.5 d-none d-sm-block"></div>
 
-        <!-- Admin Identity Pill & Logout -->
-        <div class="d-flex align-items-center gap-1.5 gap-md-2">
-          <img
-            :src="authStore.userAvatar"
-            class="rounded-circle border border-2 border-teal shrink-0"
-            style="width: 32px; height: 32px; object-fit: cover;"
-          />
-          <div class="d-none d-md-flex flex-column">
-            <span class="fw-bold fs-7 text-dark-emphasis leading-tight">{{ authStore.userName }}</span>
-            <span class="badge rounded-pill" :class="roleBadgeClass" style="font-size: 9px;">{{ roleDisplayName }}</span>
-          </div>
-
-          <button @click="handleLogout" class="btn btn-sm btn-outline-danger rounded-circle p-1 ms-0.5" title="Đăng xuất khỏi Admin" style="width: 32px; height: 32px;">
-            <i class="bi bi-box-arrow-right fs-7"></i>
-          </button>
-        </div>
+        <!-- Admin Identity & Auth Header Widget -->
+        <AuthHeaderWidget :isAdminView="true" />
       </div>
     </header>
 
@@ -414,6 +400,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import AuthHeaderWidget from '@/components/AuthHeaderWidget.vue'
 
 const authStore = useAuthStore()
 const router = useRouter()

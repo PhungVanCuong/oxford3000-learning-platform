@@ -124,6 +124,23 @@ onMounted(async () => {
       // Nạp thông tin tài khoản đầy đủ từ /api/auth/me
       await authStore.fetchMe()
 
+      // Nếu mở trong popup, gửi thông điệp về cửa sổ cha và đóng popup
+      if (window.opener && !window.opener.closed) {
+        try {
+          window.opener.postMessage({
+            type: 'GOOGLE_AUTH_SUCCESS',
+            token,
+            user: authStore.user || user
+          }, '*')
+          setTimeout(() => {
+            window.close()
+          }, 300)
+          return
+        } catch (e) {
+          console.warn('Không gửi được postMessage:', e)
+        }
+      }
+
       loading.value = false
       success.value = true
 
@@ -154,6 +171,23 @@ onMounted(async () => {
 
         loggedUserName.value = user.name || 'Học viên'
         await authStore.fetchMe()
+
+        // Nếu mở trong popup, gửi postMessage và đóng
+        if (window.opener && !window.opener.closed) {
+          try {
+            window.opener.postMessage({
+              type: 'GOOGLE_AUTH_SUCCESS',
+              token,
+              user: authStore.user || user
+            }, '*')
+            setTimeout(() => {
+              window.close()
+            }, 300)
+            return
+          } catch (e) {
+            console.warn('Không gửi được postMessage:', e)
+          }
+        }
 
         loading.value = false
         success.value = true

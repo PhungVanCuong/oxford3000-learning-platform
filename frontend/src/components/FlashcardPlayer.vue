@@ -457,6 +457,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useSpeech } from '@/composables/useSpeech'
 import { useAuthStore } from '@/stores/authStore'
 import { useReviewStore } from '@/stores/reviewStore'
+import { useToast } from '@/composables/useToast'
 
 const props = defineProps({
   words: {
@@ -482,6 +483,7 @@ const emit = defineEmits(['status-updated', 'update-status', 'index-changed'])
 
 const speech = useSpeech()
 const authStore = useAuthStore()
+const toast = useToast()
 
 const currentIndex = ref(props.initialIndex || 0)
 const isFlipped = ref(false)
@@ -604,8 +606,10 @@ const submitSpellRecall = (e) => {
   if (isWordMatching(typedRecallWord.value, target)) {
     isSpellCorrect.value = true
     speech.speak(target)
+    toast.success(`Chính xác: "${target}" (+10 XP)`, 'Phản xạ chuẩn xác')
   } else {
     isSpellCorrect.value = false
+    toast.error(`Chưa đúng: "${typedRecallWord.value || '(để trống)'}". Thử lại hoặc bấm "Xem kết quả".`, 'Kiểm tra lại')
   }
 }
 
@@ -621,6 +625,7 @@ const revealResultNow = (e) => {
     showAnswer.value = true
     isSpellCorrect.value = true
     speech.speak(target)
+    toast.info(`Đáp án đúng là: "${target}"`, 'Kết quả từ vựng')
   }
 }
 
@@ -666,10 +671,12 @@ const markCurrentMastered = () => {
     return
   }
   if (currentWord.value) {
+    const wordText = currentWordText.value || 'từ vựng'
     currentWord.value.status = 'mastered'
     if ('is_remembered' in currentWord.value) {
       currentWord.value.is_remembered = true
     }
+    toast.mastered(`Tuyệt vời! Đã thuộc: "${wordText}"`, 'Đã nhớ (+5 XP)')
     emit('status-updated', { wordId: currentWord.value.id, status: 'mastered', word: currentWord.value })
     emit('update-status', { wordId: currentWord.value.id, status: 'mastered', word: currentWord.value })
     if (currentIndex.value < props.words.length - 1) {
@@ -684,6 +691,7 @@ const markCurrentLearning = () => {
     return
   }
   if (currentWord.value) {
+    const wordText = currentWordText.value || 'từ vựng'
     currentWord.value.status = 'learning'
     if ('is_remembered' in currentWord.value) {
       currentWord.value.is_remembered = false
@@ -694,6 +702,7 @@ const markCurrentLearning = () => {
     } catch (e) {
       console.warn('Failed to sync to reviewStore:', e)
     }
+    toast.review(`Đã đưa "${wordText}" vào danh sách cần ôn tập.`, 'Cần ôn tập')
     emit('status-updated', { wordId: currentWord.value.id, status: 'learning', word: currentWord.value })
     emit('update-status', { wordId: currentWord.value.id, status: 'learning', word: currentWord.value })
     if (currentIndex.value < props.words.length - 1) {

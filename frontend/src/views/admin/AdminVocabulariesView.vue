@@ -185,6 +185,9 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import SmartPagination from '@/components/SmartPagination.vue'
+import { useToast } from '@/composables/useToast'
+
+const toast = useToast()
 
 const vocabList = ref([])
 const totalCount = ref(0)
@@ -277,7 +280,7 @@ const generateAiExamples = async () => {
       vocabForm.value.phonetic_us = data.phonetic_us
     }
   } catch (err) {
-    alert('Không thể tạo ví dụ tự động qua AI.')
+    toast.error('Không thể tạo ví dụ tự động qua AI.', 'Lỗi AI')
   } finally {
     aiGenerating.value = false
   }
@@ -287,15 +290,15 @@ const saveVocab = async () => {
   try {
     if (editingVocab.value?.id) {
       await axios.put(`/api/admin/vocabularies/${editingVocab.value.id}`, vocabForm.value)
-      alert('Đã cập nhật từ vựng thành công!')
+      toast.success('Đã cập nhật từ vựng thành công!', 'Quản trị Từ vựng')
     } else {
       await axios.post('/api/admin/vocabularies', vocabForm.value)
-      alert('Đã thêm từ vựng mới thành công!')
+      toast.success('Đã thêm từ vựng mới thành công!', 'Quản trị Từ vựng')
     }
     showVocabModal.value = false
     fetchVocabs(currentPage.value)
   } catch (err) {
-    alert('Lỗi lưu từ: ' + (err.response?.data?.message || err.message))
+    toast.error('Lỗi lưu từ: ' + (err.response?.data?.message || err.message), 'Lỗi hệ thống')
   }
 }
 
@@ -303,9 +306,10 @@ const deleteVocab = async (id) => {
   if (confirm('Bạn có chắc chắn muốn xóa từ vựng này?')) {
     try {
       await axios.delete(`/api/admin/vocabularies/${id}`)
+      toast.success('Đã xóa từ vựng thành công!', 'Quản trị Từ vựng')
       fetchVocabs(currentPage.value)
     } catch (err) {
-      alert('Lỗi khi xóa từ vựng.')
+      toast.error('Lỗi khi xóa từ vựng.', 'Lỗi hệ thống')
     }
   }
 }

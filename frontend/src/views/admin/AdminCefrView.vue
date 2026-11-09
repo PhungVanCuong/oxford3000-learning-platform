@@ -231,6 +231,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import SmartPagination from '@/components/SmartPagination.vue'
+import { useToast } from '@/composables/useToast'
 
 // Import manifest & level datasets
 import manifestData from '@/data/cefr/manifest.json'
@@ -334,9 +335,11 @@ const openModal = (item) => {
   showModal.value = true
 }
 
+const toast = useToast()
+
 const saveWord = () => {
   if (!form.value.word || !form.value.meaning_vi) {
-    alert('Vui lòng nhập từ tiếng Anh và nghĩa tiếng Việt')
+    toast.warning('Vui lòng nhập từ tiếng Anh và nghĩa tiếng Việt', 'Thiếu thông tin')
     return
   }
 
@@ -354,13 +357,13 @@ const saveWord = () => {
 
   localStorage.setItem('oxford_admin_cefr_words', JSON.stringify(words.value.slice(0, 500)))
   showModal.value = false
-  alert('Đã lưu từ vựng CEFR thành công!')
+  toast.success('Đã lưu từ vựng CEFR thành công!', 'Quản trị CEFR')
 }
 
 const deleteWord = (item) => {
   if (confirm(`Bạn có chắc chắn muốn xóa từ "${item.word}" khỏi cấp độ ${item.level_code}?`)) {
     words.value = words.value.filter(w => w !== item && w.id !== item.id)
-    alert('Đã xóa từ vựng thành công!')
+    toast.success('Đã xóa từ vựng thành công!', 'Quản trị CEFR')
   }
 }
 </script>

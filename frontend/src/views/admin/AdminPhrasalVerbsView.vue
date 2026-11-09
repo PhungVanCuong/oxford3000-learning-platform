@@ -166,6 +166,9 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import SmartPagination from '@/components/SmartPagination.vue'
+import { useToast } from '@/composables/useToast'
+
+const toast = useToast()
 
 const phrases = ref([])
 const searchPhrase = ref('')
@@ -249,15 +252,15 @@ const savePhrase = async () => {
 
     if (editingPhrase.value?.id) {
       await axios.put(`/api/phrasal-verbs/${editingPhrase.value.id}`, payload)
-      alert('Đã cập nhật cụm từ thành công!')
+      toast.success('Đã cập nhật cụm từ thành công!', 'Quản trị Cụm từ')
     } else {
       await axios.post('/api/phrasal-verbs', payload)
-      alert('Đã thêm cụm từ mới thành công!')
+      toast.success('Đã thêm cụm từ mới thành công!', 'Quản trị Cụm từ')
     }
     showModal.value = false
     fetchPhrases()
   } catch (err) {
-    alert('Lỗi: ' + (err.response?.data?.message || err.message))
+    toast.error('Lỗi: ' + (err.response?.data?.message || err.message), 'Lỗi hệ thống')
   }
 }
 
@@ -265,9 +268,10 @@ const deletePhrase = async (id) => {
   if (confirm('Bạn có chắc chắn muốn xóa cụm từ này?')) {
     try {
       await axios.delete(`/api/phrasal-verbs/${id}`)
+      toast.success('Đã xóa cụm từ thành công!', 'Quản trị Cụm từ')
       fetchPhrases()
     } catch (err) {
-      alert('Không thể xóa cụm từ này.')
+      toast.error('Không thể xóa cụm từ này.', 'Lỗi hệ thống')
     }
   }
 }

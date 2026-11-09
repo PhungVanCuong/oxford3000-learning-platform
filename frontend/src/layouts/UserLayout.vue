@@ -252,134 +252,8 @@
               <i class="bi" :class="authStore.themeMode === 'light' ? 'bi-moon-stars-fill text-warning' : 'bi-sun-fill text-warning'"></i>
             </button>
 
-            <!-- GUEST BUTTONS (Matches image media_1792672183705_bc785297.png) -->
-            <template v-if="!authStore.isAuthenticated">
-              <router-link
-                to="/login"
-                class="btn btn-sm btn-outline-secondary bg-white text-dark border px-3.5 py-2 rounded-pill shadow-sm d-flex align-items-center gap-1.5 fs-7 fw-semibold"
-              >
-                <i class="bi bi-box-arrow-in-right"></i>
-                <span>Đăng nhập</span>
-              </router-link>
-
-              <router-link
-                to="/register"
-                class="btn btn-sm btn-teal text-white border-0 px-4 py-2 rounded-pill shadow d-flex align-items-center gap-2 fs-7 fw-bold"
-                style="background-color: #00b074;"
-              >
-                <span>Bắt đầu ngay</span>
-                <i class="bi bi-arrow-right"></i>
-              </router-link>
-            </template>
-
-            <!-- AUTHENTICATED USER DROPDOWN (Matches screenshot media_1792669101971_c92089a6.png) -->
-            <template v-else>
-              <!-- XP Badge -->
-              <div class="badge bg-primary-subtle text-primary border border-primary-subtle py-1.5 px-3 rounded-pill fs-7 d-flex align-items-center gap-1 shadow-sm">
-                <span>⚡</span>
-                <span class="fw-bold">{{ authStore.user?.xp_points || 0 }} XP</span>
-              </div>
-
-              <!-- Profile Dropdown Combobox -->
-              <div class="position-relative flex-shrink-0" ref="dropdownRef">
-                <button
-                  @click="toggleDropdown"
-                  class="btn btn-sm btn-teal rounded-pill d-flex align-items-center gap-2 px-3 py-1.5 shadow-sm border-0 text-nowrap"
-                  style="white-space: nowrap !important; flex-shrink: 0;"
-                  type="button"
-                >
-                  <img
-                    :src="authStore.userAvatar"
-                    class="rounded-circle border border-white flex-shrink-0"
-                    style="width: 26px; height: 26px; object-fit: cover; background-color: #fff;"
-                  />
-                  <span class="d-none d-md-inline fw-bold text-white text-nowrap" style="white-space: nowrap !important;">{{ authStore.userName }}</span>
-                  <i class="bi bi-chevron-down text-white fs-8 flex-shrink-0"></i>
-                </button>
-
-                <!-- Profile Dropdown Card -->
-                <div
-                  v-if="isDropdownOpen"
-                  class="dropdown-menu dropdown-menu-end show position-absolute end-0 mt-2 shadow-lg border rounded-4 py-2 z-3"
-                  :class="authStore.themeMode === 'dark' ? 'dropdown-menu-dark bg-dark border-secondary' : 'bg-white border-light-subtle'"
-                  style="min-width: 250px;"
-                >
-                  <div class="px-3 py-2 border-bottom">
-                    <div class="fw-black fs-6 text-dark-emphasis text-truncate">{{ authStore.userName }}</div>
-                    <div class="text-muted text-truncate fs-8">{{ authStore.userEmail }}</div>
-                    <div class="mt-1.5">
-                      <span
-                        class="badge px-2.5 py-1 rounded-pill fw-semibold"
-                        :style="authStore.isAdmin ? 'background-color: #fee2e2; color: #dc2626; border: 1px solid #fca5a5;' : 'background-color: #d1fae5; color: #059669; border: 1px solid #6ee7b7;'"
-                        style="font-size: 11px;"
-                      >
-                        {{ authStore.isAdmin ? 'Quản trị viên (Admin)' : 'Học viên' }}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div class="py-1">
-                    <router-link
-                      to="/profile"
-                      @click="isDropdownOpen = false"
-                      class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2 text-dark-emphasis"
-                    >
-                      <i class="bi bi-person-circle text-primary fs-6"></i>
-                      <span>Trang cá nhân</span>
-                    </router-link>
-
-                    <router-link
-                      to="/tree"
-                      @click="isDropdownOpen = false"
-                      class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2 text-dark-emphasis"
-                    >
-                      <i class="bi bi-tree-fill text-success fs-6"></i>
-                      <span>Vườn Cây Tri Thức</span>
-                    </router-link>
-
-                    <router-link
-                      to="/stats"
-                      @click="isDropdownOpen = false"
-                      class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2 text-dark-emphasis"
-                    >
-                      <i class="bi bi-bar-chart-fill text-teal fs-6"></i>
-                      <span>Báo Cáo Năng Suất</span>
-                    </router-link>
-
-                    <router-link
-                      to="/arena"
-                      @click="isDropdownOpen = false"
-                      class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2 text-dark-emphasis"
-                    >
-                      <i class="bi bi-trophy-fill text-warning fs-6"></i>
-                      <span>Đấu Trường Quiz</span>
-                    </router-link>
-
-                    <router-link
-                      v-if="authStore.isStaff || authStore.isAdmin"
-                      to="/admin"
-                      @click="isDropdownOpen = false"
-                      class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2 text-danger fw-semibold"
-                    >
-                      <i class="bi bi-shield-lock-fill text-danger fs-6"></i>
-                      <span>Khu vực Quản trị & Điều phối</span>
-                    </router-link>
-                  </div>
-
-                  <div class="dropdown-divider my-1"></div>
-
-                  <div class="py-1">
-                    <button
-                      @click="handleLogout"
-                      class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2 text-danger border-0 bg-transparent w-100 text-start"
-                    >
-                      <i class="bi bi-box-arrow-right text-danger fs-6"></i>
-                      <span>Đăng xuất</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </template>
+            <!-- AUTH HEADER WIDGET (Google Login Button & Avatar Dropdown) -->
+            <AuthHeaderWidget />
           </div>
         </div>
       </div>
@@ -546,6 +420,23 @@
             <i class="bi bi-box-arrow-right text-danger fs-6"></i>
             <span>Đăng xuất tài khoản</span>
           </button>
+
+          <!-- Nút Đăng nhập Google trong menu điện thoại nếu chưa đăng nhập -->
+          <div v-else class="mt-2">
+            <button
+              @click="() => { closeMobileDrawer(); openGoogleLoginPopup(); }"
+              class="btn w-100 py-2 d-flex align-items-center justify-content-center gap-2 rounded-3 border shadow-xs"
+              :class="authStore.themeMode === 'dark' ? 'btn-dark bg-dark-subtle border-secondary text-white' : 'btn-white bg-white border text-dark-emphasis'"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+              <span class="fs-7 fw-bold">Đăng nhập bằng Google</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -565,12 +456,17 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import { useGoogleAuth } from '@/composables/useGoogleAuth'
+import { useToast } from '@/composables/useToast'
+import AuthHeaderWidget from '@/components/AuthHeaderWidget.vue'
 import LoginRequiredModal from '@/components/LoginRequiredModal.vue'
 import QuickLookupPopup from '@/components/QuickLookupPopup.vue'
 import AiAssistantModal from '@/components/AiAssistantModal.vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
+const toast = useToast()
+const { openGoogleLoginPopup } = useGoogleAuth()
 
 const isDropdownOpen = ref(false)
 const dropdownRef = ref(null)
@@ -632,8 +528,9 @@ const closeMobileDrawer = () => {
 }
 const handleDrawerLogout = async () => {
   closeMobileDrawer()
+  const prevName = authStore.userName || 'bạn'
   await authStore.logout()
-  router.push('/login')
+  toast.info(`Tài khoản "${prevName}" đã đăng xuất an toàn.`, 'Đăng xuất thành công')
 }
 
 // BẢNG ĐIỀU HƯỚNG CHUẨN: Lộ trình luôn đứng thứ 2, sau đó là Ngữ pháp, Từ vựng CEFR, Học theo ngày, Cụm từ, Ôn tập, Lịch sử... Mẹo học luôn nằm cuối

@@ -230,6 +230,9 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import SmartPagination from '@/components/SmartPagination.vue'
+import { useToast } from '@/composables/useToast'
+
+const toast = useToast()
 
 const grammars = ref([])
 const isLoading = ref(false)
@@ -312,7 +315,7 @@ const openModal = (item) => {
 
 const saveGrammar = async () => {
   if (!form.value.title || !form.value.slug) {
-    alert('Vui lòng nhập đầy đủ tiêu đề và slug URL')
+    toast.warning('Vui lòng nhập đầy đủ tiêu đề và slug URL', 'Thiếu thông tin')
     return
   }
 
@@ -331,13 +334,13 @@ const saveGrammar = async () => {
   }
 
   showModal.value = false
-  alert('Đã cập nhật chuyên đề ngữ pháp thành công!')
+  toast.success('Đã cập nhật chuyên đề ngữ pháp thành công!', 'Quản trị Ngữ pháp')
 }
 
 const deleteGrammar = (id) => {
   if (confirm('Bạn có chắc chắn muốn xóa chuyên đề ngữ pháp này?')) {
     grammars.value = grammars.value.filter(g => g.id !== id)
-    alert('Đã xóa chuyên đề thành công!')
+    toast.success('Đã xóa chuyên đề thành công!', 'Quản trị Ngữ pháp')
   }
 }
 

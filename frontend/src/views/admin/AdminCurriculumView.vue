@@ -385,6 +385,9 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import SmartPagination from '@/components/SmartPagination.vue'
+import { useToast } from '@/composables/useToast'
+
+const toast = useToast()
 
 const topics = ref([])
 const loadingTopics = ref(true)
@@ -530,9 +533,10 @@ const saveTerm = async () => {
     }
 
     showTermModal.value = false
+    toast.success('Đã lưu từ vựng lộ trình thành công!', 'Quản trị Lộ trình')
     fetchTerms(termsPagination.value.current_page || 1)
   } catch (err) {
-    alert(err.response?.data?.message || 'Lỗi khi lưu từ vựng.')
+    toast.error(err.response?.data?.message || 'Lỗi khi lưu từ vựng.', 'Lỗi hệ thống')
   } finally {
     savingTerm.value = false
   }
@@ -544,9 +548,10 @@ const deleteTerm = async (term) => {
     const token = localStorage.getItem('oxford_token')
     const headers = token ? { Authorization: `Bearer ${token}` } : {}
     await axios.delete(`/api/admin/curriculum/terms/${term.id}`, { headers })
+    toast.success('Đã xóa từ vựng thành công!', 'Quản trị Lộ trình')
     fetchTerms(termsPagination.value.current_page || 1)
   } catch (err) {
-    alert('Lỗi khi xóa từ vựng.')
+    toast.error('Lỗi khi xóa từ vựng.', 'Lỗi hệ thống')
   }
 }
 
@@ -570,9 +575,10 @@ const saveTopic = async () => {
 
     await axios.put(`/api/admin/curriculum/topics/${editingTopic.value.id}`, topicForm.value, { headers })
     showTopicModal.value = false
+    toast.success('Đã cập nhật chủ đề lộ trình thành công!', 'Quản trị Lộ trình')
     fetchTopics()
   } catch (err) {
-    alert('Lỗi khi cập nhật chủ đề.')
+    toast.error('Lỗi khi cập nhật chủ đề.', 'Lỗi hệ thống')
   }
 }
 

@@ -495,10 +495,12 @@ import { ref, computed, nextTick } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
 import { useReviewStore } from '@/stores/reviewStore'
 import { useSpeech } from '@/composables/useSpeech'
+import { useToast } from '@/composables/useToast'
 
 const authStore = useAuthStore()
 const reviewStore = useReviewStore()
 const speech = useSpeech()
+const toast = useToast()
 
 const selectedCardIds = ref([])
 const isCreatingFolder = ref(false)
@@ -594,13 +596,15 @@ const openEditCardModal = (card) => {
 
 const handleSaveCard = () => {
   if (!cardForm.value.word.trim() || !cardForm.value.meaning_vi.trim()) {
-    alert('Vui lòng nhập cả từ tiếng Anh và nghĩa tiếng Việt!')
+    toast.warning('Vui lòng nhập cả từ tiếng Anh và nghĩa tiếng Việt!', 'Thiếu thông tin')
     return
   }
   if (editingCardId.value) {
     reviewStore.updateCard(editingCardId.value, cardForm.value)
+    toast.saved(`Đã cập nhật từ "${cardForm.value.word}"`, 'Bộ thẻ ôn tập')
   } else {
     reviewStore.addWordToReview(cardForm.value, cardForm.value.folder)
+    toast.saved(`Đã thêm "${cardForm.value.word}" vào bộ thẻ ôn tập!`, 'Đã lưu thẻ')
   }
   isCardModalOpen.value = false
 }
