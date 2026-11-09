@@ -531,6 +531,7 @@ const handleDrawerLogout = async () => {
   const prevName = authStore.userName || 'bạn'
   await authStore.logout()
   toast.info(`Tài khoản "${prevName}" đã đăng xuất an toàn.`, 'Đăng xuất thành công')
+  router.push('/login')
 }
 
 // BẢNG ĐIỀU HƯỚNG CHUẨN: Lộ trình luôn đứng thứ 2, sau đó là Ngữ pháp, Từ vựng CEFR, Học theo ngày, Cụm từ, Ôn tập, Lịch sử... Mẹo học luôn nằm cuối

@@ -264,11 +264,7 @@ const handleLogout = async () => {
   const prevName = authStore.userName || 'bạn'
   await authStore.logout()
   toast.info(`Tài khoản "${prevName}" đã đăng xuất an toàn.`, 'Đăng xuất thành công')
-
-  // Nếu người dùng đang đứng ở trang quản trị Admin thì chuyển hướng về Trang chủ
-  if (props.isAdminView || window.location.pathname.startsWith('/admin')) {
-    router.push('/')
-  }
+  router.push('/login')
 }
 </script>
 
