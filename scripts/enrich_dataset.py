@@ -2,8 +2,9 @@ import json
 import os
 import re
 
-raw_path = 'backend/database/data/oxford_raw.json'
-output_path = 'backend/database/data/oxford_3000.json'
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+raw_path = os.path.join(BASE_DIR, 'database', 'data', 'oxford_raw.json')
+output_path = os.path.join(BASE_DIR, 'database', 'data', 'oxford_3000.json')
 
 with open(raw_path, 'r', encoding='utf-8') as f:
     words = json.load(f)
@@ -196,4 +197,4 @@ print(f"Total enriched vocabulary entries: {len(enriched_words)}")
 with open(output_path, 'w', encoding='utf-8') as f:
     json.dump(enriched_words, f, ensure_ascii=False, indent=2)
 
-print(f"Successfully wrote {output_path}!")
+print("Successfully wrote oxford_3000.json!")
