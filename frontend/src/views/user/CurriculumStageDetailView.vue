@@ -404,338 +404,16 @@
 
     <!-- MAIN BODY -->
     <div v-else class="container py-2 flex-grow-1 d-flex flex-column justify-content-center" style="max-width: 960px;">
-      <!-- ================= MODE 1: 3D FLASHCARD ================= -->
+      <!-- ================= MODE 1: 3D FLASHCARD (UNIFIED SINGLE SOURCE OF TRUTH) ================= -->
       <div v-if="activeMode === 'flashcard'" class="flashcard-container mx-auto w-100" style="max-width: 920px;">
-        <!-- Helper Tips Banner (Desktop only) -->
-        <div class="alert alert-primary bg-primary-subtle border-primary-subtle text-primary-emphasis d-none d-md-flex align-items-center justify-content-between py-2 px-3 mb-3 rounded-3 shadow-xs fs-7">
-          <div>
-            <i class="bi bi-lightbulb-fill text-warning me-1"></i>
-            <strong>Phím tắt:</strong> <code>Space</code>: Lật thẻ | <code>Q</code>: Trước | <code>E</code>: Tiếp | <code>A</code>: Nghe | <code>D</code>: Luyện nói | <code>S</code>: Đã nhớ | <code>X</code>: Cần ôn
-          </div>
-          <div class="badge bg-primary text-white ms-2 fs-7 px-2.5 py-1">
-            {{ currentCardIndex + 1 }} / {{ terms.length }}
-          </div>
-        </div>
-
-        <!-- Mobile Touch Helper Pill -->
-        <div class="d-md-none d-flex align-items-center justify-content-between p-2 px-3 rounded-pill bg-white border shadow-2xs mb-2.5 fs-8">
-          <span class="text-muted d-flex align-items-center gap-1.5">
-            <i class="bi bi-hand-index-thumb text-teal fs-7"></i>
-            <span>Chạm thẻ để lật xem nghĩa tiếng Việt</span>
-          </span>
-          <span class="badge bg-teal text-white fw-bold">
-            Thẻ {{ currentCardIndex + 1 }} / {{ terms.length }}
-          </span>
-        </div>
-
-        <!-- 3D Card (Dark Forest Teal) -->
-        <div class="perspective-1000 mb-3" style="min-height: 430px;">
-          <div 
-            class="flashcard-3d-inner w-100 h-100 position-relative rounded-4 shadow-lg cursor-pointer transform-style-preserve-3d"
-            :class="{ 'rotate-y-180': isFlipped }"
-            style="min-height: 430px; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);"
-            @click="isFlipped = !isFlipped"
-          >
-            <!-- FRONT FACE: Dark Forest Teal with Wave Decoration -->
-            <div 
-              class="card h-100 w-100 position-absolute top-0 start-0 backface-hidden rounded-4 p-4 p-md-5 d-flex flex-column justify-content-between text-white border-0 overflow-hidden"
-              style="background: linear-gradient(145deg, #02231d 0%, #04382f 40%, #064e40 100%);"
-            >
-              <!-- Top Card Info: Category + Status -->
-              <div class="d-flex justify-content-between align-items-center position-relative z-1">
-                <span class="fs-8 fw-bold letter-spacing-1 text-uppercase" style="color: #5eead4;">
-                  COLLOCATION • IELTS & OXFORD 3000™
-                </span>
-                <span 
-                  class="badge px-3 py-1.5 rounded-pill fw-bold fs-8 shadow-xs"
-                  :class="currentTerm?.is_remembered ? 'bg-success text-white' : 'text-white'"
-                  :style="!currentTerm?.is_remembered ? 'background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.25);' : ''"
-                >
-                  {{ currentTerm?.is_remembered ? '✔ ĐÃ GHI NHỚ' : 'ĐANG HỌC' }}
-                </span>
-              </div>
-
-              <!-- Main English Word / Term -->
-              <div class="text-center my-3 position-relative z-1">
-                <h1 class="display-5 display-md-4 fw-black text-white mb-2 tracking-tight" style="letter-spacing: -0.5px; word-break: break-word;">
-                  {{ currentTerm?.term }}
-                </h1>
-
-                <!-- Part of Speech Badge -->
-                <div v-if="currentTerm?.part_of_speech" class="mb-2">
-                  <span class="badge px-3 py-1 rounded-pill text-uppercase fs-8 fw-bold" style="background-color: rgba(94, 234, 212, 0.2); color: #5eead4; border: 1px solid rgba(94, 234, 212, 0.35);">
-                    {{ currentTerm.part_of_speech }}
-                  </span>
-                </div>
-
-                <!-- Pronunciation Transcription & Audio Pill Button -->
-                <div class="d-flex align-items-center justify-content-center gap-3 mt-2">
-                  <span class="fs-6 fst-italic" style="color: #a7f3d0;">
-                    {{ currentTermPhonetic }}
-                  </span>
-                  <button 
-                    type="button"
-                    class="btn btn-sm text-white rounded-pill px-3 py-1 fw-bold d-inline-flex align-items-center gap-1.5 shadow-xs"
-                    style="background-color: #032b24; border: 1px solid rgba(255,255,255,0.3);"
-                    @click.stop="speakWord(currentTerm?.term)"
-                  >
-                    <i class="bi bi-volume-up-fill text-warning"></i>
-                    <span>NGHE US</span>
-                  </button>
-                </div>
-
-                <!-- Speech Practice Result Box (Clean Glassmorphism with High Contrast) -->
-                <div 
-                  v-if="speechScore !== null || isListening" 
-                  class="mt-3 px-3 py-2 rounded-pill d-inline-flex align-items-center gap-2 shadow-sm"
-                  :style="{
-                    backgroundColor: isListening ? 'rgba(239, 68, 68, 0.25)' : 'rgba(0, 0, 0, 0.55)',
-                    border: isListening ? '1px solid rgba(239, 68, 68, 0.6)' : '1px solid rgba(255, 255, 255, 0.25)',
-                    backdropFilter: 'blur(8px)'
-                  }"
-                >
-                  <i :class="isListening ? 'bi bi-mic-fill text-danger animate-pulse' : 'bi bi-check-circle-fill text-warning'"></i>
-                  <span class="fw-bold fs-7" style="color: #facc15;">
-                    {{ isListening ? 'Đang lắng nghe giọng bạn...' : `Điểm phát âm: ${speechScore}%` }}
-                  </span>
-                  <span v-if="recognizedText && !isListening" class="fs-8 text-white-50">
-                    "{{ recognizedText }}"
-                  </span>
-                </div>
-              </div>
-
-              <!-- Flip Hint at Bottom -->
-              <div class="text-center text-white-50 fs-8 position-relative z-1">
-                <i class="bi bi-arrow-repeat me-1"></i>Chạm để lật thẻ xem nghĩa tiếng Việt & câu ví dụ
-              </div>
-
-              <!-- Decorative SVG Waves Background -->
-              <div class="position-absolute end-0 bottom-0 pointer-events-none" style="width: 240px; height: 180px; opacity: 0.85;">
-                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                  <path fill="#00b074" d="M47.5,-57.2C59.7,-48.1,66.8,-32.1,68.9,-15.8C71,0.5,68,17.2,59.9,30.8C51.8,44.4,38.6,55,23.6,61.4C8.6,67.8,-8.2,70,-23.7,65.3C-39.2,60.6,-53.4,49,-62.4,34.2C-71.4,19.4,-75.2,1.3,-71.4,-14.8C-67.7,-30.9,-56.3,-45,-42.6,-53.8C-28.9,-62.6,-14.5,-66.1,1.1,-67.4C16.6,-68.7,35.2,-66.3,47.5,-57.2Z" transform="translate(100 100)" />
-                </svg>
-              </div>
-            </div>
-
-            <!-- BACK FACE: Vietnamese Translation & Pattern (White Card) -->
-            <div 
-              class="card h-100 w-100 position-absolute top-0 start-0 backface-hidden rotate-y-180 rounded-4 p-4 p-md-5 d-flex flex-column justify-content-between bg-white text-dark border-0 shadow-lg"
-              style="background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);"
-            >
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="badge bg-success-subtle text-success fw-bold fs-8 px-3 py-1 rounded-pill">
-                  NGHĨA TIẾNG VIỆT
-                </span>
-                <span class="fs-8 text-muted">
-                  <i class="bi bi-arrow-repeat me-1"></i>Chạm để quay lại
-                </span>
-              </div>
-
-              <div class="my-3">
-                <h3 class="fw-black text-success mb-3">
-                  {{ currentTerm?.definition }}
-                </h3>
-
-                <div v-if="currentTerm?.pattern" class="p-2.5 rounded-3 bg-light text-muted fs-7 mb-3 border">
-                  <i class="bi bi-diagram-2 me-1 text-teal"></i>
-                  <strong>Mẫu câu / Cấu trúc:</strong> {{ currentTerm.pattern }}
-                </div>
-
-                <div v-if="currentTerm?.examples" class="p-3 rounded-3 bg-light border">
-                  <div class="fw-bold fs-7 text-dark-emphasis mb-1 d-flex align-items-center gap-1.5">
-                    <i class="bi bi-quote text-teal"></i>
-                    <span>Ví dụ thực tế:</span>
-                  </div>
-                  <ul class="list-unstyled mb-0 fs-7">
-                    <li 
-                      v-for="(ex, eIdx) in parsedExamples(currentTerm?.examples)" 
-                      :key="eIdx"
-                      class="mb-1 text-dark-emphasis"
-                    >
-                      • <em>{{ ex }}</em>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              <div class="text-center text-muted fs-8">
-                Nhấn phím [S] để đánh dấu "Đã nhớ" hoặc [Space] để lật thẻ
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- CONTROLS: 1. DESKTOP SINGLE-ROW CONTROLS (>= 768px, giữ nguyên phím tắt) -->
-        <div class="d-none d-md-flex align-items-center justify-content-center gap-1.5 flex-nowrap overflow-x-auto py-1 w-100 flashcard-controls-row mb-4">
-          <!-- [Q] Trước -->
-          <button 
-            type="button"
-            class="btn btn-outline-secondary btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-semibold"
-            :disabled="currentCardIndex === 0"
-            @click="prevCard"
-            title="Phím [Q] hoặc mũi tên trái"
-          >
-            <i class="bi bi-chevron-left"></i>
-            <span><strong>[Q]</strong> Trước</span>
-          </button>
-
-          <!-- [Space] Lật thẻ -->
-          <button 
-            type="button"
-            class="btn btn-teal text-white btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-bold"
-            @click="isFlipped = !isFlipped"
-            title="Phím [Space]"
-          >
-            <i class="bi bi-arrow-repeat"></i>
-            <span><strong>[Space]</strong> Lật</span>
-          </button>
-
-          <!-- [A] Nghe US -->
-          <button 
-            type="button"
-            class="btn btn-primary btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-bold"
-            @click="speakWord(currentTerm?.term)"
-            title="Phím [A]"
-          >
-            <i class="bi bi-volume-up-fill"></i>
-            <span><strong>[A]</strong> Nghe US</span>
-          </button>
-
-          <!-- [D] Luyện nói -->
-          <button 
-            type="button"
-            class="btn btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-bold"
-            :class="isListening ? 'btn-danger animate-mic-pulse' : 'btn-info text-white'"
-            @click="startSpeechRecognition"
-            title="Phím [D]"
-          >
-            <i class="bi" :class="isListening ? 'bi-record-fill' : 'bi-mic-fill'"></i>
-            <span><strong>[D]</strong> {{ isListening ? 'Đang nghe...' : 'Luyện nói' }}</span>
-          </button>
-
-          <!-- [S] Đã nhớ -->
-          <button 
-            type="button"
-            class="btn btn-success btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-bold"
-            @click="markTermRemembered"
-            title="Phím [S]"
-          >
-            <i class="bi bi-check-circle-fill"></i>
-            <span><strong>[S]</strong> Đã nhớ</span>
-          </button>
-
-          <!-- [X] Cần ôn -->
-          <button 
-            type="button"
-            class="btn btn-warning text-dark btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-bold"
-            @click="markTermLearning"
-            title="Phím [X]"
-          >
-            <i class="bi bi-arrow-clockwise"></i>
-            <span><strong>[X]</strong> Cần ôn</span>
-          </button>
-
-          <!-- [E] Tiếp -->
-          <button 
-            type="button"
-            class="btn btn-outline-secondary btn-sm px-2 px-md-2.5 py-1.5 rounded-3 shadow-sm d-inline-flex align-items-center gap-1 text-nowrap flex-shrink-0 fs-8 fw-semibold"
-            :disabled="currentCardIndex >= terms.length - 1"
-            @click="nextCard"
-            title="Phím [E] hoặc mũi tên phải"
-          >
-            <span><strong>[E]</strong> Tiếp</span>
-            <i class="bi bi-chevron-right"></i>
-          </button>
-        </div>
-
-        <!-- CONTROLS: 2. MOBILE DEDICATED 2-ROW ERGONOMIC TOUCH KEYPAD (< 768px, CHỐNG TRÀN 100%) -->
-        <div class="d-flex d-md-none flex-column gap-2 w-100 mb-4 px-1">
-          <!-- Hàng 1: Điều hướng & Lật Thẻ Xem Nghĩa (3 Nút Lớn Rộng Rãi) -->
-          <div class="d-flex align-items-center gap-2 w-100">
-            <!-- Trước -->
-            <button 
-              type="button"
-              class="btn btn-outline-secondary btn-sm rounded-3 py-2 px-2.5 d-flex align-items-center justify-content-center gap-1 fw-bold fs-7 shadow-2xs"
-              style="flex: 1; height: 44px;"
-              :disabled="currentCardIndex === 0"
-              @click="prevCard"
-            >
-              <i class="bi bi-chevron-left"></i>
-              <span>Trước</span>
-            </button>
-
-            <!-- Lật Thẻ Trung Tâm (Nổi bật, to rõ, dễ chạm) -->
-            <button 
-              type="button"
-              class="btn btn-teal text-white btn-sm rounded-3 py-2 px-3 d-flex align-items-center justify-content-center gap-1.5 fw-bold fs-7 shadow-sm"
-              style="flex: 2; height: 44px; background: linear-gradient(135deg, #00b074 0%, #064e40 100%);"
-              @click="isFlipped = !isFlipped"
-            >
-              <i class="bi bi-arrow-repeat fs-6"></i>
-              <span>Lật Xem Nghĩa</span>
-            </button>
-
-            <!-- Tiếp -->
-            <button 
-              type="button"
-              class="btn btn-outline-secondary btn-sm rounded-3 py-2 px-2.5 d-flex align-items-center justify-content-center gap-1 fw-bold fs-7 shadow-2xs"
-              style="flex: 1; height: 44px;"
-              :disabled="currentCardIndex >= terms.length - 1"
-              @click="nextCard"
-            >
-              <span>Tiếp</span>
-              <i class="bi bi-chevron-right"></i>
-            </button>
-          </div>
-
-          <!-- Hàng 2: Tương tác Âm thanh & Đánh giá (4 Nút Cân Bằng Đồng Đều) -->
-          <div class="d-flex align-items-center gap-1.5 w-100">
-            <!-- Nghe US -->
-            <button 
-              type="button"
-              class="btn btn-primary btn-sm rounded-3 py-1.5 px-1 d-flex flex-column align-items-center justify-content-center gap-0.5 fw-bold text-nowrap shadow-2xs"
-              style="flex: 1; height: 48px; font-size: 11px;"
-              @click="speakWord(currentTerm?.term)"
-            >
-              <i class="bi bi-volume-up-fill fs-6"></i>
-              <span>Nghe US</span>
-            </button>
-
-            <!-- Luyện Nói -->
-            <button 
-              type="button"
-              class="btn btn-sm rounded-3 py-1.5 px-1 d-flex flex-column align-items-center justify-content-center gap-0.5 fw-bold text-nowrap shadow-2xs"
-              :class="isListening ? 'btn-danger animate-mic-pulse' : 'btn-info text-white'"
-              style="flex: 1; height: 48px; font-size: 11px;"
-              @click="startSpeechRecognition"
-            >
-              <i class="bi fs-6" :class="isListening ? 'bi-record-fill' : 'bi-mic-fill'"></i>
-              <span>{{ isListening ? 'Đang nghe...' : 'Luyện nói' }}</span>
-            </button>
-
-            <!-- Đã Nhớ -->
-            <button 
-              type="button"
-              class="btn btn-success btn-sm rounded-3 py-1.5 px-1 d-flex flex-column align-items-center justify-content-center gap-0.5 fw-bold text-nowrap shadow-2xs text-white"
-              style="flex: 1; height: 48px; font-size: 11px;"
-              @click="markTermRemembered"
-            >
-              <i class="bi bi-check-circle-fill fs-6"></i>
-              <span>Đã nhớ</span>
-            </button>
-
-            <!-- Cần Ôn -->
-            <button 
-              type="button"
-              class="btn btn-warning text-dark btn-sm rounded-3 py-1.5 px-1 d-flex flex-column align-items-center justify-content-center gap-0.5 fw-bold text-nowrap shadow-2xs"
-              style="flex: 1; height: 48px; font-size: 11px;"
-              @click="markTermLearning"
-            >
-              <i class="bi bi-arrow-clockwise fs-6"></i>
-              <span>Cần ôn</span>
-            </button>
-          </div>
-        </div>
+        <FlashcardPlayer
+          :words="formattedCurriculumWords"
+          :categoryTitle="topic?.title ? `CHỦ ĐỀ • ${topic.title.toUpperCase()}` : 'COLLOCATION • IELTS & OXFORD 3000™'"
+          :initialIndex="currentCardIndex"
+          @status-updated="handleCardStatusUpdated"
+          @update-status="handleCardStatusUpdated"
+          @index-changed="idx => currentCardIndex = idx"
+        />
       </div>
 
       <!-- ================= MODE 2: MULTIPLE-CHOICE QUIZ ================= -->
@@ -892,6 +570,7 @@ import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { useSpeech } from '@/composables/useSpeech'
+import FlashcardPlayer from '@/components/FlashcardPlayer.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -978,6 +657,51 @@ const formatIndex = (num) => String(num).padStart(3, '0')
 
 const stageCounts = [10, 12, 14, 16, 20, 24, 24, 26, 26, 28]
 const getStageCount = (s) => stageCounts[s - 1] || 10
+
+// Formatted words for FlashcardPlayer (Single Source of Truth)
+const formattedCurriculumWords = computed(() => {
+  const catTitle = topic.value?.title ? `CHỦ ĐỀ • ${topic.value.title.toUpperCase()}` : 'COLLOCATION • IELTS & OXFORD 3000™'
+  return (terms.value || []).map(t => ({
+    id: t.id,
+    word: t.term,
+    term: t.term,
+    phonetic_us: t.phonetic || `/${(t.term || '').toLowerCase()}/`,
+    part_of_speech: t.part_of_speech || 'Cụm từ',
+    meaning_vi: t.definition || '',
+    definition: t.definition || '',
+    pattern: t.pattern || '',
+    examples: t.examples || '',
+    category_label: catTitle,
+    status: t.is_remembered ? 'mastered' : (t.status || 'learning'),
+    is_remembered: !!t.is_remembered
+  }))
+})
+
+// Unified status handler emitted from FlashcardPlayer
+const handleCardStatusUpdated = async ({ wordId, status }) => {
+  const t = terms.value.find(term => term.id === wordId)
+  if (t) {
+    const isRemembered = status === 'mastered'
+    t.is_remembered = isRemembered
+    t.status = status
+    try {
+      const token = localStorage.getItem('oxford_token')
+      const headers = token ? { Authorization: `Bearer ${token}` } : {}
+      const res = await axios.post('/api/curriculum/term-status', {
+        term_id: wordId,
+        status: isRemembered ? 'remembered' : 'learning'
+      }, { headers })
+
+      if (res.data?.data && stagesProgress.value[currentStageNum.value]) {
+        stagesProgress.value[currentStageNum.value].score = res.data.data.stage_score
+        stagesProgress.value[currentStageNum.value].is_completed = res.data.data.stage_completed
+        stagesProgress.value[currentStageNum.value].remembered_count = res.data.data.stage_remembered_count
+      }
+    } catch (err) {
+      console.error('Lỗi cập nhật trạng thái từ trong lộ trình:', err)
+    }
+  }
+}
 
 // Phonetic fallback approximation
 const currentTermPhonetic = computed(() => {
@@ -1298,9 +1022,10 @@ const getOptionLetterClass = (idx) => {
   return 'bg-secondary-subtle text-muted'
 }
 
-// Global Keyboard Listener for [Q], [Space], [A], [D], [S], [X], [E]
+// Global Keyboard Listener (FlashcardPlayer handles flashcard shortcuts automatically)
 const handleGlobalKeydown = (e) => {
-  // Ignore typing inside inputs or textareas
+  // FlashcardPlayer already handles keyboard shortcuts in flashcard mode
+  if (activeMode.value === 'flashcard') return
   if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return
 
   const key = e.key.toLowerCase()
