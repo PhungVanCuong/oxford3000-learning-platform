@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\PhrasalVerbController;
 use App\Http\Controllers\Api\CurriculumRoadmapController;
 use App\Http\Controllers\Api\ArenaController;
 use App\Http\Controllers\Api\ActivityController;
+use App\Http\Controllers\Api\GoogleAuthController;
 
 // 1. Authentication & Profile
 Route::post('/auth/login', [AuthController::class, 'login']);
@@ -29,6 +30,12 @@ Route::post('/auth/reset-progress', [AuthController::class, 'resetMyProgress']);
 Route::get('/auth/me', [AuthController::class, 'me']);
 Route::post('/auth/profile', [AuthController::class, 'updateProfile']);
 Route::post('/auth/logout', [AuthController::class, 'logout']);
+
+// 1.1 Google OAuth 2.0 Endpoints
+Route::get('/auth/google/url', [GoogleAuthController::class, 'getAuthUrl']);
+Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect']);
+Route::post('/auth/google/callback', [GoogleAuthController::class, 'handleApiCallback']);
+Route::post('/auth/google/one-tap', [GoogleAuthController::class, 'handleApiCallback']);
 
 // 2. Dynamic Daily Chunking (15 words = 200 days, 20 words = 150 days, 100% unlocked)
 Route::get('/daily-study', [DailyStudyController::class, 'index']);

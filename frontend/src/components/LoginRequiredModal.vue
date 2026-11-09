@@ -26,13 +26,22 @@
           </p>
 
           <div class="d-flex flex-column gap-2 mb-3">
+            <GoogleLoginButton text="Đăng nhập nhanh bằng Google" customClass="rounded-pill" />
+
+            <div class="position-relative text-center my-1">
+              <hr class="text-secondary-subtle m-0">
+              <span class="position-absolute top-50 start-50 translate-middle px-2 fs-8 text-muted bg-card-custom">
+                hoặc tài khoản mật khẩu
+              </span>
+            </div>
+
             <router-link
               to="/login"
               @click="authStore.closeLoginModal"
               class="btn btn-teal rounded-pill py-2.5 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2"
             >
               <i class="bi bi-box-arrow-in-right"></i>
-              <span>Đăng nhập ngay</span>
+              <span>Đăng nhập mật khẩu</span>
             </router-link>
 
             <router-link
@@ -58,6 +67,7 @@
 
 <script setup>
 import { useAuthStore } from '@/stores/authStore'
+import GoogleLoginButton from '@/components/GoogleLoginButton.vue'
 
 const authStore = useAuthStore()
 </script>

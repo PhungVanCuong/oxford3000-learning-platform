@@ -238,6 +238,11 @@
                   <span v-else>Đăng Nhập</span>
                 </button>
 
+                <!-- Google Sign In Button -->
+                <div class="mb-3">
+                  <GoogleLoginButton text="Đăng nhập bằng Google" />
+                </div>
+
                 <!-- Facebook-style Divider -->
                 <div class="position-relative text-center my-3">
                   <hr class="text-secondary-subtle m-0">
@@ -296,6 +301,7 @@
 import { ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import GoogleLoginButton from '@/components/GoogleLoginButton.vue'
 
 const authStore = useAuthStore()
 const router = useRouter()

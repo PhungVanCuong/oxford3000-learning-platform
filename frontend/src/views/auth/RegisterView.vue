@@ -233,6 +233,11 @@
                     <span v-if="isLoading" class="spinner-border spinner-border-sm"></span>
                     <span v-else>Tiếp tục nhận mã OTP xác thực →</span>
                   </button>
+
+                  <!-- Google Sign Up Button -->
+                  <div class="mb-3">
+                    <GoogleLoginButton text="Đăng ký nhanh bằng Google" />
+                  </div>
                 </div>
 
                 <!-- STEP 2: OTP Verification -->
@@ -327,6 +332,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import axios from 'axios'
+import GoogleLoginButton from '@/components/GoogleLoginButton.vue'
 
 const authStore = useAuthStore()
 const router = useRouter()

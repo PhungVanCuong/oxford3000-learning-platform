@@ -40,6 +40,7 @@ import AdminCefrView from '@/views/admin/AdminCefrView.vue'
 import LoginView from '@/views/auth/LoginView.vue'
 import RegisterView from '@/views/auth/RegisterView.vue'
 import ForgotPasswordView from '@/views/auth/ForgotPasswordView.vue'
+import GoogleCallbackView from '@/views/auth/GoogleCallbackView.vue'
 
 const routes = [
   // User Portal Routes (with UserLayout)
@@ -224,6 +225,7 @@ const routes = [
   { path: '/login', name: 'login', component: LoginView },
   { path: '/register', name: 'register', component: RegisterView },
   { path: '/forgot-password', name: 'forgot-password', component: ForgotPasswordView },
+  { path: '/auth/google/callback', name: 'google-callback', component: GoogleCallbackView },
 
   // Catch-all redirect to Home
   { path: '/:pathMatch(.*)*', redirect: '/' },

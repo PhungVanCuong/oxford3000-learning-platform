@@ -167,6 +167,19 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
+    async getGoogleAuthUrl() {
+      try {
+        const res = await axios.get('/api/auth/google/url')
+        if (res.data?.status === 'success') {
+          return res.data.data?.url
+        }
+        return null
+      } catch (err) {
+        console.error('Lỗi lấy link đăng nhập Google:', err)
+        return null
+      }
+    },
+
     async fetchMe() {
       if (!this.token) {
         this.user = null
