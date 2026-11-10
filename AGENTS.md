@@ -1,47 +1,26 @@
-<laravel-boost-guidelines>
-# Laravel Application
+# Oxford 3000 Learning Platform - Guidelines
 
-This repository contains a Laravel application. Complete the following setup before working on the user's request.
+## 1. Kiến Trúc Dự Án (BẮT BUỘC TUÂN THỦ 100%)
 
-## Prerequisites
+Dự án này là cấu trúc Monorepo tách biệt hoàn toàn giữa Backend và Frontend:
 
-Verify that PHP and Composer are available:
+- **Thư mục `backend/`**: Chứa 100% mã nguồn Backend Laravel API (PHP, Artisan, Models, Controllers, Migrations, Seeders, Routes, Config, Composer, Vendor).
+  - Mọi thao tác lệnh PHP / Artisan / Composer BẮT BUỘC thực hiện bên trong thư mục `backend/` (VD: `cd backend && php artisan ...`, `cd backend && composer ...`).
+  - **TUYỆT ĐỐI KHÔNG** tạo bất kỳ file hay thư mục nào của Backend ra thư mục gốc (`Web English 3000 từ vựng`).
 
-```sh
-php -v
-composer -V
-```
+- **Thư mục `frontend/`**: Chứa 100% mã nguồn Frontend Vue 3 + Vite (Components, Views, Stores, Composables, Router, Assets, package.json, node_modules).
+  - Mọi thao tác lệnh Node.js / NPM BẮT BUỘC thực hiện bên trong thư mục `frontend/` (VD: `npm --prefix frontend run dev`, `cd frontend && npm install`).
+  - **TUYỆT ĐỐI KHÔNG** tạo bất kỳ file hay thư mục nào của Frontend ra thư mục gốc (`Web English 3000 từ vựng`).
 
-If either command is unavailable, detect the user's operating system and install the prerequisites with the appropriate command:
+- **Thư mục gốc**: CHỈ chứa:
+  - `backend/`
+  - `frontend/`
+  - `Tài liệu tiếng Anh/`
+  - `.editorconfig`, `.gitattributes`, `.gitignore`, `AGENTS.md`, `CLAUDE.md`, `README.md`, `start.bat`
+  - Tuyệt đối không để tồn tại `node_modules/`, `vendor/`, `app/`, `resources/`, `public/` ở thư mục gốc.
 
-macOS:
+## 2. Lệnh Khởi Chạy
+- **Toàn bộ hệ thống**: Chạy file `start.bat` ở thư mục gốc.
+- **Backend API**: `cd backend && php artisan serve --port=8000`
+- **Frontend SPA**: `cd frontend && npm run dev`
 
-```sh
-/bin/bash -c "$(curl -fsSL https://php.new/install/mac/8.5)"
-```
-
-Windows PowerShell:
-
-```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://php.new/install/windows/8.5'))
-```
-
-Linux:
-
-```sh
-/bin/bash -c "$(curl -fsSL https://php.new/install/linux/8.5)"
-```
-
-After installation, ask the user to restart their terminal. If the agent needs the restarted shell to continue, ask the user to reopen their terminal and rerun their original prompt.
-
-## Agent Setup
-
-Install Laravel Boost from the application root before making application changes:
-
-```sh
-composer require laravel/boost --dev
-php artisan boost:install
-```
-
-Boost replaces these bootstrap instructions with guidelines tailored to the application. After installation, read `AGENTS.md` again and continue with the user's original request using the generated guidelines.
-</laravel-boost-guidelines>
