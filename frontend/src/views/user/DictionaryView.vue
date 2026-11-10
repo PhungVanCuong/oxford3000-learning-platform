@@ -341,47 +341,38 @@
       </button>
     </div>
 
-    <!-- AI Explain Centered Modal -->
-    <div
-      v-if="aiModalWord"
-      class="modal fade show d-block"
-      style="background: rgba(0, 0, 0, 0.6);"
-      tabindex="-1"
-      @click.self="aiModalWord = null"
+    <!-- STANDARDIZED VIEWPORT-CENTERED AI EXPLAIN MODAL -->
+    <BaseModal
+      :modelValue="!!aiModalWord"
+      @update:modelValue="val => { if (!val) aiModalWord = null }"
+      title="Trợ Lý Gemini AI Giải Thích"
+      icon="bi bi-stars text-warning"
+      maxWidth="560px"
     >
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-4 border-0 shadow-lg bg-card-custom">
-          <div class="modal-header border-bottom py-3">
-            <h5 class="modal-title fw-bold text-teal d-flex align-items-center gap-2">
-              <i class="bi bi-stars text-warning"></i> Trợ Lý Gemini AI Giải Thích
-            </h5>
-            <button @click="aiModalWord = null" type="button" class="btn-close" aria-label="Close"></button>
-          </div>
-          <div class="modal-body p-4">
-            <div class="mb-3">
-              <span class="fs-4 fw-black text-teal">{{ aiModalWord.word }}</span>
-              <span class="font-monospace text-muted ms-2 fs-7">{{ aiModalWord.phonetic_us }}</span>
-              <div class="text-success fw-bold fs-6 mt-1">{{ aiModalWord.meaning_vi }}</div>
-            </div>
+      <div v-if="aiModalWord">
+        <div class="mb-3">
+          <span class="fs-4 fw-black text-teal">{{ aiModalWord.word }}</span>
+          <span class="font-monospace text-muted ms-2 fs-7">{{ aiModalWord.phonetic_us }}</span>
+          <div class="text-success fw-bold fs-6 mt-1">{{ aiModalWord.meaning_vi }}</div>
+        </div>
 
-            <div v-if="aiLoading" class="text-center py-4">
-              <div class="spinner-border text-teal mb-2" role="status"></div>
-              <p class="text-muted fs-8 mb-0">Gemini AI đang phân tích và chuẩn bị lời giải thích...</p>
-            </div>
+        <div v-if="aiLoading" class="text-center py-4">
+          <div class="spinner-border text-teal mb-2" role="status"></div>
+          <p class="text-muted fs-8 mb-0">Gemini AI đang phân tích và chuẩn bị lời giải thích...</p>
+        </div>
 
-            <div v-else class="alert alert-light border rounded-3 p-3 fs-7 mb-0">
-              <strong class="text-teal"><i class="bi bi-lightbulb me-1"></i> Nhận xét & Ngữ cảnh sử dụng:</strong>
-              <p class="mt-2 mb-0 leading-relaxed">{{ aiResponseText }}</p>
-            </div>
-          </div>
-          <div class="modal-footer border-top py-2">
-            <button @click="aiModalWord = null" class="btn btn-teal btn-sm px-4 rounded-pill">
-              Đã hiểu
-            </button>
-          </div>
+        <div v-else class="alert alert-light border rounded-3 p-3 fs-7 mb-0">
+          <strong class="text-teal"><i class="bi bi-lightbulb me-1"></i> Nhận xét & Ngữ cảnh sử dụng:</strong>
+          <p class="mt-2 mb-0 leading-relaxed">{{ aiResponseText }}</p>
         </div>
       </div>
-    </div>
+
+      <template #footer>
+        <button @click="aiModalWord = null" class="btn btn-teal text-white btn-sm px-4 rounded-pill fw-bold">
+          Đã hiểu
+        </button>
+      </template>
+    </BaseModal>
   </div>
 </template>
 
@@ -392,6 +383,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { useSpeech } from '@/composables/useSpeech'
 import { useToast } from '@/composables/useToast'
 import { useReviewStore } from '@/stores/reviewStore'
+import BaseModal from '@/components/BaseModal.vue'
 
 const authStore = useAuthStore()
 const speech = useSpeech()

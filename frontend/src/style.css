@@ -11,11 +11,39 @@
   --text-dark: #182325;
 }
 
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
   letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
   line-height: 1.5;
+}
+
+/* CUSTOM SLEEK SCROLLBARS */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 176, 116, 0.25);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 176, 116, 0.65);
+}
+
+/* HORIZONTAL DRAG & TOUCH MOMENTUM SCROLL */
+.smooth-scroll-x,
+.overflow-x-auto {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
 .material-symbols-outlined {

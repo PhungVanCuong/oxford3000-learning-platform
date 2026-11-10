@@ -222,9 +222,9 @@
       </div>
 
       <!-- GIAO DIỆN THẺ DẠNG TRA CỨU HIỆN ĐẠI (THAY THẾ BẢNG CŨ, ĐÁNH SỐ TỪ #1, MICRO ĐỘC LẬP TỪNG THẺ) -->
-      <div v-else class="row g-3 mb-4">
+      <div v-else id="phrasesListTop" class="row g-3 mb-4">
         <div
-          v-for="(item, idx) in phrases"
+          v-for="(item, idx) in paginatedPhrases"
           :key="item.id"
           class="col-12 col-md-6"
         >
@@ -238,7 +238,7 @@
                 <div class="d-flex align-items-center gap-1.5 flex-wrap">
                   <!-- Đánh số thứ tự tuần tự #1, #2... chuẩn xác, loại bỏ hoàn toàn lỗi hiển thị STT 96 -->
                   <span class="badge bg-light text-muted border rounded-pill px-2.5 py-1 fs-8 fw-bold">
-                    #{{ (selectedPartNumber ? (selectedPartNumber - 1) * 50 : 0) + idx + 1 }}
+                    #{{ (currentPage - 1) * pageSize + idx + 1 }}
                   </span>
                   <span class="badge bg-teal-subtle text-teal rounded-pill px-2 py-0.5 fs-8 fw-semibold">
                     Phần {{ item.part_number || Math.ceil(item.id / 50) }}
@@ -352,6 +352,17 @@
           </div>
         </div>
       </div>
+
+      <!-- Tab 1 Smart Pagination -->
+      <div v-if="phrases.length > pageSize" class="mt-4">
+        <SmartPagination
+          v-model:currentPage="currentPage"
+          v-model:pageSize="pageSize"
+          :totalItems="phrases.length"
+          :pageSizeOptions="[10, 20, 50, 100]"
+          scrollTarget="#phrasesListTop"
+        />
+      </div>
     </div>
 
     <!-- ================= TAB 2: 100 CỤM ĐỘNG TỪ (A-W) ================= -->
@@ -389,9 +400,12 @@
         </div>
       </div>
 
+      <!-- Anchor for smooth scroll -->
+      <div id="pv100ListTop"></div>
+
       <!-- Phrasal Verbs Cards Grid -->
       <div class="row g-3">
-        <div v-for="(pv, idx) in phrasalVerbs100List" :key="pv.id" class="col-12 col-md-6 col-lg-4">
+        <div v-for="(pv, idx) in paginatedPhrasalVerbs100" :key="pv.id" class="col-12 col-md-6 col-lg-4">
           <div
             class="card p-3 rounded-4 border h-100 shadow-sm transition-all bg-card-custom hover-card d-flex flex-column justify-content-between"
             :class="{ 'border-success bg-success-subtle/10': pv.status === 'mastered' }"
@@ -401,7 +415,7 @@
               <div class="d-flex justify-content-between align-items-start mb-2 gap-2">
                 <div class="d-flex align-items-center gap-1.5">
                   <span class="badge bg-light text-muted border rounded-pill px-2 py-0.5 fs-8 fw-bold">
-                    #{{ idx + 1 }}
+                    #{{ (pvPage - 1) * pvPageSize + idx + 1 }}
                   </span>
                   <span class="badge bg-teal-subtle text-teal fw-bold fs-8 px-2 py-0.5 rounded-pill">
                     Chữ [{{ (pv.phrase || 'A')[0].toUpperCase() }}]
@@ -516,6 +530,17 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Tab 2 Smart Pagination -->
+      <div v-if="phrasalVerbs100List.length > pvPageSize" class="mt-4">
+        <SmartPagination
+          v-model:currentPage="pvPage"
+          v-model:pageSize="pvPageSize"
+          :totalItems="phrasalVerbs100List.length"
+          :pageSizeOptions="[15, 30, 60, 95]"
+          scrollTarget="#pv100ListTop"
+        />
       </div>
     </div>
 
@@ -723,13 +748,17 @@
 
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore'
 import { useSpeech } from '@/composables/useSpeech'
 import { useToast } from '@/composables/useToast'
 import { useReviewStore } from '@/stores/reviewStore'
 import FlashcardPlayer from '@/components/FlashcardPlayer.vue'
+import SmartPagination from '@/components/SmartPagination.vue'
 
+const route = useRoute()
+const router = useRouter()
 const authStore = useAuthStore()
 const speech = useSpeech()
 const toast = useToast()
@@ -755,6 +784,31 @@ const searchQuery = ref('')
 const filterStatus = ref('all')
 const isLoading = ref(false)
 
+// Pagination for Tab 1 (PDF Phrases)
+const currentPage = ref(parseInt(route.query.page) || 1)
+const pageSize = ref(parseInt(route.query.limit) || 20)
+
+const paginatedPhrases = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value
+  return phrases.value.slice(start, start + pageSize.value)
+})
+
+watch([currentPage, pageSize], ([newPage, newLimit]) => {
+  if (activeMainTab.value === 'pdf_phrases') {
+    router.replace({
+      query: {
+        ...route.query,
+        page: newPage > 1 ? newPage : undefined,
+        limit: newLimit !== 20 ? newLimit : undefined
+      }
+    })
+  }
+})
+
+watch([selectedPartNumber, searchQuery, filterStatus], () => {
+  currentPage.value = 1
+})
+
 // Independent Speech State for individual cards (Fix: không bao giờ bị nhảy mic toàn bộ các thẻ)
 const activeListeningPhraseId = ref(null)
 const phraseScoreResults = ref({})
@@ -763,6 +817,19 @@ const phraseScoreResults = ref({})
 const phrasalVerbs100List = ref([])
 const selectedLetter = ref(null)
 const alphabetLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'K', 'L', 'M', 'P', 'R', 'S', 'T', 'W']
+
+// Pagination for Tab 2 (100 Phrasal Verbs)
+const pvPage = ref(1)
+const pvPageSize = ref(15)
+
+const paginatedPhrasalVerbs100 = computed(() => {
+  const start = (pvPage.value - 1) * pvPageSize.value
+  return phrasalVerbs100List.value.slice(start, start + pvPageSize.value)
+})
+
+watch(selectedLetter, () => {
+  pvPage.value = 1
+})
 
 // Tab 3: Methods
 const methodsData = ref(null)

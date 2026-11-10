@@ -151,86 +151,79 @@
       />
     </div>
 
-    <!-- Create / Edit CEFR Word Modal -->
-    <div v-if="showModal" class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.55); backdrop-filter: blur(2px);">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content rounded-4 border-0 shadow-lg">
-          <div class="modal-header border-bottom pb-3">
-            <h5 class="modal-title fw-bold text-teal d-flex align-items-center gap-2">
-              <i class="bi bi-award-fill"></i>
-              <span>{{ isEditing ? 'Chỉnh Sửa Từ Vựng CEFR' : 'Thêm Từ Vựng CEFR Mới' }}</span>
-            </h5>
-            <button @click="showModal = false" type="button" class="btn-close"></button>
+    <!-- STANDARDIZED VIEWPORT-CENTERED CEFR WORD MODAL -->
+    <BaseModal
+      v-model="showModal"
+      :title="isEditing ? 'Chỉnh Sửa Từ Vựng CEFR' : 'Thêm Từ Vựng CEFR Mới'"
+      icon="bi bi-award-fill"
+      maxWidth="780px"
+      hideFooter
+    >
+      <form @submit.prevent="saveWord">
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <label class="form-label fs-8 fw-bold">Từ tiếng Anh *</label>
+            <input v-model="form.word" type="text" required class="form-control" placeholder="aberration" />
           </div>
 
-          <form @submit.prevent="saveWord">
-            <div class="modal-body py-3">
-              <div class="row g-3">
-                <div class="col-12 col-md-6">
-                  <label class="form-label fs-8 fw-bold">Từ tiếng Anh *</label>
-                  <input v-model="form.word" type="text" required class="form-control" placeholder="aberration" />
-                </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label fs-8 fw-bold">Phiên âm US (IPA) *</label>
+            <input v-model="form.phonetic_us" type="text" required class="form-control" placeholder="/ˌæb.əˈreɪ.ʃən/" />
+          </div>
 
-                <div class="col-12 col-md-6">
-                  <label class="form-label fs-8 fw-bold">Phiên âm US (IPA) *</label>
-                  <input v-model="form.phonetic_us" type="text" required class="form-control" placeholder="/ˌæb.əˈreɪ.ʃən/" />
-                </div>
+          <div class="col-12 col-md-4">
+            <label class="form-label fs-8 fw-bold">Bậc CEFR *</label>
+            <select v-model="form.level_code" class="form-select">
+              <option value="A1">A1</option>
+              <option value="A2">A2</option>
+              <option value="B1">B1</option>
+              <option value="B2">B2</option>
+              <option value="C1">C1</option>
+              <option value="C2">C2</option>
+            </select>
+          </div>
 
-                <div class="col-12 col-md-4">
-                  <label class="form-label fs-8 fw-bold">Bậc CEFR *</label>
-                  <select v-model="form.level_code" class="form-select">
-                    <option value="A1">A1</option>
-                    <option value="A2">A2</option>
-                    <option value="B1">B1</option>
-                    <option value="B2">B2</option>
-                    <option value="C1">C1</option>
-                    <option value="C2">C2</option>
-                  </select>
-                </div>
+          <div class="col-12 col-md-4">
+            <label class="form-label fs-8 fw-bold">Số bài học (Lesson Number) *</label>
+            <input v-model.number="form.lesson_number" type="number" min="1" max="65" required class="form-control" />
+          </div>
 
-                <div class="col-12 col-md-4">
-                  <label class="form-label fs-8 fw-bold">Số bài học (Lesson Number) *</label>
-                  <input v-model.number="form.lesson_number" type="number" min="1" max="65" required class="form-control" />
-                </div>
+          <div class="col-12 col-md-4">
+            <label class="form-label fs-8 fw-bold">Loại từ</label>
+            <input v-model="form.part_of_speech" type="text" class="form-control" placeholder="Danh từ / Động từ..." />
+          </div>
 
-                <div class="col-12 col-md-4">
-                  <label class="form-label fs-8 fw-bold">Loại từ</label>
-                  <input v-model="form.part_of_speech" type="text" class="form-control" placeholder="Danh từ / Động từ..." />
-                </div>
+          <div class="col-12">
+            <label class="form-label fs-8 fw-bold">Nghĩa tiếng Việt *</label>
+            <textarea v-model="form.meaning_vi" rows="2" required class="form-control" placeholder="Giải nghĩa tiếng Việt đầy đủ và chính xác..."></textarea>
+          </div>
 
-                <div class="col-12">
-                  <label class="form-label fs-8 fw-bold">Nghĩa tiếng Việt *</label>
-                  <textarea v-model="form.meaning_vi" rows="2" required class="form-control" placeholder="Giải nghĩa tiếng Việt đầy đủ và chính xác..."></textarea>
-                </div>
+          <div class="col-12">
+            <label class="form-label fs-8 fw-bold">Câu ví dụ tiếng Anh</label>
+            <input v-model="form.example_en" type="text" class="form-control" placeholder="In a moment of aberration, she agreed to their proposal." />
+          </div>
 
-                <div class="col-12">
-                  <label class="form-label fs-8 fw-bold">Câu ví dụ tiếng Anh</label>
-                  <input v-model="form.example_en" type="text" class="form-control" placeholder="In a moment of aberration, she agreed to their proposal." />
-                </div>
-
-                <div class="col-12">
-                  <label class="form-label fs-8 fw-bold">Dịch nghĩa câu ví dụ</label>
-                  <input v-model="form.example_vi" type="text" class="form-control" placeholder="Trong một phút lơ đãng sai sót, cô ấy đã đồng ý lời đề nghị của họ." />
-                </div>
-              </div>
-            </div>
-
-            <div class="modal-footer border-top pt-2">
-              <button @click="showModal = false" type="button" class="btn btn-outline-secondary rounded-pill px-4">Hủy</button>
-              <button type="submit" class="btn btn-teal text-white rounded-pill px-4 fw-bold">
-                <i class="bi bi-check-lg me-1"></i> Lưu từ vựng
-              </button>
-            </div>
-          </form>
+          <div class="col-12">
+            <label class="form-label fs-8 fw-bold">Dịch nghĩa câu ví dụ</label>
+            <input v-model="form.example_vi" type="text" class="form-control" placeholder="Trong một phút lơ đãng sai sót, cô ấy đã đồng ý lời đề nghị của họ." />
+          </div>
         </div>
-      </div>
-    </div>
+
+        <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
+          <button @click="showModal = false" type="button" class="btn btn-outline-secondary rounded-pill px-4">Hủy</button>
+          <button type="submit" class="btn btn-teal text-white rounded-pill px-4 fw-bold">
+            <i class="bi bi-check-lg me-1"></i> Lưu từ vựng
+          </button>
+        </div>
+      </form>
+    </BaseModal>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import SmartPagination from '@/components/SmartPagination.vue'
+import BaseModal from '@/components/BaseModal.vue'
 import { useToast } from '@/composables/useToast'
 
 // Import manifest & level datasets

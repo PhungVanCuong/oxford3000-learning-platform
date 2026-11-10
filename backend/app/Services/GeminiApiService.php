@@ -313,4 +313,133 @@ class GeminiApiService
             'tips' => "Đáp án chuẩn: \"{$expectedAnswer}\". Chú ý cấu trúc thì {$tense}.",
         ];
     }
+
+    /**
+     * Trợ lý Chatbot AI toàn năng tra cứu và giải thích tiếng Anh (Gemini 2.5 / 1.5 Flash)
+     */
+    public function chatAssistant(string $message, array $history = []): array
+    {
+        $systemInstruction = "Bạn là Trợ lý Gia sư Tiếng Anh bản ngữ thông minh, tận tâm và nhiệt tình của nền tảng học OxVocab.\n"
+            . "Nhiệm vụ của bạn:\n"
+            . "1. Giải đáp mọi thắc mắc học tiếng Anh của học viên: tra cứu chi tiết từ vựng/cụm từ/idioms, so sánh sự khác nhau giữa các từ đồng nghĩa (synonyms), xin ví dụ thực tế theo ngữ cảnh, phân tích và sửa lỗi sai ngữ pháp/chính tả trong câu của học viên, giải thích các thì và cấu trúc ngữ pháp.\n"
+            . "2. Phong cách phản hồi:\n"
+            . "   - Ngắn gọn, súc tích, có cấu trúc rõ ràng, sử dụng Markdown chuẩn (in đậm từ vựng khóa, danh sách bullet points).\n"
+            . "   - Khi giải thích từ vựng hoặc cụm từ: luôn cung cấp (nếu có thể) phiên âm IPA chuẩn, nghĩa tiếng Việt, câu ví dụ song ngữ Anh - Việt, và gợi ý từ liên quan (Collocations/Idioms/Synonyms).\n"
+            . "   - Luôn giữ thái độ thân thiện, khích lệ và truyền cảm hứng cho người học.";
+
+        // Build contents payload from history + new message
+        $contents = [];
+        foreach ($history as $item) {
+            $role = ($item['role'] ?? $item['sender'] ?? 'user') === 'user' ? 'user' : 'model';
+            $text = $item['text'] ?? $item['content'] ?? '';
+            if (!empty($text)) {
+                $contents[] = [
+                    'role' => $role,
+                    'parts' => [
+                        ['text' => (string)$text]
+                    ]
+                ];
+            }
+        }
+
+        // Add current message
+        $contents[] = [
+            'role' => 'user',
+            'parts' => [
+                ['text' => $message]
+            ]
+        ];
+
+        // Ensure we don't send excessive history (last 10 turns max)
+        if (count($contents) > 11) {
+            $contents = array_slice($contents, -11);
+        }
+
+        if (!empty($this->apiKey)) {
+            $models = ['gemini-flash-latest', 'gemini-flash-lite-latest', 'gemini-2.5-flash'];
+            foreach ($models as $model) {
+                try {
+                    $payload = [
+                        'system_instruction' => [
+                            'parts' => [
+                                ['text' => $systemInstruction]
+                            ]
+                        ],
+                        'contents' => $contents,
+                        'generationConfig' => [
+                            'temperature' => 0.6,
+                            'maxOutputTokens' => 1200,
+                        ]
+                    ];
+
+                    $response = Http::timeout(6)->post("{$this->baseUrl}/{$model}:generateContent?key={$this->apiKey}", $payload);
+
+                    if ($response->successful()) {
+                        $replyText = $response->json('candidates.0.content.parts.0.text', '');
+                        if (!empty($replyText)) {
+                            return [
+                                'success' => true,
+                                'reply' => trim($replyText),
+                                'model' => $model,
+                                'source' => 'gemini_api'
+                            ];
+                        }
+                    } else {
+                        Log::warning("Gemini API {$model} returned status {$response->status()}: " . $response->body());
+                    }
+                } catch (\Exception $e) {
+                    Log::warning("Gemini API {$model} call failed: " . $e->getMessage());
+                }
+            }
+        }
+
+        // Contextual intelligent fallback if API key is not configured or network issue occurs
+        return [
+            'success' => true,
+            'reply' => $this->generateFallbackResponse($message),
+            'model' => 'offline-fallback',
+            'source' => 'local_fallback'
+        ];
+    }
+
+    /**
+     * Sinh câu trả lời dự phòng thông minh khi offline hoặc chưa gắn key
+     */
+    protected function generateFallbackResponse(string $message): string
+    {
+        $lower = mb_strtolower(trim($message), 'UTF-8');
+
+        if (str_contains($lower, 'make') && str_contains($lower, 'do')) {
+            return "### 💡 Phân biệt **Make** và **Do**:\n\n"
+                . "- **Do** dùng cho hành động, công việc, nghĩa vụ hàng ngày (không tạo ra sản phẩm mới):\n"
+                . "  - *do homework* (làm bài tập), *do the dishes* (rửa bát), *do business* (kinh doanh).\n"
+                . "- **Make** dùng khi tạo ra, sản xuất, hoặc gây ra một kết quả cụ thể:\n"
+                . "  - *make a cake* (làm bánh), *make a mistake* (phạm lỗi), *make a decision* (ra quyết định).\n\n"
+                . "> **Mẹo nhớ:** *You **do** work, but you **make** money!*";
+        }
+
+        if (str_contains($lower, 'chữa') || str_contains($lower, 'sửa') || str_contains($lower, 'sai') || str_contains($lower, 'check')) {
+            return "### ✍️ Phân tích và chữa câu của bạn:\n\n"
+                . "Để câu tiếng Anh chuẩn xác và tự nhiên như người bản xứ:\n"
+                . "1. **Kiểm tra Thì (Tense):** Xác định mốc thời gian rõ ràng để chia đúng động từ.\n"
+                . "2. **Sự hòa hợp Chủ - Vị:** Chú ý danh từ số ít / số nhiều đi kèm trợ động từ tương ứng.\n"
+                . "3. **Collocation tự nhiên:** Hãy gõ nguyên văn câu bạn cần chữa để mình phân tích từng từ chi tiết nhé!";
+        }
+
+        if (str_contains($lower, 'present perfect') || str_contains($lower, 'hiện tại hoàn thành')) {
+            return "### 🎯 3 câu ví dụ thì Hiện tại hoàn thành (*S + have/has + V3/ed*):\n\n"
+                . "1. **\"I have studied English for 5 years.\"**\n"
+                . "   - *Tôi đã học tiếng Anh được 5 năm (hành động bắt đầu trong quá khứ và vẫn tiếp diễn ở hiện tại).*\n"
+                . "2. **\"She has already finished her project.\"**\n"
+                . "   - *Cô ấy vừa mới hoàn thành dự án của mình (nhấn mạnh kết quả vừa xảy ra).*\n"
+                . "3. **\"Have you ever traveled to London?\"**\n"
+                . "   - *Bạn đã từng đi du lịch London chưa? (hỏi về trải nghiệm sống tính đến nay).*";
+        }
+
+        return "### 🤖 Trợ lý Tiếng Anh OxVocab AI\n\n"
+            . "Chào bạn! Mình đã tiếp nhận câu hỏi: **\"{$message}\"**.\n\n"
+            . "✨ **Gợi ý học tập:**\n"
+            . "- Để ghi nhớ từ vựng hoặc cấu trúc này, hãy đưa ngay vào **Bộ thẻ Flashcard** hoặc **Sổ tay từ vựng** để ôn tập Spaced Repetition.\n"
+            . "- Bạn có thể hỏi thêm: *\"Cho 3 câu ví dụ về...\"*, *\"Phân biệt ... và ...\"*, hoặc *\"Giải thích ngữ pháp...\"* để mình giải đáp chi tiết nhất nhé!";
+    }
 }

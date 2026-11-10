@@ -66,8 +66,8 @@
             </div>
           </div>
 
-          <!-- Main Term & Phonetics Body -->
-          <div class="text-center my-auto py-2 position-relative z-1">
+          <!-- Main Term & Phonetics Body (Scrollable if long) -->
+          <div class="card-face-body flex-grow-1 overflow-y-auto custom-card-scrollbar py-2 text-center position-relative z-1 d-flex flex-column justify-content-center">
             <h1 class="display-5 display-md-4 fw-black text-white mb-2 tracking-tight" style="letter-spacing: -0.5px; word-break: break-word;">
               {{ currentWordText }}
             </h1>
@@ -95,7 +95,7 @@
             <!-- English Example Sentence Shown on Front -->
             <div
               v-if="currentWordExampleEn"
-              class="interactive-zone p-3 rounded-3 text-start my-2 shadow-xs"
+              class="interactive-zone p-2.5 p-md-3 rounded-3 text-start my-1.5 shadow-xs"
               style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.16); backdrop-filter: blur(4px);"
               @click.stop
             >
@@ -170,64 +170,53 @@
             </button>
           </div>
 
-          <!-- Meaning & Vietnamese Translation Section -->
-          <div class="my-auto py-1 text-center">
-            <div class="text-muted fs-8 mb-1 fw-semibold text-uppercase">Dịch nghĩa tiếng Việt:</div>
-            <h2 class="display-6 fw-bold text-success mb-2" style="word-break: break-word;">
+          <!-- Meaning & Vietnamese Translation Section (Scrollable with Compact Input) -->
+          <div class="card-face-body flex-grow-1 overflow-y-auto custom-card-scrollbar py-1 text-center d-flex flex-column justify-content-center">
+            <div class="text-muted fs-9 mb-0.5 fw-bold text-uppercase letter-spacing-1">Dịch nghĩa tiếng Việt:</div>
+            <h2 class="fw-bold text-success mb-1" style="font-size: clamp(1.3rem, 3.2vw, 2rem); line-height: 1.25; word-break: break-word;">
               {{ currentWordMeaning }}
             </h2>
 
             <!-- Grammar Pattern / Structure (if present in curriculum data) -->
-            <div v-if="currentWord?.pattern" class="p-2 rounded-3 bg-light text-muted fs-8 mb-2 border text-start interactive-zone" @click.stop>
+            <div v-if="currentWord?.pattern" class="p-1.5 px-2.5 rounded-3 bg-light text-muted fs-9 mb-1.5 border text-start interactive-zone shadow-2xs" @click.stop>
               <i class="bi bi-diagram-2 me-1 text-teal"></i>
               <strong>Mẫu câu / Cấu trúc:</strong> <span class="text-dark-emphasis font-monospace">{{ currentWord.pattern }}</span>
             </div>
 
             <!-- Vietnamese translation / Examples list -->
-            <div v-if="currentWord?.example_vi" class="bg-light p-2.5 rounded-3 text-start border my-1 interactive-zone" @click.stop>
-              <span class="badge bg-secondary text-white fs-9 mb-1">BẢN DỊCH CÂU VÍ DỤ</span>
-              <p class="fs-7 text-dark-emphasis mb-0 fst-italic">
+            <div v-if="currentWord?.example_vi" class="bg-light p-2 rounded-3 text-start border my-1 interactive-zone shadow-2xs" @click.stop>
+              <span class="badge bg-secondary text-white fs-9 mb-0.5 py-0.5 px-2">BẢN DỊCH CÂU VÍ DỤ</span>
+              <p class="fs-8 text-dark-emphasis mb-0 fst-italic">
                 "{{ currentWord.example_vi }}"
               </p>
             </div>
 
             <!-- Multiple Curriculum Examples (if split by |) -->
-            <div v-if="curriculumExamplesList.length > 0" class="bg-light p-2.5 rounded-3 text-start border my-1 interactive-zone" @click.stop>
-              <span class="badge bg-secondary text-white fs-9 mb-1">CÂU VÍ DỤ THỰC TẾ ({{ curriculumExamplesList.length }})</span>
-              <ul class="list-unstyled mb-0 fs-8">
-                <li v-for="(ex, exIdx) in curriculumExamplesList" :key="exIdx" class="text-dark-emphasis mb-1">
+            <div v-if="curriculumExamplesList.length > 0" class="bg-light p-2 rounded-3 text-start border my-1 interactive-zone shadow-2xs" @click.stop>
+              <span class="badge bg-secondary text-white fs-9 mb-0.5 py-0.5 px-2">CÂU VÍ DỤ THỰC TẾ ({{ curriculumExamplesList.length }})</span>
+              <ul class="list-unstyled mb-0 fs-9">
+                <li v-for="(ex, exIdx) in curriculumExamplesList" :key="exIdx" class="text-dark-emphasis mb-0.5">
                   • <em>{{ ex }}</em>
                 </li>
               </ul>
             </div>
 
-            <!-- ================= TÍNH NĂNG ĐỒNG BỘ: GÕ LẠI TỪ TIẾNG ANH & NÚT XEM KẾT QUẢ ================= -->
+            <!-- ================= COMPACT TYPING INPUT (ACTIVE RECALL: 38px - 42px) ================= -->
             <div
               v-if="showTypingInput"
-              class="interactive-zone no-flip p-3 rounded-4 bg-light-subtle border border-success-subtle shadow-xs my-2 text-start position-relative z-3"
+              class="interactive-zone no-flip compact-recall-wrapper mt-2 mb-1 text-start position-relative z-3"
               @click.stop
             >
-              <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
-                <label class="fs-8 fw-bold text-teal d-flex align-items-center gap-1.5 mb-0">
-                  <i class="bi bi-pencil-square text-teal"></i>
-                  <span>Luyện gõ từ tiếng Anh (Active Recall):</span>
-                </label>
-
-                <!-- NÚT XEM KẾT QUẢ: Bo góc mềm mại, hiển thị rõ nét, bấm là HIỆN NGAY KẾT QUẢ KHÔNG LẬT THẺ, KHÔNG BẮT BUỘC PHẢI NHẬP TRƯỚC -->
-                <button
-                  type="button"
-                  @click.stop="revealResultNow"
-                  class="btn btn-sm rounded-pill px-3 py-1 fs-8 fw-bold d-inline-flex align-items-center gap-1.5 shadow-xs transition-all border border-teal text-teal bg-white hover-bg-teal"
-                  style="border-width: 1.5px !important; z-index: 25;"
-                  title="Hiện ngay kết quả và điền từ tiếng Anh chuẩn xác (không bị lật thẻ)"
-                >
-                  <i class="bi bi-eye-fill text-teal"></i>
-                  <span>Xem kết quả</span>
-                </button>
-              </div>
-
-              <!-- Input Group with Stop Propagation on Keydown/Space -->
-              <div class="input-group input-group-sm">
+              <!-- Slim Pill Input Container -->
+              <div
+                class="compact-recall-bar d-flex align-items-center gap-1.5 px-2 py-1 rounded-pill border bg-white shadow-xs transition-all"
+                :class="{
+                  'border-success bg-success-subtle': isSpellCorrect === true,
+                  'border-danger bg-danger-subtle': isSpellCorrect === false,
+                  'border-teal-subtle': isSpellCorrect === null
+                }"
+              >
+                <i class="bi bi-pencil-fill text-teal fs-8 ms-1"></i>
                 <input
                   ref="recallInputRef"
                   type="text"
@@ -237,12 +226,8 @@
                   @keydown.space.stop
                   @keydown.stop
                   @click.stop
-                  class="form-control rounded-pill-start py-2 px-3 border spell-recall-input"
-                  :class="{
-                    'border-success bg-success-subtle text-success fw-bold': isSpellCorrect === true,
-                    'border-danger bg-danger-subtle': isSpellCorrect === false
-                  }"
-                  placeholder="Gõ lại từ tiếng Anh của mặt trước..."
+                  class="compact-recall-input form-control form-control-sm border-0 bg-transparent p-0 fs-8 flex-grow-1"
+                  placeholder="Gõ lại từ..."
                   autocomplete="off"
                   autocorrect="off"
                   autocapitalize="off"
@@ -251,43 +236,49 @@
                 <button
                   type="button"
                   @click.stop="submitSpellRecall"
-                  class="btn btn-sm btn-teal text-white rounded-pill-end px-3.5 fw-bold d-flex align-items-center gap-1 shadow-2xs"
+                  class="btn btn-xs btn-teal text-white rounded-pill px-2.5 py-1 fw-bold flex-shrink-0 shadow-2xs d-inline-flex align-items-center gap-1"
+                  style="font-size: 11px; height: 28px;"
+                  title="Kiểm tra chính tả"
                 >
-                  <i class="bi bi-check2-circle"></i>
+                  <i class="bi bi-check2"></i>
                   <span>Kiểm tra</span>
                 </button>
-              </div>
-
-              <!-- Result Banner: Correct -->
-              <div v-if="isSpellCorrect === true" class="mt-2 text-success fs-8 fw-bold d-flex align-items-center gap-1.5 p-2 rounded-3 bg-success-subtle border border-success-subtle">
-                <i class="bi bi-check-circle-fill fs-6"></i>
-                <span>Chính xác tuyệt đối! Đáp án đúng: <strong class="font-monospace">{{ currentWordText }}</strong></span>
-              </div>
-
-              <!-- Result Banner: Incorrect -->
-              <div v-else-if="isSpellCorrect === false" class="mt-2 text-danger fs-8 fw-semibold d-flex align-items-center justify-content-between gap-1.5 p-2 rounded-3 bg-danger-subtle border border-danger-subtle flex-wrap">
-                <div class="d-flex align-items-center gap-1.5">
-                  <i class="bi bi-x-circle-fill fs-6"></i>
-                  <span>Chưa chính xác! Thử gõ lại hoặc bấm <strong>"Xem kết quả"</strong>.</span>
-                </div>
-                <button type="button" @click.stop="revealResultNow" class="btn btn-xs btn-outline-danger rounded-pill px-2.5 py-0.5 fs-9 fw-bold">
-                  Hiện đáp án
+                <button
+                  type="button"
+                  @click.stop="revealResultNow"
+                  class="btn btn-xs btn-outline-teal rounded-pill px-2.5 py-1 fw-bold flex-shrink-0 shadow-2xs bg-white d-inline-flex align-items-center gap-1 hover-bg-teal"
+                  style="font-size: 11px; height: 28px;"
+                  title="Xem đáp án ngay không bị lật thẻ"
+                >
+                  <i class="bi bi-eye-fill"></i>
+                  <span class="d-none d-sm-inline">Xem kết quả</span>
                 </button>
+              </div>
+
+              <!-- Compact Feedback Badges (Slim & Non-disruptive) -->
+              <div v-if="isSpellCorrect === true" class="mt-1 d-inline-flex align-items-center gap-1 text-success fs-9 fw-bold px-2 py-0.5 rounded-pill bg-success-subtle border border-success-subtle">
+                <i class="bi bi-check-circle-fill"></i>
+                <span>Chính xác! Đáp án: <strong class="font-monospace">{{ currentWordText }}</strong></span>
+              </div>
+
+              <div v-else-if="isSpellCorrect === false" class="mt-1 d-inline-flex align-items-center gap-1 text-danger fs-9 fw-semibold px-2 py-0.5 rounded-pill bg-danger-subtle border border-danger-subtle">
+                <i class="bi bi-x-circle-fill"></i>
+                <span>Chưa đúng! Thử lại hoặc bấm "Xem kết quả".</span>
               </div>
 
               <!-- Answer Reveal Banner (When 'Xem kết quả' is pressed) -->
-              <div v-if="showAnswer" class="mt-2 p-2.5 rounded-3 bg-teal-subtle text-teal border border-teal d-flex justify-content-between align-items-center shadow-2xs flex-wrap gap-2">
-                <div class="d-flex align-items-center gap-2">
-                  <span class="badge bg-teal text-white fs-9 rounded-pill">ĐÁP ÁN CHUẨN</span>
-                  <strong class="fs-6 text-teal font-monospace">{{ currentWordText }}</strong>
-                  <span v-if="currentWordPhonetic" class="text-muted fs-8 font-monospace">({{ currentWordPhonetic }})</span>
-                </div>
+              <div v-if="showAnswer" class="mt-1 d-inline-flex align-items-center gap-1.5 px-2.5 py-1 rounded-pill bg-teal-subtle text-teal border border-teal shadow-2xs">
+                <span class="badge bg-teal text-white rounded-pill px-1.5 py-0.5" style="font-size: 8px;">ĐÁP ÁN</span>
+                <strong class="font-monospace fs-8 text-teal">{{ currentWordText }}</strong>
+                <span v-if="currentWordPhonetic" class="text-muted font-monospace" style="font-size: 10px;">({{ currentWordPhonetic }})</span>
                 <button
                   type="button"
                   @click.stop="speakCurrent"
-                  class="btn btn-xs btn-teal text-white rounded-pill px-2.5 py-1 fs-9 fw-bold d-inline-flex align-items-center gap-1"
+                  class="btn btn-xs btn-teal text-white rounded-pill p-0 px-1.5 ms-1"
+                  style="font-size: 10px; height: 22px;"
+                  title="Phát âm"
                 >
-                  <i class="bi bi-volume-up-fill"></i> Phát âm
+                  <i class="bi bi-volume-up-fill"></i>
                 </button>
               </div>
             </div>
@@ -876,11 +867,64 @@ onUnmounted(() => {
   color: #ffffff !important;
 }
 
+/* CARD FACE BODY (SMART SCROLLABLE INNER CONTAINER) */
+.card-face-body {
+  max-height: calc(100% - 70px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 4px;
+}
+
+.custom-card-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 176, 116, 0.3) transparent;
+}
+.custom-card-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-card-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-card-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 176, 116, 0.3);
+  border-radius: 4px;
+}
+.custom-card-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 176, 116, 0.6);
+}
+
+/* COMPACT RECALL BAR (38px - 42px) */
+.compact-recall-bar {
+  min-height: 38px;
+  max-height: 42px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+.compact-recall-bar:focus-within {
+  border-color: #00b074 !important;
+  box-shadow: 0 0 0 3px rgba(0, 176, 116, 0.22) !important;
+}
+
+.compact-recall-input {
+  font-size: 15px !important;
+  color: #1e293b;
+  outline: none !important;
+  box-shadow: none !important;
+}
+.compact-recall-input::placeholder {
+  color: #94a3b8;
+  font-size: 13px;
+}
+
 @media (max-width: 767.98px) {
   .flashcard-3d-box,
   .flashcard-3d-inner,
   .card-face {
-    min-height: 400px !important;
+    min-height: 420px !important;
+  }
+  .card-face-body {
+    max-height: calc(100% - 64px);
   }
 }
 </style>

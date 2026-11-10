@@ -155,74 +155,66 @@
       />
     </div>
 
-    <!-- Create / Edit Modal -->
-    <div v-if="showModal" class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.55); backdrop-filter: blur(2px);">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content rounded-4 border-0 shadow-lg">
-          <div class="modal-header border-bottom pb-3">
-            <h5 class="modal-title fw-bold text-teal d-flex align-items-center gap-2">
-              <i class="bi bi-journal-check"></i>
-              <span>{{ isEditing ? 'Chỉnh Sửa Chuyên Đề Ngữ Pháp' : 'Thêm Chuyên Đề Ngữ Pháp Mới' }}</span>
-            </h5>
-            <button @click="showModal = false" type="button" class="btn-close"></button>
+    <!-- STANDARDIZED VIEWPORT-CENTERED GRAMMAR MODAL -->
+    <BaseModal
+      v-model="showModal"
+      :title="isEditing ? 'Chỉnh Sửa Chuyên Đề Ngữ Pháp' : 'Thêm Chuyên Đề Ngữ Pháp Mới'"
+      icon="bi bi-journal-check"
+      maxWidth="780px"
+      hideFooter
+    >
+      <form @submit.prevent="saveGrammar">
+        <div class="row g-3">
+          <div class="col-12 col-md-8">
+            <label class="form-label fs-8 fw-bold">Tên thì / Chuyên đề *</label>
+            <input v-model="form.title" type="text" required class="form-control" placeholder="Ví dụ: Present Simple (Hiện tại đơn)" />
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="form-label fs-8 fw-bold">Cấp độ *</label>
+            <select v-model="form.level" class="form-select">
+              <option value="Cơ bản">Cơ bản (A1-A2)</option>
+              <option value="Trung cấp">Trung cấp (B1-B2)</option>
+              <option value="Nâng cao">Nâng cao (C1-C2)</option>
+            </select>
           </div>
 
-          <form @submit.prevent="saveGrammar">
-            <div class="modal-body py-3">
-              <div class="row g-3">
-                <div class="col-12 col-md-8">
-                  <label class="form-label fs-8 fw-bold">Tên thì / Chuyên đề *</label>
-                  <input v-model="form.title" type="text" required class="form-control" placeholder="Ví dụ: Present Simple (Hiện tại đơn)" />
-                </div>
-                <div class="col-12 col-md-4">
-                  <label class="form-label fs-8 fw-bold">Cấp độ *</label>
-                  <select v-model="form.level" class="form-select">
-                    <option value="Cơ bản">Cơ bản (A1-A2)</option>
-                    <option value="Trung cấp">Trung cấp (B1-B2)</option>
-                    <option value="Nâng cao">Nâng cao (C1-C2)</option>
-                  </select>
-                </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label fs-8 fw-bold">Slug URL *</label>
+            <input v-model="form.slug" type="text" required class="form-control" placeholder="present-simple" />
+          </div>
+          <div class="col-12 col-md-3">
+            <label class="form-label fs-8 fw-bold">Thứ tự hiển thị</label>
+            <input v-model.number="form.order_index" type="number" class="form-control" />
+          </div>
+          <div class="col-12 col-md-3">
+            <label class="form-label fs-8 fw-bold">Màu thẻ (Hex)</label>
+            <input v-model="form.badge_color" type="color" class="form-control form-control-color w-100" />
+          </div>
 
-                <div class="col-12 col-md-6">
-                  <label class="form-label fs-8 fw-bold">Slug URL *</label>
-                  <input v-model="form.slug" type="text" required class="form-control" placeholder="present-simple" />
-                </div>
-                <div class="col-12 col-md-3">
-                  <label class="form-label fs-8 fw-bold">Thứ tự hiển thị</label>
-                  <input v-model.number="form.order_index" type="number" class="form-control" />
-                </div>
-                <div class="col-12 col-md-3">
-                  <label class="form-label fs-8 fw-bold">Màu thẻ (Hex)</label>
-                  <input v-model="form.badge_color" type="color" class="form-control form-control-color w-100" />
-                </div>
+          <div class="col-12">
+            <label class="form-label fs-8 fw-bold">Tóm tắt ngắn gọn</label>
+            <input v-model="form.summary" type="text" class="form-control" placeholder="Diễn tả thói quen, chân lý hiển nhiên hoặc lịch trình cố định..." />
+          </div>
 
-                <div class="col-12">
-                  <label class="form-label fs-8 fw-bold">Tóm tắt ngắn gọn</label>
-                  <input v-model="form.summary" type="text" class="form-control" placeholder="Diễn tả thói quen, chân lý hiển nhiên hoặc lịch trình cố định..." />
-                </div>
+          <div class="col-12">
+            <label class="form-label fs-8 fw-bold">Công thức / Cấu trúc ngữ pháp</label>
+            <textarea v-model="form.structure" rows="2" class="form-control" placeholder="(+) S + V(s/es) | (-) S + do/does not + V_inf | (?) Do/Does + S + V_inf?"></textarea>
+          </div>
 
-                <div class="col-12">
-                  <label class="form-label fs-8 fw-bold">Công thức / Cấu trúc ngữ pháp</label>
-                  <textarea v-model="form.structure" rows="2" class="form-control" placeholder="(+) S + V(s/es) | (-) S + do/does not + V_inf | (?) Do/Does + S + V_inf?"></textarea>
-                </div>
-
-                <div class="col-12">
-                  <label class="form-label fs-8 fw-bold">Dấu hiệu nhận biết</label>
-                  <input v-model="form.signal_words" type="text" class="form-control" placeholder="always, usually, often, sometimes, every day, once a week..." />
-                </div>
-              </div>
-            </div>
-
-            <div class="modal-footer border-top pt-2">
-              <button @click="showModal = false" type="button" class="btn btn-outline-secondary rounded-pill px-4">Hủy</button>
-              <button type="submit" class="btn btn-teal text-white rounded-pill px-4 fw-bold">
-                <i class="bi bi-check-lg me-1"></i> Lưu chuyên đề
-              </button>
-            </div>
-          </form>
+          <div class="col-12">
+            <label class="form-label fs-8 fw-bold">Dấu hiệu nhận biết</label>
+            <input v-model="form.signal_words" type="text" class="form-control" placeholder="always, usually, often, sometimes, every day, once a week..." />
+          </div>
         </div>
-      </div>
-    </div>
+
+        <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
+          <button @click="showModal = false" type="button" class="btn btn-outline-secondary rounded-pill px-4">Hủy</button>
+          <button type="submit" class="btn btn-teal text-white rounded-pill px-4 fw-bold">
+            <i class="bi bi-check-lg me-1"></i> Lưu chuyên đề
+          </button>
+        </div>
+      </form>
+    </BaseModal>
   </div>
 </template>
 
@@ -230,6 +222,7 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import SmartPagination from '@/components/SmartPagination.vue'
+import BaseModal from '@/components/BaseModal.vue'
 import { useToast } from '@/composables/useToast'
 
 const toast = useToast()

@@ -97,87 +97,81 @@
       />
     </div>
 
-    <!-- VOCABULARY MODAL WITH GEMINI AI GENERATION -->
-    <div v-if="showVocabModal" class="modal fade show d-block" style="background-color: rgba(0,0,0,0.65);" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content rounded-4 border-0 shadow bg-card-custom">
-          <div class="modal-header bg-teal text-white py-3">
-            <h5 class="modal-title fw-bold">
-              {{ editingVocab?.id ? 'Chỉnh Sửa Từ Vựng' : 'Thêm Từ Vựng Mới' }}
-            </h5>
-            <button @click="showVocabModal = false" type="button" class="btn-close btn-close-white"></button>
+    <!-- STANDARDIZED VIEWPORT-CENTERED VOCABULARY MODAL WITH GEMINI AI GENERATION -->
+    <BaseModal
+      v-model="showVocabModal"
+      :title="editingVocab?.id ? 'Chỉnh Sửa Từ Vựng' : 'Thêm Từ Vựng Mới'"
+      icon="bi bi-book-half"
+      maxWidth="780px"
+      hideFooter
+    >
+      <form @submit.prevent="saveVocab">
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label fs-7 fw-bold mb-1">Từ tiếng Anh (Word)</label>
+            <input v-model="vocabForm.word" type="text" class="form-control rounded-3 fs-7" required />
           </div>
-          <div class="modal-body p-4">
-            <form @submit.prevent="saveVocab">
-              <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                  <label class="form-label fs-7 fw-bold mb-1">Từ tiếng Anh (Word)</label>
-                  <input v-model="vocabForm.word" type="text" class="form-control rounded-3 fs-7" required />
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label fs-7 fw-bold mb-1">Phiên âm US</label>
-                  <input v-model="vocabForm.phonetic_us" type="text" class="form-control rounded-3 fs-7" placeholder="/.../" />
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label fs-7 fw-bold mb-1">Loại từ</label>
-                  <input v-model="vocabForm.part_of_speech" type="text" class="form-control rounded-3 fs-7" placeholder="Động từ, Danh từ..." />
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label fs-7 fw-bold mb-1">Cấp độ CEFR</label>
-                  <select v-model="vocabForm.cefr_level" class="form-select rounded-3 fs-7">
-                    <option value="A1">A1</option>
-                    <option value="A2">A2</option>
-                    <option value="B1">B1</option>
-                    <option value="B2">B2</option>
-                  </select>
-                </div>
-                <div class="col-12">
-                  <label class="form-label fs-7 fw-bold mb-1">Nghĩa tiếng Việt</label>
-                  <input v-model="vocabForm.meaning_vi" type="text" class="form-control rounded-3 fs-7" required />
-                </div>
-              </div>
-
-              <!-- Gemini AI Generator Button -->
-              <div class="p-3 rounded-3 bg-body-tertiary border mb-3 d-flex justify-content-between align-items-center">
-                <div>
-                  <strong class="text-teal fs-7"><i class="bi bi-stars text-warning me-1"></i> Gemini AI Tạo Ví Dụ Tự Động:</strong>
-                  <div class="text-muted fs-8">Tự động sinh câu ví dụ tiếng Anh tự nhiên & bản dịch chuẩn xác.</div>
-                </div>
-                <button
-                  type="button"
-                  @click="generateAiExamples"
-                  class="btn btn-sm btn-outline-teal rounded-pill px-3 py-1.5 shadow-sm"
-                  :disabled="aiGenerating || !vocabForm.word"
-                >
-                  <span v-if="aiGenerating" class="spinner-border spinner-border-sm me-1"></span>
-                  <i v-else class="bi bi-magic me-1"></i>
-                  <span>AI Tạo Ngay</span>
-                </button>
-              </div>
-
-              <div class="mb-3">
-                <label class="form-label fs-7 fw-bold mb-1">Câu ví dụ tiếng Anh</label>
-                <textarea v-model="vocabForm.example_en" class="form-control rounded-3 fs-7" rows="2"></textarea>
-              </div>
-
-              <div class="mb-4">
-                <label class="form-label fs-7 fw-bold mb-1">Dịch nghĩa câu ví dụ (Tiếng Việt)</label>
-                <textarea v-model="vocabForm.example_vi" class="form-control rounded-3 fs-7" rows="2"></textarea>
-              </div>
-
-              <div class="d-flex justify-content-end gap-2">
-                <button type="button" @click="showVocabModal = false" class="btn btn-secondary rounded-pill px-3 fs-7">
-                  Hủy
-                </button>
-                <button type="submit" class="btn btn-teal rounded-pill px-4 fs-7 fw-bold shadow-sm">
-                  Lưu từ vựng
-                </button>
-              </div>
-            </form>
+          <div class="col-md-6">
+            <label class="form-label fs-7 fw-bold mb-1">Phiên âm US</label>
+            <input v-model="vocabForm.phonetic_us" type="text" class="form-control rounded-3 fs-7" placeholder="/.../" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fs-7 fw-bold mb-1">Loại từ</label>
+            <input v-model="vocabForm.part_of_speech" type="text" class="form-control rounded-3 fs-7" placeholder="Động từ, Danh từ..." />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fs-7 fw-bold mb-1">Cấp độ CEFR</label>
+            <select v-model="vocabForm.cefr_level" class="form-select rounded-3 fs-7">
+              <option value="A1">A1</option>
+              <option value="A2">A2</option>
+              <option value="B1">B1</option>
+              <option value="B2">B2</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label fs-7 fw-bold mb-1">Nghĩa tiếng Việt</label>
+            <input v-model="vocabForm.meaning_vi" type="text" class="form-control rounded-3 fs-7" required />
           </div>
         </div>
-      </div>
-    </div>
+
+        <!-- Gemini AI Generator Button -->
+        <div class="p-3 rounded-3 bg-body-tertiary border mb-3 d-flex justify-content-between align-items-center">
+          <div>
+            <strong class="text-teal fs-7"><i class="bi bi-stars text-warning me-1"></i> Gemini AI Tạo Ví Dụ Tự Động:</strong>
+            <div class="text-muted fs-8">Tự động sinh câu ví dụ tiếng Anh tự nhiên & bản dịch chuẩn xác.</div>
+          </div>
+          <button
+            type="button"
+            @click="generateAiExamples"
+            class="btn btn-sm btn-outline-teal rounded-pill px-3 py-1.5 shadow-sm"
+            :disabled="aiGenerating || !vocabForm.word"
+          >
+            <span v-if="aiGenerating" class="spinner-border spinner-border-sm me-1"></span>
+            <i v-else class="bi bi-magic me-1"></i>
+            <span>AI Tạo Ngay</span>
+          </button>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fs-7 fw-bold mb-1">Câu ví dụ tiếng Anh</label>
+          <textarea v-model="vocabForm.example_en" class="form-control rounded-3 fs-7" rows="2"></textarea>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fs-7 fw-bold mb-1">Dịch nghĩa câu ví dụ (Tiếng Việt)</label>
+          <textarea v-model="vocabForm.example_vi" class="form-control rounded-3 fs-7" rows="2"></textarea>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 border-top pt-3">
+          <button type="button" @click="showVocabModal = false" class="btn btn-secondary rounded-pill px-3 fs-7">
+            Hủy
+          </button>
+          <button type="submit" class="btn btn-teal rounded-pill px-4 fs-7 fw-bold shadow-sm">
+            Lưu từ vựng
+          </button>
+        </div>
+      </form>
+    </BaseModal>
   </div>
 </template>
 
@@ -185,6 +179,7 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import SmartPagination from '@/components/SmartPagination.vue'
+import BaseModal from '@/components/BaseModal.vue'
 import { useToast } from '@/composables/useToast'
 
 const toast = useToast()

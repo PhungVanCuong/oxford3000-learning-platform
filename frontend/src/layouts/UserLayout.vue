@@ -276,33 +276,47 @@
       </div>
     </footer>
 
-    <!-- MOBILE BOTTOM NAVIGATION (Phong cách Ứng dụng Di Động) -->
-    <nav class="mobile-bottom-nav d-flex d-md-none border-top position-fixed bottom-0 start-0 w-100 z-3 align-items-center justify-content-around">
+    <!-- STICKY MOBILE BOTTOM NAVIGATION (Height 58-64px, iOS safe area, active dots) -->
+    <nav class="mobile-bottom-nav d-flex d-lg-none border-top position-fixed bottom-0 start-0 w-100 align-items-center justify-content-around">
+      <!-- 1. Trang chủ -->
       <router-link to="/" class="mobile-nav-item" exact-active-class="active">
         <i class="bi bi-house-door-fill"></i>
         <span>Trang chủ</span>
         <span v-if="$route.path === '/'" class="mobile-nav-active-dot"></span>
       </router-link>
 
+      <!-- 2. Lộ trình -->
       <router-link to="/curriculum" class="mobile-nav-item" active-class="active">
         <i class="bi bi-signpost-split-fill"></i>
         <span>Lộ trình</span>
         <span v-if="$route.path.startsWith('/curriculum')" class="mobile-nav-active-dot"></span>
       </router-link>
 
-      <router-link to="/daily" class="mobile-nav-item" active-class="active">
-        <i class="bi bi-calendar-check-fill"></i>
-        <span>Học ngày</span>
-        <span v-if="$route.path.startsWith('/daily')" class="mobile-nav-active-dot"></span>
+      <!-- 3. Cụm từ -->
+      <router-link to="/phrasal-verbs" class="mobile-nav-item" active-class="active">
+        <i class="bi bi-collection-play-fill"></i>
+        <span>Cụm từ</span>
+        <span v-if="$route.path.startsWith('/phrasal-verbs')" class="mobile-nav-active-dot"></span>
       </router-link>
 
-      <router-link to="/arena" class="mobile-nav-item" active-class="active">
-        <i class="bi bi-trophy-fill"></i>
-        <span>Đấu trường</span>
-        <span v-if="$route.path.startsWith('/arena')" class="mobile-nav-active-dot"></span>
+      <!-- 4. Ôn tập -->
+      <router-link to="/review" class="mobile-nav-item" active-class="active">
+        <i class="bi bi-clock-history"></i>
+        <span>Ôn tập</span>
+        <span v-if="$route.path.startsWith('/review')" class="mobile-nav-active-dot"></span>
       </router-link>
 
-      <button @click="toggleMobileDrawer" class="mobile-nav-item border-0 bg-transparent" :class="{ 'active': isMobileDrawerOpen }">
+      <!-- 5. Trợ lý AI Chat (Google Gemini) -->
+      <button @click="triggerAiChat" class="mobile-nav-item border-0 bg-transparent text-center" title="Mở Gia sư AI Gemini">
+        <div class="position-relative d-inline-block">
+          <i class="bi bi-stars text-warning fs-5"></i>
+          <span class="position-absolute top-0 start-100 translate-middle p-1 bg-success border border-light rounded-circle animate-pulse" style="transform: translate(-20%, 0%) !important;"></span>
+        </div>
+        <span class="text-teal fw-bold">AI Chat</span>
+      </button>
+
+      <!-- 6. Menu Drawer -->
+      <button @click="toggleMobileDrawer" class="mobile-nav-item border-0 bg-transparent" :class="{ 'active': isMobileDrawerOpen }" title="Menu toàn diện">
         <i class="bi bi-grid-fill"></i>
         <span>Menu</span>
         <span v-if="isMobileDrawerOpen" class="mobile-nav-active-dot"></span>
@@ -613,6 +627,10 @@ const handleLogout = async () => {
   router.push('/login')
 }
 
+const triggerAiChat = () => {
+  window.dispatchEvent(new CustomEvent('open-ai-chat'))
+}
+
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
   applyDisplayFilters()
@@ -701,5 +719,72 @@ onUnmounted(() => {
 .page-fade-leave-to {
   opacity: 0;
   transform: translateY(-3px);
+}
+
+/* MOBILE STICKY BOTTOM NAVIGATION BAR */
+.mobile-bottom-nav {
+  height: 60px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+  z-index: 1040 !important;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+}
+
+:global([data-bs-theme="dark"]) .mobile-bottom-nav,
+.bg-dark .mobile-bottom-nav {
+  background: rgba(15, 23, 42, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.4);
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 6px;
+  min-width: 52px;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-nav-item i {
+  font-size: 19px;
+  line-height: 1.1;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.mobile-nav-item.active {
+  color: #00b074 !important;
+  font-weight: 700;
+}
+
+.mobile-nav-item.active i {
+  color: #00b074 !important;
+  transform: translateY(-2px) scale(1.1);
+  filter: drop-shadow(0 2px 6px rgba(0, 176, 116, 0.35));
+}
+
+.mobile-nav-active-dot {
+  position: absolute;
+  bottom: 2px;
+  width: 4px;
+  height: 4px;
+  background-color: #00b074;
+  border-radius: 999px;
+  box-shadow: 0 0 6px #00b074;
+}
+
+@media (max-width: 991.98px) {
+  .user-main-content {
+    padding-bottom: 84px !important;
+  }
 }
 </style>

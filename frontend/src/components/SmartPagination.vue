@@ -1,22 +1,22 @@
 <template>
   <div v-if="totalItems > 0" class="smart-pagination-container d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 p-3 border-top flex-wrap">
     <!-- Left: Items info & Page Size Selector -->
-    <div class="d-flex align-items-center gap-2 flex-wrap fs-8 text-muted">
+    <div class="d-flex align-items-center gap-2 flex-wrap fs-8 text-muted w-100 w-md-auto justify-content-between justify-content-md-start">
       <span>
         Hiển thị <strong class="text-teal">{{ startItem }} - {{ endItem }}</strong> / tổng số <strong class="text-dark-emphasis">{{ totalItems }}</strong> mục
       </span>
 
       <span class="mx-1 d-none d-sm-inline">•</span>
 
-      <!-- Page Size Selector (Mặc định 50 mục/trang) -->
+      <!-- Page Size Selector -->
       <div class="d-inline-flex align-items-center gap-1">
-        <label for="pageSizeSelect" class="text-nowrap mb-0">Mỗi trang:</label>
+        <label for="pageSizeSelect" class="text-nowrap mb-0 fs-8">Mỗi trang:</label>
         <select
           id="pageSizeSelect"
           :value="pageSize"
           @change="onPageSizeChange($event.target.value)"
           class="form-select form-select-sm py-1 px-2 rounded-3 border fs-8 fw-semibold"
-          style="width: auto; min-width: 72px;"
+          style="width: auto; min-width: 68px;"
         >
           <option v-for="opt in pageSizeOptions" :key="opt" :value="opt">
             {{ opt }}
@@ -25,28 +25,53 @@
       </div>
     </div>
 
-    <!-- Right: Smart Navigation Buttons (Lên tất cả <<, Lên <, Trang pills, Xuống >, Xuống tất cả >>, Nhảy tới trang) -->
-    <div class="d-flex align-items-center gap-1.5 flex-wrap">
-      <!-- 1. Lên tất cả (Đầu trang / First Page <<) -->
+    <!-- Mobile-Only Condensed Navigation (d-md-none) -->
+    <div class="d-flex d-md-none align-items-center justify-content-between w-100 gap-2 mt-2 pt-2 border-top border-light-subtle">
+      <button
+        @click="goTo(currentPage - 1)"
+        :disabled="currentPage <= 1"
+        class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 fs-8 fw-bold d-inline-flex align-items-center gap-1 shadow-2xs"
+      >
+        <i class="bi bi-chevron-left"></i>
+        <span>Trước</span>
+      </button>
+
+      <span class="fs-8 fw-bold text-dark-emphasis px-2 py-1 rounded-pill bg-light border">
+        Trang <strong class="text-teal">{{ currentPage }}</strong> / {{ totalPages }}
+      </span>
+
+      <button
+        @click="goTo(currentPage + 1)"
+        :disabled="currentPage >= totalPages"
+        class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 fs-8 fw-bold d-inline-flex align-items-center gap-1 shadow-2xs"
+      >
+        <span>Sau</span>
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+
+    <!-- Desktop Navigation Buttons (d-none d-md-flex) -->
+    <div class="d-none d-md-flex align-items-center gap-1.5 flex-wrap">
+      <!-- 1. Đầu trang << -->
       <button
         @click="goTo(1)"
         :disabled="currentPage <= 1"
         class="btn btn-sm btn-outline-secondary rounded-3 px-2 py-1 fs-8 fw-bold d-inline-flex align-items-center gap-1 shadow-2xs"
-        title="Lên tất cả (Trang đầu tiên)"
+        title="Trang đầu tiên"
       >
         <i class="bi bi-chevron-double-left"></i>
         <span class="d-none d-lg-inline">Đầu</span>
       </button>
 
-      <!-- 2. Lên (Trang trước / Previous Page <) -->
+      <!-- 2. Trang trước < -->
       <button
         @click="goTo(currentPage - 1)"
         :disabled="currentPage <= 1"
         class="btn btn-sm btn-outline-secondary rounded-3 px-2 py-1 fs-8 fw-bold d-inline-flex align-items-center gap-1 shadow-2xs"
-        title="Lên (Trang trước)"
+        title="Trang trước"
       >
         <i class="bi bi-chevron-left"></i>
-        <span class="d-none d-sm-inline">Lên</span>
+        <span>Lên</span>
       </button>
 
       <!-- 3. Dynamic Page Number Pills -->
@@ -65,29 +90,29 @@
         </template>
       </div>
 
-      <!-- 4. Xuống (Trang sau / Next Page >) -->
+      <!-- 4. Trang sau > -->
       <button
         @click="goTo(currentPage + 1)"
         :disabled="currentPage >= totalPages"
         class="btn btn-sm btn-outline-secondary rounded-3 px-2 py-1 fs-8 fw-bold d-inline-flex align-items-center gap-1 shadow-2xs"
-        title="Xuống (Trang tiếp theo)"
+        title="Trang tiếp theo"
       >
-        <span class="d-none d-sm-inline">Xuống</span>
+        <span>Xuống</span>
         <i class="bi bi-chevron-right"></i>
       </button>
 
-      <!-- 5. Xuống tất cả (Cuối trang / Last Page >>) -->
+      <!-- 5. Cuối trang >> -->
       <button
         @click="goTo(totalPages)"
         :disabled="currentPage >= totalPages"
         class="btn btn-sm btn-outline-secondary rounded-3 px-2 py-1 fs-8 fw-bold d-inline-flex align-items-center gap-1 shadow-2xs"
-        title="Xuống tất cả (Trang cuối cùng)"
+        title="Trang cuối cùng"
       >
         <span class="d-none d-lg-inline">Cuối</span>
         <i class="bi bi-chevron-double-right"></i>
       </button>
 
-      <!-- 6. Nhảy trực tiếp tới trang (Jump to page input) -->
+      <!-- 6. Nhảy trực tiếp tới trang -->
       <div class="d-inline-flex align-items-center gap-1 ms-1">
         <input
           v-model.number="jumpPageInput"
@@ -113,7 +138,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 
 const props = defineProps({
   currentPage: {
@@ -126,11 +151,19 @@ const props = defineProps({
   },
   pageSize: {
     type: Number,
-    default: 50 // Mặc định 50 mục/trang theo yêu cầu
+    default: 20
   },
   pageSizeOptions: {
     type: Array,
-    default: () => [25, 50, 100, 200]
+    default: () => [10, 20, 50, 100]
+  },
+  autoScroll: {
+    type: Boolean,
+    default: true
+  },
+  scrollTarget: {
+    type: String,
+    default: ''
   }
 })
 
@@ -186,10 +219,23 @@ const goTo = (page) => {
   if (page < 1 || page > totalPages.value || page === props.currentPage) return
   emit('update:currentPage', page)
   emit('change', page)
+
+  if (props.autoScroll) {
+    nextTick(() => {
+      if (props.scrollTarget) {
+        const el = document.querySelector(props.scrollTarget)
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          return
+        }
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    })
+  }
 }
 
 const onPageSizeChange = (val) => {
-  const newSize = parseInt(val, 10) || 50
+  const newSize = parseInt(val, 10) || 20
   emit('update:pageSize', newSize)
   emit('update:currentPage', 1)
   emit('change', 1)
@@ -200,8 +246,6 @@ const handleJump = () => {
   if (val >= 1 && val <= totalPages.value) {
     goTo(val)
     jumpPageInput.value = ''
-  } else {
-    alert(`Vui lòng nhập trang từ 1 đến ${totalPages.value}`)
   }
 }
 </script>

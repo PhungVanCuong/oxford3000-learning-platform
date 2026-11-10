@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\CurriculumRoadmapController;
 use App\Http\Controllers\Api\ArenaController;
 use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\GoogleAuthController;
+use App\Http\Controllers\Api\AiController;
 
 // 1. Authentication & Profile
 Route::post('/auth/login', [AuthController::class, 'login']);
@@ -93,9 +94,10 @@ Route::delete('/phrasal-verbs/{id}', [PhrasalVerbController::class, 'destroy']);
 Route::get('/dictionary/search', [DictionaryController::class, 'search']);
 Route::get('/vocabulary/search', [DictionaryController::class, 'search']);
 
-// 10. Gemini AI Integration
+// 10. Gemini AI Integration (Chatbot & Assistant for Students & Admin)
+Route::post('/ai/chat', [AiController::class, 'chat']);
+Route::post('/ai/explain', [AiController::class, 'explain']);
 Route::post('/ai/generate-examples', [AdminController::class, 'generateAiExamples']);
-Route::post('/ai/explain', [AdminController::class, 'aiExplainOrCorrect']);
 
 // 11. NEW CURRICULUM ROADMAP (Lộ trình 25 Chủ đề Chuyên sâu từ 25 files CSV x 10 Giai đoạn x 200 câu)
 Route::get('/curriculum', [CurriculumRoadmapController::class, 'index']);

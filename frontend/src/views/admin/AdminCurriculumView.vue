@@ -270,114 +270,100 @@
       </div>
     </div>
 
-    <!-- ================= MODAL: ADD / EDIT TERM ================= -->
-    <div 
-      v-if="showTermModal" 
-      class="modal-backdrop-custom" 
-      @click.self="showTermModal = false"
+    <!-- ================= STANDARDIZED MODAL: ADD / EDIT TERM ================= -->
+    <BaseModal
+      v-model="showTermModal"
+      :title="editingTerm ? 'Chỉnh sửa Từ vựng Lộ trình' : 'Thêm Từ vựng Mới vào Lộ trình'"
+      icon="bi bi-pencil-square"
+      maxWidth="620px"
+      hideFooter
     >
-      <div class="card border-0 shadow-lg rounded-4 overflow-hidden" style="max-width: 580px; width: 100%;">
-        <div class="card-header bg-teal text-white p-3 d-flex align-items-center justify-content-between">
-          <h5 class="fw-bold mb-0">{{ editingTerm ? 'Chỉnh sửa Từ vựng Lộ trình' : 'Thêm Từ vựng Mới vào Lộ trình' }}</h5>
-          <button type="button" class="btn-close btn-close-white" @click="showTermModal = false"></button>
+      <form @submit.prevent="saveTerm">
+        <div class="mb-3">
+          <label class="form-label fs-7 fw-bold">Thuật ngữ Tiếng Anh (Term) <span class="text-danger">*</span></label>
+          <input type="text" v-model="termForm.term" class="form-control" required placeholder="Ví dụ: compulsory education" />
         </div>
 
-        <form @submit.prevent="saveTerm">
-          <div class="card-body p-4">
-            <div class="mb-3">
-              <label class="form-label fs-7 fw-bold">Thuật ngữ Tiếng Anh (Term) <span class="text-danger">*</span></label>
-              <input type="text" v-model="termForm.term" class="form-control" required placeholder="Ví dụ: compulsory education" />
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label fs-7 fw-bold">Nghĩa Tiếng Việt (Definition) <span class="text-danger">*</span></label>
-              <input type="text" v-model="termForm.definition" class="form-control" required placeholder="Ví dụ: giáo dục bắt buộc" />
-            </div>
-
-            <div class="row g-3 mb-3">
-              <div class="col-6">
-                <label class="form-label fs-7 fw-bold">Giai đoạn (1 - 10) <span class="text-danger">*</span></label>
-                <select v-model="termForm.stage_num" class="form-select" required>
-                  <option v-for="s in 10" :key="s" :value="s">Giai đoạn {{ s }}</option>
-                </select>
-              </div>
-
-              <div class="col-6">
-                <label class="form-label fs-7 fw-bold">Loại từ (Part of Speech)</label>
-                <input type="text" v-model="termForm.part_of_speech" class="form-control" placeholder="Ví dụ: Cụm danh từ, Động từ..." />
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label fs-7 fw-bold">Mẫu câu / Cấu trúc (Pattern)</label>
-              <input type="text" v-model="termForm.pattern" class="form-control" placeholder="Ví dụ: extend/complete + compulsory education" />
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label fs-7 fw-bold">Câu ví dụ (Phân tách nhiều câu bằng dấu |)</label>
-              <textarea v-model="termForm.examples" class="form-control" rows="3" placeholder="Ví dụ câu tiếng Anh 1 | Ví dụ câu tiếng Anh 2"></textarea>
-            </div>
-          </div>
-
-          <div class="card-footer bg-light p-3 d-flex justify-content-end gap-2">
-            <button type="button" class="btn btn-secondary btn-sm px-3" @click="showTermModal = false">Hủy</button>
-            <button type="submit" class="btn btn-teal btn-sm px-4" :disabled="savingTerm">
-              <span v-if="savingTerm" class="spinner-border spinner-border-sm me-1"></span>
-              {{ editingTerm ? 'Lưu thay đổi' : 'Thêm từ vựng' }}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- ================= MODAL: EDIT TOPIC ================= -->
-    <div 
-      v-if="showTopicModal" 
-      class="modal-backdrop-custom" 
-      @click.self="showTopicModal = false"
-    >
-      <div class="card border-0 shadow-lg rounded-4 overflow-hidden" style="max-width: 540px; width: 100%;">
-        <div class="card-header bg-teal text-white p-3 d-flex align-items-center justify-content-between">
-          <h5 class="fw-bold mb-0">Chỉnh sửa Chủ đề #{{ editingTopic?.order_num }}</h5>
-          <button type="button" class="btn-close btn-close-white" @click="showTopicModal = false"></button>
+        <div class="mb-3">
+          <label class="form-label fs-7 fw-bold">Nghĩa Tiếng Việt (Definition) <span class="text-danger">*</span></label>
+          <input type="text" v-model="termForm.definition" class="form-control" required placeholder="Ví dụ: giáo dục bắt buộc" />
         </div>
 
-        <form @submit.prevent="saveTopic">
-          <div class="card-body p-4">
-            <div class="mb-3">
-              <label class="form-label fs-7 fw-bold">Tên tiếng Anh (English Title)</label>
-              <input type="text" v-model="topicForm.title" class="form-control" required />
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label fs-7 fw-bold">Tên tiếng Việt</label>
-              <input type="text" v-model="topicForm.title_vi" class="form-control" required />
-            </div>
-
-            <div class="row g-3 mb-3">
-              <div class="col-6">
-                <label class="form-label fs-7 fw-bold">Biểu tượng Bootstrap Icon</label>
-                <input type="text" v-model="topicForm.icon" class="form-control" placeholder="bi-mortarboard-fill" />
-              </div>
-              <div class="col-6">
-                <label class="form-label fs-7 fw-bold">Mã màu đại diện</label>
-                <input type="color" v-model="topicForm.color" class="form-control form-control-color w-100" />
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label fs-7 fw-bold">Mô tả chủ đề</label>
-              <textarea v-model="topicForm.description" class="form-control" rows="3"></textarea>
-            </div>
+        <div class="row g-3 mb-3">
+          <div class="col-6">
+            <label class="form-label fs-7 fw-bold">Giai đoạn (1 - 10) <span class="text-danger">*</span></label>
+            <select v-model="termForm.stage_num" class="form-select" required>
+              <option v-for="s in 10" :key="s" :value="s">Giai đoạn {{ s }}</option>
+            </select>
           </div>
 
-          <div class="card-footer bg-light p-3 d-flex justify-content-end gap-2">
-            <button type="button" class="btn btn-secondary btn-sm px-3" @click="showTopicModal = false">Hủy</button>
-            <button type="submit" class="btn btn-teal btn-sm px-4">Lưu chủ đề</button>
+          <div class="col-6">
+            <label class="form-label fs-7 fw-bold">Loại từ (Part of Speech)</label>
+            <input type="text" v-model="termForm.part_of_speech" class="form-control" placeholder="Ví dụ: Cụm danh từ, Động từ..." />
           </div>
-        </form>
-      </div>
-    </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fs-7 fw-bold">Mẫu câu / Cấu trúc (Pattern)</label>
+          <input type="text" v-model="termForm.pattern" class="form-control" placeholder="Ví dụ: extend/complete + compulsory education" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fs-7 fw-bold">Câu ví dụ (Phân tách nhiều câu bằng dấu |)</label>
+          <textarea v-model="termForm.examples" class="form-control" rows="3" placeholder="Ví dụ câu tiếng Anh 1 | Ví dụ câu tiếng Anh 2"></textarea>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 border-top pt-3">
+          <button type="button" class="btn btn-secondary btn-sm px-3 rounded-pill" @click="showTermModal = false">Hủy</button>
+          <button type="submit" class="btn btn-teal btn-sm px-4 rounded-pill fw-bold text-white" :disabled="savingTerm">
+            <span v-if="savingTerm" class="spinner-border spinner-border-sm me-1"></span>
+            {{ editingTerm ? 'Lưu thay đổi' : 'Thêm từ vựng' }}
+          </button>
+        </div>
+      </form>
+    </BaseModal>
+
+    <!-- ================= STANDARDIZED MODAL: EDIT TOPIC ================= -->
+    <BaseModal
+      v-model="showTopicModal"
+      :title="`Chỉnh sửa Chủ đề #${editingTopic?.order_num || ''}`"
+      icon="bi bi-tag-fill"
+      maxWidth="580px"
+      hideFooter
+    >
+      <form @submit.prevent="saveTopic">
+        <div class="mb-3">
+          <label class="form-label fs-7 fw-bold">Tên tiếng Anh (English Title)</label>
+          <input type="text" v-model="topicForm.title" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fs-7 fw-bold">Tên tiếng Việt</label>
+          <input type="text" v-model="topicForm.title_vi" class="form-control" required />
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-6">
+            <label class="form-label fs-7 fw-bold">Biểu tượng Bootstrap Icon</label>
+            <input type="text" v-model="topicForm.icon" class="form-control" placeholder="bi-mortarboard-fill" />
+          </div>
+          <div class="col-6">
+            <label class="form-label fs-7 fw-bold">Mã màu đại diện</label>
+            <input type="color" v-model="topicForm.color" class="form-control form-control-color w-100" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fs-7 fw-bold">Mô tả chủ đề</label>
+          <textarea v-model="topicForm.description" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 border-top pt-3">
+          <button type="button" class="btn btn-secondary btn-sm px-3 rounded-pill" @click="showTopicModal = false">Hủy</button>
+          <button type="submit" class="btn btn-teal btn-sm px-4 rounded-pill fw-bold text-white">Lưu chủ đề</button>
+        </div>
+      </form>
+    </BaseModal>
   </div>
 </template>
 
@@ -385,6 +371,7 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import SmartPagination from '@/components/SmartPagination.vue'
+import BaseModal from '@/components/BaseModal.vue'
 import { useToast } from '@/composables/useToast'
 
 const toast = useToast()

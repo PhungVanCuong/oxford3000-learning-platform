@@ -92,73 +92,67 @@
       />
     </div>
 
-    <!-- MODAL: ADD / EDIT PHRASAL VERB -->
-    <div v-if="showModal" class="modal fade show d-block" style="background: rgba(0,0,0,0.6);" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content rounded-4 border-0 shadow bg-card-custom">
-          <div class="modal-header bg-teal text-white py-3">
-            <h5 class="modal-title fw-bold">
-              {{ editingPhrase?.id ? 'Chỉnh Sửa Cụm Từ' : 'Thêm Cụm Từ Mới' }}
-            </h5>
-            <button @click="showModal = false" type="button" class="btn-close btn-close-white"></button>
+    <!-- STANDARDIZED VIEWPORT-CENTERED MODAL: ADD / EDIT PHRASAL VERB -->
+    <BaseModal
+      v-model="showModal"
+      :title="editingPhrase?.id ? 'Chỉnh Sửa Cụm Từ' : 'Thêm Cụm Từ Mới'"
+      icon="bi bi-puzzle-fill"
+      maxWidth="780px"
+      hideFooter
+    >
+      <form @submit.prevent="savePhrase">
+        <div class="row g-3 mb-3">
+          <div class="col-md-8">
+            <label class="form-label fs-7 fw-bold mb-1">Cụm từ tiếng Anh (Phrase):</label>
+            <input v-model="form.phrase" type="text" class="form-control rounded-3 fs-7" required placeholder="VD: look forward to" />
           </div>
-          <div class="modal-body p-4">
-            <form @submit.prevent="savePhrase">
-              <div class="row g-3 mb-3">
-                <div class="col-md-8">
-                  <label class="form-label fs-7 fw-bold mb-1">Cụm từ tiếng Anh (Phrase):</label>
-                  <input v-model="form.phrase" type="text" class="form-control rounded-3 fs-7" required placeholder="VD: look forward to" />
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label fs-7 fw-bold mb-1">Thể loại:</label>
-                  <select v-model="form.type" class="form-select rounded-3 fs-7">
-                    <option value="phrasal_verb">Cụm động từ (Phrasal Verb)</option>
-                    <option value="collocation">Cụm từ cố định (Collocation)</option>
-                    <option value="idiom">Thành ngữ (Idiom)</option>
-                  </select>
-                </div>
-                <div class="col-12">
-                  <label class="form-label fs-7 fw-bold mb-1">Nghĩa tiếng Việt:</label>
-                  <input v-model="form.meaning_vi" type="text" class="form-control rounded-3 fs-7" required placeholder="VD: Trông mong, háo hức chờ đợi điều gì" />
-                </div>
-                <div class="col-md-8">
-                  <label class="form-label fs-7 fw-bold mb-1">Các từ đơn cấu thành (Cách nhau bằng dấu phẩy):</label>
-                  <input v-model="form.componentsInput" type="text" class="form-control rounded-3 fs-7 font-monospace" placeholder="VD: look, forward" />
-                  <div class="fs-8 text-muted mt-1">Khi học viên thuộc cụm từ này, hệ thống sẽ tự động cập nhật tiến độ các từ đơn trên.</div>
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label fs-7 fw-bold mb-1">Cấp độ CEFR:</label>
-                  <select v-model="form.cefr_level" class="form-select rounded-3 fs-7">
-                    <option value="A1">A1</option>
-                    <option value="A2">A2</option>
-                    <option value="B1">B1</option>
-                    <option value="B2">B2</option>
-                    <option value="C1">C1</option>
-                  </select>
-                </div>
-                <div class="col-12">
-                  <label class="form-label fs-7 fw-bold mb-1">Câu ví dụ tiếng Anh:</label>
-                  <textarea v-model="form.example_en" class="form-control rounded-3 fs-7" rows="2" placeholder="VD: I look forward to hearing from you."></textarea>
-                </div>
-                <div class="col-12">
-                  <label class="form-label fs-7 fw-bold mb-1">Dịch nghĩa câu ví dụ (Tiếng Việt):</label>
-                  <textarea v-model="form.example_vi" class="form-control rounded-3 fs-7" rows="2" placeholder="VD: Tôi rất mong sớm nhận được phản hồi từ bạn."></textarea>
-                </div>
-              </div>
-
-              <div class="d-flex justify-content-end gap-2 pt-2 border-top">
-                <button @click="showModal = false" type="button" class="btn btn-secondary rounded-pill px-3 fs-7">
-                  Hủy
-                </button>
-                <button type="submit" class="btn btn-teal rounded-pill px-4 fs-7 fw-bold shadow-sm">
-                  Lưu Cụm Từ
-                </button>
-              </div>
-            </form>
+          <div class="col-md-4">
+            <label class="form-label fs-7 fw-bold mb-1">Thể loại:</label>
+            <select v-model="form.type" class="form-select rounded-3 fs-7">
+              <option value="phrasal_verb">Cụm động từ (Phrasal Verb)</option>
+              <option value="collocation">Cụm từ cố định (Collocation)</option>
+              <option value="idiom">Thành ngữ (Idiom)</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label fs-7 fw-bold mb-1">Nghĩa tiếng Việt:</label>
+            <input v-model="form.meaning_vi" type="text" class="form-control rounded-3 fs-7" required placeholder="VD: Trông mong, háo hức chờ đợi điều gì" />
+          </div>
+          <div class="col-md-8">
+            <label class="form-label fs-7 fw-bold mb-1">Các từ đơn cấu thành (Cách nhau bằng dấu phẩy):</label>
+            <input v-model="form.componentsInput" type="text" class="form-control rounded-3 fs-7 font-monospace" placeholder="VD: look, forward" />
+            <div class="fs-8 text-muted mt-1">Khi học viên thuộc cụm từ này, hệ thống sẽ tự động cập nhật tiến độ các từ đơn trên.</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fs-7 fw-bold mb-1">Cấp độ CEFR:</label>
+            <select v-model="form.cefr_level" class="form-select rounded-3 fs-7">
+              <option value="A1">A1</option>
+              <option value="A2">A2</option>
+              <option value="B1">B1</option>
+              <option value="B2">B2</option>
+              <option value="C1">C1</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label fs-7 fw-bold mb-1">Câu ví dụ tiếng Anh:</label>
+            <textarea v-model="form.example_en" class="form-control rounded-3 fs-7" rows="2" placeholder="VD: I look forward to hearing from you."></textarea>
+          </div>
+          <div class="col-12">
+            <label class="form-label fs-7 fw-bold mb-1">Dịch nghĩa câu ví dụ (Tiếng Việt):</label>
+            <textarea v-model="form.example_vi" class="form-control rounded-3 fs-7" rows="2" placeholder="VD: Tôi rất mong sớm nhận được phản hồi từ bạn."></textarea>
           </div>
         </div>
-      </div>
-    </div>
+
+        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+          <button @click="showModal = false" type="button" class="btn btn-secondary rounded-pill px-3 fs-7">
+            Hủy
+          </button>
+          <button type="submit" class="btn btn-teal text-white rounded-pill px-4 fs-7 fw-bold shadow-sm">
+            Lưu Cụm Từ
+          </button>
+        </div>
+      </form>
+    </BaseModal>
   </div>
 </template>
 
@@ -166,6 +160,7 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import SmartPagination from '@/components/SmartPagination.vue'
+import BaseModal from '@/components/BaseModal.vue'
 import { useToast } from '@/composables/useToast'
 
 const toast = useToast()
