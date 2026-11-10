@@ -1,0 +1,1104 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+:root {
+  --primary-teal: #087F75;
+  --primary-teal-dark: #064e40;
+  --primary-teal-light: #00b074;
+  --accent-gold: #f59e0b;
+  --bg-warm-cream: #F5F7F8;
+  --card-light: #ffffff;
+  --text-dark: #182325;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+/* CUSTOM SLEEK SCROLLBARS */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 176, 116, 0.25);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 176, 116, 0.65);
+}
+
+/* HORIZONTAL DRAG & TOUCH MOMENTUM SCROLL */
+.smooth-scroll-x,
+.overflow-x-auto {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+[data-bs-theme="light"] {
+  body {
+    background-color: #F5F7F8;
+    color: #182325;
+  }
+  .bg-card-custom {
+    background-color: #ffffff;
+    border-color: #E2E8F0;
+  }
+}
+
+[data-bs-theme="dark"],
+html[data-bs-theme="dark"] {
+  color-scheme: dark;
+}
+
+[data-bs-theme="dark"] body {
+  background-color: #070d0b !important;
+  color: #f8fafc !important;
+}
+
+[data-bs-theme="dark"] .bg-white,
+[data-bs-theme="dark"] .bg-light,
+[data-bs-theme="dark"] .bg-body,
+[data-bs-theme="dark"] .bg-body-tertiary {
+  background-color: #0d1714 !important;
+  color: #f1f5f9 !important;
+}
+
+[data-bs-theme="dark"] .bg-card-custom,
+[data-bs-theme="dark"] .card {
+  background-color: #0d1714 !important;
+  border-color: #1a2e28 !important;
+  color: #f1f5f9 !important;
+}
+
+[data-bs-theme="dark"] .navbar {
+  background-color: #070d0b !important;
+  border-color: #1a2e28 !important;
+}
+
+[data-bs-theme="dark"] .dropdown-menu,
+[data-bs-theme="dark"] .modal-content,
+[data-bs-theme="dark"] .offcanvas {
+  background-color: #0b1411 !important;
+  border-color: #1e352e !important;
+  color: #f1f5f9 !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.75) !important;
+}
+
+[data-bs-theme="dark"] .table {
+  color: #f1f5f9 !important;
+  border-color: #1a2e28 !important;
+}
+
+[data-bs-theme="dark"] .table > :not(caption) > * > * {
+  background-color: #0d1714 !important;
+  color: #f1f5f9 !important;
+  border-bottom-color: #1a2e28 !important;
+}
+
+[data-bs-theme="dark"] .table-light,
+[data-bs-theme="dark"] thead.table-light th {
+  background-color: #101c18 !important;
+  color: #94a3b8 !important;
+  border-bottom-color: #1e352e !important;
+}
+
+[data-bs-theme="dark"] .table-hover > tbody > tr:hover > * {
+  background-color: #142420 !important;
+}
+
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select {
+  background-color: #09120f !important;
+  border-color: #1e352e !important;
+  color: #f8fafc !important;
+}
+
+[data-bs-theme="dark"] .form-control:focus,
+[data-bs-theme="dark"] .form-select:focus {
+  background-color: #0c1713 !important;
+  border-color: #00b074 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 0 0.25rem rgba(0, 176, 116, 0.25) !important;
+}
+
+[data-bs-theme="dark"] .input-group-text {
+  background-color: #0e1a16 !important;
+  border-color: #1e352e !important;
+  color: #94a3b8 !important;
+}
+
+[data-bs-theme="dark"] .text-dark,
+[data-bs-theme="dark"] .text-dark-emphasis {
+  color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .text-muted,
+[data-bs-theme="dark"] .text-secondary {
+  color: #94a3b8 !important;
+}
+
+[data-bs-theme="dark"] .border-light,
+[data-bs-theme="dark"] .border-light-subtle {
+  border-color: #1a2e28 !important;
+}
+
+[data-bs-theme="dark"] .nav-custom-link {
+  color: #cbd5e1 !important;
+}
+
+[data-bs-theme="dark"] .nav-custom-link:hover {
+  background: rgba(0, 176, 116, 0.12) !important;
+  color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .btn-outline-secondary {
+  border-color: #243c35 !important;
+  color: #cbd5e1 !important;
+}
+
+[data-bs-theme="dark"] .btn-outline-secondary:hover {
+  background-color: #162923 !important;
+  color: #ffffff !important;
+}
+
+/* Retractable Drawers ("Thụt ra - Thụt vào") for Topics, Stages & Curriculum */
+.topics-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1060;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.topics-drawer-content {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 88vw;
+  max-width: 330px;
+  height: 100vh;
+  z-index: 1065;
+  background: #ffffff;
+  overflow-y: auto;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  transform: translateX(-100%);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 8px 0 32px rgba(0, 0, 0, 0.2);
+}
+
+.topics-drawer-content.show {
+  transform: translateX(0);
+}
+
+[data-bs-theme="dark"] .topics-drawer-content {
+  background: #131e21;
+  color: #f1f5f9;
+  border-color: #243438;
+}
+
+/* Enhanced Buttons with Prominent Borders, Vibrant Colors & Smooth Hover Animation */
+.btn {
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-teal {
+  background: linear-gradient(135deg, #00b074 0%, #087F75 100%);
+  color: #ffffff !important;
+  border: 1px solid #009963;
+}
+
+.btn-teal:hover {
+  background: linear-gradient(135deg, #00c280 0%, #009963 100%);
+  color: #ffffff !important;
+  border-color: #008757;
+}
+
+.btn-outline-teal {
+  color: #087F75;
+  border: 1.5px solid #087F75;
+  background-color: transparent;
+}
+
+.btn-outline-teal:hover {
+  background-color: #087F75;
+  color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .btn-outline-teal {
+  color: #5eead4;
+  border-color: #14b8a6;
+}
+
+[data-bs-theme="dark"] .btn-outline-teal:hover {
+  background-color: #14b8a6;
+  color: #042f2e !important;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+  border: 1px solid #1d4ed8;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #00b074 0%, #059669 100%);
+  border: 1px solid #047857;
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+  color: #ffffff !important;
+  border: 1px solid #b45309;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  border: 1px solid #b91c1c;
+}
+
+.text-teal {
+  color: var(--primary-teal) !important;
+}
+
+[data-bs-theme="dark"] .text-teal {
+  color: #5eead4 !important;
+}
+
+.bg-teal {
+  background-color: var(--primary-teal) !important;
+}
+
+.bg-teal-dark {
+  background-color: var(--primary-teal-dark) !important;
+}
+
+/* Sidebar Navigation Items - Guaranteed High Contrast White on Active */
+.admin-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  color: #334155;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+}
+
+.admin-nav-link i {
+  width: 22px;
+  text-align: center;
+  font-size: 1.15rem;
+  color: #087F75;
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+.admin-nav-link:hover {
+  background-color: #f1f5f9;
+  color: #087F75;
+}
+
+[data-bs-theme="dark"] .admin-nav-link {
+  color: #cbd5e1;
+}
+
+[data-bs-theme="dark"] .admin-nav-link i {
+  color: #5eead4;
+}
+
+[data-bs-theme="dark"] .admin-nav-link:hover {
+  background-color: #1e293b;
+  color: #ffffff;
+}
+
+/* ACTIVE STATE: High contrast white text & icon on vibrant teal gradient */
+.admin-nav-link.admin-nav-active,
+.admin-nav-link.router-link-exact-active {
+  background: linear-gradient(135deg, #00b074 0%, #087F75 100%) !important;
+  color: #ffffff !important;
+  border-color: #009963 !important;
+  box-shadow: 0 4px 14px rgba(8, 127, 117, 0.3) !important;
+}
+
+.admin-nav-link.admin-nav-active i,
+.admin-nav-link.router-link-exact-active i,
+.admin-nav-link.admin-nav-active span,
+.admin-nav-link.router-link-exact-active span {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+/* Card Spacing & Typography Polish (Prevent text crowding) */
+.card {
+  border-radius: 14px;
+}
+
+.card-body {
+  padding: 1.5rem !important;
+}
+
+@media (min-width: 992px) {
+  .card-body {
+    padding: 1.75rem !important;
+  }
+}
+
+/* Table Padding & Row Breathing Space */
+.table th, .table td {
+  padding: 0.85rem 1.15rem !important;
+  vertical-align: middle;
+}
+
+.table thead th {
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+  letter-spacing: 0.5px;
+}
+
+hr {
+  margin: 1.5rem 0 !important;
+  opacity: 0.15 !important;
+}
+
+/* 3D Flashcard CSS with Ultra Smooth Flip */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.flashcard-3d-inner {
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Recording Mic Pulsing Animation */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.96);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  70% {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 12px rgba(239, 68, 68, 0);
+  }
+  100% {
+    transform: scale(0.96);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.animate-mic-pulse {
+  animation: pulse-ring 1.5s infinite;
+}
+
+/* Hover Cards Effect */
+.hover-card {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Backdrop Click Modal for easy dismissal */
+.modal-backdrop-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  padding: 1rem;
+}
+
+/* Extended Typography Utilities (Prevent Text Overflow & Crowding) */
+.fs-7 { font-size: 0.875rem !important; } /* 14px */
+.fs-8 { font-size: 0.75rem !important; }  /* 12px */
+.fs-9 { font-size: 0.6875rem !important; } /* 11px */
+.fw-black { font-weight: 800 !important; }
+.leading-none { line-height: 1 !important; }
+.leading-tight { line-height: 1.25 !important; }
+.leading-snug { line-height: 1.375 !important; }
+.leading-relaxed { line-height: 1.625 !important; }
+.letter-spacing-05 { letter-spacing: 0.5px !important; }
+.shadow-xs { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important; }
+.max-w-7xl { max-width: 80rem !important; margin-left: auto; margin-right: auto; }
+
+/* Half-Step Spacing Utilities (Essential for Bootstrap 5 Layouts) */
+.p-0\.5, .p-0-5 { padding: 0.125rem !important; }
+.p-1\.5, .p-1-5 { padding: 0.375rem !important; }
+.p-2\.5, .p-2-5 { padding: 0.625rem !important; }
+.p-3\.5, .p-3-5 { padding: 0.875rem !important; }
+.p-4\.5, .p-4-5 { padding: 1.25rem !important; }
+
+.py-0\.5, .py-0-5 { padding-top: 0.125rem !important; padding-bottom: 0.125rem !important; }
+.py-1\.5, .py-1-5 { padding-top: 0.375rem !important; padding-bottom: 0.375rem !important; }
+.py-2\.5, .py-2-5 { padding-top: 0.625rem !important; padding-bottom: 0.625rem !important; }
+.py-3\.5, .py-3-5 { padding-top: 0.875rem !important; padding-bottom: 0.875rem !important; }
+
+.px-0\.5, .px-0-5 { padding-left: 0.125rem !important; padding-right: 0.125rem !important; }
+.px-1\.5, .px-1-5 { padding-left: 0.375rem !important; padding-right: 0.375rem !important; }
+.px-2\.5, .px-2-5 { padding-left: 0.625rem !important; padding-right: 0.625rem !important; }
+.px-3\.5, .px-3-5 { padding-left: 0.875rem !important; padding-right: 0.875rem !important; }
+.px-4\.5, .px-4-5 { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+
+.m-0\.5, .m-0-5 { margin: 0.125rem !important; }
+.m-1\.5, .m-1-5 { margin: 0.375rem !important; }
+.m-2\.5, .m-2-5 { margin: 0.625rem !important; }
+.m-3\.5, .m-3-5 { margin: 0.875rem !important; }
+
+.my-1\.5, .my-1-5 { margin-top: 0.375rem !important; margin-bottom: 0.375rem !important; }
+.my-2\.5, .my-2-5 { margin-top: 0.625rem !important; margin-bottom: 0.625rem !important; }
+.my-3\.5, .my-3-5 { margin-top: 0.875rem !important; margin-bottom: 0.875rem !important; }
+
+.mb-0\.5, .mb-0-5 { margin-bottom: 0.125rem !important; }
+.mb-1\.5, .mb-1-5 { margin-bottom: 0.375rem !important; }
+.mb-2\.5, .mb-2-5 { margin-bottom: 0.625rem !important; }
+.mb-3\.5, .mb-3-5 { margin-bottom: 0.875rem !important; }
+
+/* Margin End / Right Utilities */
+.me-0\.5, .me-0-5 { margin-right: 0.125rem !important; }
+.me-1\.5, .me-1-5 { margin-right: 0.375rem !important; }
+.me-2 { margin-right: 0.5rem !important; }
+.me-2\.5, .me-2-5 { margin-right: 0.625rem !important; }
+
+/* Margin Start / Left Utilities */
+.ms-0\.5, .ms-0-5 { margin-left: 0.125rem !important; }
+.ms-1\.5, .ms-1-5 { margin-left: 0.375rem !important; }
+.ms-2 { margin-left: 0.5rem !important; }
+.ms-2\.5, .ms-2-5 { margin-left: 0.625rem !important; }
+
+.mt-0\.5, .mt-0-5 { margin-top: 0.125rem !important; }
+.mt-1\.5, .mt-1-5 { margin-top: 0.375rem !important; }
+.mt-2\.5, .mt-2-5 { margin-top: 0.625rem !important; }
+.mt-3\.5, .mt-3-5 { margin-top: 0.875rem !important; }
+
+.gap-0\.5, .gap-0-5 { gap: 0.125rem !important; }
+.gap-1\.5, .gap-1-5 { gap: 0.375rem !important; }
+.gap-2\.5, .gap-2-5 { gap: 0.625rem !important; }
+.gap-3\.5, .gap-3-5 { gap: 0.875rem !important; }
+
+.g-0\.5, .g-0-5 { --bs-gutter-x: 0.25rem; --bs-gutter-y: 0.25rem; }
+.g-1\.5, .g-1-5 { --bs-gutter-x: 0.5rem; --bs-gutter-y: 0.5rem; }
+.g-2\.5, .g-2-5 { --bs-gutter-x: 0.75rem; --bs-gutter-y: 0.75rem; }
+.g-3\.5, .g-3-5 { --bs-gutter-x: 1.25rem; --bs-gutter-y: 1.25rem; }
+
+/* Table Breathing Room & Frame Protection */
+.table th, .table td {
+  padding: 0.85rem 1.15rem !important;
+}
+
+.table tr th:first-child,
+.table tr td:first-child {
+  padding-left: 1.5rem !important;
+}
+
+.table tr th:last-child,
+.table tr td:last-child {
+  padding-right: 1.5rem !important;
+}
+
+/* ============================================================== */
+/* MOBILE OPTIMIZATIONS (Tối ưu giao diện điện thoại di động)    */
+/* ============================================================== */
+@media (max-width: 767.98px) {
+  body {
+    font-size: 13.5px;
+    -webkit-text-size-adjust: 100%;
+    overflow-x: hidden;
+  }
+
+  .container, .container-fluid {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* Compact typography on phone screens */
+  h1, .display-4 {
+    font-size: 1.45rem !important;
+    line-height: 1.25 !important;
+  }
+
+  h2, .display-5, .fs-3 {
+    font-size: 1.25rem !important;
+    line-height: 1.3 !important;
+  }
+
+  h3, .fs-4 {
+    font-size: 1.1rem !important;
+    line-height: 1.35 !important;
+  }
+
+  h4, .fs-5 {
+    font-size: 1rem !important;
+  }
+
+  h5, .fs-6 {
+    font-size: 0.9rem !important;
+  }
+
+  /* Compact Card padding on mobile */
+  .card {
+    padding: 12px 14px !important;
+    border-radius: 14px !important;
+  }
+
+  /* Touch-friendly, elegant compact buttons */
+  .btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    border-radius: 8px;
+    touch-action: manipulation;
+  }
+
+  .btn-sm {
+    padding: 4px 9px;
+    font-size: 0.75rem;
+  }
+
+  /* Override desktop table padding on mobile */
+  .table th, .table td {
+    padding: 8px 8px !important;
+    font-size: 0.8rem;
+  }
+
+  .table tr th:first-child,
+  .table tr td:first-child {
+    padding-left: 8px !important;
+  }
+
+  .table tr th:last-child,
+  .table tr td:last-child {
+    padding-right: 8px !important;
+  }
+
+  /* Padding compensation so content is never cut off by mobile bottom bar */
+  .user-main-content {
+    padding-bottom: 74px !important;
+  }
+}
+
+/* Horizontal scrollable row on mobile without ugly scrollbars */
+.mobile-scroll-x {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  gap: 8px;
+  padding-bottom: 4px;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+/* Mobile Bottom Navigation Bar (Phong cách App di động Native) */
+.mobile-bottom-nav {
+  height: 60px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.25s ease;
+  z-index: 1040 !important;
+}
+
+[data-bs-theme="light"] .mobile-bottom-nav {
+  background-color: rgba(255, 255, 255, 0.94) !important;
+  border-top-color: rgba(226, 232, 240, 0.85) !important;
+  box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.05);
+}
+
+[data-bs-theme="dark"] .mobile-bottom-nav {
+  background-color: rgba(19, 30, 33, 0.95) !important;
+  border-top-color: rgba(36, 52, 56, 0.95) !important;
+  box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.35);
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 600;
+  color: #64748b;
+  padding: 4px 0;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.mobile-nav-item i {
+  font-size: 18px;
+  line-height: 1;
+  margin-bottom: 2px;
+  transition: transform 0.15s ease;
+}
+
+.mobile-nav-item:active i {
+  transform: scale(0.85);
+}
+
+.mobile-nav-item.active {
+  color: #087F75 !important;
+  font-weight: 700;
+}
+
+[data-bs-theme="dark"] .mobile-nav-item.active {
+  color: #5eead4 !important;
+}
+
+.mobile-nav-active-dot {
+  position: absolute;
+  bottom: 2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: #087F75;
+}
+
+[data-bs-theme="dark"] .mobile-nav-active-dot {
+  background-color: #5eead4;
+}
+
+/* Mobile Offcanvas Drawer Animation & Overlay */
+.mobile-drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1050;
+  transition: opacity 0.25s ease;
+}
+
+@keyframes slideDrawerIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.mobile-drawer-content {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 86vw;
+  max-width: 340px;
+  height: 100vh;
+  z-index: 1055;
+  overflow-y: auto;
+  box-shadow: -6px 0 28px rgba(0, 0, 0, 0.35);
+  animation: slideDrawerIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.mobile-drawer-link:hover,
+.mobile-drawer-link:active {
+  background-color: rgba(8, 127, 117, 0.12) !important;
+  transform: translateX(-2px);
+}
+
+.active-mobile-link {
+  background-color: rgba(8, 127, 117, 0.15) !important;
+  border-left: 3px solid #087F75 !important;
+}
+
+[data-bs-theme="dark"] .active-mobile-link {
+  background-color: rgba(94, 234, 212, 0.15) !important;
+  border-left: 3px solid #5eead4 !important;
+}
+
+/* ============================================================== */
+/* FLASHCARD 3D CHUẨN XỊN (CHỐNG SỤP CHIỀU CAO TRÊN PC & MOBILE) */
+/* ============================================================== */
+.flashcard-3d-box {
+  min-height: 440px;
+  position: relative;
+}
+.flashcard-3d-box .flashcard-3d-inner {
+  min-height: 440px;
+}
+
+/* ============================================================== */
+/* TOÀN BỘ GIAO DIỆN DI ĐỘNG CHO TẤT CẢ CÁC MỤC & CHỦ ĐỀ CHỨC NĂNG */
+/* ============================================================== */
+@media (max-width: 767.98px) {
+  /* 1. Flashcard Player 3D thích ứng điện thoại */
+  .flashcard-3d-box,
+  .flashcard-3d-box .flashcard-3d-inner {
+    min-height: 380px !important;
+  }
+
+  .flashcard-3d-inner .display-5,
+  .flashcard-3d-inner .display-4 {
+    font-size: 1.65rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .flashcard-3d-inner .p-md-5 {
+    padding: 16px 16px !important;
+  }
+
+  /* 2. Modal Dialogs trên mobile không bị tràn màn hình */
+  .modal-dialog {
+    margin: 10px !important;
+    max-width: calc(100vw - 20px) !important;
+  }
+
+  .modal-content {
+    border-radius: 16px !important;
+  }
+
+  /* 3. Bài trắc nghiệm (Quiz 15 câu, Kiểm tra chặng, Đấu trường) */
+  .quiz-option-btn,
+  .choice-btn,
+  .answer-option {
+    padding: 10px 14px !important;
+    font-size: 0.85rem !important;
+    min-height: 46px !important;
+    text-align: left !important;
+    border-radius: 10px !important;
+    touch-action: manipulation;
+  }
+
+  /* 4. Thẻ ngày học (Daily Study 200 ngày) */
+  .day-card {
+    padding: 10px 8px !important;
+    border-radius: 12px !important;
+  }
+
+  /* 5. Thẻ chủ đề (Curriculum Roadmap & Grammar) */
+  .curriculum-stage-pills {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    padding-bottom: 6px !important;
+    gap: 6px !important;
+  }
+
+  /* 6. Bảng IPA 44 âm */
+  .ipa-card {
+    padding: 8px 6px !important;
+    font-size: 0.8rem !important;
+    border-radius: 8px !important;
+  }
+
+  /* 7. Lưới thống kê & Điểm XP */
+  .stat-card-mobile {
+    padding: 10px 12px !important;
+    border-radius: 12px !important;
+  }
+
+  /* 8. Chống tràn chiều ngang tuyệt đối trên toàn bộ màn hình điện thoại */
+  html, body {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  #app, .user-layout, .container, .container-fluid {
+    max-width: 100vw !important;
+  }
+
+  /* 9. Nút bấm và tiêu đề trên điện thoại nhỏ gọn, tinh tế */
+  .display-4, .display-5, .display-6 {
+    font-size: 1.35rem !important;
+    line-height: 1.25 !important;
+  }
+
+  /* 10. Thẻ Flashcard 3D vừa khít khung nhìn điện thoại */
+  .flashcard-3d-box,
+  .flashcard-3d-box .flashcard-3d-inner,
+  .curriculum-stage-detail-view .perspective-1000,
+  .curriculum-stage-detail-view .flashcard-3d-inner {
+    min-height: 350px !important;
+  }
+
+  .responsive-circle-node {
+    width: 52px !important;
+    height: 52px !important;
+  }
+  .stage-content-card-box {
+    max-width: 100% !important;
+  }
+
+  /* 11. Thanh nhảy nhanh ngữ pháp không chiếm không gian màn hình nhỏ */
+  .grammar-detail-page .sticky-top {
+    position: static !important;
+  }
+
+  /* 12. Giao diện Web trên Điện Thoại cho Trang Quản Trị Viên (Admin) */
+  .admin-layout {
+    font-size: 0.88rem !important;
+  }
+
+  .admin-layout .card {
+    padding: 14px 14px !important;
+    border-radius: 14px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .admin-layout .card-body {
+    padding: 12px 10px !important;
+  }
+
+  .admin-layout .card-header {
+    padding: 10px 14px !important;
+    font-size: 0.88rem !important;
+  }
+
+  .admin-layout h2 {
+    font-size: 1.25rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .admin-layout h3 {
+    font-size: 1.15rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .admin-layout h5,
+  .admin-layout h6 {
+    font-size: 0.95rem !important;
+  }
+
+  .admin-layout .display-6 {
+    font-size: 1.4rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .admin-layout .btn {
+    font-size: 0.8rem !important;
+    padding: 6px 12px !important;
+  }
+
+  .admin-layout .btn-sm {
+    font-size: 0.75rem !important;
+    padding: 4px 8px !important;
+  }
+
+  .admin-layout .table {
+    font-size: 0.78rem !important;
+    margin-bottom: 0 !important;
+  }
+
+  .admin-layout .table th,
+  .admin-layout .table td {
+    padding: 7px 8px !important;
+    white-space: nowrap !important;
+  }
+
+  .admin-layout .table-responsive {
+    border-radius: 10px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Modal quản trị trên màn hình nhỏ */
+  .admin-layout .modal-dialog {
+    margin: 8px !important;
+    max-width: calc(100vw - 16px) !important;
+  }
+
+  .admin-layout .modal-content {
+    border-radius: 16px !important;
+    padding: 8px !important;
+  }
+
+  .admin-layout .modal-body {
+    padding: 12px 8px !important;
+    max-height: 75vh !important;
+    overflow-y: auto !important;
+  }
+}
+
+/* ========================================================
+   ACCESSIBILITY (A11Y) & INTERNATIONALIZATION (I18N) STYLES
+   ======================================================== */
+html.font-size-sm {
+  font-size: 14px !important;
+}
+
+html.font-size-md {
+  font-size: 16px !important;
+}
+
+html.font-size-lg {
+  font-size: 18px !important;
+}
+
+html.high-contrast-mode body {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+html.high-contrast-mode .card,
+html.high-contrast-mode .modal-content,
+html.high-contrast-mode .dropdown-menu {
+  background-color: #0a0a0a !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+html.high-contrast-mode .text-muted,
+html.high-contrast-mode .text-secondary {
+  color: #d1d5db !important;
+}
+
+html.high-contrast-mode .btn-teal {
+  background-color: #00ff9d !important;
+  color: #000000 !important;
+  border-color: #00ff9d !important;
+  font-weight: 800 !important;
+}
+
+/* ========================================================
+   UNIVERSAL DRAG-TO-SCROLL & SCROLLBAR ELIMINATION
+   Xóa bỏ 100% các thanh kéo chiếm diện tích & cho phép nhấn giữ chuột trái kéo qua
+   ======================================================== */
+
+/* Xóa triệt để tất cả thanh cuộn ngang (horizontal scrollbars) trên toàn website */
+*::-webkit-scrollbar:horizontal {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.drag-scroll-x,
+.mobile-scroll-x,
+.no-scrollbar,
+.overflow-x-auto,
+[class*="overflow-x"] {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.drag-scroll-x::-webkit-scrollbar,
+.mobile-scroll-x::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar,
+.overflow-x-auto::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Thanh cuộn dọc siêu mảnh, tinh tế, không thô trắng */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 0px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.28);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+.drag-scroll-x,
+.drag-scroll-active {
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.drag-scroll-active:active {
+  cursor: grabbing !important;
+}
+
+/* CEFR Mobile Specific Drawer - Chỉ hiện trên Mobile khi bấm nút */
+.cefr-mobile-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 86vw;
+  max-width: 320px;
+  height: 100vh;
+  z-index: 1070;
+  overflow-y: auto;
+  box-shadow: 6px 0 28px rgba(0, 0, 0, 0.45);
+  animation: slideDrawerFromLeft 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.cefr-mobile-drawer::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+}
+
+@keyframes slideDrawerFromLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}

@@ -1,0 +1,1305 @@
+{
+  "levels": [
+    {
+      "id": "a1",
+      "code": "A1",
+      "title": "Từ vựng cơ bản A1",
+      "description": "Nền tảng giao tiếp cơ bản hàng ngày",
+      "color": "#00b074",
+      "total_words": 890,
+      "total_lessons": 45,
+      "lesson_summaries": [
+        {
+          "lesson_number": 1,
+          "title": "Bài 01",
+          "word_count": 12
+        },
+        {
+          "lesson_number": 2,
+          "title": "Bài 02",
+          "word_count": 13
+        },
+        {
+          "lesson_number": 3,
+          "title": "Bài 03",
+          "word_count": 13
+        },
+        {
+          "lesson_number": 4,
+          "title": "Bài 04",
+          "word_count": 13
+        },
+        {
+          "lesson_number": 5,
+          "title": "Bài 05",
+          "word_count": 14
+        },
+        {
+          "lesson_number": 6,
+          "title": "Bài 06",
+          "word_count": 14
+        },
+        {
+          "lesson_number": 7,
+          "title": "Bài 07",
+          "word_count": 14
+        },
+        {
+          "lesson_number": 8,
+          "title": "Bài 08",
+          "word_count": 14
+        },
+        {
+          "lesson_number": 9,
+          "title": "Bài 09",
+          "word_count": 15
+        },
+        {
+          "lesson_number": 10,
+          "title": "Bài 10",
+          "word_count": 15
+        },
+        {
+          "lesson_number": 11,
+          "title": "Bài 11",
+          "word_count": 16
+        },
+        {
+          "lesson_number": 12,
+          "title": "Bài 12",
+          "word_count": 16
+        },
+        {
+          "lesson_number": 13,
+          "title": "Bài 13",
+          "word_count": 16
+        },
+        {
+          "lesson_number": 14,
+          "title": "Bài 14",
+          "word_count": 17
+        },
+        {
+          "lesson_number": 15,
+          "title": "Bài 15",
+          "word_count": 17
+        },
+        {
+          "lesson_number": 16,
+          "title": "Bài 16",
+          "word_count": 17
+        },
+        {
+          "lesson_number": 17,
+          "title": "Bài 17",
+          "word_count": 18
+        },
+        {
+          "lesson_number": 18,
+          "title": "Bài 18",
+          "word_count": 18
+        },
+        {
+          "lesson_number": 19,
+          "title": "Bài 19",
+          "word_count": 18
+        },
+        {
+          "lesson_number": 20,
+          "title": "Bài 20",
+          "word_count": 19
+        },
+        {
+          "lesson_number": 21,
+          "title": "Bài 21",
+          "word_count": 19
+        },
+        {
+          "lesson_number": 22,
+          "title": "Bài 22",
+          "word_count": 19
+        },
+        {
+          "lesson_number": 23,
+          "title": "Bài 23",
+          "word_count": 20
+        },
+        {
+          "lesson_number": 24,
+          "title": "Bài 24",
+          "word_count": 20
+        },
+        {
+          "lesson_number": 25,
+          "title": "Bài 25",
+          "word_count": 21
+        },
+        {
+          "lesson_number": 26,
+          "title": "Bài 26",
+          "word_count": 21
+        },
+        {
+          "lesson_number": 27,
+          "title": "Bài 27",
+          "word_count": 21
+        },
+        {
+          "lesson_number": 28,
+          "title": "Bài 28",
+          "word_count": 22
+        },
+        {
+          "lesson_number": 29,
+          "title": "Bài 29",
+          "word_count": 22
+        },
+        {
+          "lesson_number": 30,
+          "title": "Bài 30",
+          "word_count": 22
+        },
+        {
+          "lesson_number": 31,
+          "title": "Bài 31",
+          "word_count": 23
+        },
+        {
+          "lesson_number": 32,
+          "title": "Bài 32",
+          "word_count": 23
+        },
+        {
+          "lesson_number": 33,
+          "title": "Bài 33",
+          "word_count": 23
+        },
+        {
+          "lesson_number": 34,
+          "title": "Bài 34",
+          "word_count": 24
+        },
+        {
+          "lesson_number": 35,
+          "title": "Bài 35",
+          "word_count": 24
+        },
+        {
+          "lesson_number": 36,
+          "title": "Bài 36",
+          "word_count": 24
+        },
+        {
+          "lesson_number": 37,
+          "title": "Bài 37",
+          "word_count": 25
+        },
+        {
+          "lesson_number": 38,
+          "title": "Bài 38",
+          "word_count": 25
+        },
+        {
+          "lesson_number": 39,
+          "title": "Bài 39",
+          "word_count": 25
+        },
+        {
+          "lesson_number": 40,
+          "title": "Bài 40",
+          "word_count": 25
+        },
+        {
+          "lesson_number": 41,
+          "title": "Bài 41",
+          "word_count": 26
+        },
+        {
+          "lesson_number": 42,
+          "title": "Bài 42",
+          "word_count": 26
+        },
+        {
+          "lesson_number": 43,
+          "title": "Bài 43",
+          "word_count": 27
+        },
+        {
+          "lesson_number": 44,
+          "title": "Bài 44",
+          "word_count": 27
+        },
+        {
+          "lesson_number": 45,
+          "title": "Bài 45",
+          "word_count": 27
+        }
+      ]
+    },
+    {
+      "id": "a2",
+      "code": "A2",
+      "title": "Từ vựng cơ bản A2",
+      "description": "Mở rộng vốn từ sơ trung cấp thực tế",
+      "color": "#06b6d4",
+      "total_words": 792,
+      "total_lessons": 40,
+      "lesson_summaries": [
+        {
+          "lesson_number": 1,
+          "title": "Bài 01",
+          "word_count": 12
+        },
+        {
+          "lesson_number": 2,
+          "title": "Bài 02",
+          "word_count": 13
+        },
+        {
+          "lesson_number": 3,
+          "title": "Bài 03",
+          "word_count": 13
+        },
+        {
+          "lesson_number": 4,
+          "title": "Bài 04",
+          "word_count": 13
+        },
+        {
+          "lesson_number": 5,
+          "title": "Bài 05",
+          "word_count": 14
+        },
+        {
+          "lesson_number": 6,
+          "title": "Bài 06",
+          "word_count": 14
+        },
+        {
+          "lesson_number": 7,
+          "title": "Bài 07",
+          "word_count": 15
+        },
+        {
+          "lesson_number": 8,
+          "title": "Bài 08",
+          "word_count": 15
+        },
+        {
+          "lesson_number": 9,
+          "title": "Bài 09",
+          "word_count": 15
+        },
+        {
+          "lesson_number": 10,
+          "title": "Bài 10",
+          "word_count": 16
+        },
+        {
+          "lesson_number": 11,
+          "title": "Bài 11",
+          "word_count": 16
+        },
+        {
+          "lesson_number": 12,
+          "title": "Bài 12",
+          "word_count": 17
+        },
+        {
+          "lesson_number": 13,
+          "title": "Bài 13",
+          "word_count": 17
+        },
+        {
+          "lesson_number": 14,
+          "title": "Bài 14",
+          "word_count": 17
+        },
+        {
+          "lesson_number": 15,
+          "title": "Bài 15",
+          "word_count": 18
+        },
+        {
+          "lesson_number": 16,
+          "title": "Bài 16",
+          "word_count": 18
+        },
+        {
+          "lesson_number": 17,
+          "title": "Bài 17",
+          "word_count": 19
+        },
+        {
+          "lesson_number": 18,
+          "title": "Bài 18",
+          "word_count": 19
+        },
+        {
+          "lesson_number": 19,
+          "title": "Bài 19",
+          "word_count": 19
+        },
+        {
+          "lesson_number": 20,
+          "title": "Bài 20",
+          "word_count": 19
+        },
+        {
+          "lesson_number": 21,
+          "title": "Bài 21",
+          "word_count": 20
+        },
+        {
+          "lesson_number": 22,
+          "title": "Bài 22",
+          "word_count": 20
+        },
+        {
+          "lesson_number": 23,
+          "title": "Bài 23",
+          "word_count": 21
+        },
+        {
+          "lesson_number": 24,
+          "title": "Bài 24",
+          "word_count": 21
+        },
+        {
+          "lesson_number": 25,
+          "title": "Bài 25",
+          "word_count": 22
+        },
+        {
+          "lesson_number": 26,
+          "title": "Bài 26",
+          "word_count": 22
+        },
+        {
+          "lesson_number": 27,
+          "title": "Bài 27",
+          "word_count": 22
+        },
+        {
+          "lesson_number": 28,
+          "title": "Bài 28",
+          "word_count": 23
+        },
+        {
+          "lesson_number": 29,
+          "title": "Bài 29",
+          "word_count": 23
+        },
+        {
+          "lesson_number": 30,
+          "title": "Bài 30",
+          "word_count": 24
+        },
+        {
+          "lesson_number": 31,
+          "title": "Bài 31",
+          "word_count": 24
+        },
+        {
+          "lesson_number": 32,
+          "title": "Bài 32",
+          "word_count": 24
+        },
+        {
+          "lesson_number": 33,
+          "title": "Bài 33",
+          "word_count": 25
+        },
+        {
+          "lesson_number": 34,
+          "title": "Bài 34",
+          "word_count": 25
+        },
+        {
+          "lesson_number": 35,
+          "title": "Bài 35",
+          "word_count": 25
+        },
+        {
+          "lesson_number": 36,
+          "title": "Bài 36",
+          "word_count": 26
+        },
+        {
+          "lesson_number": 37,
+          "title": "Bài 37",
+          "word_count": 26
+        },
+        {
+          "lesson_number": 38,
+          "title": "Bài 38",
+          "word_count": 26
+        },
+        {
+          "lesson_number": 39,
+          "title": "Bài 39",
+          "word_count": 27
+        },
+        {
+          "lesson_number": 40,
+          "title": "Bài 40",
+          "word_count": 27
+        }
+      ]
+    },
+    {
+      "id": "b1",
+      "code": "B1",
+      "title": "Từ vựng cơ bản B1",
+      "description": "Trung cấp - Đàm thoại & công việc linh hoạt",
+      "color": "#f43f5e",
+      "total_words": 688,
+      "total_lessons": 34,
+      "lesson_summaries": [
+        {
+          "lesson_number": 1,
+          "title": "Bài 01",
+          "word_count": 12
+        },
+        {
+          "lesson_number": 2,
+          "title": "Bài 02",
+          "word_count": 13
+        },
+        {
+          "lesson_number": 3,
+          "title": "Bài 03",
+          "word_count": 14
+        },
+        {
+          "lesson_number": 4,
+          "title": "Bài 04",
+          "word_count": 14
+        },
+        {
+          "lesson_number": 5,
+          "title": "Bài 05",
+          "word_count": 14
+        },
+        {
+          "lesson_number": 6,
+          "title": "Bài 06",
+          "word_count": 15
+        },
+        {
+          "lesson_number": 7,
+          "title": "Bài 07",
+          "word_count": 16
+        },
+        {
+          "lesson_number": 8,
+          "title": "Bài 08",
+          "word_count": 16
+        },
+        {
+          "lesson_number": 9,
+          "title": "Bài 09",
+          "word_count": 16
+        },
+        {
+          "lesson_number": 10,
+          "title": "Bài 10",
+          "word_count": 17
+        },
+        {
+          "lesson_number": 11,
+          "title": "Bài 11",
+          "word_count": 18
+        },
+        {
+          "lesson_number": 12,
+          "title": "Bài 12",
+          "word_count": 18
+        },
+        {
+          "lesson_number": 13,
+          "title": "Bài 13",
+          "word_count": 18
+        },
+        {
+          "lesson_number": 14,
+          "title": "Bài 14",
+          "word_count": 18
+        },
+        {
+          "lesson_number": 15,
+          "title": "Bài 15",
+          "word_count": 19
+        },
+        {
+          "lesson_number": 16,
+          "title": "Bài 16",
+          "word_count": 20
+        },
+        {
+          "lesson_number": 17,
+          "title": "Bài 17",
+          "word_count": 20
+        },
+        {
+          "lesson_number": 18,
+          "title": "Bài 18",
+          "word_count": 21
+        },
+        {
+          "lesson_number": 19,
+          "title": "Bài 19",
+          "word_count": 21
+        },
+        {
+          "lesson_number": 20,
+          "title": "Bài 20",
+          "word_count": 21
+        },
+        {
+          "lesson_number": 21,
+          "title": "Bài 21",
+          "word_count": 22
+        },
+        {
+          "lesson_number": 22,
+          "title": "Bài 22",
+          "word_count": 23
+        },
+        {
+          "lesson_number": 23,
+          "title": "Bài 23",
+          "word_count": 23
+        },
+        {
+          "lesson_number": 24,
+          "title": "Bài 24",
+          "word_count": 23
+        },
+        {
+          "lesson_number": 25,
+          "title": "Bài 25",
+          "word_count": 23
+        },
+        {
+          "lesson_number": 26,
+          "title": "Bài 26",
+          "word_count": 24
+        },
+        {
+          "lesson_number": 27,
+          "title": "Bài 27",
+          "word_count": 25
+        },
+        {
+          "lesson_number": 28,
+          "title": "Bài 28",
+          "word_count": 25
+        },
+        {
+          "lesson_number": 29,
+          "title": "Bài 29",
+          "word_count": 25
+        },
+        {
+          "lesson_number": 30,
+          "title": "Bài 30",
+          "word_count": 26
+        },
+        {
+          "lesson_number": 31,
+          "title": "Bài 31",
+          "word_count": 27
+        },
+        {
+          "lesson_number": 32,
+          "title": "Bài 32",
+          "word_count": 27
+        },
+        {
+          "lesson_number": 33,
+          "title": "Bài 33",
+          "word_count": 27
+        },
+        {
+          "lesson_number": 34,
+          "title": "Bài 34",
+          "word_count": 27
+        }
+      ]
+    },
+    {
+      "id": "b2",
+      "code": "B2",
+      "title": "Từ vựng cơ bản B2",
+      "description": "Trung cao cấp - Diễn đạt chuyên sâu & học thuật",
+      "color": "#f59e0b",
+      "total_words": 530,
+      "total_lessons": 27,
+      "lesson_summaries": [
+        {
+          "lesson_number": 1,
+          "title": "Bài 01",
+          "word_count": 12
+        },
+        {
+          "lesson_number": 2,
+          "title": "Bài 02",
+          "word_count": 13
+        },
+        {
+          "lesson_number": 3,
+          "title": "Bài 03",
+          "word_count": 14
+        },
+        {
+          "lesson_number": 4,
+          "title": "Bài 04",
+          "word_count": 14
+        },
+        {
+          "lesson_number": 5,
+          "title": "Bài 05",
+          "word_count": 14
+        },
+        {
+          "lesson_number": 6,
+          "title": "Bài 06",
+          "word_count": 15
+        },
+        {
+          "lesson_number": 7,
+          "title": "Bài 07",
+          "word_count": 15
+        },
+        {
+          "lesson_number": 8,
+          "title": "Bài 08",
+          "word_count": 16
+        },
+        {
+          "lesson_number": 9,
+          "title": "Bài 09",
+          "word_count": 17
+        },
+        {
+          "lesson_number": 10,
+          "title": "Bài 10",
+          "word_count": 18
+        },
+        {
+          "lesson_number": 11,
+          "title": "Bài 11",
+          "word_count": 18
+        },
+        {
+          "lesson_number": 12,
+          "title": "Bài 12",
+          "word_count": 18
+        },
+        {
+          "lesson_number": 13,
+          "title": "Bài 13",
+          "word_count": 19
+        },
+        {
+          "lesson_number": 14,
+          "title": "Bài 14",
+          "word_count": 20
+        },
+        {
+          "lesson_number": 15,
+          "title": "Bài 15",
+          "word_count": 20
+        },
+        {
+          "lesson_number": 16,
+          "title": "Bài 16",
+          "word_count": 21
+        },
+        {
+          "lesson_number": 17,
+          "title": "Bài 17",
+          "word_count": 21
+        },
+        {
+          "lesson_number": 18,
+          "title": "Bài 18",
+          "word_count": 22
+        },
+        {
+          "lesson_number": 19,
+          "title": "Bài 19",
+          "word_count": 23
+        },
+        {
+          "lesson_number": 20,
+          "title": "Bài 20",
+          "word_count": 23
+        },
+        {
+          "lesson_number": 21,
+          "title": "Bài 21",
+          "word_count": 24
+        },
+        {
+          "lesson_number": 22,
+          "title": "Bài 22",
+          "word_count": 24
+        },
+        {
+          "lesson_number": 23,
+          "title": "Bài 23",
+          "word_count": 25
+        },
+        {
+          "lesson_number": 24,
+          "title": "Bài 24",
+          "word_count": 25
+        },
+        {
+          "lesson_number": 25,
+          "title": "Bài 25",
+          "word_count": 26
+        },
+        {
+          "lesson_number": 26,
+          "title": "Bài 26",
+          "word_count": 26
+        },
+        {
+          "lesson_number": 27,
+          "title": "Bài 27",
+          "word_count": 27
+        }
+      ]
+    },
+    {
+      "id": "c1",
+      "code": "C1",
+      "title": "Từ vựng cơ bản C1",
+      "description": "Cao cấp - IELTS 7.0+ & nghiên cứu chuyên nghiệp",
+      "color": "#6366f1",
+      "total_words": 1300,
+      "total_lessons": 65,
+      "lesson_summaries": [
+        {
+          "lesson_number": 1,
+          "title": "Bài 01",
+          "word_count": 12
+        },
+        {
+          "lesson_number": 2,
+          "title": "Bài 02",
+          "word_count": 13
+        },
+        {
+          "lesson_number": 3,
+          "title": "Bài 03",
+          "word_count": 13
+        },
+        {
+          "lesson_number": 4,
+          "title": "Bài 04",
+          "word_count": 13
+        },
+        {
+          "lesson_number": 5,
+          "title": "Bài 05",
+          "word_count": 13
+        },
+        {
+          "lesson_number": 6,
+          "title": "Bài 06",
+          "word_count": 13
+        },
+        {
+          "lesson_number": 7,
+          "title": "Bài 07",
+          "word_count": 14
+        },
+        {
+          "lesson_number": 8,
+          "title": "Bài 08",
+          "word_count": 14
+        },
+        {
+          "lesson_number": 9,
+          "title": "Bài 09",
+          "word_count": 14
+        },
+        {
+          "lesson_number": 10,
+          "title": "Bài 10",
+          "word_count": 14
+        },
+        {
+          "lesson_number": 11,
+          "title": "Bài 11",
+          "word_count": 14
+        },
+        {
+          "lesson_number": 12,
+          "title": "Bài 12",
+          "word_count": 15
+        },
+        {
+          "lesson_number": 13,
+          "title": "Bài 13",
+          "word_count": 15
+        },
+        {
+          "lesson_number": 14,
+          "title": "Bài 14",
+          "word_count": 15
+        },
+        {
+          "lesson_number": 15,
+          "title": "Bài 15",
+          "word_count": 16
+        },
+        {
+          "lesson_number": 16,
+          "title": "Bài 16",
+          "word_count": 16
+        },
+        {
+          "lesson_number": 17,
+          "title": "Bài 17",
+          "word_count": 16
+        },
+        {
+          "lesson_number": 18,
+          "title": "Bài 18",
+          "word_count": 16
+        },
+        {
+          "lesson_number": 19,
+          "title": "Bài 19",
+          "word_count": 16
+        },
+        {
+          "lesson_number": 20,
+          "title": "Bài 20",
+          "word_count": 17
+        },
+        {
+          "lesson_number": 21,
+          "title": "Bài 21",
+          "word_count": 17
+        },
+        {
+          "lesson_number": 22,
+          "title": "Bài 22",
+          "word_count": 17
+        },
+        {
+          "lesson_number": 23,
+          "title": "Bài 23",
+          "word_count": 18
+        },
+        {
+          "lesson_number": 24,
+          "title": "Bài 24",
+          "word_count": 18
+        },
+        {
+          "lesson_number": 25,
+          "title": "Bài 25",
+          "word_count": 18
+        },
+        {
+          "lesson_number": 26,
+          "title": "Bài 26",
+          "word_count": 18
+        },
+        {
+          "lesson_number": 27,
+          "title": "Bài 27",
+          "word_count": 18
+        },
+        {
+          "lesson_number": 28,
+          "title": "Bài 28",
+          "word_count": 19
+        },
+        {
+          "lesson_number": 29,
+          "title": "Bài 29",
+          "word_count": 19
+        },
+        {
+          "lesson_number": 30,
+          "title": "Bài 30",
+          "word_count": 19
+        },
+        {
+          "lesson_number": 31,
+          "title": "Bài 31",
+          "word_count": 19
+        },
+        {
+          "lesson_number": 32,
+          "title": "Bài 32",
+          "word_count": 20
+        },
+        {
+          "lesson_number": 33,
+          "title": "Bài 33",
+          "word_count": 20
+        },
+        {
+          "lesson_number": 34,
+          "title": "Bài 34",
+          "word_count": 20
+        },
+        {
+          "lesson_number": 35,
+          "title": "Bài 35",
+          "word_count": 20
+        },
+        {
+          "lesson_number": 36,
+          "title": "Bài 36",
+          "word_count": 21
+        },
+        {
+          "lesson_number": 37,
+          "title": "Bài 37",
+          "word_count": 21
+        },
+        {
+          "lesson_number": 38,
+          "title": "Bài 38",
+          "word_count": 21
+        },
+        {
+          "lesson_number": 39,
+          "title": "Bài 39",
+          "word_count": 22
+        },
+        {
+          "lesson_number": 40,
+          "title": "Bài 40",
+          "word_count": 22
+        },
+        {
+          "lesson_number": 41,
+          "title": "Bài 41",
+          "word_count": 22
+        },
+        {
+          "lesson_number": 42,
+          "title": "Bài 42",
+          "word_count": 22
+        },
+        {
+          "lesson_number": 43,
+          "title": "Bài 43",
+          "word_count": 22
+        },
+        {
+          "lesson_number": 44,
+          "title": "Bài 44",
+          "word_count": 23
+        },
+        {
+          "lesson_number": 45,
+          "title": "Bài 45",
+          "word_count": 23
+        },
+        {
+          "lesson_number": 46,
+          "title": "Bài 46",
+          "word_count": 23
+        },
+        {
+          "lesson_number": 47,
+          "title": "Bài 47",
+          "word_count": 24
+        },
+        {
+          "lesson_number": 48,
+          "title": "Bài 48",
+          "word_count": 24
+        },
+        {
+          "lesson_number": 49,
+          "title": "Bài 49",
+          "word_count": 24
+        },
+        {
+          "lesson_number": 50,
+          "title": "Bài 50",
+          "word_count": 24
+        },
+        {
+          "lesson_number": 51,
+          "title": "Bài 51",
+          "word_count": 24
+        },
+        {
+          "lesson_number": 52,
+          "title": "Bài 52",
+          "word_count": 25
+        },
+        {
+          "lesson_number": 53,
+          "title": "Bài 53",
+          "word_count": 25
+        },
+        {
+          "lesson_number": 54,
+          "title": "Bài 54",
+          "word_count": 25
+        },
+        {
+          "lesson_number": 55,
+          "title": "Bài 55",
+          "word_count": 26
+        },
+        {
+          "lesson_number": 56,
+          "title": "Bài 56",
+          "word_count": 26
+        },
+        {
+          "lesson_number": 57,
+          "title": "Bài 57",
+          "word_count": 26
+        },
+        {
+          "lesson_number": 58,
+          "title": "Bài 58",
+          "word_count": 26
+        },
+        {
+          "lesson_number": 59,
+          "title": "Bài 59",
+          "word_count": 26
+        },
+        {
+          "lesson_number": 60,
+          "title": "Bài 60",
+          "word_count": 27
+        },
+        {
+          "lesson_number": 61,
+          "title": "Bài 61",
+          "word_count": 27
+        },
+        {
+          "lesson_number": 62,
+          "title": "Bài 62",
+          "word_count": 27
+        },
+        {
+          "lesson_number": 63,
+          "title": "Bài 63",
+          "word_count": 28
+        },
+        {
+          "lesson_number": 64,
+          "title": "Bài 64",
+          "word_count": 28
+        },
+        {
+          "lesson_number": 65,
+          "title": "Bài 65",
+          "word_count": 27
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "code": "C2",
+      "title": "Từ vựng cơ bản C2",
+      "description": "Thành thạo bản xứ - Tinh hoa ngôn ngữ đỉnh cao",
+      "color": "#ec4899",
+      "total_words": 722,
+      "total_lessons": 36,
+      "lesson_summaries": [
+        {
+          "lesson_number": 1,
+          "title": "Bài 01",
+          "word_count": 12
+        },
+        {
+          "lesson_number": 2,
+          "title": "Bài 02",
+          "word_count": 13
+        },
+        {
+          "lesson_number": 3,
+          "title": "Bài 03",
+          "word_count": 13
+        },
+        {
+          "lesson_number": 4,
+          "title": "Bài 04",
+          "word_count": 13
+        },
+        {
+          "lesson_number": 5,
+          "title": "Bài 05",
+          "word_count": 14
+        },
+        {
+          "lesson_number": 6,
+          "title": "Bài 06",
+          "word_count": 14
+        },
+        {
+          "lesson_number": 7,
+          "title": "Bài 07",
+          "word_count": 15
+        },
+        {
+          "lesson_number": 8,
+          "title": "Bài 08",
+          "word_count": 15
+        },
+        {
+          "lesson_number": 9,
+          "title": "Bài 09",
+          "word_count": 16
+        },
+        {
+          "lesson_number": 10,
+          "title": "Bài 10",
+          "word_count": 16
+        },
+        {
+          "lesson_number": 11,
+          "title": "Bài 11",
+          "word_count": 17
+        },
+        {
+          "lesson_number": 12,
+          "title": "Bài 12",
+          "word_count": 17
+        },
+        {
+          "lesson_number": 13,
+          "title": "Bài 13",
+          "word_count": 17
+        },
+        {
+          "lesson_number": 14,
+          "title": "Bài 14",
+          "word_count": 18
+        },
+        {
+          "lesson_number": 15,
+          "title": "Bài 15",
+          "word_count": 18
+        },
+        {
+          "lesson_number": 16,
+          "title": "Bài 16",
+          "word_count": 19
+        },
+        {
+          "lesson_number": 17,
+          "title": "Bài 17",
+          "word_count": 19
+        },
+        {
+          "lesson_number": 18,
+          "title": "Bài 18",
+          "word_count": 20
+        },
+        {
+          "lesson_number": 19,
+          "title": "Bài 19",
+          "word_count": 21
+        },
+        {
+          "lesson_number": 20,
+          "title": "Bài 20",
+          "word_count": 21
+        },
+        {
+          "lesson_number": 21,
+          "title": "Bài 21",
+          "word_count": 21
+        },
+        {
+          "lesson_number": 22,
+          "title": "Bài 22",
+          "word_count": 22
+        },
+        {
+          "lesson_number": 23,
+          "title": "Bài 23",
+          "word_count": 22
+        },
+        {
+          "lesson_number": 24,
+          "title": "Bài 24",
+          "word_count": 23
+        },
+        {
+          "lesson_number": 25,
+          "title": "Bài 25",
+          "word_count": 23
+        },
+        {
+          "lesson_number": 26,
+          "title": "Bài 26",
+          "word_count": 23
+        },
+        {
+          "lesson_number": 27,
+          "title": "Bài 27",
+          "word_count": 24
+        },
+        {
+          "lesson_number": 28,
+          "title": "Bài 28",
+          "word_count": 24
+        },
+        {
+          "lesson_number": 29,
+          "title": "Bài 29",
+          "word_count": 25
+        },
+        {
+          "lesson_number": 30,
+          "title": "Bài 30",
+          "word_count": 25
+        },
+        {
+          "lesson_number": 31,
+          "title": "Bài 31",
+          "word_count": 26
+        },
+        {
+          "lesson_number": 32,
+          "title": "Bài 32",
+          "word_count": 26
+        },
+        {
+          "lesson_number": 33,
+          "title": "Bài 33",
+          "word_count": 27
+        },
+        {
+          "lesson_number": 34,
+          "title": "Bài 34",
+          "word_count": 27
+        },
+        {
+          "lesson_number": 35,
+          "title": "Bài 35",
+          "word_count": 28
+        },
+        {
+          "lesson_number": 36,
+          "title": "Bài 36",
+          "word_count": 28
+        }
+      ]
+    }
+  ]
+}
