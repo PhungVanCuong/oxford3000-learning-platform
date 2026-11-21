@@ -24,6 +24,7 @@ import CefrVocabularyView from '@/views/user/CefrVocabularyView.vue'
 import ReviewSpacedRepetitionView from '@/views/user/ReviewSpacedRepetitionView.vue'
 import HistoryStudyView from '@/views/user/HistoryStudyView.vue'
 import VocabularyNotebookView from '@/views/user/VocabularyNotebookView.vue'
+import DictationView from '@/views/user/DictationView.vue'
 
 // Admin Views
 import AdminDashboardView from '@/views/admin/AdminDashboardView.vue'
@@ -68,6 +69,8 @@ const routes = [
       { path: 'cefr/:levelId/lesson/:lessonNum', name: 'cefr-lesson-detail', component: CefrVocabularyView },
       { path: 'review', name: 'review', component: ReviewSpacedRepetitionView },
       { path: 'history', name: 'history', component: HistoryStudyView },
+      { path: 'dictation', name: 'dictation', component: DictationView },
+      { path: 'dictation/:topicId', name: 'dictation-topic', component: DictationView },
       { path: 'notebook', redirect: '/review' }, // Sổ tay cũ chuyển hướng sang Bộ thẻ ôn tập
       { path: 'profile', name: 'profile', component: ProfileView },
     ],

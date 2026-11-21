@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\ArenaController;
 use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\GoogleAuthController;
 use App\Http\Controllers\Api\AiController;
+use App\Http\Controllers\Api\DictationController;
 
 // 1. Authentication & Profile
 Route::post('/auth/login', [AuthController::class, 'login']);
@@ -98,6 +99,12 @@ Route::get('/vocabulary/search', [DictionaryController::class, 'search']);
 Route::post('/ai/chat', [AiController::class, 'chat']);
 Route::post('/ai/explain', [AiController::class, 'explain']);
 Route::post('/ai/generate-examples', [AdminController::class, 'generateAiExamples']);
+
+// 10.1 Dictation (Nghe chép chính tả như DailyDictation)
+Route::get('/dictation/categories', [DictationController::class, 'getCategories']);
+Route::get('/dictation/lessons', [DictationController::class, 'getLessons']);
+Route::get('/dictation/lesson/{slug}', [DictationController::class, 'getLesson']);
+Route::post('/dictation/submit-challenge', [DictationController::class, 'submitChallenge']);
 
 // 11. NEW CURRICULUM ROADMAP (Lộ trình 25 Chủ đề Chuyên sâu từ 25 files CSV x 10 Giai đoạn x 200 câu)
 Route::get('/curriculum', [CurriculumRoadmapController::class, 'index']);
