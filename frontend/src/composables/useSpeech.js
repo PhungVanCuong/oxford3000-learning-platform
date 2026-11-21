@@ -130,6 +130,69 @@ const getPreferredVoice = () => {
   return voices.find(v => v.lang.startsWith('en')) || voices[0] || null
 }
 
+// Regex nhận diện ký tự tiếng Việt có dấu
+const VIETNAMESE_REGEX = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđĐ]/i
+
+export const isVietnameseText = (text) => {
+  if (!text) return false
+  return VIETNAMESE_REGEX.test(text)
+}
+
+// Lấy giọng đọc tiếng Việt chất lượng cao có sẵn trong trình duyệt
+export const getVietnameseVoice = () => {
+  if (!synth) return null
+  const voices = synth.getVoices()
+  if (!voices || voices.length === 0) return null
+
+  // 1. Tìm giọng Việt chuẩn vi-VN (Google Tiếng Việt, Microsoft HoaiMy, NamMinh, Linh, etc.)
+  const viVoice = voices.find(v => {
+    const l = (v.lang || '').toLowerCase()
+    const n = (v.name || '').toLowerCase()
+    return l.startsWith('vi') || l.includes('vie') || n.includes('vietnam') || n.includes('tiếng việt')
+  })
+  if (viVoice) return viVoice
+
+  return null
+}
+
+// Làm sạch văn bản trước khi đọc (loại bỏ markdown, thẻ, dấu ngoặc kỹ thuật)
+const cleanSpokenText = (text) => {
+  if (!text) return ''
+  return text
+    .replace(/\[.*?\]/g, '')
+    .replace(/___+/g, '')
+    .replace(/\(.*?\)/g, '')
+    .replace(/[*#`_~]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+// Chia nhỏ văn bản hỗn hợp Anh - Việt thành các đoạn liên tiếp mượt mà
+export const splitLanguageChunks = (text) => {
+  if (!text) return []
+  const clean = cleanSpokenText(text)
+  if (!clean) return []
+
+  // Nếu là chuỗi đơn ngữ hoàn toàn
+  const hasVi = isVietnameseText(clean)
+  // Nếu có cả 2 ngôn ngữ (thường phân tách bằng dấu hai chấm, dấu gạch ngang, ngoặc hoặc xuống dòng)
+  const segments = clean.split(/([\n\r]+|:\s+|\s*-\s*|(?<=[.!?])\s+)/)
+  const chunks = []
+
+  for (const seg of segments) {
+    const trimmed = seg.trim()
+    if (!trimmed || trimmed === '-' || trimmed === ':') continue
+    const lang = isVietnameseText(trimmed) ? 'vi-VN' : 'en-US'
+    if (chunks.length > 0 && chunks[chunks.length - 1].lang === lang) {
+      chunks[chunks.length - 1].text += ' ' + trimmed
+    } else {
+      chunks.push({ text: trimmed, lang })
+    }
+  }
+
+  return chunks.length > 0 ? chunks : [{ text: clean, lang: hasVi ? 'vi-VN' : 'en-US' }]
+}
+
 export function useSpeech() {
   const isSpeaking = ref(false)
   const isListening = ref(false)
@@ -144,6 +207,8 @@ export function useSpeech() {
   let currentTargetText = ''
   let currentItemId = null
   let micPermissionGranted = false
+  let utteranceQueue = []
+  let isQueuePlaying = false
 
   // Refresh voices on component mount if empty
   if (availableVoices.value.length === 0 && synth) {
@@ -165,43 +230,104 @@ export function useSpeech() {
   }
 
   /**
-   * Speak English text with configurable speed and selected voice
-   * @param {string} text - text to read
-   * @param {number|null} rate - 1.0 (normal) or 0.75 (slow)
+   * Phát âm văn bản thông minh (Tự động nhận diện Tiếng Anh & Tiếng Việt, hỗ trợ đọc song ngữ mượt mà)
+   * @param {string} text - Văn bản cần đọc
+   * @param {number|null} rate - Tốc độ đọc (1.0 chuẩn, 0.85 vừa, 0.75 chậm)
+   * @param {string|null} forceLang - 'en-US' | 'vi-VN' | 'auto'
    */
-  const speak = (text, rate = null) => {
+  const speak = (text, rate = null, forceLang = 'auto') => {
     if (!synth || !text) return
 
     try {
-      synth.cancel() // Stop previous speaking immediately
+      synth.cancel() // Hủy ngay phát âm cũ
     } catch (e) {}
 
-    // Clean brackets and underscores
-    const cleanText = text.replace(/\[.*?\]/g, '').replace(/___+/g, '').replace(/\(.*?\)/g, '')
-    const utterance = new SpeechSynthesisUtterance(cleanText)
-    utterance.lang = 'en-US'
-    utterance.rate = rate !== null ? rate : (selectedSpeed.value || 1.0)
-    utterance.pitch = 1.0
+    utteranceQueue = []
+    isQueuePlaying = false
 
-    const voice = getPreferredVoice()
-    if (voice) {
-      utterance.voice = voice
+    const clean = cleanSpokenText(text)
+    if (!clean) return
+
+    // 1. Nếu chỉ định ép ngôn ngữ cụ thể
+    if (forceLang === 'vi-VN' || (forceLang === 'auto' && isVietnameseText(clean) && !/[a-zA-Z]{5,}/.test(clean))) {
+      const utter = new SpeechSynthesisUtterance(clean)
+      utter.lang = 'vi-VN'
+      utter.rate = rate !== null ? rate : (selectedSpeed.value || 1.0)
+      const viVoice = getVietnameseVoice()
+      if (viVoice) utter.voice = viVoice
+
+      utter.onstart = () => { isSpeaking.value = true }
+      utter.onend = () => { isSpeaking.value = false }
+      utter.onerror = () => { isSpeaking.value = false }
+      synth.speak(utter)
+      return
     }
 
-    utterance.onstart = () => {
-      isSpeaking.value = true
+    if (forceLang === 'en-US' || forceLang === 'en-GB' || (!isVietnameseText(clean) && forceLang === 'auto')) {
+      const utter = new SpeechSynthesisUtterance(clean)
+      utter.lang = forceLang === 'en-GB' ? 'en-GB' : 'en-US'
+      utter.rate = rate !== null ? rate : (selectedSpeed.value || 1.0)
+      const enVoice = getPreferredVoice()
+      if (enVoice) utter.voice = enVoice
+
+      utter.onstart = () => { isSpeaking.value = true }
+      utter.onend = () => { isSpeaking.value = false }
+      utter.onerror = () => { isSpeaking.value = false }
+      synth.speak(utter)
+      return
     }
 
-    utterance.onend = () => {
-      isSpeaking.value = false
+    // 2. Nếu là văn bản song ngữ hỗn hợp (Cả tiếng Anh và tiếng Việt trong cùng một câu/đoạn)
+    // Chia nhỏ và đọc luân phiên mượt mà, không bị vấp hay lỗi giọng
+    const chunks = splitLanguageChunks(clean)
+    if (chunks.length === 1) {
+      const utter = new SpeechSynthesisUtterance(chunks[0].text)
+      utter.lang = chunks[0].lang
+      utter.rate = rate !== null ? rate : (selectedSpeed.value || 1.0)
+      if (chunks[0].lang.startsWith('vi')) {
+        const viVoice = getVietnameseVoice()
+        if (viVoice) utter.voice = viVoice
+      } else {
+        const enVoice = getPreferredVoice()
+        if (enVoice) utter.voice = enVoice
+      }
+      utter.onstart = () => { isSpeaking.value = true }
+      utter.onend = () => { isSpeaking.value = false }
+      utter.onerror = () => { isSpeaking.value = false }
+      synth.speak(utter)
+      return
     }
 
-    utterance.onerror = () => {
-      isSpeaking.value = false
+    // Xử lý chuỗi nhiều đoạn song ngữ liên tiếp
+    isSpeaking.value = true
+    let idx = 0
+    const playNext = () => {
+      if (idx >= chunks.length) {
+        isSpeaking.value = false
+        return
+      }
+      const item = chunks[idx++]
+      const utter = new SpeechSynthesisUtterance(item.text)
+      utter.rate = rate !== null ? rate : (selectedSpeed.value || 1.0)
+      utter.lang = item.lang
+      if (item.lang.startsWith('vi')) {
+        const viVoice = getVietnameseVoice()
+        if (viVoice) utter.voice = viVoice
+      } else {
+        const enVoice = getPreferredVoice()
+        if (enVoice) utter.voice = enVoice
+      }
+
+      utter.onend = () => playNext()
+      utter.onerror = () => playNext()
+      synth.speak(utter)
     }
 
-    synth.speak(utterance)
+    playNext()
   }
+
+  const speakEnglish = (text, rate = null) => speak(text, rate, 'en-US')
+  const speakVietnamese = (text, rate = null) => speak(text, rate, 'vi-VN')
 
   const testVoice = (voiceURI, testText = 'Hello! Welcome to Oxford English learning system.') => {
     if (!synth) return
@@ -426,6 +552,10 @@ export function useSpeech() {
     setSpeed,
     testVoice,
     speak,
+    speakEnglish,
+    speakVietnamese,
+    isVietnameseText,
+    splitLanguageChunks,
     stopSpeech,
     startListening,
     stopListening,
