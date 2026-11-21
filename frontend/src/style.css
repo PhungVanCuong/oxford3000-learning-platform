@@ -215,24 +215,39 @@ body {
 }
 
 .ox-header-grid {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
-  max-width: 1440px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 0 1.25rem;
+  padding: 0 2rem;
+  gap: 2rem; /* 3 ĐOẠN TÁCH BIỆT RÕ RÀNG: Logo - Menu - Tiện ích, không bị xịt vào nhau */
+}
+
+@media (min-width: 1440px) {
+  .ox-header-grid {
+    padding: 0 2.5rem;
+    gap: 3rem; /* Khoảng cách rộng rãi, thông thoáng trên màn hình lớn */
+  }
+}
+
+@media (max-width: 1200px) {
+  .ox-header-grid {
+    padding: 0 1.25rem;
+    gap: 1.25rem;
+  }
 }
 
 @media (max-width: 991px) {
   .ox-header-grid {
-    display: flex;
-    justify-content: space-between;
     padding: 0 1rem;
+    gap: 1rem;
   }
 }
 
 .ox-header-left {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -280,34 +295,32 @@ body {
 }
 
 .ox-header-center {
+  flex: 1 1 auto;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 0;
 }
 
 .ox-header-right {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 0.65rem;
 }
 
-/* MINIMALIST TEXT-ONLY NAVIGATION MENU */
+/* MINIMALIST TEXT-ONLY NAVIGATION MENU VỚI ĐƯỜNG VIỀN SẮC NÉT XỊN XÒ */
 .ox-nav-menu {
   display: flex;
   align-items: center;
-  gap: 0.2rem;
-  padding: 0.25rem 0.4rem;
-  background: rgba(0, 0, 0, 0.03);
-  border: 1px solid var(--ox-border);
-  border-radius: 999px;
+  gap: 0.5rem; /* Khoảng cách riêng giữa từng nút để nổi bật viền */
+  padding: 0;
+  background: transparent;
+  border: none;
   list-style: none;
   margin: 0;
-}
-
-[data-bs-theme="dark"] .ox-nav-menu {
-  background: rgba(0, 0, 0, 0.25);
-  border-color: #283a37;
+  flex-wrap: nowrap;
 }
 
 .ox-nav-item {
@@ -319,29 +332,40 @@ body {
   position: relative;
   display: inline-flex;
   align-items: center;
-  padding: 0.42rem 0.95rem;
+  justify-content: center;
+  padding: 0.45rem 1rem;
   font-size: 0.885rem;
-  font-weight: 500;
-  color: var(--ox-text-muted);
+  font-weight: 600;
+  color: var(--ox-text-main);
   text-decoration: none;
   border-radius: 999px;
-  letter-spacing: 0.01em;
+  border: 1px solid var(--ox-border); /* HIỂN THỊ ĐƯỜNG VIỀN NỔI BẬT, DỄ BẤM */
+  background: var(--ox-surface-1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  letter-spacing: -0.01em;
   white-space: nowrap;
-  background: transparent;
-  border: none;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .ox-nav-link:hover {
+  border-color: var(--primary-teal);
   color: var(--primary-teal);
-  background-color: rgba(0, 176, 116, 0.09);
+  background: rgba(0, 176, 116, 0.08);
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px rgba(0, 176, 116, 0.18);
+}
+
+.ox-nav-link:active {
+  transform: translateY(0);
 }
 
 .ox-nav-link.active {
+  border-color: var(--primary-teal) !important;
+  background: linear-gradient(135deg, rgba(0, 176, 116, 0.14), rgba(0, 176, 116, 0.06)) !important;
   color: var(--primary-teal) !important;
-  font-weight: 600;
-  background-color: rgba(0, 176, 116, 0.15);
+  font-weight: 700;
+  box-shadow: 0 2px 10px rgba(0, 176, 116, 0.25) !important;
 }
 
 /* Subtle Active Glow Dot */
@@ -355,7 +379,28 @@ body {
   height: 2.5px;
   border-radius: 999px;
   background: var(--primary-teal);
-  box-shadow: 0 0 8px rgba(0, 176, 116, 0.6);
+  box-shadow: 0 0 8px rgba(0, 176, 116, 0.7);
+}
+
+[data-bs-theme="dark"] .ox-nav-link {
+  background: #1c2826;
+  border-color: #283a37;
+  color: #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-bs-theme="dark"] .ox-nav-link:hover {
+  border-color: #00b074;
+  color: #5eead4;
+  background: rgba(0, 176, 116, 0.18);
+  box-shadow: 0 4px 14px rgba(0, 176, 116, 0.3);
+}
+
+[data-bs-theme="dark"] .ox-nav-link.active {
+  border-color: #00b074 !important;
+  background: linear-gradient(135deg, rgba(0, 176, 116, 0.25), rgba(0, 176, 116, 0.12)) !important;
+  color: #5eead4 !important;
+  box-shadow: 0 3px 12px rgba(0, 176, 116, 0.35) !important;
 }
 
 .ox-chevron-icon {
@@ -466,26 +511,37 @@ body {
 }
 
 .ox-deck-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 4px;
   border-radius: 999px;
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 800;
+  line-height: 1;
   background: #ef4444;
   color: #ffffff;
-  animation: pulseBadge 2s infinite;
+  border: 2px solid var(--ox-surface-1);
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.45);
+  animation: pulseBadge 2.2s infinite;
+  z-index: 2;
+}
+
+[data-bs-theme="dark"] .ox-deck-badge {
+  border-color: #1c2826;
 }
 
 @keyframes pulseBadge {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.15); }
+  50% { transform: scale(1.12); }
 }
 
-/* ICON BUTTONS (THEME TOGGLE, A11Y, HAMBURGER) */
+/* ICON BUTTONS (THEME TOGGLE, A11Y, REVIEW DECK, HAMBURGER) */
 .ox-icon-btn {
   width: 38px;
   height: 38px;
@@ -497,19 +553,34 @@ body {
   background: var(--ox-surface-1);
   color: var(--ox-text-muted);
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  position: relative;
+  text-decoration: none;
+  flex-shrink: 0;
 }
 
 .ox-icon-btn:hover {
   border-color: var(--primary-teal);
   color: var(--primary-teal);
-  transform: scale(1.05);
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px rgba(0, 176, 116, 0.2);
+}
+
+.ox-icon-btn:active {
+  transform: translateY(0);
 }
 
 [data-bs-theme="dark"] .ox-icon-btn {
   background: #1c2826;
   border-color: #283a37;
+  color: #cbd5e1;
+}
+
+[data-bs-theme="dark"] .ox-icon-btn:hover {
+  border-color: #00b074;
+  color: #5eead4;
+  box-shadow: 0 4px 14px rgba(0, 176, 116, 0.3);
 }
 
 .ox-mobile-hamburger {

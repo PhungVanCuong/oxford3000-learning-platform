@@ -128,14 +128,13 @@
 
         <!-- 3. RIGHT ZONE: BỘ THẺ ÔN TẬP + A11Y + THEME TOGGLE + AUTH WIDGET -->
         <div class="ox-header-right">
-          <!-- Nút "Bộ thẻ ôn tập" (Nổi bật, Spaced Repetition) -->
+          <!-- Nút "Bộ thẻ ôn tập" (Icon tròn đồng bộ, đã xóa chữ để tránh ngắt dòng, kèm badge thông báo) -->
           <router-link
             to="/review"
-            class="ox-review-deck-btn"
+            class="ox-icon-btn"
             title="Bộ thẻ ôn tập (Spaced Repetition)"
           >
-            <i class="bi bi-collection-play-fill text-teal"></i>
-            <span class="d-none d-xl-inline">Bộ thẻ ôn tập</span>
+            <i class="bi bi-collection-play-fill text-teal fs-6"></i>
             <span v-if="dueCardsCount > 0" class="ox-deck-badge">{{ dueCardsCount }}</span>
           </router-link>
 
