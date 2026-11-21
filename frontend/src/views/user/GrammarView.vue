@@ -1,5 +1,5 @@
 <template>
-  <div class="grammar-view min-vh-100 pb-5" :style="authStore.themeMode === 'dark' ? '' : 'background-color: #F8F7F4;'">
+  <div class="grammar-view min-vh-100 pb-5">
     <div class="container-fluid px-3 px-md-4 px-xl-5 pt-3 pt-md-4 max-w-7xl mx-auto">
       <!-- 1. TOP HEADER BANNER (ĐỒNG BỘ 100% CẢ VỊ TRÍ, KÍCH THƯỚC VÀ NÚT CHUYỂN ĐỔI) -->
       <LearningNavHeader

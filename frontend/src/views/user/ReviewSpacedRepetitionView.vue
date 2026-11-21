@@ -1,5 +1,5 @@
 <template>
-  <div class="review-page min-vh-100 pb-5" :style="authStore.themeMode === 'dark' ? 'background-color: #070d0b;' : 'background-color: #F8F7F4;'">
+  <div class="review-page min-vh-100 pb-5">
     <div class="container-fluid px-3 px-md-4 px-xl-5 pt-3 pt-md-4 max-w-7xl mx-auto">
       <!-- 1. TOP HEADER (MATCHING IMAGE 3 & 4) -->
       <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-3 mb-md-4">

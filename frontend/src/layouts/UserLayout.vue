@@ -1,257 +1,289 @@
 <template>
   <div class="user-layout min-vh-100 d-flex flex-column">
-    <!-- Navbar matching Image 1 (media_1792672183705_bc785297.png) -->
-    <nav class="navbar navbar-expand-lg border-bottom sticky-top py-2.5 shadow-sm navbar-header-custom" :class="authStore.themeMode === 'dark' ? 'navbar-dark border-secondary' : 'navbar-light border-light-subtle'" style="z-index: 1040 !important;">
-      <div class="container-fluid px-3 px-md-4 px-xl-5">
-        <!-- Brand Logo Header (Logo ngang có chữ, nền trong suốt) -->
-        <router-link to="/" class="navbar-brand d-flex align-items-center text-decoration-none py-0 me-2 me-md-4" title="OxVocab - Quay về trang chủ">
-          <img
-            src="/images/branding/logo-header-transparent.png"
-            alt="OXVOCAB - Học Từ Vựng & Lộ Trình Thông Minh"
-            class="brand-header-logo"
-            loading="eager"
-          />
-        </router-link>
+    <!-- 3-ZONE ABSOLUTE-CENTER HEADER NAVBAR -->
+    <nav class="ox-header-navbar sticky-top">
+      <div class="ox-header-grid">
+        <!-- 1. LEFT ZONE: Brand Logo Header (Logo ngang có chữ, nền trong suốt) -->
+        <div class="ox-header-left">
+          <router-link to="/" class="ox-logo-wrapper" title="OXVOCAB - Quay về trang chủ">
+            <img
+              src="/images/branding/logo-header-transparent.png"
+              alt="OXVOCAB - Học Từ Vựng & Lộ Trình Thông Minh"
+              class="brand-header-logo"
+              loading="eager"
+            />
+          </router-link>
+        </div>
 
-        <!-- Toggle Button for Mobile (Bấm mở / đóng Drawer trượt toàn màn hình) -->
-        <button
-          class="navbar-toggler border-0 p-1.5 rounded-3 d-lg-none"
-          type="button"
-          @click="toggleMobileDrawer"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
+        <!-- 2. CENTER ZONE: CĂN GIỮA TUYỆT ĐỐI (Text-Only, No Icons) -->
+        <div class="ox-header-center d-none d-lg-flex">
+          <nav class="ox-nav-menu">
+            <!-- 1. Trang chủ -->
+            <router-link to="/" class="ox-nav-link" exact-active-class="active">
+              Trang chủ
+            </router-link>
 
-        <!-- Nav Links (Desktop Only - Trên điện thoại sử dụng Drawer thông minh) -->
-        <div class="collapse navbar-collapse d-none d-lg-flex" id="userNavbar">
-          <!-- UNIFIED 6-SLOT NAVIGATION BAR (Slot 1: Trang chủ, Slots 2-5: Customizable 4 items, Slot 6: Xem thêm) -->
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold fs-7 gap-1.5 gap-lg-2 align-items-center flex-nowrap">
-            <!-- Slot 1: Trang chủ (Fixed) -->
-            <li class="nav-item">
-              <router-link to="/" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link text-nowrap" exact-active-class="nav-item-active">
-                <i class="bi bi-house-door-fill me-1.5 icon-home"></i>
-                <span>Trang chủ</span>
-              </router-link>
-            </li>
+            <!-- 2. Lộ trình -->
+            <router-link to="/curriculum" class="ox-nav-link" active-class="active">
+              Lộ trình
+            </router-link>
 
-            <!-- Slots 2-5: The 4 Customized Navigation Items -->
-            <li v-for="item in visibleNavItems" :key="item.id" class="nav-item">
-              <router-link :to="item.to" class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link d-flex align-items-center gap-1.5 text-nowrap" active-class="nav-item-active">
-                <i :class="[item.icon, item.iconClass, 'me-1']"></i>
-                <span>{{ item.label }}</span>
-                <span v-if="item.badge" class="badge bg-warning text-dark px-1.5 py-1 rounded-pill shadow-xs" style="font-size: 8px;">{{ item.badge }}</span>
-              </router-link>
-            </li>
+            <!-- 3. Cụm từ (Đưa ra ngoài thanh menu theo yêu cầu) -->
+            <router-link to="/phrasal-verbs" class="ox-nav-link" active-class="active">
+              Cụm từ
+            </router-link>
 
-            <!-- Slot 6: Xem thêm Dropdown (Containing all other items) -->
-            <li class="nav-item position-relative" ref="moreMenuRef">
+            <!-- 4. Chép chính tả (Đưa ra ngoài thanh menu theo yêu cầu) -->
+            <router-link to="/dictation" class="ox-nav-link" active-class="active">
+              Chép chính tả
+            </router-link>
+
+            <!-- 5. Học theo ngày -->
+            <router-link to="/daily" class="ox-nav-link" active-class="active">
+              Học theo ngày
+            </router-link>
+
+            <!-- 6. Đấu trường -->
+            <router-link to="/arena" class="ox-nav-link" active-class="active">
+              Đấu trường
+            </router-link>
+
+            <!-- 7. Xem thêm Dropdown (Ngữ pháp 12 thì, Từ vựng CEFR, Sổ tay, Lịch sử, Tra cứu, 44 Âm IPA, Cây tri thức, Mẹo học) -->
+            <div class="ox-nav-item" ref="moreMenuRef">
               <button
                 @click="toggleMoreMenu"
-                class="nav-link px-2.5 py-1.5 rounded-pill nav-custom-link d-flex align-items-center gap-1 border-0 bg-transparent text-nowrap"
-                :class="{ 'nav-item-active': isMoreMenuOpen }"
+                class="ox-nav-link"
+                :class="{ 'active': isMoreMenuOpen || isMoreMenuActive }"
                 type="button"
+                :aria-expanded="isMoreMenuOpen"
               >
-                <i class="bi bi-grid-fill me-1 text-teal"></i>
                 <span>Xem thêm</span>
-                <i class="bi bi-chevron-down fs-8 ms-0.5"></i>
+                <i class="bi bi-chevron-down ox-chevron-icon" :class="{ 'rotated': isMoreMenuOpen }"></i>
               </button>
 
-              <div
-                v-if="isMoreMenuOpen"
-                class="dropdown-menu show position-absolute start-0 mt-2 shadow-lg border rounded-4 py-2 z-3"
-                :class="authStore.themeMode === 'dark' ? 'dropdown-menu-dark bg-dark border-secondary' : 'bg-white border-light-subtle'"
-                style="min-width: 250px;"
-              >
-                <router-link
-                  v-for="item in moreNavItems"
-                  :key="item.id"
-                  :to="item.to"
-                  @click="isMoreMenuOpen = false"
-                  class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2"
-                >
-                  <i :class="[item.icon, item.iconClass, 'fs-6']"></i>
-                  <span>{{ item.fullLabel || item.label }}</span>
-                </router-link>
+              <Transition name="ox-dropdown">
+                <div v-if="isMoreMenuOpen" class="ox-dropdown-pane shadow-lg">
+                  <!-- Ngữ pháp 12 thì (Bỏ vào xem thêm theo yêu cầu) -->
+                  <router-link to="/grammar" class="ox-dropdown-item" @click="isMoreMenuOpen = false">
+                    <div class="ox-dropdown-item-title">Ngữ pháp 12 thì</div>
+                    <div class="ox-dropdown-item-desc">Hệ thống công thức, bài tập chuyên sâu</div>
+                  </router-link>
+
+                  <!-- Từ vựng CEFR (Bỏ vào xem thêm theo yêu cầu) -->
+                  <router-link to="/cefr" class="ox-dropdown-item" @click="isMoreMenuOpen = false">
+                    <div class="ox-dropdown-item-title">Từ vựng CEFR</div>
+                    <div class="ox-dropdown-item-desc">Khung Châu Âu A1 - C2 với 4.922 từ chuẩn</div>
+                  </router-link>
+
+                  <div class="ox-dropdown-divider"></div>
+
+                  <!-- Sổ tay từ vựng -->
+                  <router-link to="/vocabulary-notebook" class="ox-dropdown-item" @click="isMoreMenuOpen = false">
+                    <div class="ox-dropdown-item-title">Sổ tay từ vựng</div>
+                    <div class="ox-dropdown-item-desc">Kho từ đã lưu và ghi chú cá nhân</div>
+                  </router-link>
+
+                  <!-- Lịch sử bài làm & Câu sai -->
+                  <router-link to="/history" class="ox-dropdown-item" @click="isMoreMenuOpen = false">
+                    <div class="ox-dropdown-item-title">Lịch sử bài làm & Câu sai</div>
+                    <div class="ox-dropdown-item-desc">Xem lại điểm cần cải thiện</div>
+                  </router-link>
+
+                  <!-- Tra cứu từ điển -->
+                  <router-link to="/dictionary" class="ox-dropdown-item" @click="isMoreMenuOpen = false">
+                    <div class="ox-dropdown-item-title">Tra cứu nhanh</div>
+                    <div class="ox-dropdown-item-desc">Từ điển thông minh kèm Gemini AI</div>
+                  </router-link>
+
+                  <!-- 44 Âm IPA -->
+                  <router-link to="/ipa" class="ox-dropdown-item" @click="isMoreMenuOpen = false">
+                    <div class="ox-dropdown-item-title">44 Âm IPA</div>
+                    <div class="ox-dropdown-item-desc">Luyện phát âm chuẩn quốc tế</div>
+                  </router-link>
+
+                  <!-- Cây tri thức -->
+                  <router-link to="/tree" class="ox-dropdown-item" @click="isMoreMenuOpen = false">
+                    <div class="ox-dropdown-item-title">Cây tri thức</div>
+                    <div class="ox-dropdown-item-desc">Nuôi dưỡng mầm xanh từ vựng</div>
+                  </router-link>
+
+                  <!-- Thống kê năng suất -->
+                  <router-link to="/stats" class="ox-dropdown-item" @click="isMoreMenuOpen = false">
+                    <div class="ox-dropdown-item-title">Thống kê năng suất</div>
+                    <div class="ox-dropdown-item-desc">Theo dõi Streak & tiến độ chi tiết</div>
+                  </router-link>
+
+                  <div class="ox-dropdown-divider"></div>
+
+                  <!-- Mẹo học (Luôn ở cuối cùng) -->
+                  <router-link to="/tips" class="ox-dropdown-item" @click="isMoreMenuOpen = false">
+                    <div class="ox-dropdown-item-title">Mẹo học</div>
+                    <div class="ox-dropdown-item-desc">Chiến thuật ghi nhớ đỉnh cao</div>
+                  </router-link>
+                </div>
+              </Transition>
+            </div>
+          </nav>
+        </div>
+
+        <!-- 3. RIGHT ZONE: BỘ THẺ ÔN TẬP + A11Y + THEME TOGGLE + AUTH WIDGET -->
+        <div class="ox-header-right">
+          <!-- Nút "Bộ thẻ ôn tập" (Nổi bật, Spaced Repetition) -->
+          <router-link
+            to="/review"
+            class="ox-review-deck-btn"
+            title="Bộ thẻ ôn tập (Spaced Repetition)"
+          >
+            <i class="bi bi-collection-play-fill text-teal"></i>
+            <span class="d-none d-xl-inline">Bộ thẻ ôn tập</span>
+            <span v-if="dueCardsCount > 0" class="ox-deck-badge">{{ dueCardsCount }}</span>
+          </router-link>
+
+          <!-- BỘ LỌC HIỂN THỊ & CÀI ĐẶT CHUẨN QUỐC TẾ (Độ sáng, Độ tương phản, Độ ấm, Độ xám) -->
+          <div class="position-relative" ref="a11yMenuRef">
+            <button
+              @click="toggleA11yMenu"
+              class="ox-icon-btn"
+              title="Bộ lọc màn hình & Cài đặt chuẩn quốc tế"
+              type="button"
+            >
+              <i class="bi bi-sliders text-teal"></i>
+            </button>
+
+            <div
+              v-if="isA11yOpen"
+              class="dropdown-menu show position-absolute end-0 mt-2 shadow-lg border rounded-4 p-3 z-3"
+              :class="authStore.themeMode === 'dark' ? 'dropdown-menu-dark bg-dark border-secondary' : 'bg-white border-light-subtle'"
+              style="min-width: 300px;"
+            >
+              <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-2.5">
+                <div class="d-flex align-items-center gap-1.5">
+                  <i class="bi bi-sliders text-teal fs-6"></i>
+                  <span class="fw-bold fs-8 text-teal text-uppercase">Bộ Lọc & Chuẩn Quốc Tế</span>
+                </div>
+                <button @click="isA11yOpen = false" class="btn-close fs-9"></button>
               </div>
-            </li>
-          </ul>
 
-          <!-- Right Side: Review Deck + History + Arena Icon + Display Filter Settings + Theme toggle + Auth state -->
-          <div class="d-flex align-items-center gap-1.5 gap-lg-2 mt-3 mt-lg-0 flex-nowrap">
-            <!-- Bộ thẻ ôn tập nhanh -->
-            <router-link
-              to="/review"
-              class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center shadow-sm position-relative text-decoration-none"
-              style="width: 36px; height: 36px;"
-              :class="authStore.themeMode === 'dark' ? 'border-secondary' : 'border-light-subtle'"
-              title="Bộ thẻ ôn tập (Spaced Repetition)"
-            >
-              <i class="bi bi-clock-history text-success fs-7"></i>
-            </router-link>
+              <!-- Cỡ chữ hiển thị -->
+              <div class="mb-3">
+                <label class="fs-9 fw-bold text-muted text-uppercase d-block mb-1">Cỡ chữ hiển thị</label>
+                <div class="btn-group btn-group-sm w-100 p-0.5 rounded-pill bg-body-tertiary border">
+                  <button @click="setFontSize('sm')" class="btn btn-sm rounded-pill fs-9 py-1 fw-bold" :class="currentFontSize === 'sm' ? 'btn-teal text-white' : 'btn-light'">A- Nhỏ</button>
+                  <button @click="setFontSize('md')" class="btn btn-sm rounded-pill fs-9 py-1 fw-bold" :class="currentFontSize === 'md' ? 'btn-teal text-white' : 'btn-light'">Chuẩn</button>
+                  <button @click="setFontSize('lg')" class="btn btn-sm rounded-pill fs-9 py-1 fw-bold" :class="currentFontSize === 'lg' ? 'btn-teal text-white' : 'btn-light'">A+ Lớn</button>
+                </div>
+              </div>
 
-            <!-- Lịch sử học & bài tập đã làm -->
-            <router-link
-              to="/history"
-              class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center shadow-sm position-relative text-decoration-none"
-              style="width: 36px; height: 36px;"
-              :class="authStore.themeMode === 'dark' ? 'border-secondary' : 'border-light-subtle'"
-              title="Lịch sử bài làm & ôn câu sai"
-            >
-              <i class="bi bi-journal-check text-info fs-7"></i>
-            </router-link>
+              <!-- Giọng đọc phát âm -->
+              <div class="mb-3">
+                <label class="fs-9 fw-bold text-muted text-uppercase d-block mb-1">Giọng đọc tiếng Anh</label>
+                <div class="btn-group btn-group-sm w-100 p-0.5 rounded-pill bg-body-tertiary border">
+                  <button @click="setVoiceAccent('US')" class="btn btn-sm rounded-pill fs-9 py-1 fw-bold" :class="currentAccent === 'US' ? 'btn-teal text-white' : 'btn-light'">🇺🇸 US (Nữ - Chuẩn)</button>
+                  <button @click="setVoiceAccent('UK')" class="btn btn-sm rounded-pill fs-9 py-1 fw-bold" :class="currentAccent === 'UK' ? 'btn-teal text-white' : 'btn-light'">🇬🇧 UK (Anh - Anh)</button>
+                </div>
+              </div>
 
-            <!-- Arena Circular Icon Button -->
-            <router-link
-              to="/arena"
-              class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center shadow-sm position-relative text-decoration-none"
-              style="width: 36px; height: 36px;"
-              :class="authStore.themeMode === 'dark' ? 'border-secondary' : 'border-light-subtle'"
-              title="Đấu trường Quiz & Luyện thi"
-            >
-              <i class="bi bi-trophy-fill text-warning fs-6"></i>
-              <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" style="transform: translate(-30%, 25%) !important;">
-                <span class="visually-hidden">Live</span>
-              </span>
-            </router-link>
-
-            <!-- BỘ LỌC HIỂN THỊ & CÀI ĐẶT CHUẨN QUỐC TẾ (Độ sáng, Độ tương phản, Độ ấm, Độ xám) -->
-            <div class="position-relative" ref="a11yMenuRef">
-              <button
-                @click="toggleA11yMenu"
-                class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-                style="width: 36px; height: 36px;"
-                :class="authStore.themeMode === 'dark' ? 'border-secondary' : 'border-light-subtle'"
-                title="Bộ lọc màn hình & Cài đặt chuẩn quốc tế"
-              >
-                <i class="bi bi-sliders fs-6 text-teal"></i>
-              </button>
-
-              <div
-                v-if="isA11yOpen"
-                class="dropdown-menu show position-absolute end-0 mt-2 shadow-lg border rounded-4 p-3 z-3"
-                :class="authStore.themeMode === 'dark' ? 'dropdown-menu-dark bg-dark border-secondary' : 'bg-white border-light-subtle'"
-                style="min-width: 300px;"
-              >
-                <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-2.5">
-                  <div class="d-flex align-items-center gap-1.5">
-                    <i class="bi bi-sliders text-teal fs-6"></i>
-                    <span class="fw-bold fs-8 text-teal text-uppercase">Bộ Lọc & Chuẩn Quốc Tế</span>
-                  </div>
-                  <button @click="isA11yOpen = false" class="btn-close fs-9"></button>
+              <div class="border-top pt-2.5 mb-2">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="fs-9 fw-bold text-muted text-uppercase">Bộ lọc màn hình chuyên sâu</span>
+                  <button @click="resetDisplayFilters" class="btn btn-link btn-sm p-0 fs-9 text-teal text-decoration-none fw-bold">
+                    <i class="bi bi-arrow-counterclockwise"></i> Đặt lại
+                  </button>
                 </div>
 
-                <!-- Cỡ chữ hiển thị -->
-                <div class="mb-3">
-                  <label class="fs-9 fw-bold text-muted text-uppercase d-block mb-1">Cỡ chữ hiển thị</label>
-                  <div class="btn-group btn-group-sm w-100 p-0.5 rounded-pill bg-body-tertiary border">
-                    <button @click="setFontSize('sm')" class="btn btn-sm rounded-pill fs-9 py-1 fw-bold" :class="currentFontSize === 'sm' ? 'btn-teal text-white' : 'btn-light'">A- Nhỏ</button>
-                    <button @click="setFontSize('md')" class="btn btn-sm rounded-pill fs-9 py-1 fw-bold" :class="currentFontSize === 'md' ? 'btn-teal text-white' : 'btn-light'">Chuẩn</button>
-                    <button @click="setFontSize('lg')" class="btn btn-sm rounded-pill fs-9 py-1 fw-bold" :class="currentFontSize === 'lg' ? 'btn-teal text-white' : 'btn-light'">A+ Lớn</button>
+                <!-- 1. Độ sáng (Brightness: 70 - 130%) -->
+                <div class="mb-2">
+                  <div class="d-flex justify-content-between align-items-center fs-9 mb-0.5">
+                    <span class="fw-semibold">☀️ Độ sáng</span>
+                    <span class="badge bg-secondary-subtle text-secondary px-1.5 py-0.5 rounded-pill">{{ filterBrightness }}%</span>
                   </div>
+                  <input
+                    type="range"
+                    min="70"
+                    max="130"
+                    step="2"
+                    v-model.number="filterBrightness"
+                    @input="applyDisplayFilters"
+                    class="form-range form-range-sm"
+                  />
                 </div>
 
-                <!-- Giọng đọc phát âm -->
-                <div class="mb-3">
-                  <label class="fs-9 fw-bold text-muted text-uppercase d-block mb-1">Giọng đọc tiếng Anh</label>
-                  <div class="btn-group btn-group-sm w-100 p-0.5 rounded-pill bg-body-tertiary border">
-                    <button @click="setVoiceAccent('US')" class="btn btn-sm rounded-pill fs-9 py-1 fw-bold" :class="currentAccent === 'US' ? 'btn-teal text-white' : 'btn-light'">🇺🇸 US (Nữ - Chuẩn)</button>
-                    <button @click="setVoiceAccent('UK')" class="btn btn-sm rounded-pill fs-9 py-1 fw-bold" :class="currentAccent === 'UK' ? 'btn-teal text-white' : 'btn-light'">🇬🇧 UK (Anh - Anh)</button>
+                <!-- 2. Độ tương phản (Contrast: 70 - 150%) -->
+                <div class="mb-2">
+                  <div class="d-flex justify-content-between align-items-center fs-9 mb-0.5">
+                    <span class="fw-semibold">🌓 Độ tương phản</span>
+                    <span class="badge bg-secondary-subtle text-secondary px-1.5 py-0.5 rounded-pill">{{ filterContrast }}%</span>
                   </div>
+                  <input
+                    type="range"
+                    min="70"
+                    max="150"
+                    step="2"
+                    v-model.number="filterContrast"
+                    @input="applyDisplayFilters"
+                    class="form-range form-range-sm"
+                  />
                 </div>
 
-                <div class="border-top pt-2.5 mb-2">
-                  <div class="d-flex justify-content-between align-items-center mb-1">
-                    <span class="fs-9 fw-bold text-muted text-uppercase">Bộ lọc màn hình chuyên sâu</span>
-                    <button @click="resetDisplayFilters" class="btn btn-link btn-sm p-0 fs-9 text-teal text-decoration-none fw-bold">
-                      <i class="bi bi-arrow-counterclockwise"></i> Đặt lại
-                    </button>
+                <!-- 3. Độ ấm / Lọc ánh sáng xanh (Warmth: 0 - 60%) -->
+                <div class="mb-2">
+                  <div class="d-flex justify-content-between align-items-center fs-9 mb-0.5">
+                    <span class="fw-semibold">🍵 Độ ấm (Ánh sáng vàng)</span>
+                    <span class="badge bg-secondary-subtle text-secondary px-1.5 py-0.5 rounded-pill">{{ filterWarmth }}%</span>
                   </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="60"
+                    step="2"
+                    v-model.number="filterWarmth"
+                    @input="applyDisplayFilters"
+                    class="form-range form-range-sm"
+                  />
+                </div>
 
-                  <!-- 1. Độ sáng (Brightness: 70 - 130%) -->
-                  <div class="mb-2">
-                    <div class="d-flex justify-content-between align-items-center fs-9 mb-0.5">
-                      <span class="fw-semibold">☀️ Độ sáng</span>
-                      <span class="badge bg-secondary-subtle text-secondary px-1.5 py-0.5 rounded-pill">{{ filterBrightness }}%</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="70"
-                      max="130"
-                      step="2"
-                      v-model.number="filterBrightness"
-                      @input="applyDisplayFilters"
-                      class="form-range form-range-sm"
-                    />
+                <!-- 4. Độ xám (Grayscale: 0 - 100%) -->
+                <div>
+                  <div class="d-flex justify-content-between align-items-center fs-9 mb-0.5">
+                    <span class="fw-semibold">⚪ Độ xám (Tập trung đọc)</span>
+                    <span class="badge bg-secondary-subtle text-secondary px-1.5 py-0.5 rounded-pill">{{ filterGrayscale }}%</span>
                   </div>
-
-                  <!-- 2. Độ tương phản (Contrast: 70 - 150%) -->
-                  <div class="mb-2">
-                    <div class="d-flex justify-content-between align-items-center fs-9 mb-0.5">
-                      <span class="fw-semibold">🌓 Độ tương phản</span>
-                      <span class="badge bg-secondary-subtle text-secondary px-1.5 py-0.5 rounded-pill">{{ filterContrast }}%</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="70"
-                      max="150"
-                      step="2"
-                      v-model.number="filterContrast"
-                      @input="applyDisplayFilters"
-                      class="form-range form-range-sm"
-                    />
-                  </div>
-
-                  <!-- 3. Độ ấm / Lọc ánh sáng xanh (Warmth: 0 - 60%) -->
-                  <div class="mb-2">
-                    <div class="d-flex justify-content-between align-items-center fs-9 mb-0.5">
-                      <span class="fw-semibold">🍵 Độ ấm (Ánh sáng vàng)</span>
-                      <span class="badge bg-secondary-subtle text-secondary px-1.5 py-0.5 rounded-pill">{{ filterWarmth }}%</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="60"
-                      step="2"
-                      v-model.number="filterWarmth"
-                      @input="applyDisplayFilters"
-                      class="form-range form-range-sm"
-                    />
-                  </div>
-
-                  <!-- 4. Độ xám (Grayscale: 0 - 100%) -->
-                  <div>
-                    <div class="d-flex justify-content-between align-items-center fs-9 mb-0.5">
-                      <span class="fw-semibold">⚪ Độ xám (Tập trung đọc)</span>
-                      <span class="badge bg-secondary-subtle text-secondary px-1.5 py-0.5 rounded-pill">{{ filterGrayscale }}%</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      step="5"
-                      v-model.number="filterGrayscale"
-                      @input="applyDisplayFilters"
-                      class="form-range form-range-sm"
-                    />
-                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    v-model.number="filterGrayscale"
+                    @input="applyDisplayFilters"
+                    class="form-range form-range-sm"
+                  />
                 </div>
               </div>
             </div>
-
-            <!-- Theme Toggle Button -->
-            <button
-              @click="authStore.toggleTheme"
-              class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-              style="width: 36px; height: 36px;"
-              :title="authStore.themeMode === 'light' ? 'Chế độ Tối' : 'Chế độ Sáng'"
-            >
-              <i class="bi" :class="authStore.themeMode === 'light' ? 'bi-moon-stars-fill text-warning' : 'bi-sun-fill text-warning'"></i>
-            </button>
-
-            <!-- AUTH HEADER WIDGET (Google Login Button & Avatar Dropdown) -->
-            <AuthHeaderWidget />
           </div>
+
+          <!-- Theme Toggle Button -->
+          <button
+            @click="authStore.toggleTheme"
+            class="ox-icon-btn"
+            :title="authStore.themeMode === 'light' ? 'Chuyển sang Chế độ Tối' : 'Chuyển sang Chế độ Sáng'"
+            type="button"
+          >
+            <i class="bi" :class="authStore.themeMode === 'light' ? 'bi-moon-stars-fill text-warning' : 'bi-sun-fill text-warning'"></i>
+          </button>
+
+          <!-- AUTH HEADER WIDGET (Google Login Button & Avatar Dropdown) -->
+          <AuthHeaderWidget />
+
+          <!-- Mobile Hamburger Button (D-lg-none) -->
+          <button
+            class="ox-icon-btn d-lg-none"
+            type="button"
+            @click="toggleMobileDrawer"
+            aria-label="Toggle navigation"
+          >
+            <i class="bi bi-list fs-5"></i>
+          </button>
         </div>
       </div>
     </nav>
@@ -469,8 +501,9 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import { useReviewStore } from '@/stores/reviewStore'
 import { useGoogleAuth } from '@/composables/useGoogleAuth'
 import { useToast } from '@/composables/useToast'
 import AuthHeaderWidget from '@/components/AuthHeaderWidget.vue'
@@ -479,9 +512,18 @@ import QuickLookupPopup from '@/components/QuickLookupPopup.vue'
 import AiAssistantModal from '@/components/AiAssistantModal.vue'
 
 const authStore = useAuthStore()
+const reviewStore = useReviewStore()
 const router = useRouter()
+const route = useRoute()
 const toast = useToast()
 const { openGoogleLoginPopup } = useGoogleAuth()
+
+const dueCardsCount = computed(() => reviewStore.dueCardsCount || 0)
+
+const isMoreMenuActive = computed(() => {
+  const morePaths = ['/grammar', '/cefr', '/vocabulary-notebook', '/history', '/dictionary', '/ipa', '/tree', '/stats', '/tips']
+  return morePaths.some(p => route.path.startsWith(p))
+})
 
 const isDropdownOpen = ref(false)
 const dropdownRef = ref(null)

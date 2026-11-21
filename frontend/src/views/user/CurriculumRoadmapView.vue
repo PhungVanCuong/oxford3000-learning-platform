@@ -166,13 +166,13 @@
               </div>
 
               <!-- Scrollable 25 Topics List -->
-              <div class="p-3 overflow-y-auto flex-grow-1 d-flex flex-column gap-2.5" style="background-color: #F8FAFC;">
+              <div class="topic-sidebar-content p-3 overflow-y-auto flex-grow-1 d-flex flex-column gap-2.5">
                 <div
                   v-for="t in filteredTopics"
                   :key="t.id"
                   @click="selectedTopicId = t.id"
                   class="card p-3 rounded-4 border transition-all cursor-pointer topic-item-card"
-                  :class="selectedTopicId === t.id ? 'active-topic-card' : 'bg-white border-light-subtle hover-shadow'"
+                  :class="selectedTopicId === t.id ? 'active-topic-card' : 'bg-card-custom border-light-subtle hover-shadow'"
                 >
                   <div class="d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center gap-3 min-w-0">
@@ -231,15 +231,14 @@
             <!-- Top Banner: 10 bài học • 200 mục từ -->
             <div 
               v-if="currentTopic" 
-              class="p-3.5 p-md-4 rounded-4 mb-4 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 border shadow-xs"
-              style="background-color: #eefaf6; border-color: #a7f3d0 !important;"
+              class="curriculum-topic-banner p-3.5 p-md-4 rounded-4 mb-4 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 border shadow-xs"
             >
               <div class="d-flex align-items-center gap-3">
                 <div class="rounded-3 px-3 py-2 text-white fw-bold fs-7 shadow-xs flex-shrink-0" style="background-color: #00b074;">
                   CHỦ ĐỀ {{ String(currentTopic.order_num).padStart(2, '0') }}
                 </div>
                 <div>
-                  <h4 class="fw-black text-dark mb-0.5">10 bài học • 200 mục từ</h4>
+                  <h4 class="fw-black mb-0.5">10 bài học • 200 mục từ</h4>
                   <p class="text-muted fs-7 mb-0">
                     Mỗi bài học giới thiệu thêm nhiều từ hơn bài trước. (Tiến độ: {{ currentTopic.remembered_terms_count || 0 }}/200 từ)
                   </p>
@@ -257,7 +256,7 @@
             </div>
 
             <!-- ZIGZAG S-CURVE ROADMAP CONTAINER (10 STAGES) -->
-            <div v-if="currentTopic" class="card bg-white rounded-4 border shadow-sm p-4 p-md-5 position-relative mb-4" style="border-color: #E2E8F0;">
+            <div v-if="currentTopic" class="card bg-card-custom rounded-4 border shadow-sm p-4 p-md-5 position-relative mb-4">
               <div class="roadmap-zigzag-timeline position-relative">
                 <div 
                   v-for="(st, idx) in currentTopic.stages" 
@@ -275,12 +274,12 @@
                     >
                       <!-- Circle Node (Attached Left) -->
                       <div 
-                        class="stage-circle-node rounded-circle d-flex flex-column align-items-center justify-content-center flex-shrink-0 bg-white responsive-circle-node"
+                        class="stage-circle-node rounded-circle d-flex flex-column align-items-center justify-content-center flex-shrink-0 responsive-circle-node"
                         :class="getNodeClass(st)"
                         style="width: 68px; height: 68px;"
                       >
                         <i v-if="st.is_completed" class="bi bi-check-lg fs-4 text-success"></i>
-                        <span v-else class="fs-5 fw-black leading-none" :class="isStageUnlocked(st.stage_num) ? 'text-dark' : 'text-muted'">
+                        <span v-else class="fs-5 fw-black leading-none" :class="isStageUnlocked(st.stage_num) ? '' : 'text-muted'">
                           {{ String(st.stage_num).padStart(2, '0') }}
                         </span>
                         <span class="fs-9 fw-bold mt-1 text-uppercase" :class="getNodeLabelClass(st)">
@@ -289,7 +288,7 @@
                       </div>
 
                       <!-- Stage Card -->
-                      <div class="card p-3.5 p-md-4 rounded-4 border bg-white shadow-xs hover-card flex-grow-1" style="border-color: #E2E8F0;">
+                      <div class="card p-3.5 p-md-4 rounded-4 border bg-card-custom shadow-xs hover-card flex-grow-1">
                         <div class="d-flex justify-content-between align-items-center mb-1">
                           <span class="fs-9 fw-bold text-danger text-uppercase letter-spacing-05">
                             {{ st.count }} MỤC TỪ • 200 MỤC TỪ/CHỦ ĐỀ
@@ -298,7 +297,7 @@
                             <i class="bi bi-check-circle-fill me-1"></i>Đạt {{ st.score }}/{{ st.count }} câu
                           </span>
                         </div>
-                        <h5 class="fw-black text-dark mb-1">Bài từ vựng {{ String(st.stage_num).padStart(2, '0') }}</h5>
+                        <h5 class="fw-black mb-1">Bài từ vựng {{ String(st.stage_num).padStart(2, '0') }}</h5>
                         <p class="text-muted fs-7 mb-2 leading-relaxed">
                           Học bằng thẻ lật, sau đó kiểm tra mức độ ghi nhớ.
                         </p>
@@ -340,7 +339,7 @@
                       @click="goToStage(st.stage_num)"
                     >
                       <!-- Stage Card -->
-                      <div class="card p-3.5 p-md-4 rounded-4 border bg-white shadow-xs hover-card flex-grow-1 text-start" style="border-color: #E2E8F0;">
+                      <div class="card p-3.5 p-md-4 rounded-4 border bg-card-custom shadow-xs hover-card flex-grow-1 text-start">
                         <div class="d-flex justify-content-between align-items-center mb-1">
                           <span class="fs-9 fw-bold text-danger text-uppercase letter-spacing-05">
                             {{ st.count }} MỤC TỪ • 200 MỤC TỪ/CHỦ ĐỀ
@@ -349,7 +348,7 @@
                             <i class="bi bi-check-circle-fill me-1"></i>Đạt {{ st.score }}/{{ st.count }} câu
                           </span>
                         </div>
-                        <h5 class="fw-black text-dark mb-1">Bài từ vựng {{ String(st.stage_num).padStart(2, '0') }}</h5>
+                        <h5 class="fw-black mb-1">Bài từ vựng {{ String(st.stage_num).padStart(2, '0') }}</h5>
                         <p class="text-muted fs-7 mb-2 leading-relaxed">
                           Học bằng thẻ lật, sau đó kiểm tra mức độ ghi nhớ.
                         </p>
@@ -363,12 +362,12 @@
 
                       <!-- Circle Node (Attached Right) -->
                       <div 
-                        class="stage-circle-node rounded-circle d-flex flex-column align-items-center justify-content-center flex-shrink-0 bg-white responsive-circle-node"
+                        class="stage-circle-node rounded-circle d-flex flex-column align-items-center justify-content-center flex-shrink-0 responsive-circle-node"
                         :class="getNodeClass(st)"
                         style="width: 68px; height: 68px;"
                       >
                         <i v-if="st.is_completed" class="bi bi-check-lg fs-4 text-success"></i>
-                        <span v-else class="fs-5 fw-black leading-none" :class="isStageUnlocked(st.stage_num) ? 'text-dark' : 'text-muted'">
+                        <span v-else class="fs-5 fw-black leading-none" :class="isStageUnlocked(st.stage_num) ? '' : 'text-muted'">
                           {{ String(st.stage_num).padStart(2, '0') }}
                         </span>
                         <span class="fs-9 fw-bold mt-1 text-uppercase" :class="getNodeLabelClass(st)">
@@ -534,8 +533,12 @@ onMounted(() => {
 <style scoped>
 .active-topic-card {
   border: 2px solid #00b074 !important;
-  background-color: #ffffff !important;
-  box-shadow: 0 4px 14px rgba(0, 176, 116, 0.16) !important;
+  background-color: var(--ox-surface-1, #ffffff) !important;
+  box-shadow: 0 4px 14px rgba(0, 176, 116, 0.25) !important;
+}
+
+:global([data-bs-theme="dark"]) .active-topic-card {
+  background-color: #233331 !important;
 }
 
 .topic-item-card {

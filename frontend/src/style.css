@@ -2,13 +2,83 @@
 @import "bootstrap-icons/font/bootstrap-icons.css";
 
 :root {
-  --primary-teal: #087F75;
-  --primary-teal-dark: #064e40;
-  --primary-teal-light: #00b074;
+  /* Brand Core Accents */
+  --primary-teal: #00b074;
+  --primary-teal-dark: #008055;
+  --primary-teal-light: #10b981;
   --accent-gold: #f59e0b;
-  --bg-warm-cream: #F5F7F8;
+  --accent-blue: #3b82f6;
+
+  /* LIGHT THEME (Soft Off-White, Non-glaring, Elegant) */
+  --ox-bg-main: #F8FAFC;
+  --ox-surface-1: #FFFFFF;
+  --ox-surface-2: #F1F5F9;
+  --ox-surface-3: #E2E8F0;
+  --ox-border: #E2E8F0;
+  --ox-border-subtle: #F1F5F9;
+  --ox-text-main: #1E293B;
+  --ox-text-muted: #64748B;
+  --ox-header-bg: rgba(248, 250, 252, 0.88);
+  --ox-header-border: rgba(0, 176, 116, 0.14);
+  --ox-card-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+  --ox-dropdown-bg: rgba(255, 255, 255, 0.96);
+
+  /* Legacy aliases for compatibility */
+  --bg-warm-cream: #F8FAFC;
   --card-light: #ffffff;
-  --text-dark: #182325;
+  --text-dark: #1E293B;
+}
+
+[data-bs-theme="dark"],
+html[data-bs-theme="dark"] {
+  color-scheme: dark;
+
+  /* DARK THEME (Deep Slate Teal #151e1d as requested) */
+  --ox-bg-main: #151e1d;
+  --ox-surface-1: #1c2826;
+  --ox-surface-2: #233331;
+  --ox-surface-3: #2b3e3c;
+  --ox-border: #283a37;
+  --ox-border-subtle: #1e2c29;
+  --ox-text-main: #F1F5F9;
+  --ox-text-muted: #8FA7A3;
+  --ox-header-bg: rgba(21, 30, 29, 0.90);
+  --ox-header-border: rgba(40, 58, 55, 0.85);
+  --ox-card-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+  --ox-dropdown-bg: rgba(28, 40, 38, 0.96);
+}
+
+/* GLOBAL THEME TRANSITION (Smooth 350ms ease, no flickering / FOUC) */
+body,
+.user-layout,
+.admin-layout,
+.ox-header-navbar,
+.card,
+.modal-content,
+.dropdown-menu,
+.offcanvas,
+.form-control,
+.form-select,
+.input-group-text,
+.ox-nav-link,
+.ox-review-deck-btn,
+.ox-icon-btn,
+.btn-outline-secondary,
+.table {
+  transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+body {
+  background-color: var(--ox-bg-main) !important;
+  color: var(--ox-text-main) !important;
+}
+
+.user-layout,
+.admin-layout,
+main,
+.user-main-content {
+  background-color: var(--ox-bg-main);
+  color: var(--ox-text-main);
 }
 
 html {
@@ -55,8 +125,8 @@ body {
 
 [data-bs-theme="light"] {
   body {
-    background-color: #F5F7F8;
-    color: #182325;
+    background-color: #F8FAFC !important;
+    color: #1E293B !important;
   }
   .bg-card-custom {
     background-color: #ffffff;
@@ -64,36 +134,119 @@ body {
   }
 }
 
-[data-bs-theme="dark"],
-html[data-bs-theme="dark"] {
-  color-scheme: dark;
+/* ==============================================================================
+   DARK MODE COMPREHENSIVE OVERRIDES (#151e1d / #1c2826 / #233331 / #2b3e3c)
+   ============================================================================== */
+[data-bs-theme="dark"] body,
+[data-bs-theme="dark"] .user-layout,
+[data-bs-theme="dark"] .admin-layout,
+[data-bs-theme="dark"] main,
+[data-bs-theme="dark"] .user-main-content {
+  background-color: #151e1d !important;
+  color: #F1F5F9 !important;
 }
 
-[data-bs-theme="dark"] body {
-  background-color: #070d0b !important;
-  color: #f8fafc !important;
-}
-
+[data-bs-theme="dark"] .card,
+[data-bs-theme="dark"] .bg-card-custom,
 [data-bs-theme="dark"] .bg-white,
 [data-bs-theme="dark"] .bg-light,
 [data-bs-theme="dark"] .bg-body,
 [data-bs-theme="dark"] .bg-body-tertiary {
-  background-color: #0d1714 !important;
-  color: #f1f5f9 !important;
+  background-color: #1c2826 !important;
+  border-color: #283a37 !important;
+  color: #F1F5F9 !important;
 }
 
-[data-bs-theme="dark"] .bg-card-custom,
-[data-bs-theme="dark"] .card {
-  background-color: #0d1714 !important;
-  border-color: #1a2e28 !important;
-  color: #f1f5f9 !important;
+[data-bs-theme="dark"] .modal-content,
+[data-bs-theme="dark"] .dropdown-menu,
+[data-bs-theme="dark"] .offcanvas,
+[data-bs-theme="dark"] .mobile-drawer-content {
+  background-color: #1c2826 !important;
+  border-color: #283a37 !important;
+  color: #F1F5F9 !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55) !important;
 }
 
-/* Header Custom Background (Cool soft mint rgb(243, 255, 253) / rgb(238, 250, 248) to avoid harsh white glare or yellowish tint on PC) */
-.navbar-header-custom {
-  background-color: rgb(243, 255, 253) !important;
-  border-bottom: 1px solid rgba(0, 176, 116, 0.16) !important;
-  box-shadow: 0 1px 4px rgba(0, 78, 64, 0.04) !important;
+[data-bs-theme="dark"] .bg-dark {
+  background-color: #1c2826 !important;
+  border-color: #283a37 !important;
+}
+
+/* TOPIC & CURRICULUM BANNER THEME FIX */
+.curriculum-topic-banner {
+  background-color: #eefaf6;
+  border: 1px solid #a7f3d0 !important;
+}
+
+[data-bs-theme="dark"] .curriculum-topic-banner {
+  background-color: #1c2826 !important;
+  border-color: #283a37 !important;
+}
+
+.topic-sidebar-content {
+  background-color: #F8FAFC;
+}
+
+[data-bs-theme="dark"] .topic-sidebar-content {
+  background-color: #1c2826 !important;
+}
+
+[data-bs-theme="dark"] .stage-circle-node {
+  background-color: #1c2826 !important;
+  border-color: #283a37 !important;
+  color: #F1F5F9 !important;
+}
+
+/* ==============================================================================
+   WORLD-CLASS 3-ZONE ABSOLUTE-CENTER HEADER
+   ============================================================================== */
+.ox-header-navbar {
+  background: var(--ox-header-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--ox-header-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  padding: 0.55rem 0;
+  z-index: 1040;
+}
+
+[data-bs-theme="dark"] .ox-header-navbar {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+}
+
+.ox-header-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+@media (max-width: 991px) {
+  .ox-header-grid {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1rem;
+  }
+}
+
+.ox-header-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.ox-logo-wrapper {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.ox-logo-wrapper:hover {
+  transform: scale(1.02);
 }
 
 /* Brand Header Logo Responsive (Transparent 4:1) */
@@ -109,7 +262,7 @@ html[data-bs-theme="dark"] {
 
 .brand-header-logo:hover {
   transform: translateY(-1px) scale(1.02);
-  filter: drop-shadow(0 4px 8px rgba(0, 176, 116, 0.3));
+  filter: drop-shadow(0 4px 8px rgba(0, 176, 116, 0.35));
 }
 
 @media (max-width: 768px) {
@@ -126,20 +279,248 @@ html[data-bs-theme="dark"] {
   }
 }
 
-[data-bs-theme="dark"] .navbar-header-custom,
-[data-bs-theme="dark"] .navbar {
-  background-color: #070d0b !important;
-  border-color: #1a2e28 !important;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4) !important;
+.ox-header-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-[data-bs-theme="dark"] .dropdown-menu,
-[data-bs-theme="dark"] .modal-content,
-[data-bs-theme="dark"] .offcanvas {
-  background-color: #0b1411 !important;
-  border-color: #1e352e !important;
-  color: #f1f5f9 !important;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.75) !important;
+.ox-header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.65rem;
+}
+
+/* MINIMALIST TEXT-ONLY NAVIGATION MENU */
+.ox-nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.25rem 0.4rem;
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--ox-border);
+  border-radius: 999px;
+  list-style: none;
+  margin: 0;
+}
+
+[data-bs-theme="dark"] .ox-nav-menu {
+  background: rgba(0, 0, 0, 0.25);
+  border-color: #283a37;
+}
+
+.ox-nav-item {
+  position: relative;
+  list-style: none;
+}
+
+.ox-nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.42rem 0.95rem;
+  font-size: 0.885rem;
+  font-weight: 500;
+  color: var(--ox-text-muted);
+  text-decoration: none;
+  border-radius: 999px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.ox-nav-link:hover {
+  color: var(--primary-teal);
+  background-color: rgba(0, 176, 116, 0.09);
+}
+
+.ox-nav-link.active {
+  color: var(--primary-teal) !important;
+  font-weight: 600;
+  background-color: rgba(0, 176, 116, 0.15);
+}
+
+/* Subtle Active Glow Dot */
+.ox-nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 2.5px;
+  border-radius: 999px;
+  background: var(--primary-teal);
+  box-shadow: 0 0 8px rgba(0, 176, 116, 0.6);
+}
+
+.ox-chevron-icon {
+  font-size: 10px;
+  margin-left: 4px;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ox-chevron-icon.rotated {
+  transform: rotate(180deg);
+}
+
+/* DROP-DOWN PANE "XEM THÊM" (Glassmorphism & Fade-Slide) */
+.ox-dropdown-pane {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 290px;
+  padding: 0.5rem;
+  border-radius: 1.1rem;
+  z-index: 1050;
+  background: var(--ox-dropdown-bg);
+  border: 1px solid var(--ox-border);
+  box-shadow: var(--ox-card-shadow);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.ox-dropdown-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0.55rem 0.85rem;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: var(--ox-text-main);
+  transition: all 0.18s ease-in-out;
+}
+
+.ox-dropdown-item:hover {
+  background-color: rgba(0, 176, 116, 0.1);
+  color: var(--primary-teal);
+  transform: translateX(3px);
+}
+
+.ox-dropdown-item-title {
+  font-size: 0.885rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.ox-dropdown-item-desc {
+  font-size: 0.75rem;
+  color: var(--ox-text-muted);
+  margin-top: 2px;
+}
+
+.ox-dropdown-divider {
+  height: 1px;
+  background: var(--ox-border);
+  margin: 0.35rem 0.5rem;
+}
+
+/* Dropdown Animation (Fade-in & Slide-down) */
+.ox-dropdown-enter-active,
+.ox-dropdown-leave-active {
+  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ox-dropdown-enter-from,
+.ox-dropdown-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-10px) scale(0.97);
+}
+
+/* RIGHT UTILITIES: BỘ THẺ ÔN TẬP BUTTON */
+.ox-review-deck-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--ox-border);
+  background: var(--ox-surface-1);
+  color: var(--ox-text-main);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.22s ease-in-out;
+  position: relative;
+}
+
+.ox-review-deck-btn:hover {
+  border-color: var(--primary-teal);
+  color: var(--primary-teal);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 176, 116, 0.25);
+}
+
+[data-bs-theme="dark"] .ox-review-deck-btn {
+  background: #1c2826;
+  border-color: #283a37;
+}
+
+[data-bs-theme="dark"] .ox-review-deck-btn:hover {
+  border-color: #00b074;
+}
+
+.ox-deck-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  background: #ef4444;
+  color: #ffffff;
+  animation: pulseBadge 2s infinite;
+}
+
+@keyframes pulseBadge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+/* ICON BUTTONS (THEME TOGGLE, A11Y, HAMBURGER) */
+.ox-icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ox-border);
+  background: var(--ox-surface-1);
+  color: var(--ox-text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.ox-icon-btn:hover {
+  border-color: var(--primary-teal);
+  color: var(--primary-teal);
+  transform: scale(1.05);
+}
+
+[data-bs-theme="dark"] .ox-icon-btn {
+  background: #1c2826;
+  border-color: #283a37;
+}
+
+.ox-mobile-hamburger {
+  background: transparent;
+  border: none;
+  color: var(--ox-text-main);
+  padding: 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 [data-bs-theme="dark"] .table {
