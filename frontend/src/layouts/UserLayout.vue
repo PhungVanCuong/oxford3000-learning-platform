@@ -1,7 +1,7 @@
 <template>
   <div class="user-layout min-vh-100 d-flex flex-column">
     <!-- Navbar matching Image 1 (media_1792672183705_bc785297.png) -->
-    <nav class="navbar navbar-expand-lg border-bottom sticky-top py-2.5 shadow-sm" :class="authStore.themeMode === 'dark' ? 'bg-dark navbar-dark border-secondary' : 'bg-white navbar-light border-light-subtle'" style="z-index: 1040 !important;">
+    <nav class="navbar navbar-expand-lg border-bottom sticky-top py-2.5 shadow-sm navbar-header-custom" :class="authStore.themeMode === 'dark' ? 'navbar-dark border-secondary' : 'navbar-light border-light-subtle'" style="z-index: 1040 !important;">
       <div class="container-fluid px-3 px-md-4 px-xl-5">
         <!-- Brand Logo -->
         <router-link to="/" class="navbar-brand d-flex align-items-center gap-2.5 text-decoration-none">
