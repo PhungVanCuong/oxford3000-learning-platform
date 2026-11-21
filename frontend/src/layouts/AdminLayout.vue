@@ -16,15 +16,19 @@
         </button>
 
         <!-- Brand Icon & Label on Mobile -->
-        <div class="d-flex align-items-center gap-2 shrink-0">
-          <div class="rounded-2 d-flex align-items-center justify-content-center text-white fw-black shadow-2xs" style="width: 32px; height: 32px; background: linear-gradient(135deg, #00b074 0%, #064e40 100%); font-size: 13px;">
-            Ox
-          </div>
+        <router-link to="/" class="d-flex align-items-center gap-2 shrink-0 text-decoration-none" title="Trở về Trang Chủ OxVocab">
+          <img
+            src="/images/branding/favicon-transparent.png"
+            alt="OxVocab"
+            class="rounded-2 shadow-2xs"
+            width="32"
+            height="32"
+          />
           <div class="d-flex flex-column d-md-none">
             <span class="fw-black fs-7 text-teal leading-none">OX ADMIN</span>
             <span class="text-muted fw-semibold" style="font-size: 8.5px;">Quản Trị Viên</span>
           </div>
-        </div>
+        </router-link>
 
         <!-- Breadcrumb info (Desktop only) -->
         <div class="d-none d-md-flex align-items-center gap-2 fs-7 ps-2 border-start">

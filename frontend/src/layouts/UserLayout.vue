@@ -3,17 +3,14 @@
     <!-- Navbar matching Image 1 (media_1792672183705_bc785297.png) -->
     <nav class="navbar navbar-expand-lg border-bottom sticky-top py-2.5 shadow-sm navbar-header-custom" :class="authStore.themeMode === 'dark' ? 'navbar-dark border-secondary' : 'navbar-light border-light-subtle'" style="z-index: 1040 !important;">
       <div class="container-fluid px-3 px-md-4 px-xl-5">
-        <!-- Brand Logo -->
-        <router-link to="/" class="navbar-brand d-flex align-items-center gap-2.5 text-decoration-none">
-          <div class="rounded-3 d-flex align-items-center justify-content-center text-white fw-black shadow-sm" style="width: 42px; height: 42px; background: linear-gradient(135deg, #00b074 0%, #064e40 100%);">
-            <span class="fs-5" style="letter-spacing: -0.5px;">Ox</span>
-          </div>
-          <div class="d-flex flex-column">
-            <span class="fw-black fs-5 tracking-tight text-teal text-uppercase leading-tight" style="letter-spacing: 0.5px;">
-              OXVOCAB<span class="text-success" style="font-size: 11px; vertical-align: top;">™</span>
-            </span>
-            <span class="text-muted d-none d-sm-inline fw-semibold" style="font-size: 10px; letter-spacing: 0.3px;">HỌC TỪ VỰNG & LỘ TRÌNH THÔNG MINH</span>
-          </div>
+        <!-- Brand Logo Header (Logo ngang có chữ, nền trong suốt) -->
+        <router-link to="/" class="navbar-brand d-flex align-items-center text-decoration-none py-0 me-2 me-md-4" title="OxVocab - Quay về trang chủ">
+          <img
+            src="/images/branding/logo-header-transparent.png"
+            alt="OXVOCAB - Học Từ Vựng & Lộ Trình Thông Minh"
+            class="brand-header-logo"
+            loading="eager"
+          />
         </router-link>
 
         <!-- Toggle Button for Mobile (Bấm mở / đóng Drawer trượt toàn màn hình) -->
@@ -333,9 +330,13 @@
       <!-- Drawer Header: Có nút Đóng / Thụt lại menu cực kỳ to rõ -->
       <div class="d-flex justify-content-between align-items-center pb-2.5 border-bottom border-light-subtle mb-3">
         <div class="d-flex align-items-center gap-2">
-          <div class="rounded-3 d-flex align-items-center justify-content-center text-white fw-black shadow-xs" style="width: 34px; height: 34px; background: linear-gradient(135deg, #00b074 0%, #064e40 100%);">
-            <span class="fs-6">Ox</span>
-          </div>
+          <img
+            src="/images/branding/favicon-transparent.png"
+            alt="OxVocab Icon"
+            class="rounded-3 shadow-xs"
+            width="36"
+            height="36"
+          />
           <div>
             <div class="fw-black fs-6 text-teal text-uppercase leading-none">OxVocab™</div>
             <div class="text-muted" style="font-size: 10px;">Menu Học Tập Di Động</div>
