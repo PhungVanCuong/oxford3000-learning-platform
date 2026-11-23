@@ -13,8 +13,17 @@
 /.vscode
 /.zed
 /auth.json
+# Root protection: Monorepo isolation (Backend & Frontend only inside their folders)
 /node_modules
 /vendor
+/resources
+/app
+/routes
+/config
+/database
+/storage
+/bootstrap
+/src
 _ide_helper.php
 Homestead.json
 Homestead.yaml
