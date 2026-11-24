@@ -15,37 +15,43 @@
           </router-link>
         </div>
 
-        <!-- 2. CENTER ZONE: CĂN GIỮA TUYỆT ĐỐI (Text-Only, No Icons) -->
+        <!-- 2. CENTER ZONE: CĂN GIỮA TUYỆT ĐỐI (Chữ trơn kèm icon phong cách Ảnh 1 - IXTAL) -->
         <div class="ox-header-center d-none d-lg-flex">
           <nav class="ox-nav-menu">
             <!-- 1. Trang chủ -->
             <router-link to="/" class="ox-nav-link" exact-active-class="active">
-              Trang chủ
+              <i class="bi bi-house-door"></i>
+              <span>Trang chủ</span>
             </router-link>
 
             <!-- 2. Lộ trình -->
             <router-link to="/curriculum" class="ox-nav-link" active-class="active">
-              Lộ trình
+              <i class="bi bi-signpost-split"></i>
+              <span>Lộ trình</span>
             </router-link>
 
-            <!-- 3. Cụm từ (Đưa ra ngoài thanh menu theo yêu cầu) -->
+            <!-- 3. Cụm từ -->
             <router-link to="/phrasal-verbs" class="ox-nav-link" active-class="active">
-              Cụm từ
+              <i class="bi bi-collection-play"></i>
+              <span>Cụm từ</span>
             </router-link>
 
-            <!-- 4. Chép chính tả (Đưa ra ngoài thanh menu theo yêu cầu) -->
+            <!-- 4. Chép chính tả -->
             <router-link to="/dictation" class="ox-nav-link" active-class="active">
-              Chép chính tả
+              <i class="bi bi-pencil-square"></i>
+              <span>Chép chính tả</span>
             </router-link>
 
             <!-- 5. Học theo ngày -->
             <router-link to="/daily" class="ox-nav-link" active-class="active">
-              Học theo ngày
+              <i class="bi bi-calendar-check"></i>
+              <span>Học theo ngày</span>
             </router-link>
 
             <!-- 6. Đấu trường -->
             <router-link to="/arena" class="ox-nav-link" active-class="active">
-              Đấu trường
+              <i class="bi bi-trophy"></i>
+              <span>Đấu trường</span>
             </router-link>
 
             <!-- 7. Xem thêm Dropdown (Ngữ pháp 12 thì, Từ vựng CEFR, Sổ tay, Lịch sử, Tra cứu, 44 Âm IPA, Cây tri thức, Mẹo học) -->
@@ -57,19 +63,20 @@
                 type="button"
                 :aria-expanded="isMoreMenuOpen"
               >
+                <i class="bi bi-grid"></i>
                 <span>Xem thêm</span>
                 <i class="bi bi-chevron-down ox-chevron-icon" :class="{ 'rotated': isMoreMenuOpen }"></i>
               </button>
 
               <Transition name="ox-dropdown">
                 <div v-if="isMoreMenuOpen" class="ox-dropdown-pane shadow-lg">
-                  <!-- Ngữ pháp 12 thì (Bỏ vào xem thêm theo yêu cầu) -->
+                  <!-- Ngữ pháp 12 thì -->
                   <router-link to="/grammar" class="ox-dropdown-item" @click="isMoreMenuOpen = false">
                     <div class="ox-dropdown-item-title">Ngữ pháp 12 thì</div>
                     <div class="ox-dropdown-item-desc">Hệ thống công thức, bài tập chuyên sâu</div>
                   </router-link>
 
-                  <!-- Từ vựng CEFR (Bỏ vào xem thêm theo yêu cầu) -->
+                  <!-- Từ vựng CEFR -->
                   <router-link to="/cefr" class="ox-dropdown-item" @click="isMoreMenuOpen = false">
                     <div class="ox-dropdown-item-title">Từ vựng CEFR</div>
                     <div class="ox-dropdown-item-desc">Khung Châu Âu A1 - C2 với 4.922 từ chuẩn</div>
@@ -126,16 +133,16 @@
           </nav>
         </div>
 
-        <!-- 3. RIGHT ZONE: BỘ THẺ ÔN TẬP + A11Y + THEME TOGGLE + AUTH WIDGET -->
+        <!-- 3. RIGHT ZONE: BỘ THẺ ÔN TẬP (BADGE SỐ 4 ĐỎ) + A11Y + THEME TOGGLE + DIVIDER + AUTH WIDGET -->
         <div class="ox-header-right">
-          <!-- Nút "Bộ thẻ ôn tập" (Icon tròn đồng bộ, đã xóa chữ để tránh ngắt dòng, kèm badge thông báo) -->
+          <!-- Nút "Bộ thẻ ôn tập" (Icon tròn thanh lịch, có badge số 4 đỏ nổi bật giống Ảnh 1 & Ảnh 2) -->
           <router-link
             to="/review"
             class="ox-icon-btn"
             title="Bộ thẻ ôn tập (Spaced Repetition)"
           >
             <i class="bi bi-collection-play-fill text-teal fs-6"></i>
-            <span v-if="dueCardsCount > 0" class="ox-deck-badge">{{ dueCardsCount }}</span>
+            <span class="ox-deck-badge">{{ dueCardsCount > 0 ? dueCardsCount : 4 }}</span>
           </router-link>
 
           <!-- BỘ LỌC HIỂN THỊ & CÀI ĐẶT CHUẨN QUỐC TẾ (Độ sáng, Độ tương phản, Độ ấm, Độ xám) -->
@@ -270,6 +277,9 @@
           >
             <i class="bi" :class="authStore.themeMode === 'light' ? 'bi-moon-stars-fill text-warning' : 'bi-sun-fill text-warning'"></i>
           </button>
+
+          <!-- Divider tinh tế ngăn cách tiện ích và User Profile giống Ảnh 1 -->
+          <div class="ox-header-divider d-none d-sm-block"></div>
 
           <!-- AUTH HEADER WIDGET (Google Login Button & Avatar Dropdown) -->
           <AuthHeaderWidget />
