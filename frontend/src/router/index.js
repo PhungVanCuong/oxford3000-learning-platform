@@ -25,6 +25,7 @@ import ReviewSpacedRepetitionView from '@/views/user/ReviewSpacedRepetitionView.
 import HistoryStudyView from '@/views/user/HistoryStudyView.vue'
 import VocabularyNotebookView from '@/views/user/VocabularyNotebookView.vue'
 import DictationView from '@/views/user/DictationView.vue'
+import NotFoundView from '@/views/NotFoundView.vue'
 
 // Admin Views
 import AdminDashboardView from '@/views/admin/AdminDashboardView.vue'
@@ -71,7 +72,8 @@ const routes = [
       { path: 'history', name: 'history', component: HistoryStudyView },
       { path: 'dictation', name: 'dictation', component: DictationView },
       { path: 'dictation/:topicId', name: 'dictation-topic', component: DictationView },
-      { path: 'notebook', redirect: '/review' }, // Sổ tay cũ chuyển hướng sang Bộ thẻ ôn tập
+      { path: 'vocabulary-notebook', name: 'vocabulary-notebook', component: VocabularyNotebookView },
+      { path: 'notebook', redirect: '/vocabulary-notebook' },
       { path: 'profile', name: 'profile', component: ProfileView },
     ],
   },
@@ -230,8 +232,14 @@ const routes = [
   { path: '/forgot-password', name: 'forgot-password', component: ForgotPasswordView },
   { path: '/auth/google/callback', name: 'google-callback', component: GoogleCallbackView },
 
-  // Catch-all redirect to Home
-  { path: '/:pathMatch(.*)*', redirect: '/' },
+  // Catch-all 404 Route (Biển báo đường dẫn bị lỗi kèm nút quay lại trang chủ)
+  {
+    path: '/:pathMatch(.*)*',
+    component: UserLayout,
+    children: [
+      { path: '', name: 'not-found', component: NotFoundView }
+    ]
+  },
 ]
 
 const router = createRouter({

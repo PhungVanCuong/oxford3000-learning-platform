@@ -15,42 +15,36 @@
           </router-link>
         </div>
 
-        <!-- 2. CENTER ZONE: CĂN GIỮA TUYỆT ĐỐI (Chữ trơn kèm icon phong cách Ảnh 1 - IXTAL) -->
+        <!-- 2. CENTER ZONE: CĂN GIỮA TUYỆT ĐỐI (Chữ trơn không icon, khoảng cách thoáng rộng) -->
         <div class="ox-header-center d-none d-lg-flex">
           <nav class="ox-nav-menu">
             <!-- 1. Trang chủ -->
             <router-link to="/" class="ox-nav-link" exact-active-class="active">
-              <i class="bi bi-house-door"></i>
               <span>Trang chủ</span>
             </router-link>
 
             <!-- 2. Lộ trình -->
             <router-link to="/curriculum" class="ox-nav-link" active-class="active">
-              <i class="bi bi-signpost-split"></i>
               <span>Lộ trình</span>
             </router-link>
 
             <!-- 3. Cụm từ -->
             <router-link to="/phrasal-verbs" class="ox-nav-link" active-class="active">
-              <i class="bi bi-collection-play"></i>
               <span>Cụm từ</span>
             </router-link>
 
             <!-- 4. Chép chính tả -->
             <router-link to="/dictation" class="ox-nav-link" active-class="active">
-              <i class="bi bi-pencil-square"></i>
               <span>Chép chính tả</span>
             </router-link>
 
             <!-- 5. Học theo ngày -->
             <router-link to="/daily" class="ox-nav-link" active-class="active">
-              <i class="bi bi-calendar-check"></i>
               <span>Học theo ngày</span>
             </router-link>
 
             <!-- 6. Đấu trường -->
             <router-link to="/arena" class="ox-nav-link" active-class="active">
-              <i class="bi bi-trophy"></i>
               <span>Đấu trường</span>
             </router-link>
 
@@ -63,7 +57,6 @@
                 type="button"
                 :aria-expanded="isMoreMenuOpen"
               >
-                <i class="bi bi-grid"></i>
                 <span>Xem thêm</span>
                 <i class="bi bi-chevron-down ox-chevron-icon" :class="{ 'rotated': isMoreMenuOpen }"></i>
               </button>
