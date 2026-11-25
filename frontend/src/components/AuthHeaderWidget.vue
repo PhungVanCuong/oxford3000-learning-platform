@@ -34,7 +34,7 @@
         title="Điểm kinh nghiệm tích lũy"
       >
         <span class="ox-xp-icon">⚡</span>
-        <span class="ox-xp-text">{{ authStore.user?.xp_points || 4970 }} XP</span>
+        <span class="ox-xp-text">{{ authStore.user?.xp_points ?? 0 }} XP</span>
       </div>
 
       <!-- Huy hiệu chức vụ (Nếu là Admin view) -->
@@ -126,13 +126,22 @@
               </router-link>
 
               <router-link
-                to="/roadmap"
+                to="/cefr"
                 @click="isDropdownOpen = false"
                 class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2"
                 :class="authStore.themeMode === 'dark' ? 'text-white' : 'text-dark-emphasis'"
               >
-                <i class="bi bi-map-fill text-teal fs-6"></i>
-                <span>Lộ trình Từ Vựng CEFR</span>
+                <i class="bi bi-award-fill text-teal fs-6"></i>
+                <span>Từ vựng CEFR (A1-C2)</span>
+              </router-link>
+              <router-link
+                to="/curriculum"
+                @click="isDropdownOpen = false"
+                class="dropdown-item fs-7 py-2 d-flex align-items-center gap-2"
+                :class="authStore.themeMode === 'dark' ? 'text-white' : 'text-dark-emphasis'"
+              >
+                <i class="bi bi-signpost-split-fill text-success fs-6"></i>
+                <span>Lộ trình 25 Chủ đề</span>
               </router-link>
 
               <router-link

@@ -211,17 +211,35 @@
 
         <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
           <button @click="showModal = false" type="button" class="btn btn-outline-secondary rounded-pill px-4">Hủy</button>
-          <button type="submit" class="btn btn-teal text-white rounded-pill px-4 fw-bold">
-            <i class="bi bi-check-lg me-1"></i> Lưu từ vựng
+          <button type="submit" class="btn btn-teal text-white rounded-pill px-4 fw-bold" :disabled="isSaving">
+            <span v-if="isSaving" class="spinner-border spinner-border-sm me-1"></span>
+            <i v-else class="bi bi-check-lg me-1"></i> Lưu & Đồng bộ CEFR
           </button>
         </div>
       </form>
+    </BaseModal>
+
+    <BaseModal
+      v-model="showDeleteConfirm"
+      title="Xác nhận Xóa Từ CEFR"
+      icon="bi bi-trash-fill"
+      maxWidth="440px"
+      hideFooter
+    >
+      <p class="fs-7 mb-3 text-dark-emphasis">
+        Bạn có chắc chắn muốn xóa từ <strong>"{{ pendingDeleteItem?.word }}"</strong> khỏi cấp độ {{ pendingDeleteItem?.level_code }}?
+      </p>
+      <div class="d-flex justify-content-end gap-2">
+        <button @click="showDeleteConfirm = false" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Hủy</button>
+        <button @click="confirmDeleteWord" class="btn btn-danger btn-sm rounded-pill px-4 fw-bold">Xóa ngay</button>
+      </div>
     </BaseModal>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 import SmartPagination from '@/components/SmartPagination.vue'
 import BaseModal from '@/components/BaseModal.vue'
 import { useToast } from '@/composables/useToast'
@@ -236,8 +254,9 @@ import c1Data from '@/data/cefr/c1.json'
 import c2Data from '@/data/cefr/c2.json'
 
 const manifest = manifestData
+const toast = useToast()
 
-// Flatten all CEFR words into a consolidated array with level_code and lesson_number
+// Normalize CEFR JSON fields (term/pattern/definition -> word/phonetic_us/meaning_vi)
 const flattenLevel = (levelData, levelCode) => {
   const result = []
   if (!levelData?.lessons) return result
@@ -245,6 +264,9 @@ const flattenLevel = (levelData, levelCode) => {
     (l.words || []).forEach(w => {
       result.push({
         ...w,
+        word: w.word || w.term || '',
+        phonetic_us: w.phonetic_us || w.pattern || '',
+        meaning_vi: w.meaning_vi || w.definition || '',
         level_code: levelCode,
         lesson_number: l.lesson_number,
         lesson_title: l.title
@@ -254,9 +276,7 @@ const flattenLevel = (levelData, levelCode) => {
   return result
 }
 
-// Initial combined dataset with localStorage overrides if modified
-const savedOverrides = JSON.parse(localStorage.getItem('oxford_admin_cefr_words') || 'null')
-const initialWords = savedOverrides || [
+const baseWords = [
   ...flattenLevel(a1Data, 'A1'),
   ...flattenLevel(a2Data, 'A2'),
   ...flattenLevel(b1Data, 'B1'),
@@ -265,13 +285,32 @@ const initialWords = savedOverrides || [
   ...flattenLevel(c2Data, 'C2'),
 ]
 
-const words = ref(initialWords)
+const overridesState = ref({
+  custom_words: [],
+  updated_words: [],
+  deleted_ids: [],
+})
+
+const applyOverrides = (ov) => {
+  const deletedSet = new Set(ov.deleted_ids || [])
+  const updatedMap = new Map((ov.updated_words || []).map(w => [String(w.id), w]))
+  const merged = baseWords
+    .filter(w => !deletedSet.has(String(w.id)))
+    .map(w => updatedMap.has(String(w.id)) ? { ...w, ...updatedMap.get(String(w.id)) } : w)
+  const customs = (ov.custom_words || []).filter(w => !deletedSet.has(String(w.id)))
+  return [...customs, ...merged]
+}
+
+const words = ref(applyOverrides(overridesState.value))
 const searchQuery = ref('')
 const selectedLevel = ref('all')
 const selectedLesson = ref('all')
+const isSaving = ref(false)
+const showDeleteConfirm = ref(false)
+const pendingDeleteItem = ref(null)
 
 const currentPage = ref(1)
-const pageSize = ref(50) // Mặc định 50 mục/trang
+const pageSize = ref(50)
 
 const showModal = ref(false)
 const isEditing = ref(false)
@@ -328,37 +367,91 @@ const openModal = (item) => {
   showModal.value = true
 }
 
-const toast = useToast()
+const syncOverridesToBackend = async () => {
+  localStorage.setItem('oxford_cefr_overrides', JSON.stringify(overridesState.value))
+  await axios.post('/api/admin/cefr/overrides', overridesState.value)
+}
 
-const saveWord = () => {
+const saveWord = async () => {
   if (!form.value.word || !form.value.meaning_vi) {
     toast.warning('Vui lòng nhập từ tiếng Anh và nghĩa tiếng Việt', 'Thiếu thông tin')
     return
   }
 
-  if (isEditing.value) {
-    const idx = words.value.findIndex(w => (w.id && w.id === form.value.id) || w.word === form.value.word)
-    if (idx !== -1) {
-      words.value[idx] = { ...words.value[idx], ...form.value }
+  isSaving.value = true
+  try {
+    if (isEditing.value && form.value.id) {
+      const idStr = String(form.value.id)
+      const cIdx = overridesState.value.custom_words.findIndex(w => String(w.id) === idStr)
+      if (cIdx !== -1) {
+        overridesState.value.custom_words[cIdx] = { ...overridesState.value.custom_words[cIdx], ...form.value }
+      } else {
+        const uIdx = overridesState.value.updated_words.findIndex(w => String(w.id) === idStr)
+        if (uIdx !== -1) {
+          overridesState.value.updated_words[uIdx] = { ...form.value }
+        } else {
+          overridesState.value.updated_words.push({ ...form.value })
+        }
+      }
+    } else {
+      overridesState.value.custom_words.unshift({
+        ...form.value,
+        id: `cefr_custom_${Date.now()}`,
+        term: form.value.word,
+        pattern: form.value.phonetic_us,
+        definition: form.value.meaning_vi,
+      })
     }
-  } else {
-    words.value.unshift({
-      ...form.value,
-      id: `cefr_custom_${Date.now()}`
-    })
-  }
 
-  localStorage.setItem('oxford_admin_cefr_words', JSON.stringify(words.value.slice(0, 500)))
-  showModal.value = false
-  toast.success('Đã lưu từ vựng CEFR thành công!', 'Quản trị CEFR')
+    words.value = applyOverrides(overridesState.value)
+    await syncOverridesToBackend()
+    showModal.value = false
+    toast.success('Đã lưu & đồng bộ từ vựng CEFR thành công!', 'Quản trị CEFR')
+  } catch (err) {
+    toast.error('Lỗi lưu lên máy chủ: ' + (err.response?.data?.message || err.message), 'Lỗi hệ thống')
+  } finally {
+    isSaving.value = false
+  }
 }
 
 const deleteWord = (item) => {
-  if (confirm(`Bạn có chắc chắn muốn xóa từ "${item.word}" khỏi cấp độ ${item.level_code}?`)) {
-    words.value = words.value.filter(w => w !== item && w.id !== item.id)
-    toast.success('Đã xóa từ vựng thành công!', 'Quản trị CEFR')
+  pendingDeleteItem.value = item
+  showDeleteConfirm.value = true
+}
+
+const confirmDeleteWord = async () => {
+  if (!pendingDeleteItem.value) return
+  const item = pendingDeleteItem.value
+  const idStr = String(item.id)
+  overridesState.value.custom_words = overridesState.value.custom_words.filter(w => String(w.id) !== idStr)
+  overridesState.value.updated_words = overridesState.value.updated_words.filter(w => String(w.id) !== idStr)
+  if (!overridesState.value.deleted_ids.includes(idStr)) {
+    overridesState.value.deleted_ids.push(idStr)
+  }
+  words.value = applyOverrides(overridesState.value)
+  showDeleteConfirm.value = false
+  pendingDeleteItem.value = null
+  try {
+    await syncOverridesToBackend()
+    toast.success('Đã xóa & đồng bộ từ vựng thành công!', 'Quản trị CEFR')
+  } catch (err) {
+    toast.error('Lỗi đồng bộ xóa lên máy chủ.', 'Lỗi hệ thống')
   }
 }
+
+onMounted(async () => {
+  try {
+    const res = await axios.get('/api/cefr/overrides')
+    if (res.data?.data) {
+      overridesState.value = {
+        custom_words: res.data.data.custom_words || [],
+        updated_words: res.data.data.updated_words || [],
+        deleted_ids: res.data.data.deleted_ids || [],
+      }
+      words.value = applyOverrides(overridesState.value)
+    }
+  } catch (e) {}
+})
 </script>
 
 <style scoped>

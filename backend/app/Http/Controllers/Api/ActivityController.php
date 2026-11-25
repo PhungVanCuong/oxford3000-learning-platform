@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use App\Models\User;
 use App\Models\UserStudyLog;
 use App\Models\UserVocabularyProgress;
@@ -101,13 +102,10 @@ class ActivityController extends Controller
         }
 
         $filteredLogs = $query->get();
-        $timeSpentMinutes = $filteredLogs->sum('minutes_spent');
-        $earnedXp = $filteredLogs->sum('xp_earned');
-
-        if ($filteredLogs->isEmpty() && $range === 'today' && $user && $user->streak_days > 0) {
-            $timeSpentMinutes = 15;
-            $earnedXp = 45;
-        }
+        $timeSpentMinutes = (int) $filteredLogs->sum('minutes_spent');
+        $earnedXp = (int) $filteredLogs->sum('xp_earned');
+        $sessionsCount = (int) $filteredLogs->sum('exercises_done');
+        $wordsLearnedCount = (int) $filteredLogs->sum('words_learned');
 
         return response()->json([
             'status' => 'success',
@@ -128,8 +126,191 @@ class ActivityController extends Controller
                     'range' => $range,
                     'time_minutes' => $timeSpentMinutes,
                     'earned_xp' => $earnedXp,
+                    'sessions_count' => $sessionsCount,
+                    'words_learned' => $wordsLearnedCount,
                 ],
             ],
+        ]);
+    }
+
+    /**
+     * Get Tree care state for today
+     */
+    public function getTreeState(Request $request)
+    {
+        $user = $this->resolveCurrentUser($request);
+        if (!$user) {
+            return response()->json(['status' => 'success', 'data' => [
+                'watered_today' => false,
+                'dug_today' => false,
+                'fertilized_today' => false,
+                'harvested_slots' => [],
+            ]]);
+        }
+
+        $today = Carbon::now()->toDateString();
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'watered_today' => (bool) Cache::get("tree_water_{$user->id}_{$today}", false),
+                'dug_today' => (bool) Cache::get("tree_dig_{$user->id}_{$today}", false),
+                'fertilized_today' => (bool) Cache::get("tree_fertilize_{$user->id}_{$today}", false),
+                'harvested_slots' => Cache::get("tree_harvest_{$user->id}_{$today}", []),
+            ],
+        ]);
+    }
+
+    /**
+     * Persist user study/tree actions (Knowledge Tree care, CEFR Quiz, Study minutes)
+     */
+    public function logStudyAction(Request $request)
+    {
+        $user = $this->resolveCurrentUser($request);
+        if (!$user) {
+            return response()->json(['status' => 'error', 'message' => 'Bạn cần đăng nhập để lưu tiến độ.'], 401);
+        }
+
+        $validated = $request->validate([
+            'action' => 'required|string|in:tree_water,tree_dig,tree_fertilize,tree_harvest,cefr_quiz,vocab_study',
+            'xp_delta' => 'nullable|integer|min:0|max:500',
+            'minutes' => 'nullable|integer|min:0|max:120',
+            'words_count' => 'nullable|integer|min:0|max:200',
+            'slot_id' => 'nullable|integer|min:0|max:50',
+        ]);
+
+        $today = Carbon::now()->toDateString();
+        $action = $validated['action'];
+        $xpAwarded = 0;
+        $alreadyDone = false;
+
+        if (in_array($action, ['tree_water', 'tree_dig', 'tree_fertilize'], true)) {
+            $cacheKey = "{$action}_{$user->id}_{$today}";
+            if (Cache::get($cacheKey)) {
+                $alreadyDone = true;
+            } else {
+                Cache::put($cacheKey, true, now()->endOfDay());
+                $xpAwarded = match ($action) {
+                    'tree_water' => 5,
+                    'tree_dig' => 10,
+                    'tree_fertilize' => 25,
+                };
+            }
+        } elseif ($action === 'tree_harvest') {
+            $harvestKey = "tree_harvest_{$user->id}_{$today}";
+            $slots = Cache::get($harvestKey, []);
+            $slotId = $validated['slot_id'] ?? null;
+            if ($slotId !== null) {
+                if (in_array($slotId, $slots, true)) {
+                    $alreadyDone = true;
+                } else {
+                    $slots[] = $slotId;
+                    Cache::put($harvestKey, $slots, now()->endOfDay());
+                    $xpAwarded = 150;
+                }
+            } else {
+                $newCount = max(1, min(6, (int) ($validated['words_count'] ?? 1)));
+                for ($i = 1; $i <= 6 && $newCount > 0; $i++) {
+                    if (!in_array($i, $slots, true)) {
+                        $slots[] = $i;
+                        $xpAwarded += 150;
+                        $newCount--;
+                    }
+                }
+                Cache::put($harvestKey, $slots, now()->endOfDay());
+            }
+        } else {
+            $xpAwarded = (int) ($validated['xp_delta'] ?? 0);
+        }
+
+        if ($xpAwarded > 0) {
+            $user->xp_points = ($user->xp_points ?? 0) + $xpAwarded;
+            if (!$user->last_study_date || $user->last_study_date->toDateString() !== $today) {
+                $yesterday = Carbon::yesterday()->toDateString();
+                if ($user->last_study_date && $user->last_study_date->toDateString() === $yesterday) {
+                    $user->streak_days = ($user->streak_days ?? 0) + 1;
+                } elseif (!$user->last_study_date || ($user->streak_days ?? 0) === 0) {
+                    $user->streak_days = 1;
+                }
+                $user->last_study_date = $today;
+            }
+            $user->save();
+        }
+
+        $log = UserStudyLog::firstOrNew([
+            'user_id' => $user->id,
+            'study_date' => $today,
+        ]);
+        $log->xp_earned = ($log->xp_earned ?? 0) + $xpAwarded;
+        $log->minutes_spent = ($log->minutes_spent ?? 0) + (int) ($validated['minutes'] ?? ($xpAwarded > 0 ? 1 : 0));
+        $log->words_learned = ($log->words_learned ?? 0) + (int) ($validated['words_count'] ?? 0);
+        $log->exercises_done = ($log->exercises_done ?? 0) + 1;
+        $log->save();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'already_done' => $alreadyDone,
+                'xp_awarded' => $xpAwarded,
+                'total_xp' => $user->xp_points,
+                'streak_days' => $user->streak_days,
+            ],
+        ]);
+    }
+
+    /**
+     * Get personal notebook words for authenticated user
+     */
+    public function getNotebook(Request $request)
+    {
+        $user = $this->resolveCurrentUser($request);
+        if (!$user) {
+            return response()->json(['status' => 'success', 'data' => []]);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => is_array($user->notebook_words_json) ? $user->notebook_words_json : [],
+        ]);
+    }
+
+    /**
+     * Sync personal notebook words for authenticated user
+     */
+    public function syncNotebook(Request $request)
+    {
+        $user = $this->resolveCurrentUser($request);
+        if (!$user) {
+            return response()->json(['status' => 'error', 'message' => 'Bạn cần đăng nhập để đồng bộ sổ tay.'], 401);
+        }
+
+        $validated = $request->validate([
+            'words' => 'required|array|max:2000',
+        ]);
+
+        $user->notebook_words_json = array_values($validated['words']);
+        $user->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Đã đồng bộ Sổ tay từ vựng lên hệ thống.',
+            'data' => $user->notebook_words_json,
+        ]);
+    }
+
+    /**
+     * Public CEFR custom overrides created/edited by Admins
+     */
+    public function getCefrOverrides()
+    {
+        $data = \App\Models\AppSetting::getJson('cefr_word_overrides', [
+            'custom_words' => [],
+            'updated_words' => [],
+            'deleted_ids' => [],
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $data,
         ]);
     }
 

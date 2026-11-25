@@ -8,6 +8,9 @@ use App\Models\User;
 use App\Models\Vocabulary;
 use App\Models\Topic;
 use App\Models\Grammar;
+use App\Models\GrammarQuestion;
+use App\Models\AppSetting;
+use Illuminate\Support\Str;
 use App\Models\QuizHistory;
 use App\Models\UserVocabularyProgress;
 use App\Models\CurriculumTopic;
@@ -475,6 +478,8 @@ class AdminController extends Controller
             ->pluck('total', 'role')
             ->toArray();
 
+        $roleDefaults = User::getRoleDefaultsMap();
+
         $roles = [
             [
                 'key' => 'admin',
@@ -483,11 +488,7 @@ class AdminController extends Controller
                 'icon' => 'bi-shield-shaded',
                 'description' => 'Toàn quyền điều hành toàn bộ hệ thống, quản lý cơ sở dữ liệu, phân quyền tài khoản, reset tiến độ và giám sát máy chủ.',
                 'user_count' => $roleCounts['admin'] ?? 0,
-                'default_permissions' => [
-                    'manage_vocab', 'ai_generation', 'manage_curriculum', 
-                    'manage_phrases', 'manage_users', 'manage_roles', 
-                    'reset_progress', 'view_reports', 'view_students', 'view_student_progress'
-                ],
+                'default_permissions' => $roleDefaults['admin'] ?? [],
             ],
             [
                 'key' => 'moderator',
@@ -496,10 +497,7 @@ class AdminController extends Controller
                 'icon' => 'bi-pencil-square',
                 'description' => 'Phụ trách kiểm duyệt nội dung học tập, quản lý lộ trình 25 chủ đề, biên tập câu hỏi trắc nghiệm và cụm từ.',
                 'user_count' => $roleCounts['moderator'] ?? 0,
-                'default_permissions' => [
-                    'manage_vocab', 'ai_generation', 'manage_curriculum', 
-                    'manage_phrases', 'view_reports'
-                ],
+                'default_permissions' => $roleDefaults['moderator'] ?? [],
             ],
             [
                 'key' => 'editor',
@@ -508,9 +506,7 @@ class AdminController extends Controller
                 'icon' => 'bi-journal-code',
                 'description' => 'Chuyên môn biên soạn nghĩa tiếng Việt, phiên âm IPA, ví dụ thực tế và tra cứu từ vựng Oxford.',
                 'user_count' => $roleCounts['editor'] ?? 0,
-                'default_permissions' => [
-                    'manage_vocab', 'ai_generation', 'manage_phrases'
-                ],
+                'default_permissions' => $roleDefaults['editor'] ?? [],
             ],
             [
                 'key' => 'tutor',
@@ -519,9 +515,7 @@ class AdminController extends Controller
                 'icon' => 'bi-person-badge',
                 'description' => 'Theo dõi quá trình học tập của học viên, giám sát số từ đã thuộc, chuỗi ngày streak và giải đáp thắc mắc.',
                 'user_count' => $roleCounts['tutor'] ?? 0,
-                'default_permissions' => [
-                    'view_students', 'view_student_progress', 'view_reports'
-                ],
+                'default_permissions' => $roleDefaults['tutor'] ?? [],
             ],
             [
                 'key' => 'user',
@@ -530,9 +524,7 @@ class AdminController extends Controller
                 'icon' => 'bi-mortarboard',
                 'description' => 'Truy cập toàn bộ 3.000 từ vựng Oxford, 25 chủ đề thực chiến, luyện phát âm microphone và làm bài kiểm tra.',
                 'user_count' => $roleCounts['user'] ?? 0,
-                'default_permissions' => [
-                    'learn_curriculum', 'learn_daily', 'practice_voice', 'bookmark_words'
-                ],
+                'default_permissions' => $roleDefaults['user'] ?? [],
             ],
         ];
 
@@ -556,7 +548,7 @@ class AdminController extends Controller
                 'description' => 'Lưu từ cần ôn tập vào danh mục cá nhân và tra cứu nhanh.',
                 'category' => 'Từ vựng & AI',
             ],
-            // Lộ trình & Cụm từ
+            // Lộ trình & Cụm từ & Ngữ pháp
             [
                 'key' => 'manage_curriculum',
                 'name' => 'Quản lý 25 chủ đề lộ trình & 200 câu trắc nghiệm',
@@ -564,9 +556,21 @@ class AdminController extends Controller
                 'category' => 'Lộ trình & Cụm từ',
             ],
             [
+                'key' => 'manage_grammar',
+                'name' => 'Quản lý chuyên đề Ngữ pháp & Câu hỏi ôn tập',
+                'description' => 'Thêm, sửa, xóa lý thuyết các thì và chuyên đề ngữ pháp trong hệ thống.',
+                'category' => 'Lộ trình & Cụm từ',
+            ],
+            [
                 'key' => 'manage_phrases',
                 'name' => 'Quản lý cụm từ & Phrasal Verbs',
                 'description' => 'Thêm mới và cập nhật thành ngữ, cụm động từ trong hệ thống.',
+                'category' => 'Lộ trình & Cụm từ',
+            ],
+            [
+                'key' => 'manage_arena',
+                'name' => 'Quản lý Đấu trường Quiz & Phòng thi trực tiếp',
+                'description' => 'Kiểm soát phòng thi Đấu trường, đóng hoặc xóa phòng vi phạm.',
                 'category' => 'Lộ trình & Cụm từ',
             ],
             [
@@ -621,6 +625,164 @@ class AdminController extends Controller
                 'roles' => $roles,
                 'permissions' => $permissions,
             ],
+        ]);
+    }
+
+    /**
+     * Save Role Package default permissions to persistent storage
+     */
+    public function updateRolePackage(Request $request, string $roleKey)
+    {
+        $this->authorizePermission($request, 'manage_roles');
+
+        $allowedRoles = array_keys(User::$roleDefaultPermissions);
+        if (!in_array($roleKey, $allowedRoles, true)) {
+            return response()->json(['status' => 'error', 'message' => 'Gói chức vụ không hợp lệ.'], 422);
+        }
+
+        $validated = $request->validate([
+            'permissions' => 'required|array',
+            'permissions.*' => 'string',
+        ]);
+
+        $overrides = AppSetting::getJson('rbac_role_packages', []);
+        $overrides[$roleKey] = array_values(array_unique($validated['permissions']));
+        AppSetting::setJson('rbac_role_packages', $overrides);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => "Đã lưu cấu hình gói chức vụ [{$roleKey}] vào hệ thống!",
+            'data' => [
+                'role' => $roleKey,
+                'default_permissions' => $overrides[$roleKey],
+            ],
+        ]);
+    }
+
+    /**
+     * Create a new Grammar lesson
+     */
+    public function createGrammar(Request $request)
+    {
+        $this->authorizePermissionAny($request, ['manage_grammar', 'manage_curriculum', 'manage_vocab']);
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'level' => 'required|string|max:20',
+            'summary' => 'nullable|string',
+            'theory_html' => 'nullable|string',
+            'active_passive_html' => 'nullable|string',
+            'pronunciation_notes' => 'nullable|string',
+            'examples_json' => 'nullable|array',
+            'exercises_json' => 'nullable|array',
+            'order_index' => 'nullable|integer',
+            'badge_color' => 'nullable|string|max:30',
+            'icon' => 'nullable|string|max:60',
+            'topic_id' => 'nullable|integer|exists:topics,id',
+        ]);
+
+        $baseSlug = Str::slug($validated['title']);
+        $slug = $baseSlug ?: ('grammar-' . time());
+        if (Grammar::where('slug', $slug)->exists()) {
+            $slug .= '-' . rand(100, 999);
+        }
+
+        $grammar = Grammar::create([
+            'topic_id' => $validated['topic_id'] ?? null,
+            'title' => $validated['title'],
+            'slug' => $slug,
+            'level' => $validated['level'],
+            'summary' => $validated['summary'] ?? '',
+            'theory_html' => $validated['theory_html'] ?? '<p>Đang cập nhật lý thuyết.</p>',
+            'active_passive_html' => $validated['active_passive_html'] ?? '',
+            'pronunciation_notes' => $validated['pronunciation_notes'] ?? '',
+            'examples_json' => $validated['examples_json'] ?? [],
+            'exercises_json' => $validated['exercises_json'] ?? [],
+            'order_index' => $validated['order_index'] ?? ((Grammar::max('order_index') ?? 0) + 1),
+            'badge_color' => $validated['badge_color'] ?? '#00b074',
+            'icon' => $validated['icon'] ?? 'bi-journal-bookmark-fill',
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Đã thêm chuyên đề Ngữ pháp mới!',
+            'data' => $grammar,
+        ], 201);
+    }
+
+    /**
+     * Update an existing Grammar lesson
+     */
+    public function updateGrammar(Request $request, $id)
+    {
+        $this->authorizePermissionAny($request, ['manage_grammar', 'manage_curriculum', 'manage_vocab']);
+
+        $grammar = Grammar::findOrFail($id);
+        $validated = $request->validate([
+            'title' => 'sometimes|required|string|max:255',
+            'level' => 'sometimes|required|string|max:20',
+            'summary' => 'nullable|string',
+            'theory_html' => 'nullable|string',
+            'active_passive_html' => 'nullable|string',
+            'pronunciation_notes' => 'nullable|string',
+            'examples_json' => 'nullable|array',
+            'exercises_json' => 'nullable|array',
+            'order_index' => 'nullable|integer',
+            'badge_color' => 'nullable|string|max:30',
+            'icon' => 'nullable|string|max:60',
+            'topic_id' => 'nullable|integer|exists:topics,id',
+        ]);
+
+        $grammar->fill($validated);
+        $grammar->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Đã cập nhật chuyên đề Ngữ pháp!',
+            'data' => $grammar,
+        ]);
+    }
+
+    /**
+     * Delete a Grammar lesson
+     */
+    public function deleteGrammar(Request $request, $id)
+    {
+        $this->authorizePermissionAny($request, ['manage_grammar', 'manage_curriculum', 'manage_vocab']);
+
+        $grammar = Grammar::findOrFail($id);
+        $grammar->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Đã xóa chuyên đề Ngữ pháp!',
+        ]);
+    }
+
+    /**
+     * Persist CEFR word custom additions / edits / deletions synced across Admin & Learner
+     */
+    public function saveCefrOverrides(Request $request)
+    {
+        $this->authorizePermission($request, 'manage_vocab');
+
+        $validated = $request->validate([
+            'custom_words' => 'nullable|array',
+            'updated_words' => 'nullable|array',
+            'deleted_ids' => 'nullable|array',
+        ]);
+
+        $payload = [
+            'custom_words' => $validated['custom_words'] ?? [],
+            'updated_words' => $validated['updated_words'] ?? [],
+            'deleted_ids' => $validated['deleted_ids'] ?? [],
+        ];
+        AppSetting::setJson('cefr_word_overrides', $payload);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Đã lưu đồng bộ dữ liệu từ vựng CEFR!',
+            'data' => $payload,
         ]);
     }
 

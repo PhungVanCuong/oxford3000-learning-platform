@@ -27,11 +27,14 @@ class User extends Authenticatable
         'words_per_day',
         'theme_mode',
         'header_nav_json',
+        'more_nav_order_json',
+        'notebook_words_json',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        'notebook_words_json',
     ];
 
     protected $appends = [
@@ -40,16 +43,16 @@ class User extends Authenticatable
 
     public static array $roleDefaultPermissions = [
         'admin' => [
-            'manage_vocab', 'ai_generation', 'manage_curriculum', 
-            'manage_phrases', 'manage_users', 'manage_roles', 
+            'manage_vocab', 'ai_generation', 'manage_curriculum',
+            'manage_grammar', 'manage_phrases', 'manage_arena', 'manage_users', 'manage_roles',
             'reset_progress', 'view_reports', 'view_students', 'view_student_progress'
         ],
         'moderator' => [
-            'manage_vocab', 'ai_generation', 'manage_curriculum', 
-            'manage_phrases', 'view_reports'
+            'manage_vocab', 'ai_generation', 'manage_curriculum',
+            'manage_grammar', 'manage_phrases', 'manage_arena', 'view_reports'
         ],
         'editor' => [
-            'manage_vocab', 'ai_generation', 'manage_phrases'
+            'manage_vocab', 'ai_generation', 'manage_grammar', 'manage_phrases'
         ],
         'tutor' => [
             'view_students', 'view_student_progress', 'view_reports'
@@ -58,6 +61,18 @@ class User extends Authenticatable
             'learn_curriculum', 'learn_daily', 'practice_voice', 'bookmark_words'
         ],
     ];
+
+    public static function getRoleDefaultsMap(): array
+    {
+        $map = self::$roleDefaultPermissions;
+        $overrides = AppSetting::getJson('rbac_role_packages', []);
+        foreach ($overrides as $roleKey => $perms) {
+            if (is_string($roleKey) && is_array($perms)) {
+                $map[$roleKey] = array_values(array_unique($perms));
+            }
+        }
+        return $map;
+    }
 
     protected function casts(): array
     {
@@ -71,16 +86,20 @@ class User extends Authenticatable
             'streak_days' => 'integer',
             'permissions_json' => 'array',
             'header_nav_json' => 'array',
+            'more_nav_order_json' => 'array',
+            'notebook_words_json' => 'array',
         ];
     }
 
     public function getPermissionsAttribute(): array
     {
+        $defaultsMap = self::getRoleDefaultsMap();
+
         if ($this->isAdmin()) {
-            return self::$roleDefaultPermissions['admin'];
+            return $defaultsMap['admin'];
         }
 
-        $base = self::$roleDefaultPermissions[$this->role] ?? self::$roleDefaultPermissions['user'];
+        $base = $defaultsMap[$this->role] ?? $defaultsMap['user'];
         if (!empty($this->permissions_json) && is_array($this->permissions_json)) {
             return array_values(array_unique(array_merge($base, $this->permissions_json)));
         }

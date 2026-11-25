@@ -390,7 +390,8 @@ class AuthController extends Controller
             'words_per_day' => 'nullable|integer|in:10,15,20,25,30,50',
             'theme_mode' => 'nullable|in:light,dark',
             'avatar_url' => 'nullable|string',
-            'header_nav_json' => 'nullable|array',
+            'header_nav_json' => 'nullable|array|max:7',
+            'more_nav_order_json' => 'nullable|array|max:20',
         ]);
 
         $user->fill($validated);

@@ -522,13 +522,23 @@ const resetRoleToDefault = () => {
   }
 }
 
-const saveRolePackagePermissions = () => {
+const saveRolePackagePermissions = async () => {
+  if (!currentRole.value) return
   isSavingRole.value = true
-  setTimeout(() => {
-    isSavingRole.value = false
-    alertMessage.value = `Đã lưu cấu hình ma trận chức năng cho gói chức vụ [${currentRole.value?.name}] thành công!`
+  try {
+    const perms = rolePermissionsMap.value[currentRole.value.key] || []
+    const res = await axios.put(`/api/admin/roles/${currentRole.value.key}`, {
+      permissions: perms,
+    })
+    currentRole.value.default_permissions = res.data?.data?.default_permissions || [...perms]
+    alertMessage.value = res.data?.message || `Đã lưu cấu hình ma trận chức năng cho gói chức vụ [${currentRole.value?.name}] thành công!`
     alertType.value = 'success'
-  }, 400)
+  } catch (err) {
+    alertMessage.value = err.response?.data?.message || 'Không thể lưu cấu hình gói chức vụ. Vui lòng thử lại.'
+    alertType.value = 'error'
+  } finally {
+    isSavingRole.value = false
+  }
 }
 
 const applyUserRole = async (u) => {

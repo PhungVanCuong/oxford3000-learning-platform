@@ -985,7 +985,15 @@ const chooseQuizOption = (qIdx, optIdx) => {
   quizUserAnswers.value[qIdx] = optIdx
   const q = quizQuestions.value[qIdx]
   if (optIdx === q.correct) {
-    // Award small XP and update authStore
+    if (authStore.isAuthenticated) {
+      axios.post('/api/user/study-action', { action: 'cefr_quiz', xp_delta: 15, words_count: 1 })
+        .then(res => {
+          if (authStore.user && res.data?.data?.total_xp !== undefined) {
+            authStore.user.xp_points = res.data.data.total_xp
+          }
+        })
+        .catch(() => {})
+    }
     if (authStore.user) {
       authStore.user.xp_points = (authStore.user.xp_points || 0) + 15
     }

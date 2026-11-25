@@ -126,20 +126,26 @@
                   <span class="fs-8 text-muted fw-semibold">từ đã thuộc</span>
                 </div>
                 <div class="text-muted d-flex align-items-center gap-1 mt-0.5 flex-wrap" style="font-size: 11px;">
-                  <span class="badge bg-light text-secondary border px-1.5 py-0.5">{{ u.mastered_words }} Oxford</span>
-                  <span class="badge bg-light text-secondary border px-1.5 py-0.5">{{ u.curriculum_remembered || 0 }} Lộ trình</span>
-                  <span class="badge bg-light text-secondary border px-1.5 py-0.5">{{ u.mastered_phrases || 0 }} Cụm từ</span>
+                  <span class="badge bg-body-tertiary text-dark-emphasis border px-1.5 py-0.5">{{ u.mastered_words }} Oxford</span>
+                  <span class="badge bg-body-tertiary text-dark-emphasis border px-1.5 py-0.5">{{ u.curriculum_remembered || 0 }} Lộ trình</span>
+                  <span class="badge bg-body-tertiary text-dark-emphasis border px-1.5 py-0.5">{{ u.mastered_phrases || 0 }} Cụm từ</span>
                 </div>
               </td>
               <td class="text-center">
                 <div class="btn-group btn-group-sm">
+                  <button v-if="authStore.canViewStudents || authStore.canViewStudentProgress || authStore.isAdmin" @click="openUserDetailModal(u)" class="btn btn-outline-teal" title="Xem chi tiết tiến độ học viên">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                  <button v-if="authStore.canManageUsers" @click="openEditUserModal(u)" class="btn btn-outline-secondary" title="Sửa thông tin tài khoản">
+                    <i class="bi bi-pencil"></i>
+                  </button>
                   <button v-if="authStore.canManageRoles" @click="openRoleModal(u)" class="btn btn-outline-primary" title="Phân quyền chức vụ">
                     <i class="bi bi-shield-lock"></i>
                   </button>
-                  <button v-if="authStore.hasPermission('reset_progress') || authStore.canManageUsers" @click="resetUserProgress(u)" class="btn btn-outline-warning" title="Reset toàn bộ quá trình học">
+                  <button v-if="authStore.hasPermission('reset_progress') || authStore.canManageUsers" @click="confirmResetProgress(u)" class="btn btn-outline-warning" title="Reset toàn bộ quá trình học">
                     <i class="bi bi-arrow-counterclockwise"></i>
                   </button>
-                  <button v-if="authStore.canManageUsers" @click="deleteUser(u.id)" class="btn btn-outline-danger" title="Xóa tài khoản" :disabled="u.email === 'cuongphung1810@gmail.com'">
+                  <button v-if="authStore.canManageUsers" @click="confirmDeleteUser(u)" class="btn btn-outline-danger" title="Xóa tài khoản" :disabled="u.email === 'cuongphung1810@gmail.com'">
                     <i class="bi bi-trash"></i>
                   </button>
                 </div>
@@ -214,6 +220,132 @@
         </div>
       </div>
     </div>
+
+    <!-- MODAL: TẠO / CHỈNH SỬA HỌC VIÊN -->
+    <BaseModal
+      v-model="showUserFormModal"
+      :title="editingUser ? `Chỉnh Sửa Tài Khoản: ${editingUser.name}` : 'Thêm Tài Khoản Mới'"
+      icon="bi bi-person-badge-fill"
+      maxWidth="620px"
+      hideFooter
+    >
+      <form @submit.prevent="submitUserForm">
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <label class="form-label fs-8 fw-bold">Họ và tên *</label>
+            <input v-model="userForm.name" type="text" required class="form-control rounded-3 fs-7" placeholder="Nguyễn Văn A" />
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label fs-8 fw-bold">Email *</label>
+            <input v-model="userForm.email" type="email" required class="form-control rounded-3 fs-7" placeholder="email@example.com" />
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label fs-8 fw-bold">{{ editingUser ? 'Mật khẩu mới (bỏ trống nếu giữ nguyên)' : 'Mật khẩu khởi tạo *' }}</label>
+            <input v-model="userForm.password" type="password" :required="!editingUser" minlength="6" class="form-control rounded-3 fs-7" placeholder="Tối thiểu 6 ký tự..." />
+          </div>
+          <div class="col-12 col-md-3">
+            <label class="form-label fs-8 fw-bold">Chức vụ</label>
+            <select v-model="userForm.role" class="form-select rounded-3 fs-7">
+              <option value="user">Học viên (Learner)</option>
+              <option value="tutor">Trợ giảng (Tutor)</option>
+              <option value="editor">Biên tập viên (Editor)</option>
+              <option value="moderator">Quản trị nội dung</option>
+              <option value="admin">Quản trị viên (Admin)</option>
+            </select>
+          </div>
+          <div class="col-12 col-md-3">
+            <label class="form-label fs-8 fw-bold">Mục tiêu/ngày</label>
+            <select v-model.number="userForm.words_per_day" class="form-select rounded-3 fs-7">
+              <option :value="10">10 từ</option>
+              <option :value="15">15 từ</option>
+              <option :value="20">20 từ</option>
+              <option :value="25">25 từ</option>
+              <option :value="30">30 từ</option>
+              <option :value="50">50 từ</option>
+            </select>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
+          <button type="button" @click="showUserFormModal = false" class="btn btn-outline-secondary rounded-pill px-4 fs-7">Hủy</button>
+          <button type="submit" class="btn btn-teal text-white rounded-pill px-4 fs-7 fw-bold" :disabled="isSubmittingUser">
+            <span v-if="isSubmittingUser" class="spinner-border spinner-border-sm me-1"></span>
+            {{ editingUser ? 'Cập nhật tài khoản' : 'Tạo tài khoản' }}
+          </button>
+        </div>
+      </form>
+    </BaseModal>
+
+    <!-- MODAL: CHI TIẾT TIẾN ĐỘ HỌC VIÊN -->
+    <BaseModal
+      v-model="showDetailModal"
+      :title="`Chi Tiết Tiến Độ: ${detailUser?.name || ''}`"
+      icon="bi bi-bar-chart-line-fill"
+      maxWidth="700px"
+      hideFooter
+    >
+      <div v-if="isLoadingDetail" class="text-center py-4">
+        <div class="spinner-border text-teal"></div>
+      </div>
+      <div v-else-if="detailData">
+        <div class="row g-2 mb-3">
+          <div class="col-6 col-sm-3">
+            <div class="p-3 rounded-3 bg-body-tertiary border text-center">
+              <div class="fs-8 text-muted">XP tích lũy</div>
+              <div class="fs-4 fw-black text-teal">{{ detailData.user?.xp_points ?? 0 }}</div>
+            </div>
+          </div>
+          <div class="col-6 col-sm-3">
+            <div class="p-3 rounded-3 bg-body-tertiary border text-center">
+              <div class="fs-8 text-muted">Chuỗi ngày</div>
+              <div class="fs-4 fw-black text-warning">{{ detailData.user?.streak_days ?? 0 }}</div>
+            </div>
+          </div>
+          <div class="col-6 col-sm-3">
+            <div class="p-3 rounded-3 bg-body-tertiary border text-center">
+              <div class="fs-8 text-muted">Oxford đã thuộc</div>
+              <div class="fs-4 fw-black text-success">{{ detailData.stats?.mastered_words ?? 0 }}</div>
+            </div>
+          </div>
+          <div class="col-6 col-sm-3">
+            <div class="p-3 rounded-3 bg-body-tertiary border text-center">
+              <div class="fs-8 text-muted">Bài kiểm tra</div>
+              <div class="fs-4 fw-black text-primary">{{ detailData.stats?.total_quizzes ?? 0 }}</div>
+            </div>
+          </div>
+        </div>
+        <div v-if="detailData.recent_quizzes?.length" class="border-top pt-3">
+          <div class="fw-bold fs-7 text-teal mb-2">Lịch sử bài thi gần nhất</div>
+          <div class="list-group list-group-flush">
+            <div v-for="q in detailData.recent_quizzes" :key="q.id" class="list-group-item bg-transparent px-0 py-2 d-flex justify-content-between align-items-center fs-8">
+              <div>
+                <div class="fw-bold text-dark-emphasis">{{ q.title || q.type }}</div>
+                <div class="text-muted">{{ new Date(q.created_at).toLocaleString('vi-VN') }}</div>
+              </div>
+              <span class="badge bg-success-subtle text-success rounded-pill px-2.5 py-1 fw-bold">
+                {{ q.score }}/{{ q.total_questions }} (+{{ q.xp_earned || 0 }} XP)
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </BaseModal>
+
+    <!-- MODAL: XÁC NHẬN THAO TÁC (RESET / XÓA) -->
+    <BaseModal
+      v-model="confirmModal.show"
+      :title="confirmModal.title"
+      icon="bi bi-exclamation-triangle-fill"
+      maxWidth="480px"
+      hideFooter
+    >
+      <p class="fs-7 mb-3 text-dark-emphasis">{{ confirmModal.message }}</p>
+      <div class="d-flex justify-content-end gap-2">
+        <button @click="confirmModal.show = false" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Hủy bỏ</button>
+        <button @click="executeConfirmAction" class="btn btn-sm rounded-pill px-4 fw-bold text-white" :class="confirmModal.danger ? 'btn-danger' : 'btn-warning text-dark'">
+          Xác nhận
+        </button>
+      </div>
+    </BaseModal>
   </div>
 </template>
 
@@ -221,27 +353,61 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore'
+import { useToast } from '@/composables/useToast'
 import SmartPagination from '@/components/SmartPagination.vue'
+import BaseModal from '@/components/BaseModal.vue'
 
 const authStore = useAuthStore()
+const toast = useToast()
 
 const users = ref([])
 const searchUser = ref('')
 const currentPage = ref(1)
-const pageSize = ref(50) // Mặc định 50 học viên/trang
+const pageSize = ref(50)
 const selectedUserForRole = ref(null)
 const roleForm = ref({
   role: 'user',
   permissions: [],
 })
 
-const availablePermissions = [
+const showUserFormModal = ref(false)
+const editingUser = ref(null)
+const isSubmittingUser = ref(false)
+const userForm = ref({
+  name: '',
+  email: '',
+  password: '',
+  role: 'user',
+  words_per_day: 15,
+})
+
+const showDetailModal = ref(false)
+const detailUser = ref(null)
+const detailData = ref(null)
+const isLoadingDetail = ref(false)
+
+const confirmModal = ref({
+  show: false,
+  title: '',
+  message: '',
+  danger: true,
+  onConfirm: null,
+})
+
+const availablePermissions = ref([
   { key: 'manage_vocab', name: 'Quản lý kho từ vựng (Thêm, Sửa, Xóa & AI)', category: 'Từ vựng' },
+  { key: 'ai_generation', name: 'Tự động tạo ví dụ qua Gemini AI', category: 'Từ vựng & AI' },
+  { key: 'manage_curriculum', name: 'Quản lý 25 chủ đề lộ trình', category: 'Lộ trình' },
+  { key: 'manage_grammar', name: 'Quản lý chuyên đề Ngữ pháp', category: 'Ngữ pháp' },
   { key: 'manage_phrases', name: 'Quản lý cụm từ & Phrasal Verbs', category: 'Cụm từ' },
-  { key: 'manage_users', name: 'Quản lý tài khoản & Phân quyền', category: 'Hệ thống' },
+  { key: 'manage_arena', name: 'Quản lý Đấu trường Quiz', category: 'Đấu trường' },
+  { key: 'view_students', name: 'Xem danh sách học viên', category: 'Học viên' },
+  { key: 'view_student_progress', name: 'Xem chi tiết tiến độ học viên', category: 'Học viên' },
   { key: 'reset_progress', name: 'Quyền Reset tiến độ học viên', category: 'Học viên' },
+  { key: 'manage_users', name: 'Quản lý tài khoản (Tạo/Sửa/Xóa)', category: 'Hệ thống' },
+  { key: 'manage_roles', name: 'Phân quyền & đóng gói chức vụ', category: 'Hệ thống' },
   { key: 'view_reports', name: 'Xem thống kê toàn hệ thống', category: 'Báo cáo' },
-]
+])
 
 const filteredUsers = computed(() => {
   if (!searchUser.value.trim()) return users.value
@@ -255,7 +421,7 @@ const paginatedUsers = computed(() => {
 })
 
 const permName = (key) => {
-  const found = availablePermissions.find(p => p.key === key)
+  const found = availablePermissions.value.find(p => p.key === key)
   return found ? found.name.split(' (')[0] : key
 }
 
@@ -266,6 +432,15 @@ const fetchUsers = async () => {
   } catch (err) {
     console.error('Failed to load users:', err)
   }
+}
+
+const fetchAvailablePermissions = async () => {
+  try {
+    const res = await axios.get('/api/admin/permissions')
+    if (res.data?.data?.permissions?.length) {
+      availablePermissions.value = res.data.data.permissions
+    }
+  } catch (e) {}
 }
 
 const openRoleModal = (user) => {
@@ -284,57 +459,123 @@ const saveRoleAndPermissions = async () => {
       permissions: roleForm.value.permissions,
     }
     const res = await axios.put(`/api/admin/users/${selectedUserForRole.value.id}/role-permissions`, payload)
-    alert(res.data.message || 'Cập nhật phân quyền thành công!')
+    toast.success(res.data.message || 'Cập nhật phân quyền thành công!', 'Phân quyền')
     selectedUserForRole.value = null
     fetchUsers()
   } catch (err) {
-    alert('Lỗi: ' + (err.response?.data?.message || err.message))
+    toast.error(err.response?.data?.message || err.message, 'Lỗi phân quyền')
   }
 }
 
-const resetUserProgress = async (user) => {
-  if (confirm(`Bạn có chắc chắn muốn RESET toàn bộ quá trình học tập của học viên "${user.name}" không? Toàn bộ từ đã nhớ, chuỗi ngày và XP sẽ được làm lại từ đầu.`)) {
-    try {
-      const res = await axios.post(`/api/admin/users/${user.id}/reset-progress`)
-      alert(res.data.message || 'Đã reset tiến độ học tập thành công!')
-      fetchUsers()
-    } catch (err) {
-      alert('Lỗi: ' + (err.response?.data?.message || err.message))
-    }
-  }
-}
-
-const deleteUser = async (id) => {
-  if (confirm('Bạn có chắc muốn xóa vĩnh viễn tài khoản này?')) {
-    try {
-      await axios.delete(`/api/admin/users/${id}`)
-      fetchUsers()
-    } catch (err) {
-      alert('Không thể xóa tài khoản này.')
-    }
+const openUserDetailModal = async (user) => {
+  detailUser.value = user
+  detailData.value = null
+  showDetailModal.value = true
+  isLoadingDetail.value = true
+  try {
+    const res = await axios.get(`/api/admin/users/${user.id}`)
+    detailData.value = res.data?.data || { user, stats: {}, recent_quizzes: [] }
+  } catch (err) {
+    detailData.value = { user, stats: { mastered_words: user.mastered_words || 0, total_quizzes: 0 }, recent_quizzes: [] }
+  } finally {
+    isLoadingDetail.value = false
   }
 }
 
 const openCreateUserModal = () => {
-  const name = prompt('Nhập họ tên học viên:')
-  const email = prompt('Nhập email học viên:')
-  if (name && email) {
-    axios.post('/api/admin/users', {
-      name,
-      email,
-      password: 'password123',
-      role: 'user',
-      words_per_day: 15,
-    }).then(() => {
-      alert('Tạo tài khoản học viên thành công! Mật khẩu khởi tạo: password123 (yêu cầu đổi mật khẩu sau khi đăng nhập)')
-      fetchUsers()
-    }).catch(err => {
-      alert('Lỗi: ' + (err.response?.data?.message || err.message))
-    })
+  editingUser.value = null
+  userForm.value = {
+    name: '',
+    email: '',
+    password: '',
+    role: 'user',
+    words_per_day: 15,
   }
+  showUserFormModal.value = true
+}
+
+const openEditUserModal = (user) => {
+  editingUser.value = user
+  userForm.value = {
+    name: user.name || '',
+    email: user.email || '',
+    password: '',
+    role: user.role || 'user',
+    words_per_day: user.words_per_day || 15,
+  }
+  showUserFormModal.value = true
+}
+
+const submitUserForm = async () => {
+  isSubmittingUser.value = true
+  try {
+    if (editingUser.value) {
+      const payload = {
+        name: userForm.value.name,
+        email: userForm.value.email,
+        role: userForm.value.role,
+        words_per_day: userForm.value.words_per_day,
+      }
+      if (userForm.value.password) payload.password = userForm.value.password
+      await axios.put(`/api/admin/users/${editingUser.value.id}`, payload)
+      toast.success(`Đã cập nhật tài khoản "${userForm.value.name}" thành công!`, 'Quản lý Học viên')
+    } else {
+      await axios.post('/api/admin/users', userForm.value)
+      toast.success(`Đã tạo tài khoản "${userForm.value.name}" thành công!`, 'Quản lý Học viên')
+    }
+    showUserFormModal.value = false
+    fetchUsers()
+  } catch (err) {
+    toast.error(err.response?.data?.message || err.message, 'Lỗi lưu tài khoản')
+  } finally {
+    isSubmittingUser.value = false
+  }
+}
+
+const confirmResetProgress = (user) => {
+  confirmModal.value = {
+    show: true,
+    title: 'Xác nhận Reset Tiến Độ',
+    danger: false,
+    message: `Bạn có chắc chắn muốn RESET toàn bộ quá trình học tập của học viên "${user.name}" không? Toàn bộ từ đã nhớ, chuỗi ngày và XP sẽ trở về ban đầu.`,
+    onConfirm: async () => {
+      try {
+        const res = await axios.post(`/api/admin/users/${user.id}/reset-progress`)
+        toast.success(res.data.message || 'Đã reset tiến độ học tập thành công!', 'Reset Tiến độ')
+        fetchUsers()
+      } catch (err) {
+        toast.error(err.response?.data?.message || err.message, 'Lỗi hệ thống')
+      }
+    },
+  }
+}
+
+const confirmDeleteUser = (user) => {
+  confirmModal.value = {
+    show: true,
+    title: 'Xác nhận Xóa Tài Khoản',
+    danger: true,
+    message: `Bạn có chắc muốn xóa vĩnh viễn tài khoản "${user.name}" (${user.email}) khỏi hệ thống?`,
+    onConfirm: async () => {
+      try {
+        await axios.delete(`/api/admin/users/${user.id}`)
+        toast.success('Đã xóa tài khoản thành công!', 'Quản lý Học viên')
+        fetchUsers()
+      } catch (err) {
+        toast.error(err.response?.data?.message || 'Không thể xóa tài khoản này.', 'Lỗi hệ thống')
+      }
+    },
+  }
+}
+
+const executeConfirmAction = async () => {
+  const fn = confirmModal.value.onConfirm
+  confirmModal.value.show = false
+  if (fn) await fn()
 }
 
 onMounted(() => {
   fetchUsers()
+  fetchAvailablePermissions()
 })
 </script>

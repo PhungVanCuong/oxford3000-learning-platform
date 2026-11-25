@@ -18,37 +18,23 @@
         <!-- 2. CENTER ZONE: CĂN GIỮA TUYỆT ĐỐI (Chữ trơn không icon, khoảng cách thoáng rộng) -->
         <div class="ox-header-center d-none d-lg-flex">
           <nav class="ox-nav-menu">
-            <!-- 1. Trang chủ -->
+            <!-- 1. Trang chủ (Cố định) -->
             <router-link to="/" class="ox-nav-link" exact-active-class="active">
               <span>Trang chủ</span>
             </router-link>
 
-            <!-- 2. Lộ trình -->
-            <router-link to="/curriculum" class="ox-nav-link" active-class="active">
-              <span>Lộ trình</span>
+            <!-- 2..6 Các mục điều hướng tùy chỉnh đồng bộ từ Hồ sơ (1..5 mục) -->
+            <router-link
+              v-for="item in visibleNavItems"
+              :key="item.id"
+              :to="item.to"
+              class="ox-nav-link"
+              active-class="active"
+            >
+              <span>{{ item.label }}</span>
             </router-link>
 
-            <!-- 3. Cụm từ -->
-            <router-link to="/phrasal-verbs" class="ox-nav-link" active-class="active">
-              <span>Cụm từ</span>
-            </router-link>
-
-            <!-- 4. Chép chính tả -->
-            <router-link to="/dictation" class="ox-nav-link" active-class="active">
-              <span>Chép chính tả</span>
-            </router-link>
-
-            <!-- 5. Học theo ngày -->
-            <router-link to="/daily" class="ox-nav-link" active-class="active">
-              <span>Học theo ngày</span>
-            </router-link>
-
-            <!-- 6. Đấu trường -->
-            <router-link to="/arena" class="ox-nav-link" active-class="active">
-              <span>Đấu trường</span>
-            </router-link>
-
-            <!-- 7. Xem thêm Dropdown (Ngữ pháp 12 thì, Từ vựng CEFR, Sổ tay, Lịch sử, Tra cứu, 44 Âm IPA, Cây tri thức, Mẹo học) -->
+            <!-- 7. Xem thêm Dropdown (Tất cả mục còn lại theo thứ tự đã sắp xếp, Mẹo học cuối cùng) -->
             <div class="ox-nav-item" ref="moreMenuRef">
               <button
                 @click="toggleMoreMenu"
@@ -63,62 +49,16 @@
 
               <Transition name="ox-dropdown">
                 <div v-if="isMoreMenuOpen" class="ox-dropdown-pane shadow-lg">
-                  <!-- Ngữ pháp 12 thì -->
-                  <router-link to="/grammar" class="ox-dropdown-item" @click="isMoreMenuOpen = false">
-                    <div class="ox-dropdown-item-title">Ngữ pháp 12 thì</div>
-                    <div class="ox-dropdown-item-desc">Hệ thống công thức, bài tập chuyên sâu</div>
-                  </router-link>
-
-                  <!-- Từ vựng CEFR -->
-                  <router-link to="/cefr" class="ox-dropdown-item" @click="isMoreMenuOpen = false">
-                    <div class="ox-dropdown-item-title">Từ vựng CEFR</div>
-                    <div class="ox-dropdown-item-desc">Khung Châu Âu A1 - C2 với 4.922 từ chuẩn</div>
-                  </router-link>
-
-                  <div class="ox-dropdown-divider"></div>
-
-                  <!-- Sổ tay từ vựng -->
-                  <router-link to="/vocabulary-notebook" class="ox-dropdown-item" @click="isMoreMenuOpen = false">
-                    <div class="ox-dropdown-item-title">Sổ tay từ vựng</div>
-                    <div class="ox-dropdown-item-desc">Kho từ đã lưu và ghi chú cá nhân</div>
-                  </router-link>
-
-                  <!-- Lịch sử bài làm & Câu sai -->
-                  <router-link to="/history" class="ox-dropdown-item" @click="isMoreMenuOpen = false">
-                    <div class="ox-dropdown-item-title">Lịch sử bài làm & Câu sai</div>
-                    <div class="ox-dropdown-item-desc">Xem lại điểm cần cải thiện</div>
-                  </router-link>
-
-                  <!-- Tra cứu từ điển -->
-                  <router-link to="/dictionary" class="ox-dropdown-item" @click="isMoreMenuOpen = false">
-                    <div class="ox-dropdown-item-title">Tra cứu nhanh</div>
-                    <div class="ox-dropdown-item-desc">Từ điển thông minh kèm Gemini AI</div>
-                  </router-link>
-
-                  <!-- 44 Âm IPA -->
-                  <router-link to="/ipa" class="ox-dropdown-item" @click="isMoreMenuOpen = false">
-                    <div class="ox-dropdown-item-title">44 Âm IPA</div>
-                    <div class="ox-dropdown-item-desc">Luyện phát âm chuẩn quốc tế</div>
-                  </router-link>
-
-                  <!-- Cây tri thức -->
-                  <router-link to="/tree" class="ox-dropdown-item" @click="isMoreMenuOpen = false">
-                    <div class="ox-dropdown-item-title">Cây tri thức</div>
-                    <div class="ox-dropdown-item-desc">Nuôi dưỡng mầm xanh từ vựng</div>
-                  </router-link>
-
-                  <!-- Thống kê năng suất -->
-                  <router-link to="/stats" class="ox-dropdown-item" @click="isMoreMenuOpen = false">
-                    <div class="ox-dropdown-item-title">Thống kê năng suất</div>
-                    <div class="ox-dropdown-item-desc">Theo dõi Streak & tiến độ chi tiết</div>
-                  </router-link>
-
-                  <div class="ox-dropdown-divider"></div>
-
-                  <!-- Mẹo học (Luôn ở cuối cùng) -->
-                  <router-link to="/tips" class="ox-dropdown-item" @click="isMoreMenuOpen = false">
-                    <div class="ox-dropdown-item-title">Mẹo học</div>
-                    <div class="ox-dropdown-item-desc">Chiến thuật ghi nhớ đỉnh cao</div>
+                  <router-link
+                    v-for="mItem in moreNavItems"
+                    :key="mItem.id"
+                    :to="mItem.to"
+                    class="ox-dropdown-item"
+                    active-class="active"
+                    @click="isMoreMenuOpen = false"
+                  >
+                    <div class="ox-dropdown-item-title">{{ mItem.label }}</div>
+                    <div class="ox-dropdown-item-desc">{{ mItem.desc }}</div>
                   </router-link>
                 </div>
               </Transition>
@@ -135,7 +75,7 @@
             title="Bộ thẻ ôn tập (Spaced Repetition)"
           >
             <i class="bi bi-collection-play-fill text-teal fs-6"></i>
-            <span class="ox-deck-badge">{{ dueCardsCount > 0 ? dueCardsCount : 4 }}</span>
+            <span v-if="dueCardsCount > 0" class="ox-deck-badge">{{ dueCardsCount }}</span>
           </router-link>
 
           <!-- BỘ LỌC HIỂN THỊ & CÀI ĐẶT CHUẨN QUỐC TẾ (Độ sáng, Độ tương phản, Độ ấm, Độ xám) -->
@@ -355,10 +295,10 @@
     </nav>
 
     <!-- MOBILE DRAWER / OFFCANVAS (Menu trượt toàn diện trên điện thoại) -->
-    <div v-if="isMobileDrawerOpen" class="mobile-drawer-overlay d-md-none" @click="closeMobileDrawer"></div>
+    <div v-if="isMobileDrawerOpen" class="mobile-drawer-overlay d-lg-none" @click="closeMobileDrawer"></div>
     <div
       v-if="isMobileDrawerOpen"
-      class="mobile-drawer-content d-md-none p-3 d-flex flex-column"
+      class="mobile-drawer-content d-lg-none p-3 d-flex flex-column"
       :class="authStore.themeMode === 'dark' ? 'bg-dark text-white' : 'bg-white text-dark'"
     >
       <!-- Drawer Header: Có nút Đóng / Thụt lại menu cực kỳ to rõ -->
@@ -396,8 +336,8 @@
           </div>
         </div>
         <div class="d-flex align-items-center justify-content-between pt-1.5 border-top border-light-subtle">
-          <span class="badge bg-warning text-dark fs-8 rounded-pill">⚡ {{ authStore.user?.xp_points || 0 }} XP</span>
-          <span class="badge bg-danger text-white fs-8 rounded-pill">🔥 {{ authStore.user?.streak_days || 0 }} ngày</span>
+          <span class="badge bg-warning text-dark fs-8 rounded-pill">⚡ {{ authStore.user?.xp_points ?? 0 }} XP</span>
+          <span class="badge bg-danger text-white fs-8 rounded-pill">🔥 {{ authStore.user?.streak_days ?? 0 }} ngày</span>
           <span class="badge bg-teal text-white fs-8 rounded-pill">{{ authStore.isAdmin ? 'Admin' : 'Học viên' }}</span>
         </div>
       </div>
@@ -512,6 +452,7 @@ import AuthHeaderWidget from '@/components/AuthHeaderWidget.vue'
 import LoginRequiredModal from '@/components/LoginRequiredModal.vue'
 import QuickLookupPopup from '@/components/QuickLookupPopup.vue'
 import AiAssistantModal from '@/components/AiAssistantModal.vue'
+import { NAV_CATALOG, DEFAULT_HEADER_NAV_IDS, buildOrderedMoreItems } from '@/constants/navCatalog'
 
 const authStore = useAuthStore()
 const reviewStore = useReviewStore()
@@ -522,9 +463,20 @@ const { openGoogleLoginPopup } = useGoogleAuth()
 
 const dueCardsCount = computed(() => reviewStore.dueCardsCount || 0)
 
+const visibleNavItems = computed(() => {
+  const chosenIds = (authStore.headerNavItems && authStore.headerNavItems.length > 0)
+    ? authStore.headerNavItems
+    : DEFAULT_HEADER_NAV_IDS
+  return chosenIds.map(id => NAV_CATALOG.find(item => item.id === id)).filter(Boolean)
+})
+
+const moreNavItems = computed(() => {
+  const chosenIds = visibleNavItems.value.map(i => i.id)
+  return buildOrderedMoreItems(chosenIds, authStore.moreNavOrder)
+})
+
 const isMoreMenuActive = computed(() => {
-  const morePaths = ['/grammar', '/cefr', '/vocabulary-notebook', '/history', '/dictionary', '/ipa', '/tree', '/stats', '/tips']
-  return morePaths.some(p => route.path.startsWith(p))
+  return moreNavItems.value.some(item => route.path === item.to || (item.to !== '/' && route.path.startsWith(item.to)))
 })
 
 const isDropdownOpen = ref(false)
@@ -593,60 +545,25 @@ const handleDrawerLogout = async () => {
   router.push('/login')
 }
 
-// BẢNG ĐIỀU HƯỚNG CHUẨN: Lộ trình luôn đứng thứ 2, sau đó là Ngữ pháp, Từ vựng CEFR, Học theo ngày, Cụm từ, Ôn tập, Lịch sử... Mẹo học luôn nằm cuối
-const NAV_CATALOG = [
-  { id: 'curriculum', label: 'Lộ trình', to: '/curriculum', icon: 'bi bi-signpost-split-fill', iconClass: 'icon-curriculum' },
-  { id: 'grammar', label: 'Ngữ pháp', to: '/grammar', icon: 'bi bi-journal-bookmark-fill', iconClass: 'icon-grammar' },
-  { id: 'cefr', label: 'Từ vựng CEFR', to: '/cefr', icon: 'bi bi-award-fill text-success', iconClass: 'icon-cefr' },
-  { id: 'daily', label: 'Học theo ngày', to: '/daily', icon: 'bi bi-calendar-check-fill', iconClass: 'icon-daily' },
-  { id: 'phrasal_verbs', label: 'Cụm từ', to: '/phrasal-verbs', icon: 'bi bi-puzzle-fill', iconClass: 'icon-phrasal' },
-  { id: 'dictation', label: 'Chép chính tả', to: '/dictation', icon: 'bi bi-headphones text-teal', iconClass: '' },
-  { id: 'review', label: 'Ôn tập', to: '/review', icon: 'bi bi-clock-history text-warning', iconClass: '' },
-  { id: 'history', label: 'Lịch sử', to: '/history', icon: 'bi bi-journal-check text-info', iconClass: '' },
-  { id: 'arena', label: 'Đấu trường', to: '/arena', icon: 'bi bi-trophy-fill text-warning', iconClass: '' },
-  { id: 'dictionary', label: 'Tra cứu', to: '/dictionary', icon: 'bi bi-search-heart-fill', iconClass: 'icon-dict' },
-  { id: 'ipa', label: '44 Âm IPA', to: '/ipa', icon: 'bi bi-soundwave', iconClass: 'icon-ipa' },
-  { id: 'tree', label: 'Cây tri thức', to: '/tree', icon: 'bi bi-tree-fill text-success', iconClass: '' },
-  { id: 'stats', label: 'Năng suất', to: '/stats', icon: 'bi bi-bar-chart-fill text-primary', iconClass: '' },
-  { id: 'tips', label: 'Mẹo học', to: '/tips', icon: 'bi bi-lightbulb-fill text-warning', iconClass: '' },
-]
-
-// FULL TẤT CẢ CÁC MỤC HỌC TẬP CHO GIAO DIỆN DI ĐỘNG (Liệt kê 100% đầy đủ, gọn gàng, Mẹo học luôn nằm cuối)
+// FULL TẤT CẢ CÁC MỤC HỌC TẬP CHO GIAO DIỆN DI ĐỘNG (Đồng bộ đầy đủ 100% tính năng, gồm Sổ tay từ vựng)
 const MOBILE_FULL_NAV = [
   { id: 'home', label: 'Trang chủ', desc: 'Tổng quan & Lộ trình học thông minh', to: '/', icon: 'bi bi-house-door-fill', color: '#00b074' },
   { id: 'curriculum', label: 'Lộ trình', desc: '5.000 từ vựng & 10 giai đoạn kiểm tra', to: '/curriculum', icon: 'bi bi-signpost-split-fill', color: '#087F75' },
-  { id: 'grammar', label: 'Ngữ pháp', desc: '12 thì chuyên đề, dịch câu & bài tập', to: '/grammar', icon: 'bi bi-journal-bookmark-fill', color: '#6366f1' },
-  { id: 'cefr', label: 'Từ vựng CEFR', desc: '4.922 từ vựng chuẩn Châu Âu 6 phần', to: '/cefr', icon: 'bi bi-award-fill', color: '#10b981' },
-  { id: 'daily', label: 'Học theo ngày', desc: 'Flashcard 3D & 20 từ mỗi ngày', to: '/daily', icon: 'bi bi-calendar-check-fill', color: '#0d9488' },
   { id: 'phrasal_verbs', label: 'Cụm từ', desc: 'Phrasal Verbs & 1000 cụm đàm thoại', to: '/phrasal-verbs', icon: 'bi bi-puzzle-fill', color: '#ec4899' },
   { id: 'dictation', label: 'Chép chính tả', desc: 'Luyện nghe & gõ chuẩn DailyDictation', to: '/dictation', icon: 'bi bi-headphones', color: '#0ea5e9' },
+  { id: 'daily', label: 'Học theo ngày', desc: 'Flashcard 3D & 20 từ mỗi ngày', to: '/daily', icon: 'bi bi-calendar-check-fill', color: '#0d9488' },
+  { id: 'arena', label: 'Đấu trường', desc: 'Thi đấu realtime & BXH liên server', to: '/arena', icon: 'bi bi-trophy-fill', color: '#eab308' },
+  { id: 'grammar', label: 'Ngữ pháp', desc: '12 thì chuyên đề, dịch câu & bài tập', to: '/grammar', icon: 'bi bi-journal-bookmark-fill', color: '#6366f1' },
+  { id: 'cefr', label: 'Từ vựng CEFR', desc: '4.922 từ vựng chuẩn Châu Âu 6 phần', to: '/cefr', icon: 'bi bi-award-fill', color: '#10b981' },
+  { id: 'vocabulary_notebook', label: 'Sổ tay từ vựng', desc: 'Kho từ đã lưu & ghi chú cá nhân', to: '/vocabulary-notebook', icon: 'bi bi-journal-text', color: '#14b8a6' },
   { id: 'review', label: 'Ôn tập', desc: 'Bộ thẻ Spaced Repetition ôn tập ngắt quãng', to: '/review', icon: 'bi bi-clock-history', color: '#f59e0b' },
   { id: 'history', label: 'Lịch sử', desc: 'Lịch sử học tập & xem lại câu sai', to: '/history', icon: 'bi bi-journal-check', color: '#06b6d4' },
-  { id: 'arena', label: 'Đấu trường', desc: 'Thi đấu realtime & BXH liên server', to: '/arena', icon: 'bi bi-trophy-fill', color: '#eab308' },
   { id: 'tree', label: 'Cây tri thức', desc: '30 cấp độ tiến hóa & nuôi mầm xanh', to: '/tree', icon: 'bi bi-tree-fill', color: '#16a34a' },
   { id: 'ipa', label: '44 Âm IPA', desc: 'Nguyên âm & phụ âm chuẩn quốc tế', to: '/ipa', icon: 'bi bi-soundwave', color: '#06b6d4' },
   { id: 'stats', label: 'Năng suất', desc: 'Thống kê tần suất & chuỗi ngày Streak', to: '/stats', icon: 'bi bi-bar-chart-fill', color: '#3b82f6' },
   { id: 'dictionary', label: 'Tra cứu', desc: 'Kho 3.351 từ & giải thích Gemini AI', to: '/dictionary', icon: 'bi bi-search-heart-fill', color: '#14b8a6' },
   { id: 'tips', label: 'Mẹo học', desc: 'Chiến thuật ghi nhớ đỉnh cao', to: '/tips', icon: 'bi bi-lightbulb-fill', color: '#f59e0b' },
 ]
-
-const defaultHeaderItems = ['curriculum', 'grammar', 'cefr', 'daily', 'phrasal_verbs', 'review', 'history']
-
-const visibleNavItems = computed(() => {
-  const chosenIds = authStore.headerNavItems || defaultHeaderItems
-  return chosenIds.map(id => NAV_CATALOG.find(item => item.id === id)).filter(Boolean)
-})
-
-const moreNavItems = computed(() => {
-  const chosenIds = authStore.headerNavItems || defaultHeaderItems
-  const unchosen = NAV_CATALOG.filter(item => !chosenIds.includes(item.id))
-  // Đảm bảo "Mẹo học" (tips) LUÔN LUÔN nằm cuối cùng danh sách Xem thêm
-  return [...unchosen].sort((a, b) => {
-    if (a.id === 'tips') return 1
-    if (b.id === 'tips') return -1
-    return 0
-  })
-})
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value

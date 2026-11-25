@@ -209,11 +209,26 @@
 
         <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-4">
           <button @click="showModal = false" type="button" class="btn btn-outline-secondary rounded-pill px-4">Hủy</button>
-          <button type="submit" class="btn btn-teal text-white rounded-pill px-4 fw-bold">
-            <i class="bi bi-check-lg me-1"></i> Lưu chuyên đề
+          <button type="submit" class="btn btn-teal text-white rounded-pill px-4 fw-bold" :disabled="isSaving">
+            <span v-if="isSaving" class="spinner-border spinner-border-sm me-1"></span>
+            <i v-else class="bi bi-check-lg me-1"></i> Lưu chuyên đề
           </button>
         </div>
       </form>
+    </BaseModal>
+
+    <BaseModal
+      v-model="showDeleteConfirm"
+      title="Xác nhận Xóa Chuyên Đề"
+      icon="bi bi-trash-fill"
+      maxWidth="440px"
+      hideFooter
+    >
+      <p class="fs-7 mb-3 text-dark-emphasis">Bạn có chắc chắn muốn xóa chuyên đề ngữ pháp này khỏi cơ sở dữ liệu?</p>
+      <div class="d-flex justify-content-end gap-2">
+        <button @click="showDeleteConfirm = false" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Hủy</button>
+        <button @click="confirmDeleteGrammar" class="btn btn-danger btn-sm rounded-pill px-4 fw-bold">Xóa ngay</button>
+      </div>
     </BaseModal>
   </div>
 </template>
@@ -285,10 +300,18 @@ const paginatedGrammars = computed(() => {
   return filteredGrammars.value.slice(start, start + pageSize.value)
 })
 
+const isSaving = ref(false)
+const showDeleteConfirm = ref(false)
+const pendingDeleteId = ref(null)
+
 const openModal = (item) => {
   if (item) {
     isEditing.value = true
-    form.value = { ...item }
+    form.value = {
+      ...item,
+      structure: item.structure || item.theory_html || '',
+      signal_words: item.signal_words || item.pronunciation_notes || '',
+    }
   } else {
     isEditing.value = false
     form.value = {
@@ -312,28 +335,51 @@ const saveGrammar = async () => {
     return
   }
 
-  if (isEditing.value) {
-    const idx = grammars.value.findIndex(g => g.id === form.value.id)
-    if (idx !== -1) {
-      grammars.value[idx] = { ...grammars.value[idx], ...form.value }
+  isSaving.value = true
+  try {
+    const payload = {
+      title: form.value.title,
+      slug: form.value.slug,
+      level: form.value.level,
+      order_index: form.value.order_index,
+      badge_color: form.value.badge_color,
+      summary: form.value.summary,
+      theory_html: form.value.structure || form.value.theory_html || '',
+      pronunciation_notes: form.value.signal_words || form.value.pronunciation_notes || '',
     }
-  } else {
-    const newId = Date.now()
-    grammars.value.push({
-      ...form.value,
-      id: newId,
-      total_exercises: 20
-    })
-  }
 
-  showModal.value = false
-  toast.success('Đã cập nhật chuyên đề ngữ pháp thành công!', 'Quản trị Ngữ pháp')
+    if (isEditing.value && form.value.id) {
+      await axios.put(`/api/admin/grammars/${form.value.id}`, payload)
+      toast.success('Đã cập nhật chuyên đề ngữ pháp vào hệ thống!', 'Quản trị Ngữ pháp')
+    } else {
+      await axios.post('/api/admin/grammars', payload)
+      toast.success('Đã thêm chuyên đề ngữ pháp mới vào hệ thống!', 'Quản trị Ngữ pháp')
+    }
+
+    showModal.value = false
+    await fetchGrammars()
+  } catch (err) {
+    toast.error(err.response?.data?.message || 'Lỗi lưu chuyên đề ngữ pháp.', 'Lỗi hệ thống')
+  } finally {
+    isSaving.value = false
+  }
 }
 
 const deleteGrammar = (id) => {
-  if (confirm('Bạn có chắc chắn muốn xóa chuyên đề ngữ pháp này?')) {
-    grammars.value = grammars.value.filter(g => g.id !== id)
+  pendingDeleteId.value = id
+  showDeleteConfirm.value = true
+}
+
+const confirmDeleteGrammar = async () => {
+  if (!pendingDeleteId.value) return
+  try {
+    await axios.delete(`/api/admin/grammars/${pendingDeleteId.value}`)
+    showDeleteConfirm.value = false
+    pendingDeleteId.value = null
     toast.success('Đã xóa chuyên đề thành công!', 'Quản trị Ngữ pháp')
+    await fetchGrammars()
+  } catch (err) {
+    toast.error(err.response?.data?.message || 'Lỗi khi xóa chuyên đề.', 'Lỗi hệ thống')
   }
 }
 

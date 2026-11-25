@@ -1005,11 +1005,15 @@ const markCurrentAsCompleted = () => {
   completedChallengesByLesson.value[key] = true
   saveCompletedProgress()
 
-  // Submit to backend
+  // Submit to backend & sync XP
   axios.post('/api/dictation/submit-challenge', {
     lesson_id: currentLesson.value.id,
     challenge_id: currentChallenge.value.id,
     accuracy: 100
+  }).then(res => {
+    if (authStore.user && res.data?.data?.total_xp !== undefined) {
+      authStore.user.xp_points = res.data.data.total_xp
+    }
   }).catch(() => {})
 }
 

@@ -768,8 +768,9 @@ const fetchData = async () => {
     if (allTopics.value.length === 0) {
       try {
         const allRes = await axios.get('/api/curriculum', { headers })
-        if (allRes.data?.data?.topics) {
-          allTopics.value = allRes.data.data.topics
+        const list = allRes.data?.data?.topics || allRes.data?.data
+        if (Array.isArray(list)) {
+          allTopics.value = list
         }
       } catch (e) {
         console.warn('Không tải được danh sách 25 chủ đề:', e)

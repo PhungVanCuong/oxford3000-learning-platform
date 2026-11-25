@@ -279,6 +279,39 @@
                 ></div>
               </div>
             </div>
+            <!-- Progress 5: Từ vựng CEFR (A1-C2) -->
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-1 fs-7">
+                <span class="fw-bold d-flex align-items-center gap-1.5">
+                  <i class="bi bi-award-fill text-success"></i>
+                  <span>Từ vựng CEFR (A1 - C2: 4.922 từ)</span>
+                </span>
+                <div class="d-flex gap-2">
+                  <span class="text-muted">{{ cefrMasteredCount }}/4922 từ</span>
+                  <span class="fw-bold text-teal">{{ formatFloatPercent(cefrPercent) }}%</span>
+                </div>
+              </div>
+              <div class="progress" style="height: 10px; border-radius: 999px;">
+                <div
+                  class="progress-bar rounded-pill"
+                  role="progressbar"
+                  :style="{ width: `${Math.min(100, cefrPercent)}%`, backgroundColor: '#0ea5e9' }"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Progress 6: Chép chính tả -->
+            <div class="mb-2">
+              <div class="d-flex justify-content-between align-items-center mb-1 fs-7">
+                <span class="fw-bold d-flex align-items-center gap-1.5">
+                  <i class="bi bi-headphones text-info"></i>
+                  <span>Chép chính tả (Dictation Arena)</span>
+                </span>
+                <div class="d-flex gap-2">
+                  <span class="text-muted">{{ dictationCompletedCount }} câu đã chép</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Khung trạng thái giai đoạn cây dưới cùng (nền xanh nhạt) -->
@@ -299,7 +332,7 @@
     </div>
 
     <!-- CÀI ĐẶT GIỌNG ĐỌC & PHÁT ÂM (VOICE SETTINGS) -->
-    <div class="card p-4 rounded-4 shadow-sm border bg-card-custom mb-4" style="border-color: #E2E8F0;">
+    <div class="card p-3.5 p-md-4 rounded-4 shadow-sm border bg-card-custom mb-4">
       <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-3">
         <div>
           <div class="d-flex align-items-center gap-2 mb-1">
@@ -379,43 +412,52 @@
       </div>
     </div>
 
-    <!-- 3. TÙY CHỈNH THANH ĐIỀU HƯỚNG HEADER (MENU 6 MỤC) -->
-    <div class="card p-4 rounded-4 shadow-sm border bg-card-custom mb-4" style="border-color: #E2E8F0;">
+    <!-- 3. TÙY CHỈNH THANH ĐIỀU HƯỚNG HEADER (ĐỒNG BỘ TRỰC TIẾP VỚI HEADER CHÍNH) -->
+    <div class="card p-3.5 p-md-4 rounded-4 shadow-sm border bg-card-custom mb-4">
       <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-3">
         <div>
           <div class="d-flex align-items-center gap-2 mb-1">
             <span class="badge bg-teal-dark text-white rounded-pill px-2.5 py-1 fs-8">NAV</span>
-            <h5 class="fw-bold mb-0 text-teal">TÙY CHỈNH THANH ĐIỀU HƯỚNG HEADER (MENU 6 MỤC)</h5>
+            <h5 class="fw-bold mb-0 text-teal">TÙY CHỈNH THANH ĐIỀU HƯỚNG HEADER</h5>
           </div>
           <div class="text-muted fs-7">
-            Thanh Header gồm 6 mục: <strong>Trang chủ</strong> (Cố định vị trí 1), <strong>4 Mục bạn tự chọn</strong> (Vị trí 2 - 5), và <strong>Xem thêm ▾</strong> (Cố định vị trí 6 chứa các mục còn lại theo thứ tự bạn sắp xếp).
+            Thanh Header gồm: <strong>Trang chủ</strong> (Cố định vị trí 1), <strong>1–5 Mục bạn tự chọn</strong> (Vị trí 2 - 6), và <strong>Xem thêm ▾</strong> (Cố định cuối cùng chứa các mục phụ theo thứ tự bạn sắp xếp).
           </div>
         </div>
-        <button
-          @click="saveHeaderNav"
-          class="btn btn-teal text-white rounded-pill px-4 py-2 fw-bold fs-7 d-flex align-items-center gap-1.5 shadow-sm"
-          :disabled="isSavingNav"
-        >
-          <span v-if="isSavingNav" class="spinner-border spinner-border-sm me-1"></span>
-          <i v-else class="bi bi-check2-circle fs-6"></i>
-          <span>Lưu Cấu Hình Menu ({{ selectedNavIds.length }}/4)</span>
-        </button>
+        <div class="d-flex flex-wrap gap-2">
+          <button
+            @click="resetHeaderNavToDefault"
+            type="button"
+            class="btn btn-outline-secondary rounded-pill px-3 py-2 fw-semibold fs-8"
+          >
+            <i class="bi bi-arrow-counterclockwise me-1"></i>Mặc định
+          </button>
+          <button
+            @click="saveHeaderNav"
+            class="btn btn-teal text-white rounded-pill px-4 py-2 fw-bold fs-7 d-flex align-items-center gap-1.5 shadow-sm"
+            :disabled="isSavingNav"
+          >
+            <span v-if="isSavingNav" class="spinner-border spinner-border-sm me-1"></span>
+            <i v-else class="bi bi-check2-circle fs-6"></i>
+            <span>Lưu Cấu Hình Menu ({{ selectedNavIds.length }}/{{ MAX_HEADER_NAV_ITEMS }})</span>
+          </button>
+        </div>
       </div>
 
       <!-- Live Preview of Header Bar -->
-      <div class="p-3 rounded-4 mb-3" style="background-color: rgba(6, 78, 64, 0.05); border: 1.5px dashed rgba(6, 78, 64, 0.2);">
+      <div class="p-3 rounded-4 mb-3 border" style="background-color: rgba(0, 176, 116, 0.06); border-style: dashed !important; border-color: rgba(0, 176, 116, 0.28) !important;">
         <div class="text-muted fs-8 fw-bold text-uppercase mb-2 d-flex align-items-center gap-1.5">
           <i class="bi bi-eye-fill text-teal"></i>
-          <span>Mô Phỏng Giao Diện Thanh Header 6 Mục Của Bạn:</span>
+          <span>Mô Phỏng Giao Diện Thanh Header Của Bạn (Đồng bộ tức thì):</span>
         </div>
         <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
           <!-- Fixed 1: Trang chủ -->
-          <div class="badge bg-light text-dark border px-3 py-2 rounded-pill fs-7 fw-semibold d-flex align-items-center gap-1.5 shadow-xs">
+          <div class="badge bg-card-custom text-dark-emphasis border px-3 py-2 rounded-pill fs-7 fw-semibold d-flex align-items-center gap-1.5 shadow-xs">
             <i class="bi bi-house-door-fill text-primary"></i>
             <span>1. Trang chủ (Cố định)</span>
           </div>
 
-          <!-- Dynamic Slots 2-5 -->
+          <!-- Dynamic Slots 2..6 -->
           <div
             v-for="(id, idx) in selectedNavIds"
             :key="id"
@@ -450,19 +492,18 @@
             ></button>
           </div>
 
-          <!-- Empty placeholders if < 4 -->
+          <!-- Empty slot indicator -->
           <div
-            v-for="emptyIdx in (4 - selectedNavIds.length)"
-            :key="'empty-' + emptyIdx"
-            class="badge bg-light text-muted border border-dashed px-3 py-2 rounded-pill fs-7 fw-normal"
+            v-if="selectedNavIds.length < MAX_HEADER_NAV_ITEMS"
+            class="badge bg-body-tertiary text-muted border px-3 py-2 rounded-pill fs-7 fw-normal"
           >
-            + Chọn thêm {{ emptyIdx }} mục
+            + Có thể chọn thêm {{ MAX_HEADER_NAV_ITEMS - selectedNavIds.length }} mục
           </div>
 
-          <!-- Fixed 6: Xem thêm -->
-          <div class="badge bg-light text-dark border px-3 py-2 rounded-pill fs-7 fw-semibold d-flex align-items-center gap-1.5 shadow-xs">
+          <!-- Fixed End: Xem thêm -->
+          <div class="badge bg-card-custom text-dark-emphasis border px-3 py-2 rounded-pill fs-7 fw-semibold d-flex align-items-center gap-1.5 shadow-xs">
             <i class="bi bi-grid-fill text-teal"></i>
-            <span>6. Xem thêm ▾ ({{ unselectedNavIds.length }} mục phụ)</span>
+            <span>{{ selectedNavIds.length + 2 }}. Xem thêm ▾ ({{ unselectedNavIds.length }} mục phụ)</span>
           </div>
         </div>
 
@@ -476,7 +517,7 @@
             <span
               v-for="(id, mIdx) in unselectedNavIds"
               :key="id"
-              class="badge bg-white text-dark border px-2.5 py-1.5 rounded-pill fs-8 d-inline-flex align-items-center gap-1 shadow-2xs"
+              class="badge bg-card-custom text-dark-emphasis border px-2.5 py-1.5 rounded-pill fs-8 d-inline-flex align-items-center gap-1 shadow-2xs"
             >
               <i :class="[getNavOption(id)?.icon, 'text-teal']"></i>
               <span>#{{ mIdx + 1 }}. {{ getNavOption(id)?.label }}</span>
@@ -503,21 +544,21 @@
 
       <!-- Selectable items grid -->
       <div class="row g-2.5">
-        <div v-for="opt in availableNavOptions" :key="opt.id" class="col-12 col-sm-6 col-lg-4 col-xl-2-4">
+        <div v-for="opt in availableNavOptions" :key="opt.id" class="col-12 col-sm-6 col-md-4 col-xl-3">
           <div
             @click="toggleNavItem(opt.id)"
             class="card p-3 rounded-4 border h-100 cursor-pointer transition-all user-select-none"
-            :class="selectedNavIds.includes(opt.id) ? 'border-success bg-success-subtle shadow-xs' : 'border-light-subtle bg-white hover-card'"
+            :class="selectedNavIds.includes(opt.id) ? 'border-success bg-success-subtle shadow-xs' : 'bg-card-custom hover-card'"
             style="cursor: pointer;"
           >
             <div class="d-flex justify-content-between align-items-start mb-1.5">
-              <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;" :class="selectedNavIds.includes(opt.id) ? 'bg-success text-white' : 'bg-light ' + opt.color">
+              <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;" :class="selectedNavIds.includes(opt.id) ? 'bg-success text-white' : 'bg-body-tertiary ' + opt.color">
                 <i :class="opt.icon"></i>
               </div>
               <span v-if="selectedNavIds.includes(opt.id)" class="badge bg-success rounded-pill px-2 py-1 fs-8">
                 <i class="bi bi-check-lg me-0.5"></i>Vị trí {{ selectedNavIds.indexOf(opt.id) + 2 }}
               </span>
-              <span v-else class="badge bg-light text-muted rounded-pill px-2 py-1 fs-8">
+              <span v-else class="badge bg-body-tertiary text-muted border rounded-pill px-2 py-1 fs-8">
                 Xem thêm ▾
               </span>
             </div>
@@ -529,7 +570,7 @@
     </div>
 
     <!-- 4. TIẾN ĐỘ CHI TIẾT 25 CHỦ ĐỀ LỘ TRÌNH IELTS (5.000 TỪ) -->
-    <div class="card p-4 rounded-4 shadow-sm border bg-card-custom mb-4" style="border-color: #E2E8F0;">
+    <div class="card p-3.5 p-md-4 rounded-4 shadow-sm border bg-card-custom mb-4">
       <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-3">
         <div>
           <div class="d-flex align-items-center gap-2 mb-1">
@@ -545,21 +586,21 @@
       </div>
 
       <div class="row g-2.5">
-        <div v-for="t in curriculumTopics" :key="t.id" class="col-12 col-md-6 col-lg-4">
-          <router-link :to="`/curriculum`" class="card p-3 rounded-3 border text-decoration-none hover-card h-100 bg-white" style="border-color: #E2E8F0;">
+        <div v-for="t in curriculumTopics" :key="t.id" class="col-12 col-sm-6 col-lg-4">
+          <router-link :to="`/curriculum/stage/${t.id}/1`" class="card p-3 rounded-3 border text-decoration-none hover-card h-100 bg-card-custom">
             <div class="d-flex justify-content-between align-items-start mb-1.5">
               <span class="badge rounded-pill text-teal fw-bold bg-teal-subtle px-2 py-0.5" style="font-size: 10px;">
                 CHỦ ĐỀ {{ String(t.order_num).padStart(2, '0') }}
               </span>
               <span 
                 class="badge rounded-pill fw-bold" 
-                :class="t.progress_percent >= 100 ? 'bg-success text-white' : (t.progress_percent > 0 ? 'bg-teal text-white' : 'bg-light text-muted border')" 
+                :class="t.progress_percent >= 100 ? 'bg-success text-white' : (t.progress_percent > 0 ? 'bg-teal text-white' : 'bg-body-tertiary text-muted border')" 
                 style="font-size: 10px;"
               >
                 {{ t.progress_percent }}%
               </span>
             </div>
-            <div class="fw-bold fs-7 text-dark text-truncate">{{ t.title }}</div>
+            <div class="fw-bold fs-7 text-dark-emphasis text-truncate">{{ t.title }}</div>
             <div class="text-muted fs-8 mb-2 text-truncate">{{ t.title_vi }}</div>
             <div class="d-flex justify-content-between align-items-center fs-8 text-muted mb-1">
               <span>{{ t.remembered_terms_count || 0 }}/200 từ đã nhớ</span>
@@ -645,6 +686,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { useSpeech } from '@/composables/useSpeech'
 import { useToast } from '@/composables/useToast'
+import { NAV_CATALOG, DEFAULT_HEADER_NAV_IDS, MAX_HEADER_NAV_ITEMS, MIN_HEADER_NAV_ITEMS, sanitizeHeaderNavIds, buildOrderedMoreItems } from '@/constants/navCatalog'
 import axios from 'axios'
 
 const authStore = useAuthStore()
@@ -673,39 +715,12 @@ const showResetConfirm = ref(false)
 const isResetting = ref(false)
 const isSavingNav = ref(false)
 
-const availableNavOptions = [
-  { id: 'curriculum', label: 'Lộ trình', desc: '5000 từ vựng 25 chủ đề IELTS', icon: 'bi bi-signpost-split-fill', color: 'text-success' },
-  { id: 'grammar', label: 'Ngữ pháp', desc: '12 thì chuyên đề & bài tập dịch câu', icon: 'bi bi-journal-bookmark-fill', color: 'text-danger' },
-  { id: 'cefr', label: 'Từ vựng CEFR', desc: '4.922 từ chuẩn Châu Âu 6 bậc A1-C2', icon: 'bi bi-award-fill', color: 'text-success' },
-  { id: 'daily', label: 'Học theo ngày', desc: '20 từ vựng mỗi ngày & kiểm tra', icon: 'bi bi-calendar-check-fill', color: 'text-warning' },
-  { id: 'phrasal_verbs', label: 'Cụm từ', desc: '100 Phrasal Verbs & 1000 cụm từ', icon: 'bi bi-puzzle-fill', color: 'text-info' },
-  { id: 'review', label: 'Ôn tập', desc: 'Bộ thẻ Spaced Repetition ôn ngắt quãng', icon: 'bi bi-clock-history', color: 'text-warning' },
-  { id: 'history', label: 'Lịch sử', desc: 'Lịch sử học tập & xem lại câu sai', icon: 'bi bi-journal-check', color: 'text-info' },
-  { id: 'arena', label: 'Đấu trường', desc: 'Đấu trường trực tiếp & Bảng xếp hạng', icon: 'bi bi-trophy-fill', color: 'text-warning' },
-  { id: 'dictionary', label: 'Tra cứu', desc: 'Từ điển tra cứu 3000 từ vựng', icon: 'bi bi-search-heart-fill', color: 'text-teal' },
-  { id: 'ipa', label: '44 Âm IPA', desc: 'Bảng phiên âm quốc tế chuẩn IPA', icon: 'bi bi-soundwave', color: 'text-primary' },
-  { id: 'tree', label: 'Cây tri thức', desc: 'Vườn cây tiến độ học tập 30 cấp', icon: 'bi bi-tree-fill', color: 'text-success' },
-  { id: 'stats', label: 'Năng suất', desc: 'Biểu đồ giờ học & streak liên tục', icon: 'bi bi-bar-chart-fill', color: 'text-primary' },
-  { id: 'tips', label: 'Mẹo học', desc: 'Chiến thuật ghi nhớ đỉnh cao', icon: 'bi bi-lightbulb-fill', color: 'text-warning' },
-]
+const availableNavOptions = NAV_CATALOG
 
-const selectedNavIds = ref([...(authStore.headerNavItems || ['curriculum', 'grammar', 'cefr', 'daily', 'phrasal_verbs', 'review', 'history'])])
+const selectedNavIds = ref(sanitizeHeaderNavIds(authStore.headerNavItems || DEFAULT_HEADER_NAV_IDS))
 
 const computeUnselectedNavIds = () => {
-  const allIds = availableNavOptions.map(opt => opt.id)
-  const moreOrder = authStore.moreNavOrder || []
-  const unselected = allIds.filter(id => !selectedNavIds.value.includes(id))
-  if (moreOrder.length > 0) {
-    unselected.sort((a, b) => {
-      const idxA = moreOrder.indexOf(a)
-      const idxB = moreOrder.indexOf(b)
-      if (idxA === -1 && idxB === -1) return 0
-      if (idxA === -1) return 1
-      if (idxB === -1) return -1
-      return idxA - idxB
-    })
-  }
-  return unselected
+  return buildOrderedMoreItems(selectedNavIds.value, authStore.moreNavOrder).map(i => i.id)
 }
 
 const unselectedNavIds = ref(computeUnselectedNavIds())
@@ -718,18 +733,24 @@ const getNavOption = (id) => availableNavOptions.find(opt => opt.id === id)
 
 const toggleNavItem = (id) => {
   if (selectedNavIds.value.includes(id)) {
-    if (selectedNavIds.value.length <= 1) {
-      toast.warning('Vui lòng chọn ít nhất 1 mục hiển thị trên thanh Header!', 'Cấu hình Header')
+    if (selectedNavIds.value.length <= MIN_HEADER_NAV_ITEMS) {
+      toast.warning(`Vui lòng giữ ít nhất ${MIN_HEADER_NAV_ITEMS} mục hiển thị trên thanh Header!`, 'Cấu hình Header')
       return
     }
     selectedNavIds.value = selectedNavIds.value.filter(item => item !== id)
   } else {
-    if (selectedNavIds.value.length >= 4) {
-      toast.warning('Tối đa 4 mục tùy chỉnh trên thanh Header (kết hợp Trang chủ và Xem thêm)! Hãy bỏ bớt 1 mục trước.', 'Giới hạn Header')
+    if (selectedNavIds.value.length >= MAX_HEADER_NAV_ITEMS) {
+      toast.warning(`Tối đa ${MAX_HEADER_NAV_ITEMS} mục tùy chỉnh trên thanh Header (kết hợp Trang chủ và Xem thêm)! Hãy bỏ bớt 1 mục trước.`, 'Giới hạn Header')
       return
     }
     selectedNavIds.value.push(id)
   }
+}
+
+const resetHeaderNavToDefault = () => {
+  selectedNavIds.value = [...DEFAULT_HEADER_NAV_IDS]
+  unselectedNavIds.value = buildOrderedMoreItems(selectedNavIds.value, []).map(i => i.id)
+  toast.info('Đã đưa thanh điều hướng về cấu hình mặc định, nhấn Lưu để áp dụng.', 'Mặc định')
 }
 
 const moveHeaderItemUp = (idx) => {
@@ -765,14 +786,14 @@ const moveMoreItemDown = (idx) => {
 }
 
 const saveHeaderNav = async () => {
-  if (selectedNavIds.value.length !== 4) {
-    toast.warning('Vui lòng chọn đúng 4 mục để thanh Header hiển thị chuẩn xác 6 mục!', 'Cấu hình Header')
+  if (selectedNavIds.value.length < MIN_HEADER_NAV_ITEMS || selectedNavIds.value.length > MAX_HEADER_NAV_ITEMS) {
+    toast.warning(`Vui lòng chọn từ ${MIN_HEADER_NAV_ITEMS} đến ${MAX_HEADER_NAV_ITEMS} mục trên thanh Header!`, 'Cấu hình Header')
     return
   }
   isSavingNav.value = true
   try {
     await authStore.setHeaderNavAndMore(selectedNavIds.value, unselectedNavIds.value)
-    toast.success('Đã lưu cấu hình menu Header và danh sách Xem thêm thành công!', 'Đã lưu cài đặt')
+    toast.success('Đã lưu & đồng bộ cấu hình menu Header thành công!', 'Đã lưu cài đặt')
   } catch (err) {
     console.error(err)
     toast.error('Lỗi lưu cấu hình: ' + (err.response?.data?.message || err.message), 'Lỗi hệ thống')
@@ -838,6 +859,26 @@ const phrasesPercent = computed(() => {
   return Math.min(100, (comp / total) * 100)
 })
 
+const cefrMasteredCount = computed(() => {
+  try {
+    const saved = JSON.parse(localStorage.getItem('oxford_cefr_words') || '{}')
+    return Object.values(saved).filter(v => v === 'mastered').length
+  } catch (e) {
+    return 0
+  }
+})
+
+const cefrPercent = computed(() => Math.min(100, (cefrMasteredCount.value / 4922) * 100))
+
+const dictationCompletedCount = computed(() => {
+  try {
+    const saved = JSON.parse(localStorage.getItem('oxford_dictation_completed') || '{}')
+    return Object.values(saved).filter(Boolean).length
+  } catch (e) {
+    return 0
+  }
+})
+
 const plantStage = computed(() => {
   const xp = authStore.user?.xp_points || 0
   if (xp < 150) return 'Hạt giống ươm mầm'
@@ -883,8 +924,9 @@ onMounted(async () => {
     form.value.words_per_day = authStore.user.words_per_day || 15
   }
 
-  if (authStore.headerNavItems && Array.isArray(authStore.headerNavItems) && authStore.headerNavItems.length === 4) {
-    selectedNavIds.value = [...authStore.headerNavItems]
+  if (authStore.headerNavItems && Array.isArray(authStore.headerNavItems) && authStore.headerNavItems.length >= 1) {
+    selectedNavIds.value = sanitizeHeaderNavIds(authStore.headerNavItems)
+    unselectedNavIds.value = computeUnselectedNavIds()
   }
 
   // Load Curriculum 25 Topics Progress

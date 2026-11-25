@@ -126,6 +126,8 @@
               <option value="A2">A2</option>
               <option value="B1">B1</option>
               <option value="B2">B2</option>
+              <option value="C1">C1</option>
+              <option value="C2">C2</option>
             </select>
           </div>
           <div class="col-12">
@@ -171,6 +173,20 @@
           </button>
         </div>
       </form>
+    </BaseModal>
+
+    <BaseModal
+      v-model="showDeleteConfirm"
+      title="Xác nhận Xóa Từ Vựng"
+      icon="bi bi-trash-fill"
+      maxWidth="440px"
+      hideFooter
+    >
+      <p class="fs-7 mb-3 text-dark-emphasis">Bạn có chắc chắn muốn xóa từ vựng này khỏi kho dữ liệu không?</p>
+      <div class="d-flex justify-content-end gap-2">
+        <button @click="showDeleteConfirm = false" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Hủy bỏ</button>
+        <button @click="confirmDeleteVocab" class="btn btn-danger btn-sm rounded-pill px-4 fw-bold">Xóa ngay</button>
+      </div>
     </BaseModal>
   </div>
 </template>
@@ -265,7 +281,7 @@ const generateAiExamples = async () => {
   try {
     const res = await axios.post('/api/ai/generate-examples', {
       word: vocabForm.value.word,
-      meaning: vocabForm.value.meaning_vi,
+      meaning_vi: vocabForm.value.meaning_vi,
       part_of_speech: vocabForm.value.part_of_speech,
     })
     const data = res.data.data
@@ -297,15 +313,24 @@ const saveVocab = async () => {
   }
 }
 
-const deleteVocab = async (id) => {
-  if (confirm('Bạn có chắc chắn muốn xóa từ vựng này?')) {
-    try {
-      await axios.delete(`/api/admin/vocabularies/${id}`)
-      toast.success('Đã xóa từ vựng thành công!', 'Quản trị Từ vựng')
-      fetchVocabs(currentPage.value)
-    } catch (err) {
-      toast.error('Lỗi khi xóa từ vựng.', 'Lỗi hệ thống')
-    }
+const showDeleteConfirm = ref(false)
+const pendingDeleteId = ref(null)
+
+const deleteVocab = (id) => {
+  pendingDeleteId.value = id
+  showDeleteConfirm.value = true
+}
+
+const confirmDeleteVocab = async () => {
+  if (!pendingDeleteId.value) return
+  try {
+    await axios.delete(`/api/admin/vocabularies/${pendingDeleteId.value}`)
+    toast.success('Đã xóa từ vựng thành công!', 'Quản trị Từ vựng')
+    showDeleteConfirm.value = false
+    pendingDeleteId.value = null
+    fetchVocabs(currentPage.value)
+  } catch (err) {
+    toast.error('Lỗi khi xóa từ vựng.', 'Lỗi hệ thống')
   }
 }
 

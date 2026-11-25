@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
+import { DEFAULT_HEADER_NAV_IDS, sanitizeHeaderNavIds } from '@/constants/navCatalog'
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: (() => {
@@ -20,9 +22,9 @@ export const useAuthStore = defineStore('auth', {
     headerNavItems: (() => {
       try {
         const saved = JSON.parse(localStorage.getItem('oxford_header_nav'))
-        if (Array.isArray(saved) && saved.length === 4) return saved
+        if (Array.isArray(saved) && saved.length >= 1) return sanitizeHeaderNavIds(saved)
       } catch (e) {}
-      return ['curriculum', 'daily', 'grammar', 'phrasal_verbs']
+      return [...DEFAULT_HEADER_NAV_IDS]
     })(),
     moreNavOrder: (() => {
       try {
@@ -195,9 +197,13 @@ export const useAuthStore = defineStore('auth', {
           if (this.user?.theme_mode) {
             this.applyTheme(this.user.theme_mode)
           }
-          if (this.user?.header_nav_json && Array.isArray(this.user.header_nav_json) && this.user.header_nav_json.length === 4) {
-            this.headerNavItems = this.user.header_nav_json
+          if (this.user?.header_nav_json && Array.isArray(this.user.header_nav_json) && this.user.header_nav_json.length >= 1) {
+            this.headerNavItems = sanitizeHeaderNavIds(this.user.header_nav_json)
             localStorage.setItem('oxford_header_nav', JSON.stringify(this.headerNavItems))
+          }
+          if (this.user?.more_nav_order_json && Array.isArray(this.user.more_nav_order_json)) {
+            this.moreNavOrder = this.user.more_nav_order_json
+            localStorage.setItem('oxford_more_nav_order', JSON.stringify(this.moreNavOrder))
           }
         } else {
           this.user = null
@@ -246,8 +252,8 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async setHeaderNavAndMore(headerItems, moreItems = []) {
-      if (Array.isArray(headerItems) && headerItems.length === 4) {
-        this.headerNavItems = [...headerItems]
+      if (Array.isArray(headerItems) && headerItems.length >= 1) {
+        this.headerNavItems = sanitizeHeaderNavIds(headerItems)
         localStorage.setItem('oxford_header_nav', JSON.stringify(this.headerNavItems))
       }
       if (Array.isArray(moreItems)) {

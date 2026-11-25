@@ -66,9 +66,14 @@ Route::get('/arena/rooms/{id}', [ArenaController::class, 'show']);
 Route::post('/arena/rooms/{id}/start', [ArenaController::class, 'start']);
 Route::post('/arena/rooms/{id}/answer', [ArenaController::class, 'submitAnswer']);
 
-// 4.2 User Activity & Productivity Charts (Weekly frequency & GitHub heatmap)
+// 4.2 User Activity, Productivity Charts, Tree & Notebook Sync
 Route::get('/user/study-stats', [ActivityController::class, 'getStudyStats']);
 Route::get('/user/contribution-heatmap', [ActivityController::class, 'getContributionHeatmap']);
+Route::get('/user/tree-state', [ActivityController::class, 'getTreeState']);
+Route::post('/user/study-action', [ActivityController::class, 'logStudyAction']);
+Route::get('/user/notebook', [ActivityController::class, 'getNotebook']);
+Route::post('/user/notebook/sync', [ActivityController::class, 'syncNotebook']);
+Route::get('/cefr/overrides', [ActivityController::class, 'getCefrOverrides']);
 
 // 5. 44 IPA Sounds
 Route::get('/ipa-sounds', [IpaController::class, 'index']);
@@ -124,11 +129,17 @@ Route::prefix('admin')->group(function () {
     Route::delete('/users/{id}', [AdminController::class, 'deleteUser']);
     Route::post('/users/{id}/reset-progress', [AdminController::class, 'resetUserProgress']);
     Route::get('/permissions', [AdminController::class, 'getPermissionsList']);
+    Route::put('/roles/{roleKey}', [AdminController::class, 'updateRolePackage']);
     Route::put('/users/{id}/role-permissions', [AdminController::class, 'updateUserRoleAndPermissions']);
 
     Route::post('/vocabularies', [AdminController::class, 'createVocabulary']);
     Route::put('/vocabularies/{id}', [AdminController::class, 'updateVocabulary']);
     Route::delete('/vocabularies/{id}', [AdminController::class, 'deleteVocabulary']);
+    Route::post('/cefr/overrides', [AdminController::class, 'saveCefrOverrides']);
+
+    Route::post('/grammars', [AdminController::class, 'createGrammar']);
+    Route::put('/grammars/{id}', [AdminController::class, 'updateGrammar']);
+    Route::delete('/grammars/{id}', [AdminController::class, 'deleteGrammar']);
 
     // Admin Curriculum Management
     Route::get('/curriculum/topics', [CurriculumRoadmapController::class, 'adminGetTopics']);
