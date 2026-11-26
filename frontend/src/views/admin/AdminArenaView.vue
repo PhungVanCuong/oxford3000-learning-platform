@@ -411,6 +411,22 @@
         </div>
       </div>
     </div>
+
+    <BaseModal
+      v-model="confirmModal.show"
+      :title="confirmModal.title"
+      icon="bi bi-exclamation-triangle-fill"
+      maxWidth="460px"
+      hideFooter
+    >
+      <p class="fs-7 mb-3 text-dark-emphasis">{{ confirmModal.message }}</p>
+      <div class="d-flex justify-content-end gap-2">
+        <button @click="confirmModal.show = false" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Hủy</button>
+        <button @click="executeConfirmRoomAction" class="btn btn-sm rounded-pill px-4 fw-bold text-white" :class="confirmModal.danger ? 'btn-danger' : 'btn-warning text-dark'">
+          Xác nhận
+        </button>
+      </div>
+    </BaseModal>
   </div>
 </template>
 
@@ -418,6 +434,11 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import SmartPagination from '@/components/SmartPagination.vue'
+import BaseModal from '@/components/BaseModal.vue'
+import { useToast } from '@/composables/useToast'
+
+const toast = useToast()
+const confirmModal = ref({ show: false, title: '', message: '', danger: false, onConfirm: null })
 
 const activeMainTab = ref('leaderboard')
 
@@ -549,24 +570,46 @@ const loadRooms = async () => {
   }
 }
 
-const closeRoom = async (room) => {
-  if (!confirm(`Bạn có chắc muốn đóng phòng thi đấu "${room.title}" (${room.room_code})?`)) return
-  try {
-    await axios.post(`/api/admin/arena/rooms/${room.id}/close`)
-    room.status = 'finished'
-  } catch (err) {
-    alert(err.response?.data?.message || 'Không thể đóng phòng lúc này.')
+const closeRoom = (room) => {
+  confirmModal.value = {
+    show: true,
+    title: 'Đóng phòng thi đấu',
+    danger: false,
+    message: `Bạn có chắc muốn đóng phòng thi đấu "${room.title}" (${room.room_code})?`,
+    onConfirm: async () => {
+      try {
+        await axios.post(`/api/admin/arena/rooms/${room.id}/close`)
+        room.status = 'finished'
+        toast.success(`Đã đóng phòng "${room.room_code}" thành công!`, 'Quản trị Đấu trường')
+      } catch (err) {
+        toast.error(err.response?.data?.message || 'Không thể đóng phòng lúc này.', 'Lỗi hệ thống')
+      }
+    }
   }
 }
 
-const deleteRoom = async (room) => {
-  if (!confirm(`CẢNH BÁO: Bạn có chắc chắn muốn XÓA VĨNH VIỄN phòng "${room.title}" (${room.room_code})? Hành động này không thể hoàn tác.`)) return
-  try {
-    await axios.delete(`/api/admin/arena/rooms/${room.id}`)
-    rooms.value = rooms.value.filter(r => r.id !== room.id)
-  } catch (err) {
-    alert(err.response?.data?.message || 'Không thể xóa phòng lúc này.')
+const deleteRoom = (room) => {
+  confirmModal.value = {
+    show: true,
+    title: 'Xóa vĩnh viễn phòng thi',
+    danger: true,
+    message: `CẢNH BÁO: Bạn có chắc chắn muốn XÓA VĨNH VIỄN phòng "${room.title}" (${room.room_code})? Hành động này không thể hoàn tác.`,
+    onConfirm: async () => {
+      try {
+        await axios.delete(`/api/admin/arena/rooms/${room.id}`)
+        rooms.value = rooms.value.filter(r => r.id !== room.id)
+        toast.success(`Đã xóa phòng "${room.room_code}" thành công!`, 'Quản trị Đấu trường')
+      } catch (err) {
+        toast.error(err.response?.data?.message || 'Không thể xóa phòng lúc này.', 'Lỗi hệ thống')
+      }
+    }
   }
+}
+
+const executeConfirmRoomAction = async () => {
+  const fn = confirmModal.value.onConfirm
+  confirmModal.value.show = false
+  if (fn) await fn()
 }
 
 onMounted(() => {

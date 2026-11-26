@@ -30,7 +30,7 @@
           <router-link
             v-if="authStore.canManageArena || authStore.isAdmin"
             to="/admin/arena"
-            class="btn btn-outline-warning text-dark rounded-pill px-3.5 py-2 fw-bold shadow-xs fs-7 d-flex align-items-center gap-1.5"
+            class="btn btn-outline-warning text-warning-emphasis rounded-pill px-3.5 py-2 fw-bold shadow-xs fs-7 d-flex align-items-center gap-1.5"
           >
             <i class="bi bi-trophy-fill text-warning"></i>
             <span>QL Đấu Trường Quiz</span>
@@ -177,7 +177,7 @@
         </router-link>
       </div>
 
-      <!-- Card 6: Hoạt động học tập hôm nay -->
+      <!-- Card 7: Hoạt động học tập hôm nay -->
       <div class="col-12 col-sm-6 col-xl-4">
         <div class="card p-4 rounded-4 shadow-sm border bg-card-custom h-100 hover-card" style="border-color: #E2E8F0;">
           <div class="d-flex justify-content-between align-items-center mb-3">

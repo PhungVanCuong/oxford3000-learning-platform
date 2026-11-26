@@ -818,7 +818,7 @@ const speakWord = (text) => {
 const startSpeechRecognition = () => {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
   if (!SpeechRecognition) {
-    alert('Trình duyệt của bạn chưa hỗ trợ Web Speech Recognition API.')
+    toast.warning('Trình duyệt của bạn chưa hỗ trợ Web Speech Recognition API (hãy dùng Chrome/Edge).', 'Không hỗ trợ Microphone')
     return
   }
 

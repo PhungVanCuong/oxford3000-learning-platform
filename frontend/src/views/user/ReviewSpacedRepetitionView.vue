@@ -218,6 +218,29 @@
               </div>
             </div>
 
+            <!-- BULK SELECTION ACTION TOOLBAR -->
+            <div
+              v-if="selectedCardIds.length > 0"
+              class="p-2.5 px-3 rounded-3 bg-success-subtle border border-success-subtle mb-3 d-flex flex-wrap align-items-center justify-content-between gap-2 animate-fade-in"
+            >
+              <div class="fs-8 fw-bold text-success-emphasis d-flex align-items-center gap-2">
+                <i class="bi bi-check2-square fs-6"></i>
+                <span>Đã chọn {{ selectedCardIds.length }} thẻ</span>
+              </div>
+              <div class="d-flex flex-wrap align-items-center gap-2">
+                <select v-model="bulkMoveFolder" @change="handleBulkMoveFolder" class="form-select form-select-sm rounded-pill fs-8" style="width: auto;">
+                  <option value="">-- Chuyển vào thư mục --</option>
+                  <option v-for="f in reviewStore.folders" :key="f" :value="f">{{ f }}</option>
+                </select>
+                <button @click="handleBulkMarkMastered" class="btn btn-sm btn-success rounded-pill px-3 py-1 fs-8 fw-bold">
+                  <i class="bi bi-check-all me-1"></i>Đánh dấu đã thuộc
+                </button>
+                <button @click="handleBulkDeleteSelected" class="btn btn-sm btn-danger rounded-pill px-3 py-1 fs-8 fw-bold">
+                  <i class="bi bi-trash me-1"></i>Xóa đã chọn
+                </button>
+              </div>
+            </div>
+
             <!-- TABLE OF CARDS (WITH WORD-BREAK & OVERFLOW WRAP TO PREVENT TEXT OVERLAP) -->
             <div class="table-responsive">
               <table class="table table-hover align-middle mb-0" style="table-layout: auto;">
@@ -683,12 +706,44 @@ const handleCreateFolder = () => {
   }
 }
 
+const bulkMoveFolder = ref('')
+
 const toggleSelectAll = (e) => {
   if (e.target.checked) {
     selectedCardIds.value = reviewStore.filteredCards.map(c => c.id)
   } else {
     selectedCardIds.value = []
   }
+}
+
+const handleBulkMoveFolder = () => {
+  if (!bulkMoveFolder.value || selectedCardIds.value.length === 0) return
+  const targetFolder = bulkMoveFolder.value
+  selectedCardIds.value.forEach(id => {
+    reviewStore.updateCard(id, { folder: targetFolder })
+  })
+  toast.success(`Đã chuyển ${selectedCardIds.value.length} thẻ sang thư mục "${targetFolder}"!`, 'Cập nhật hàng loạt')
+  selectedCardIds.value = []
+  bulkMoveFolder.value = ''
+}
+
+const handleBulkMarkMastered = () => {
+  if (selectedCardIds.value.length === 0) return
+  selectedCardIds.value.forEach(id => {
+    reviewStore.markCardResult(id, true)
+  })
+  toast.success(`Đã đánh dấu hoàn thành ôn tập cho ${selectedCardIds.value.length} thẻ!`, 'Ôn tập thông minh')
+  selectedCardIds.value = []
+}
+
+const handleBulkDeleteSelected = () => {
+  if (selectedCardIds.value.length === 0) return
+  const count = selectedCardIds.value.length
+  selectedCardIds.value.forEach(id => {
+    reviewStore.removeCard(id)
+  })
+  toast.info(`Đã xóa ${count} thẻ khỏi bộ ôn tập!`, 'Đã xóa thẻ')
+  selectedCardIds.value = []
 }
 
 const openAddCardModal = () => {

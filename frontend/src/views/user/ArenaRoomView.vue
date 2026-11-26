@@ -237,10 +237,10 @@
           <p class="text-muted fs-7 mb-4">Xin chúc mừng các học viên đã xuất sắc trả lời nhanh và chính xác nhất!</p>
 
           <!-- Top 3 Podium (1st, 2nd, 3rd) -->
-          <div class="d-flex justify-content-center align-items-end gap-3 mb-5 px-3" style="min-height: 200px;">
+          <div class="d-flex justify-content-center align-items-end gap-2 gap-sm-3 mb-5 px-1 px-sm-3 arena-podium-row" style="min-height: 200px;">
             <!-- 2nd Place -->
-            <div v-if="sortedParticipants[1]" class="d-flex flex-column align-items-center" style="width: 120px;">
-              <img :src="sortedParticipants[1].user_avatar" class="rounded-circle border border-2 border-secondary mb-1" style="width: 50px; height: 50px;" />
+            <div v-if="sortedParticipants[1]" class="d-flex flex-column align-items-center arena-podium-col" style="width: 30%; max-width: 125px;">
+              <img :src="sortedParticipants[1].user_avatar" class="rounded-circle border border-2 border-secondary mb-1" style="width: 48px; height: 48px;" />
               <div class="fw-bold fs-8 text-dark-emphasis text-truncate w-100">{{ sortedParticipants[1].user_name }}</div>
               <div class="badge bg-secondary text-white rounded-pill fs-8 mb-2">{{ sortedParticipants[1].total_score }} XP</div>
               <div class="podium-step bg-secondary-subtle border rounded-top-3 w-100 d-flex align-items-center justify-content-center fw-black fs-4 text-secondary" style="height: 90px;">
@@ -249,9 +249,9 @@
             </div>
 
             <!-- 1st Place (Champion) -->
-            <div v-if="sortedParticipants[0]" class="d-flex flex-column align-items-center" style="width: 140px;">
+            <div v-if="sortedParticipants[0]" class="d-flex flex-column align-items-center arena-podium-col" style="width: 34%; max-width: 145px;">
               <div class="fs-4">👑</div>
-              <img :src="sortedParticipants[0].user_avatar" class="rounded-circle border border-3 border-warning mb-1 shadow" style="width: 64px; height: 64px;" />
+              <img :src="sortedParticipants[0].user_avatar" class="rounded-circle border border-3 border-warning mb-1 shadow" style="width: 60px; height: 60px;" />
               <div class="fw-black fs-7 text-dark-emphasis text-truncate w-100">{{ sortedParticipants[0].user_name }}</div>
               <div class="badge bg-warning text-dark rounded-pill fs-8 fw-bold mb-2 shadow-xs">{{ sortedParticipants[0].total_score }} XP</div>
               <div class="podium-step bg-warning-subtle border border-warning rounded-top-3 w-100 d-flex align-items-center justify-content-center fw-black fs-3 text-warning-emphasis shadow-sm" style="height: 130px;">
@@ -260,8 +260,8 @@
             </div>
 
             <!-- 3rd Place -->
-            <div v-if="sortedParticipants[2]" class="d-flex flex-column align-items-center" style="width: 120px;">
-              <img :src="sortedParticipants[2].user_avatar" class="rounded-circle border border-2 border-danger-subtle mb-1" style="width: 50px; height: 50px;" />
+            <div v-if="sortedParticipants[2]" class="d-flex flex-column align-items-center arena-podium-col" style="width: 30%; max-width: 125px;">
+              <img :src="sortedParticipants[2].user_avatar" class="rounded-circle border border-2 border-danger-subtle mb-1" style="width: 48px; height: 48px;" />
               <div class="fw-bold fs-8 text-dark-emphasis text-truncate w-100">{{ sortedParticipants[2].user_name }}</div>
               <div class="badge bg-danger-subtle text-danger rounded-pill fs-8 mb-2">{{ sortedParticipants[2].total_score }} XP</div>
               <div class="podium-step bg-danger-subtle border rounded-top-3 w-100 d-flex align-items-center justify-content-center fw-black fs-4 text-danger" style="height: 70px;">

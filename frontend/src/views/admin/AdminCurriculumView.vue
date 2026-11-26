@@ -364,6 +364,22 @@
         </div>
       </form>
     </BaseModal>
+
+    <BaseModal
+      v-model="showDeleteConfirm"
+      title="Xác nhận Xóa Thuật Ngữ"
+      icon="bi bi-trash-fill"
+      maxWidth="440px"
+      hideFooter
+    >
+      <p class="fs-7 mb-3 text-dark-emphasis">
+        Bạn có chắc chắn muốn xóa thuật ngữ <strong>"{{ pendingDeleteTerm?.term }}"</strong> khỏi chủ đề này?
+      </p>
+      <div class="d-flex justify-content-end gap-2">
+        <button @click="showDeleteConfirm = false" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Hủy</button>
+        <button @click="confirmDeleteTerm" class="btn btn-danger btn-sm rounded-pill px-4 fw-bold">Xóa ngay</button>
+      </div>
+    </BaseModal>
   </div>
 </template>
 
@@ -529,12 +545,22 @@ const saveTerm = async () => {
   }
 }
 
-const deleteTerm = async (term) => {
-  if (!confirm(`Bạn có chắc muốn xóa thuật ngữ "${term.term}"?`)) return
+const showDeleteConfirm = ref(false)
+const pendingDeleteTerm = ref(null)
+
+const deleteTerm = (term) => {
+  pendingDeleteTerm.value = term
+  showDeleteConfirm.value = true
+}
+
+const confirmDeleteTerm = async () => {
+  if (!pendingDeleteTerm.value) return
   try {
     const token = localStorage.getItem('oxford_token')
     const headers = token ? { Authorization: `Bearer ${token}` } : {}
-    await axios.delete(`/api/admin/curriculum/terms/${term.id}`, { headers })
+    await axios.delete(`/api/admin/curriculum/terms/${pendingDeleteTerm.value.id}`, { headers })
+    showDeleteConfirm.value = false
+    pendingDeleteTerm.value = null
     toast.success('Đã xóa từ vựng thành công!', 'Quản trị Lộ trình')
     fetchTerms(termsPagination.value.current_page || 1)
   } catch (err) {

@@ -43,7 +43,7 @@
                 <button
                   v-for="flt in filterOptions"
                   :key="flt.key"
-                  @click="activeFilter = flt.key"
+                  @click="selectStatsFilter(flt.key)"
                   type="button"
                   class="btn rounded-pill px-2.5 py-1 fs-8 fw-bold border-0"
                   :class="activeFilter === flt.key ? 'btn-teal text-white shadow-xs' : 'btn-link text-muted text-decoration-none'"
@@ -296,18 +296,20 @@ const currentDayCode = computed(() => {
   return map[day]
 })
 
-const currentMinutes = computed(() => {
-  if (activeFilter.value === 'today') return 46
-  if (activeFilter.value === 'week') return 207
-  if (activeFilter.value === 'month') return 840
-  return 3420
+const filterStats = ref({
+  time_minutes: 0,
+  earned_xp: 0,
+  sessions_count: 0,
+  words_learned: 0,
 })
 
+const currentMinutes = computed(() => filterStats.value.time_minutes ?? 0)
+
 const currentXp = computed(() => {
-  if (activeFilter.value === 'today') return 180
-  if (activeFilter.value === 'week') return 950
-  if (activeFilter.value === 'month') return 3600
-  return authStore.user?.xp_points || 3850
+  if (activeFilter.value === 'all') {
+    return authStore.user?.xp_points ?? filterStats.value.earned_xp ?? 0
+  }
+  return filterStats.value.earned_xp ?? 0
 })
 
 const maxMinutes = computed(() => {
@@ -323,28 +325,28 @@ const getBarHeight = (mins) => {
 const radius = 62
 const circumference = 2 * Math.PI * radius
 const dashOffset = computed(() => {
-  const pct = courseProgress.value.percent || 43
+  const pct = courseProgress.value.percent || 0
   return circumference - (pct / 100) * circumference
 })
 
 // Heatmap Data & Settings
-const selectedYear = ref(2026)
+const selectedYear = ref(new Date().getFullYear())
 const availableYears = ref([2026, 2025, 2024])
-const heatmapData = ref({ total_contributions: 214, days: [] })
+const heatmapData = ref({ total_contributions: 0, days: [] })
 const months = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct']
 
 const weekColumns = computed(() => {
   const days = heatmapData.value.days || []
   if (!days.length) {
-    // Generate default 52 weeks x 7 days
+    // Deterministic empty placeholder grid (no random jitter)
     const cols = []
     for (let c = 0; c < 52; c++) {
       const col = []
       for (let r = 0; r < 7; r++) {
         col.push({
-          date: `2026-05-${r + 1}`,
-          count: Math.random() > 0.4 ? Math.floor(Math.random() * 5) : 0,
-          intensity: Math.random() > 0.5 ? Math.floor(Math.random() * 5) : 0
+          date: `${selectedYear.value}`,
+          count: 0,
+          intensity: 0
         })
       }
       cols.push(col)
@@ -372,13 +374,13 @@ const getCellColor = (intensity) => {
 }
 
 const formatTooltip = (day) => {
-  if (!day) return 'No contributions'
-  return `${day.count || 0} contributions on ${day.date}`
+  if (!day) return 'Chưa có hoạt động'
+  return `${day.count || 0} hoạt động học tập (${day.date})`
 }
 
-const loadStudyStats = async () => {
+const loadStudyStats = async (range = activeFilter.value) => {
   try {
-    const res = await axios.get('/api/user/study-stats')
+    const res = await axios.get('/api/user/study-stats', { params: { range } })
     if (res.data.data) {
       if (res.data.data.weekly_frequency?.length) {
         weeklyBars.value = res.data.data.weekly_frequency
@@ -386,10 +388,18 @@ const loadStudyStats = async () => {
       if (res.data.data.course_progress) {
         courseProgress.value = res.data.data.course_progress
       }
+      if (res.data.data.filter_stats) {
+        filterStats.value = res.data.data.filter_stats
+      }
     }
   } catch (err) {
     console.error('Failed to load study stats:', err)
   }
+}
+
+const selectStatsFilter = (key) => {
+  activeFilter.value = key
+  loadStudyStats(key)
 }
 
 const loadHeatmap = async (year) => {

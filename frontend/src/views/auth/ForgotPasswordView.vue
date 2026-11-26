@@ -299,10 +299,12 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import { useToast } from '@/composables/useToast'
 import axios from 'axios'
 
 const authStore = useAuthStore()
 const router = useRouter()
+const toast = useToast()
 
 const step = ref(1)
 const isLoading = ref(false)
@@ -349,7 +351,7 @@ const resetPassword = async () => {
       password: password.value,
       password_confirmation: passwordConfirmation.value,
     })
-    alert('Đặt lại mật khẩu thành công! Hãy đăng nhập bằng mật khẩu mới.')
+    toast.success('Đặt lại mật khẩu thành công! Hãy đăng nhập bằng mật khẩu mới.', 'Khôi phục mật khẩu')
     router.push('/login')
   } catch (err) {
     alertType.value = 'error'

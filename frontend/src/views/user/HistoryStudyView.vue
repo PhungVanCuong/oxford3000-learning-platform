@@ -217,9 +217,12 @@
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
 import { useHistoryStore } from '@/stores/historyStore'
+import { useToast } from '@/composables/useToast'
 
 const authStore = useAuthStore()
 const historyStore = useHistoryStore()
+const toast = useToast()
+const isConfirmingClear = ref(false)
 
 // Mặc định mở record đầu tiên giống trong ảnh mẫu
 const expandedIds = ref([historyStore.records[0]?.id].filter(Boolean))
@@ -253,10 +256,16 @@ const getStatusIcon = (status) => {
 }
 
 const handleClearHistory = () => {
-  if (confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử các lượt làm bài kiểm tra không?')) {
-    historyStore.clearHistory()
-    expandedIds.value = []
+  if (!isConfirmingClear.value) {
+    isConfirmingClear.value = true
+    toast.warning('Bấm lại lần nữa trong 4 giây để xác nhận xóa toàn bộ lịch sử!', 'Xác nhận xóa')
+    setTimeout(() => { isConfirmingClear.value = false }, 4000)
+    return
   }
+  isConfirmingClear.value = false
+  historyStore.clearHistory()
+  expandedIds.value = []
+  toast.success('Đã xóa toàn bộ lịch sử làm bài kiểm tra.', 'Lịch sử học tập')
 }
 </script>
 

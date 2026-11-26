@@ -711,6 +711,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore'
 import { useSpeech } from '@/composables/useSpeech'
 import LearningNavHeader from '@/components/LearningNavHeader.vue'
@@ -731,13 +732,62 @@ const authStore = useAuthStore()
 const speech = useSpeech()
 
 const manifest = manifestData
-const levelDatasets = {
+const levelDatasets = ref({
   a1: a1Data,
   a2: a2Data,
   b1: b1Data,
   b2: b2Data,
   c1: c1Data,
   c2: c2Data,
+})
+
+const applyAdminCefrOverrides = (ov) => {
+  if (!ov) return
+  const deletedSet = new Set((ov.deleted_ids || []).map(String))
+  const updatedMap = new Map((ov.updated_words || []).map(w => [String(w.id), w]))
+  const nextDatasets = {}
+
+  Object.entries({ a1: a1Data, a2: a2Data, b1: b1Data, b2: b2Data, c1: c1Data, c2: c2Data }).forEach(([lvlKey, data]) => {
+    const clone = JSON.parse(JSON.stringify(data))
+    const codeUpper = lvlKey.toUpperCase()
+    clone.lessons = (clone.lessons || []).map(l => {
+      let words = (l.words || [])
+        .filter(w => !deletedSet.has(String(w.id)))
+        .map(w => {
+          const upd = updatedMap.get(String(w.id))
+          if (!upd) return w
+          return {
+            ...w,
+            term: upd.word || w.term,
+            pattern: upd.phonetic_us ?? w.pattern,
+            definition: upd.meaning_vi || w.definition,
+            part_of_speech: upd.part_of_speech ?? w.part_of_speech,
+            example_en: upd.example_en ?? w.example_en,
+            example_vi: upd.example_vi ?? w.example_vi,
+          }
+        })
+
+      const extraForLesson = (ov.custom_words || []).filter(
+        cw => (cw.level_code || '').toUpperCase() === codeUpper && Number(cw.lesson_number || 1) === Number(l.lesson_number) && !deletedSet.has(String(cw.id))
+      ).map(cw => ({
+        id: cw.id,
+        term: cw.word || cw.term,
+        pattern: cw.phonetic_us || cw.pattern || '',
+        definition: cw.meaning_vi || cw.definition || '',
+        part_of_speech: cw.part_of_speech || '',
+        example_en: cw.example_en || '',
+        example_vi: cw.example_vi || '',
+      }))
+
+      if (extraForLesson.length) {
+        words = [...extraForLesson, ...words]
+      }
+      return { ...l, words }
+    })
+    nextDatasets[lvlKey] = clone
+  })
+
+  levelDatasets.value = nextDatasets
 }
 
 // View mode: 'roadmap' (mặc định theo giao diện ảnh người dùng cung cấp) hoặc 'study' (không gian luyện tập)
@@ -801,7 +851,7 @@ const quizQuestions = ref([])
 const quizUserAnswers = ref({})
 
 const currentLevel = computed(() => {
-  return levelDatasets[selectedLevelId.value] || a1Data
+  return levelDatasets.value[selectedLevelId.value] || levelDatasets.value.a1
 })
 
 const currentLesson = computed(() => {
@@ -1017,8 +1067,14 @@ const saveProgress = () => {
   } catch (e) {}
 }
 
-onMounted(() => {
+onMounted(async () => {
   loadProgress()
+  try {
+    const res = await axios.get('/api/cefr/overrides')
+    if (res.data?.data) {
+      applyAdminCefrOverrides(res.data.data)
+    }
+  } catch (e) {}
   generateQuiz()
 })
 

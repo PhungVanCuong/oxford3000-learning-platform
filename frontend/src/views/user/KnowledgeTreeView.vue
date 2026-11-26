@@ -61,7 +61,15 @@
       <div class="row g-4 mb-4">
         <!-- Interactive Tree Graphic Column -->
         <div class="col-12 col-lg-8">
-          <div class="card rounded-4 shadow-sm border bg-card-custom overflow-hidden h-100 position-relative" style="min-height: 560px; background: linear-gradient(180deg, #e0f2fe 0%, #bae6fd 35%, #dcfce7 75%, #86efac 100%);">
+          <div
+            class="card rounded-4 shadow-sm border bg-card-custom overflow-hidden h-100 position-relative d-flex flex-column justify-content-between"
+            :style="{
+              minHeight: '520px',
+              background: authStore.themeMode === 'dark'
+                ? 'linear-gradient(180deg, #0b192c 0%, #0f2936 45%, #064e3b 85%, #065f46 100%)'
+                : 'linear-gradient(180deg, #e0f2fe 0%, #bae6fd 35%, #dcfce7 75%, #86efac 100%)'
+            }"
+          >
             
             <!-- Sun & Cloud Elements -->
             <div class="position-absolute top-0 end-0 p-4 pointer-events-none">
@@ -69,9 +77,9 @@
             </div>
 
             <!-- Stage & Level Badge Overlay + History Switcher -->
-            <div class="position-absolute top-0 start-0 p-3.5 z-2 w-100 d-flex justify-content-between align-items-center flex-wrap gap-2">
-              <div class="d-flex align-items-center gap-2">
-                <span class="badge bg-white text-dark shadow-sm px-3 py-1.5 rounded-pill fw-bold fs-7 border">
+            <div class="p-3 z-2 w-100 d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <div class="d-flex align-items-center gap-2 flex-wrap">
+                <span class="badge bg-card-custom text-dark-emphasis shadow-sm px-3 py-1.5 rounded-pill fw-bold fs-7 border">
                   ⭐ Cấp {{ displayedLevel.level }}: {{ displayedLevel.name }}
                 </span>
                 <span class="badge bg-success text-white px-2.5 py-1.5 rounded-pill fs-8 shadow-sm">
@@ -90,8 +98,8 @@
             </div>
 
             <!-- Dynamic SVG Tree Graphic -->
-            <div class="d-flex align-items-end justify-content-center h-100 pb-2 position-relative" style="min-height: 500px;">
-              <svg viewBox="0 0 500 500" class="w-100 h-100" style="max-height: 480px;" xmlns="http://www.w3.org/2000/svg">
+            <div class="d-flex align-items-end justify-content-center flex-grow-1 pb-1 position-relative">
+              <svg viewBox="0 0 500 500" class="w-100" style="max-height: 410px;" xmlns="http://www.w3.org/2000/svg">
                 <!-- Ground Grass Hill & Soil Mound -->
                 <ellipse cx="250" cy="480" rx="240" ry="45" fill="#4ade80" />
                 <ellipse cx="250" cy="480" rx="220" ry="36" fill="#22c55e" />
@@ -206,8 +214,8 @@
               </svg>
             </div>
 
-            <!-- Bottom Floating Action Bar & History Slider -->
-            <div class="position-absolute bottom-0 start-0 end-0 p-3 bg-white bg-opacity-90 backdrop-blur border-top d-flex flex-wrap align-items-center justify-content-between gap-2 z-2">
+            <!-- Bottom Care Action Bar & History Slider (Non-overlapping on Mobile) -->
+            <div class="p-3 bg-card-custom border-top d-flex flex-wrap align-items-center justify-content-between gap-2 z-2 mt-auto">
               <div class="d-flex align-items-center gap-2 flex-wrap">
                 <!-- 1. Watering Button -->
                 <button
@@ -216,7 +224,7 @@
                   :disabled="hasWateredToday"
                 >
                   <i class="bi bi-droplet-fill text-info"></i>
-                  <span>{{ hasWateredToday ? 'Đã tưới nước (+5 XP)' : 'Tưới nước (+5 XP)' }}</span>
+                  <span>{{ hasWateredToday ? 'Đã tưới nước' : 'Tưới nước (+5 XP)' }}</span>
                 </button>
 
                 <!-- 2. Dig Soil Button -->
@@ -226,7 +234,7 @@
                   :disabled="hasDugToday"
                 >
                   <i class="bi bi-shovel text-warning"></i>
-                  <span>{{ hasDugToday ? 'Đã xới đất (+5 XP)' : 'Đào đất xới gốc (+5 XP)' }}</span>
+                  <span>{{ hasDugToday ? 'Đã xới đất' : 'Xới đất (+10 XP)' }}</span>
                 </button>
 
                 <!-- 3. Fertilize Button -->
@@ -236,7 +244,7 @@
                   :disabled="hasFertilizedToday"
                 >
                   <i class="bi bi-capsule text-success"></i>
-                  <span>{{ hasFertilizedToday ? 'Đã bón phân (+10 XP)' : 'Bón phân (+10 XP)' }}</span>
+                  <span>{{ hasFertilizedToday ? 'Đã bón phân' : 'Bón phân (+25 XP)' }}</span>
                 </button>
 
                 <!-- 4. Harvest Fruit Button -->
@@ -247,7 +255,7 @@
                   :disabled="fruitsAvailable === 0"
                 >
                   <i class="bi bi-basket-fill text-danger"></i>
-                  <span>Thu hoạch ({{ fruitsAvailable }} quả)</span>
+                  <span>Thu hoạch ({{ fruitsAvailable }} quả • +150 XP/quả)</span>
                 </button>
               </div>
 
@@ -348,10 +356,13 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore'
+import { useToast } from '@/composables/useToast'
 import confetti from 'canvas-confetti'
 
 const authStore = useAuthStore()
+const toast = useToast()
 
 const userXp = computed(() => authStore.user?.xp_points || 0)
 const userStreak = computed(() => authStore.user?.streak_days || 0)
@@ -512,85 +523,92 @@ const openHistoryModal = () => {
   previewLevelNum.value = prevLvl
 }
 
-const waterTree = () => {
+const syncTreeActionBackend = async (action, localXpFallback, extraPayload = {}) => {
+  if (authStore.isAuthenticated) {
+    try {
+      const res = await axios.post('/api/user/study-action', { action, ...extraPayload })
+      if (authStore.user && res.data?.data?.total_xp !== undefined) {
+        authStore.user.xp_points = res.data.data.total_xp
+        if (res.data.data.streak_days !== undefined) {
+          authStore.user.streak_days = res.data.data.streak_days
+        }
+      }
+      return res.data?.data?.xp_awarded ?? localXpFallback
+    } catch (e) {}
+  }
+  if (authStore.user) {
+    authStore.user.xp_points = (authStore.user.xp_points || 0) + localXpFallback
+  }
+  return localXpFallback
+}
+
+const waterTree = async () => {
+  if (hasWateredToday.value) return
   hasWateredToday.value = true
   localStorage.setItem('ox_last_watered_date', new Date().toDateString())
-  if (authStore.user) {
-    authStore.user.xp_points = (authStore.user.xp_points || 0) + 5
-  }
-  confetti({
-    particleCount: 40,
-    spread: 60,
-    origin: { y: 0.7 }
-  })
+  const xp = await syncTreeActionBackend('tree_water', 5)
+  toast.success(`Đã tưới nước cho Cây Tri Thức! (+${xp} XP)`, 'Chăm sóc cây')
+  confetti({ particleCount: 40, spread: 60, origin: { y: 0.7 } })
 }
 
-const digSoil = () => {
+const digSoil = async () => {
+  if (hasDugToday.value) return
   hasDugToday.value = true
   localStorage.setItem('ox_last_dug_date', new Date().toDateString())
-  if (authStore.user) {
-    authStore.user.xp_points = (authStore.user.xp_points || 0) + 5
-  }
-  confetti({
-    particleCount: 45,
-    spread: 60,
-    origin: { y: 0.8 }
-  })
+  const xp = await syncTreeActionBackend('tree_dig', 10)
+  toast.success(`Đã đào đất xới gốc giúp rễ hấp thụ! (+${xp} XP)`, 'Chăm sóc cây')
+  confetti({ particleCount: 45, spread: 60, origin: { y: 0.8 } })
 }
 
-const fertilizeTree = () => {
+const fertilizeTree = async () => {
+  if (hasFertilizedToday.value) return
   hasFertilizedToday.value = true
   localStorage.setItem('ox_last_fertilized_date', new Date().toDateString())
-  if (authStore.user) {
-    authStore.user.xp_points = (authStore.user.xp_points || 0) + 10
-  }
-  confetti({
-    particleCount: 60,
-    spread: 80,
-    origin: { y: 0.7 }
-  })
+  const xp = await syncTreeActionBackend('tree_fertilize', 25)
+  toast.success(`Đã bón phân hữu cơ cho cây xanh tốt! (+${xp} XP)`, 'Chăm sóc cây')
+  confetti({ particleCount: 60, spread: 80, origin: { y: 0.7 } })
 }
 
-const harvestSingleFruit = (idx) => {
+const harvestSingleFruit = async (idx) => {
+  if (fruitsAvailable.value <= 0) return
   harvestedFruits.value++
   localStorage.setItem('ox_harvested_fruits', String(harvestedFruits.value))
-  if (fruitsAvailable.value > 0) fruitsAvailable.value--
-  if (authStore.user) {
-    authStore.user.xp_points = (authStore.user.xp_points || 0) + 15
-  }
-  confetti({
-    particleCount: 60,
-    spread: 70,
-    origin: { y: 0.6 }
-  })
+  fruitsAvailable.value--
+  const xp = await syncTreeActionBackend('tree_harvest', 150, { slot_id: idx + 1 })
+  toast.success(`Thu hoạch trái tri thức thành công! (+${xp} XP)`, 'Mùa gặt tri thức')
+  confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } })
 }
 
-const harvestAllFruits = () => {
+const harvestAllFruits = async () => {
   if (fruitsAvailable.value === 0) return
   const count = fruitsAvailable.value
   harvestedFruits.value += count
   fruitsAvailable.value = 0
   localStorage.setItem('ox_harvested_fruits', String(harvestedFruits.value))
-  if (authStore.user) {
-    authStore.user.xp_points = (authStore.user.xp_points || 0) + (count * 15)
-  }
-  confetti({
-    particleCount: 120,
-    spread: 100,
-    origin: { y: 0.5 }
-  })
+  const xp = await syncTreeActionBackend('tree_harvest', count * 150, { words_count: count })
+  toast.success(`Đã thu hoạch toàn bộ ${count} quả chín! (+${xp} XP)`, 'Mùa gặt bội thu')
+  confetti({ particleCount: 120, spread: 100, origin: { y: 0.5 } })
 }
 
-onMounted(() => {
+onMounted(async () => {
   const todayStr = new Date().toDateString()
-  if (localStorage.getItem('ox_last_watered_date') === todayStr) {
-    hasWateredToday.value = true
-  }
-  if (localStorage.getItem('ox_last_dug_date') === todayStr) {
-    hasDugToday.value = true
-  }
-  if (localStorage.getItem('ox_last_fertilized_date') === todayStr) {
-    hasFertilizedToday.value = true
+  if (localStorage.getItem('ox_last_watered_date') === todayStr) hasWateredToday.value = true
+  if (localStorage.getItem('ox_last_dug_date') === todayStr) hasDugToday.value = true
+  if (localStorage.getItem('ox_last_fertilized_date') === todayStr) hasFertilizedToday.value = true
+
+  if (authStore.isAuthenticated) {
+    try {
+      const res = await axios.get('/api/user/tree-state')
+      const s = res.data?.data
+      if (s) {
+        hasWateredToday.value = !!s.watered_today
+        hasDugToday.value = !!s.dug_today
+        hasFertilizedToday.value = !!s.fertilized_today
+        if (Array.isArray(s.harvested_slots)) {
+          fruitsAvailable.value = Math.max(0, 6 - s.harvested_slots.length)
+        }
+      }
+    } catch (e) {}
   }
 })
 </script>

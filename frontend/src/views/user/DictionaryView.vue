@@ -266,18 +266,29 @@
               </div>
             </div>
 
-            <!-- Meaning -->
-            <div class="fw-bold text-success fs-6 mb-2">
+            <!-- Meaning (Active-Recall hidden in Study Mode until clicked) -->
+            <div v-if="!isStudyMode || revealedWordIds[word.id]" class="fw-bold text-success fs-6 mb-2">
               {{ word.meaning_vi }}
             </div>
+            <button
+              v-else
+              @click="toggleRevealWord(word.id)"
+              type="button"
+              class="btn btn-sm btn-outline-success rounded-pill px-3 py-1 mb-2 fs-8 fw-bold"
+            >
+              <i class="bi bi-eye me-1"></i> Nhấp để xem nghĩa (Chế độ Học)
+            </button>
 
             <!-- Example sentence -->
             <div v-if="word.example_en" class="bg-body-tertiary p-2.5 rounded-3 border fs-8 mb-2">
               <div class="text-teal fw-semibold mb-1">
                 <i class="bi bi-chat-quote me-1"></i>{{ word.example_en }}
               </div>
-              <div class="text-muted fst-italic">
+              <div v-if="!isStudyMode || revealedWordIds[word.id]" class="text-muted fst-italic">
                 {{ word.example_vi }}
+              </div>
+              <div v-else class="text-muted fst-italic opacity-75">
+                (Đang ẩn dịch nghĩa trong chế độ tự kiểm tra)
               </div>
             </div>
           </div>
@@ -434,6 +445,10 @@ watch(() => speech.isListening.value, (isListening) => {
 const searchQuery = ref('')
 const filterStatus = ref('all')
 const isStudyMode = ref(false)
+const revealedWordIds = ref({})
+const toggleRevealWord = (id) => {
+  revealedWordIds.value[id] = !revealedWordIds.value[id]
+}
 const activeTab = ref('all') // 'all', 'alphabet', 'topic', 'index', 'cefr', 'newest'
 
 const alphabetList = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')

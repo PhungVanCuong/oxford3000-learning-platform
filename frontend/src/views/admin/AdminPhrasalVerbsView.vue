@@ -153,6 +153,20 @@
         </div>
       </form>
     </BaseModal>
+
+    <BaseModal
+      v-model="showDeleteConfirm"
+      title="Xác nhận Xóa Cụm Từ"
+      icon="bi bi-trash-fill"
+      maxWidth="440px"
+      hideFooter
+    >
+      <p class="fs-7 mb-3 text-dark-emphasis">Bạn có chắc chắn muốn xóa cụm từ này khỏi hệ thống?</p>
+      <div class="d-flex justify-content-end gap-2">
+        <button @click="showDeleteConfirm = false" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Hủy</button>
+        <button @click="confirmDeletePhrase" class="btn btn-danger btn-sm rounded-pill px-4 fw-bold">Xóa ngay</button>
+      </div>
+    </BaseModal>
   </div>
 </template>
 
@@ -259,15 +273,24 @@ const savePhrase = async () => {
   }
 }
 
-const deletePhrase = async (id) => {
-  if (confirm('Bạn có chắc chắn muốn xóa cụm từ này?')) {
-    try {
-      await axios.delete(`/api/phrasal-verbs/${id}`)
-      toast.success('Đã xóa cụm từ thành công!', 'Quản trị Cụm từ')
-      fetchPhrases()
-    } catch (err) {
-      toast.error('Không thể xóa cụm từ này.', 'Lỗi hệ thống')
-    }
+const showDeleteConfirm = ref(false)
+const pendingDeleteId = ref(null)
+
+const deletePhrase = (id) => {
+  pendingDeleteId.value = id
+  showDeleteConfirm.value = true
+}
+
+const confirmDeletePhrase = async () => {
+  if (!pendingDeleteId.value) return
+  try {
+    await axios.delete(`/api/phrasal-verbs/${pendingDeleteId.value}`)
+    showDeleteConfirm.value = false
+    pendingDeleteId.value = null
+    toast.success('Đã xóa cụm từ thành công!', 'Quản trị Cụm từ')
+    fetchPhrases()
+  } catch (err) {
+    toast.error('Không thể xóa cụm từ này.', 'Lỗi hệ thống')
   }
 }
 

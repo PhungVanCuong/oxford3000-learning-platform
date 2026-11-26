@@ -748,7 +748,7 @@
                   <button
                     v-for="flt in statsFilterOptions"
                     :key="flt.key"
-                    @click="activeStatsFilter = flt.key"
+                    @click="selectHomeStatsFilter(flt.key)"
                     type="button"
                     class="btn rounded-pill px-2 py-0.5 fs-8 fw-bold border-0"
                     :class="activeStatsFilter === flt.key ? 'btn-teal text-white shadow-2xs' : 'btn-link text-muted text-decoration-none'"
@@ -821,7 +821,7 @@
 
             <!-- Footer Link to Full Activity Report -->
             <div class="d-flex justify-content-between align-items-center pt-2 border-top fs-8">
-              <span class="text-muted">Đóng góp GitHub: <strong>214 ngày</strong></span>
+              <span class="text-muted">Đóng góp GitHub: <strong>{{ totalHeatmapContributions }} hoạt động</strong></span>
               <router-link to="/stats" class="text-teal fw-bold text-decoration-none">
                 Xem Báo Cáo Năng Suất Chi Tiết →
               </router-link>
@@ -855,7 +855,7 @@
                 ></div>
               </div>
               <div class="d-flex justify-content-between text-muted fs-8 mb-2">
-                <span>Mục tiêu mỗi ngày: <strong>20 từ</strong></span>
+                <span>Mục tiêu mỗi ngày: <strong>{{ authStore.user?.words_per_day || 15 }} từ</strong></span>
                 <span>Còn lại: <strong>{{ Math.max(0, 3351 - overallMasteredWords) }} từ</strong></span>
               </div>
             </div>
@@ -910,14 +910,17 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore'
 import { useDailyStudyStore } from '@/stores/dailyStudyStore'
 import { useGoogleAuth } from '@/composables/useGoogleAuth'
+import { useToast } from '@/composables/useToast'
 import LearningContentCards from '@/components/LearningContentCards.vue'
 import confetti from 'canvas-confetti'
 
 const authStore = useAuthStore()
 const dailyStore = useDailyStudyStore()
+const toast = useToast()
 const { isLoggingIn: isGoogleLoggingIn, openGoogleLoginPopup } = useGoogleAuth()
 
 const handleGoogleLogin = () => {
@@ -1047,17 +1050,22 @@ const treeFoliageColor3 = computed(() => {
 })
 
 const quickWatered = ref(false)
-const quickWaterTree = () => {
+const quickWaterTree = async () => {
+  if (quickWatered.value) return
   quickWatered.value = true
   localStorage.setItem('ox_last_watered_date', new Date().toDateString())
-  if (authStore.user) {
+  if (authStore.isAuthenticated) {
+    try {
+      const res = await axios.post('/api/user/study-action', { action: 'tree_water' })
+      if (authStore.user && res.data?.data?.total_xp !== undefined) {
+        authStore.user.xp_points = res.data.data.total_xp
+      }
+      toast.success(`Đã tưới nước cho Cây Tri Thức (+${res.data?.data?.xp_awarded ?? 5} XP)!`, 'Chăm sóc cây')
+    } catch (e) {}
+  } else if (authStore.user) {
     authStore.user.xp_points = (authStore.user.xp_points || 0) + 5
   }
-  confetti({
-    particleCount: 35,
-    spread: 50,
-    origin: { y: 0.65 }
-  })
+  confetti({ particleCount: 35, spread: 50, origin: { y: 0.65 } })
 }
 
 // WEEKLY STATS ACTIVITY CHART (Tuần trước vs Tuần này)
@@ -1069,14 +1077,21 @@ const statsFilterOptions = [
 ]
 
 const weeklyStatsBars = ref([
-  { day_code: 'T2', this_week_minutes: 25, last_week_minutes: 15 },
-  { day_code: 'T3', this_week_minutes: 35, last_week_minutes: 20 },
-  { day_code: 'T4', this_week_minutes: 20, last_week_minutes: 25 },
-  { day_code: 'T5', this_week_minutes: 42, last_week_minutes: 30 },
-  { day_code: 'T6', this_week_minutes: 30, last_week_minutes: 22 },
-  { day_code: 'T7', this_week_minutes: 45, last_week_minutes: 20 },
-  { day_code: 'CN', this_week_minutes: 15, last_week_minutes: 15 }
+  { day_code: 'T2', this_week_minutes: 0, last_week_minutes: 0 },
+  { day_code: 'T3', this_week_minutes: 0, last_week_minutes: 0 },
+  { day_code: 'T4', this_week_minutes: 0, last_week_minutes: 0 },
+  { day_code: 'T5', this_week_minutes: 0, last_week_minutes: 0 },
+  { day_code: 'T6', this_week_minutes: 0, last_week_minutes: 0 },
+  { day_code: 'T7', this_week_minutes: 0, last_week_minutes: 0 },
+  { day_code: 'CN', this_week_minutes: 0, last_week_minutes: 0 }
 ])
+
+const homeFilterStats = ref({
+  time_minutes: 0,
+  earned_xp: 0,
+  sessions_count: 0,
+})
+const totalHeatmapContributions = ref(0)
 
 const currentDayCode = computed(() => {
   const day = new Date().getDay()
@@ -1084,26 +1099,9 @@ const currentDayCode = computed(() => {
   return map[day]
 })
 
-const currentStatsMinutes = computed(() => {
-  if (activeStatsFilter.value === 'today') return 46
-  if (activeStatsFilter.value === 'week') return 207
-  if (activeStatsFilter.value === 'month') return 840
-  return 3420
-})
-
-const currentStatsXp = computed(() => {
-  if (activeStatsFilter.value === 'today') return 180
-  if (activeStatsFilter.value === 'week') return 950
-  if (activeStatsFilter.value === 'month') return 3600
-  return authStore.user?.xp_points || 3850
-})
-
-const currentStatsSessions = computed(() => {
-  if (activeStatsFilter.value === 'today') return 3
-  if (activeStatsFilter.value === 'week') return 18
-  if (activeStatsFilter.value === 'month') return 64
-  return 214
-})
+const currentStatsMinutes = computed(() => homeFilterStats.value.time_minutes ?? 0)
+const currentStatsXp = computed(() => homeFilterStats.value.earned_xp ?? 0)
+const currentStatsSessions = computed(() => homeFilterStats.value.sessions_count ?? 0)
 
 const maxStatsMinutes = computed(() => {
   const vals = weeklyStatsBars.value.flatMap(b => [b.this_week_minutes, b.last_week_minutes])
@@ -1114,12 +1112,41 @@ const getStatsBarHeight = (mins) => {
   return Math.min(100, Math.max(10, Math.round((mins / maxStatsMinutes.value) * 100)))
 }
 
-onMounted(() => {
+const loadHomeStudyStats = async (range = activeStatsFilter.value) => {
+  try {
+    const res = await axios.get('/api/user/study-stats', { params: { range } })
+    const data = res.data?.data
+    if (data) {
+      if (data.weekly_frequency?.length) weeklyStatsBars.value = data.weekly_frequency
+      if (data.filter_stats) homeFilterStats.value = data.filter_stats
+    }
+  } catch (e) {}
+}
+
+const selectHomeStatsFilter = (key) => {
+  activeStatsFilter.value = key
+  loadHomeStudyStats(key)
+}
+
+onMounted(async () => {
   if (authStore.isAuthenticated) {
     dailyStore.fetchDays()
-    const lastWatered = localStorage.getItem('ox_last_watered_date')
-    if (lastWatered === new Date().toDateString()) {
-      quickWatered.value = true
+    loadHomeStudyStats(activeStatsFilter.value)
+
+    try {
+      const [treeRes, heatRes] = await Promise.all([
+        axios.get('/api/user/tree-state'),
+        axios.get(`/api/user/contribution-heatmap?year=${new Date().getFullYear()}`)
+      ])
+      if (treeRes.data?.data) {
+        quickWatered.value = !!treeRes.data.data.watered_today
+      }
+      if (heatRes.data?.data?.total_contributions !== undefined) {
+        totalHeatmapContributions.value = heatRes.data.data.total_contributions
+      }
+    } catch (e) {
+      const lastWatered = localStorage.getItem('ox_last_watered_date')
+      if (lastWatered === new Date().toDateString()) quickWatered.value = true
     }
   }
 })

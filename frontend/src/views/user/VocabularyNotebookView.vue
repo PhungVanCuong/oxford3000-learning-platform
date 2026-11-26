@@ -466,6 +466,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import axios from 'axios'
 import { useSpeech } from '@/composables/useSpeech'
 import { useReviewStore } from '@/stores/reviewStore'
 import { useToast } from '@/composables/useToast'
@@ -512,27 +513,35 @@ const quizAnswerSubmitted = ref(false)
 const quizSelectedOption = ref(null)
 const quizQuestions = ref([])
 
-const loadNotebook = () => {
+const loadNotebook = async () => {
   isLoading.value = true
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) {
-      words.value = JSON.parse(raw)
-    } else {
-      words.value = DEFAULT_SAMPLE_WORDS
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_SAMPLE_WORDS))
+    const localWords = raw ? JSON.parse(raw) : DEFAULT_SAMPLE_WORDS
+    words.value = Array.isArray(localWords) ? localWords : DEFAULT_SAMPLE_WORDS
+
+    if (localStorage.getItem('oxford_token')) {
+      const res = await axios.get('/api/user/notebook')
+      const remoteWords = res.data?.data
+      if (Array.isArray(remoteWords) && remoteWords.length > 0) {
+        words.value = remoteWords
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(words.value))
+      } else if (words.value.length > 0) {
+        await axios.post('/api/user/notebook/sync', { words: words.value }).catch(() => {})
+      }
     }
   } catch (e) {
-    words.value = DEFAULT_SAMPLE_WORDS
+    if (!words.value.length) words.value = DEFAULT_SAMPLE_WORDS
   } finally {
-    setTimeout(() => {
-      isLoading.value = false
-    }, 280)
+    isLoading.value = false
   }
 }
 
 const saveNotebook = () => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(words.value))
+  if (localStorage.getItem('oxford_token')) {
+    axios.post('/api/user/notebook/sync', { words: words.value }).catch(() => {})
+  }
 }
 
 const masteredCount = computed(() => words.value.filter(w => w.mastered).length)
@@ -771,7 +780,7 @@ onUnmounted(() => {
 .notebook-flashcard-box {
   perspective: 1200px;
   width: 100%;
-  height: 480px;
+  height: clamp(380px, 58vh, 480px);
   user-select: none;
 }
 

@@ -150,11 +150,36 @@ body {
 [data-bs-theme="dark"] .bg-card-custom,
 [data-bs-theme="dark"] .bg-white,
 [data-bs-theme="dark"] .bg-light,
+[data-bs-theme="dark"] .bg-light-subtle,
 [data-bs-theme="dark"] .bg-body,
-[data-bs-theme="dark"] .bg-body-tertiary {
+[data-bs-theme="dark"] .bg-body-tertiary,
+[data-bs-theme="dark"] .btn-light,
+[data-bs-theme="dark"] .btn-white {
   background-color: #1c2826 !important;
   border-color: #283a37 !important;
   color: #F1F5F9 !important;
+}
+
+[data-bs-theme="dark"] .progress {
+  background-color: #233331 !important;
+}
+
+[data-bs-theme="dark"] [style*="background-color: #E6F7F3"],
+[data-bs-theme="dark"] [style*="background-color: #ecfdf5"],
+[data-bs-theme="dark"] [style*="background-color: #eff6ff"],
+[data-bs-theme="dark"] [style*="background-color: #ecfeff"],
+[data-bs-theme="dark"] [style*="background-color: #fffbeb"],
+[data-bs-theme="dark"] [style*="background-color: #f5f3ff"],
+[data-bs-theme="dark"] [style*="background-color: #fefce8"],
+[data-bs-theme="dark"] [style*="background-color: #fef2f2"],
+[data-bs-theme="dark"] [style*="background-color: #F5F7F8"] {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  border-color: #283a37 !important;
+}
+
+[data-bs-theme="dark"] [style*="color: #087F75"],
+[data-bs-theme="dark"] [style*="color: #064e40"] {
+  color: #5eead4 !important;
 }
 
 [data-bs-theme="dark"] .modal-content,
@@ -1957,6 +1982,36 @@ html.high-contrast-mode .btn-teal {
   background-size: 400% 100%;
   animation: skeletonShimmer 1.4s ease infinite;
   border-radius: 8px;
+}
+
+/* Prevent horizontal overflow on desktop & mobile while preserving sticky headers */
+html,
+body,
+#app,
+.user-layout,
+.admin-layout {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+@media (max-width: 767.98px) {
+  .flashcard-3d-box {
+    min-height: 350px !important;
+  }
+
+  .ox-header-grid {
+    padding: 0 0.75rem !important;
+    gap: 0.5rem !important;
+  }
+
+  .ox-header-right {
+    gap: 0.35rem !important;
+  }
+
+  .modal-dialog {
+    margin: 0.5rem auto !important;
+    max-width: calc(100vw - 1rem) !important;
+  }
 }
 
 [data-bs-theme="dark"] .ox-skeleton {

@@ -778,9 +778,11 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
 import * as bootstrap from 'bootstrap'
+import { useToast } from '@/composables/useToast'
 
 const router = useRouter()
 const route = useRoute()
+const toast = useToast()
 
 // Active Tab: 'leaderboard' or 'rooms'
 const activeTab = ref(route.query.tab === 'rooms' ? 'rooms' : 'leaderboard')
@@ -1063,7 +1065,7 @@ const openCreateModal = () => {
 
 const submitCreateRoom = async () => {
   if (!newRoom.value.title) {
-    alert('Vui lòng nhập tên phòng thi.')
+    toast.warning('Vui lòng nhập tên phòng thi.', 'Thiếu thông tin')
     return
   }
 
@@ -1077,7 +1079,7 @@ const submitCreateRoom = async () => {
     router.push(`/arena/${res.data.data.room_code}`)
   } catch (err) {
     console.error('Failed to create arena room:', err)
-    alert(err.response?.data?.message || 'Không thể tạo phòng lúc này.')
+    toast.error(err.response?.data?.message || 'Không thể tạo phòng lúc này.', 'Đấu trường Quiz')
   }
 }
 

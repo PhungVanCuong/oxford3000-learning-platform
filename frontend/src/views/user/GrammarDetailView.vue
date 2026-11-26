@@ -680,12 +680,14 @@ import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { useSpeech } from '@/composables/useSpeech'
 import { useAuthStore } from '@/stores/authStore'
+import { useToast } from '@/composables/useToast'
 import DailyQuizModal from '@/components/DailyQuizModal.vue'
 import * as bootstrap from 'bootstrap'
 
 const route = useRoute()
 const speech = useSpeech()
 const authStore = useAuthStore()
+const toast = useToast()
 
 const isLoading = ref(true)
 const grammar = ref(null)
@@ -903,8 +905,16 @@ const loadLocalProgress = () => {
   }
 }
 
+const isConfirmingReset = ref(false)
 const resetAllExercises = () => {
-  if (!confirm('Bạn có chắc chắn muốn làm lại bài tập của thì này? Toàn bộ kết quả đã làm sẽ được làm mới.')) return
+  if (!isConfirmingReset.value) {
+    isConfirmingReset.value = true
+    toast.warning('Bấm lại nút này lần nữa trong 4 giây để xác nhận làm lại bài tập!', 'Xác nhận làm lại')
+    setTimeout(() => { isConfirmingReset.value = false }, 4000)
+    return
+  }
+  isConfirmingReset.value = false
+  toast.info('Đã làm mới toàn bộ bài tập của chuyên đề này.', 'Đã reset bài tập')
   userAnswers.value = {}
   results.value = {}
   verbAnswers.value = {}
